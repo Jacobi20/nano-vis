@@ -29,7 +29,7 @@ namespace nano_vis
 	class NanoVis : Game
 	{
 		public VisAtom	vis_atom	;
-		public VisCube	vis_cube;
+		public VisBase	vis_base;
 		
 		const int InitialWidth = 800;
 		const int InitialHeight = 600;
@@ -78,15 +78,12 @@ namespace nano_vis
 
 			view_rotation			=	Matrix.Identity;
 
-			Window.ClientSize	=	new Size(InitialWidth, InitialHeight);
-			Window.Text			=	"Nano Visualizer";
-			Window.KeyDown		+=	Window_KeyDown;
-			Window.MouseMove	+=	Window_MouseMove;
-			Window.Width		=	800;
-			Window.Height		=	600;
-			Window.Top			=	100;
-			Window.Left			=	100;
-
+			Window.ClientSize		=	new Size(InitialWidth, InitialHeight);
+			Window.Text				=	"Nano Visualizer";
+			Window.KeyDown			+=	Window_KeyDown;
+			Window.MouseMove		+=	Window_MouseMove;
+			Window.StartPosition	=	FormStartPosition.CenterScreen;
+			
 			camera.FieldOfView	=	(float)(Math.PI / 4);
 			camera.NearPlane	=	1.0f;
 			camera.FarPlane		=	1000.0f;
@@ -106,7 +103,7 @@ namespace nano_vis
             dev.MultisampleType		= MultisampleType.FourSamples;
 			
 			
-			vis_cube	=	new VisCube("test3.cube");
+			vis_base	=	new VisCube("test1.cube");
 			
 			GraphicsDeviceManager.ChangeDevice(dev);
 			//GraphicsDeviceManager.ChangeDevice(DeviceVersion.Direct3D9, true, InitialWidth, InitialHeight);
@@ -116,16 +113,19 @@ namespace nano_vis
 		
 		void InitSettingsWindow()
 		{
-			form_settings			=	new Form();
-			form_settings.Text		=	"Settings";
-			form_settings.Width		=	300;
-			form_settings.Height	=	400;
+			form_settings				=	new Form();
+			form_settings.Text			=	"Settings";
+			form_settings.Width			=	200;
+			form_settings.Height		=	Window.Height;
+			form_settings.Left			=	Window.Left + Window.Width;
+			form_settings.Top			=	Window.Top;
+			form_settings.StartPosition	=	FormStartPosition.Manual;
 			
 			property_editor	=	new PropertyGrid();
 			property_editor.Parent	=	form_settings;
 			property_editor.Dock	=	DockStyle.Fill;
 			
-			property_editor.SelectedObject	=	vis_cube;
+			property_editor.SelectedObject	=	vis_base;
 			
 		}
 
@@ -166,7 +166,7 @@ namespace nano_vis
 			p0 /= p0.W;
 			p1 /= p1.W;
 			
-			vis_cube.UpdateTraceRay(new Vector3(p0.X, p0.Y, p0.Z), new Vector3(p1.X, p1.Y, p1.Z));
+			vis_base.UpdateTraceRay(new Vector3(p0.X, p0.Y, p0.Z), new Vector3(p1.X, p1.Y, p1.Z));
 		
 			if (e.Button==MouseButtons.Left) {
 				view_rotation	*=	Matrix.RotationY(0.01f * dx);
@@ -203,7 +203,7 @@ namespace nano_vis
 			font		=	new SlimDX.Direct3D9.Font(Device, new System.Drawing.Font(FontFamily.GenericSansSerif, 10));
 			font_big	=	new SlimDX.Direct3D9.Font(Device, new System.Drawing.Font(FontFamily.GenericSansSerif, 20));
 			
-			vis_cube.ReloadData( this );
+			vis_base.ReloadData( this );
 		}
 
 		/*---------------------------------------------------------------------
@@ -215,6 +215,7 @@ namespace nano_vis
 			
 			vis_atom.Dispose();
 			font.Dispose();
+			font_big.Dispose();
 		}
 
 		/*---------------------------------------------------------------------
@@ -228,7 +229,7 @@ namespace nano_vis
 					view	*=	Matrix.Translation(0, 0, -view_distance);
 			Matrix	proj	=	Matrix.PerspectiveFovRH(3.14f/6.0f, cam_aspect, 0.1f, 1000.0f);
 			
-			ClearColor	=	vis_cube.Background;
+			ClearColor	=	vis_base.Background;
 			
 			try {
 		
@@ -237,7 +238,14 @@ namespace nano_vis
 
 					DrawParticles(view, proj);
 
-					vis_cube.Draw2D(this);
+					vis_base.Draw2D(this);
+					
+					font.DrawString(null, 
+						"Press F2 to edit visualizer options", 
+						Window.ClientRectangle, 
+						DrawTextFormat.Bottom | DrawTextFormat.Left, 
+						new Color4(0.5f, 1,1,1)
+					);
 
 				Device.EndScene();
 				
@@ -264,7 +272,7 @@ namespace nano_vis
 				view_offset	=	Matrix.Translation( -mol_center );
 				//vis_atom.DrawAxis( mol_center );
 				
-				vis_cube.Draw3D(this);
+				vis_base.Draw3D(this);
 				
 			} catch (Exception ex) {
 				Debug.WriteLine("ERROR : " + ex.Message);

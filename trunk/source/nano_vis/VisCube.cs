@@ -7,18 +7,18 @@ using System.Drawing;
 using SampleFramework;
 using SlimDX;
 using SlimDX.Direct3D9;
+using System.Windows.Forms;
 using OpenBabel;
 
 namespace nano_vis
 {
-	class VisCube
+	class VisCube : VisBase
 	{
 		OBMol			mol;
 		OBConversion	conv;
 		OBGridData		grid;
 		OBElementTable	elem_table;
 		
-		public Color		Background	{ get; set; }
 		public Color		BondColor	{ get; set; }
 		public float		BondRadius	{ get; set; }
 		public float		AtomScale	{ get; set; }
@@ -52,7 +52,7 @@ namespace nano_vis
 			    throw new Exception("cann`t set input format");
 			}
 			
-			if (!conv.ReadFile(mol, "test3.cube")) {
+			if (!conv.ReadFile(mol, "test1.cube")) {
 			    throw new Exception("cann`t open \"test.cube\" file");
 			}
 						
@@ -76,7 +76,7 @@ namespace nano_vis
 		/*---------------------------------------------------------------------
 		 * Update Trace
 		---------------------------------------------------------------------*/
-		public void UpdateTraceRay( Vector3 p0, Vector3 p1 )
+		override public void UpdateTraceRay( Vector3 p0, Vector3 p1 )
 		{
 			trace_p0		=	p0;
 			trace_p1		=	p1;
@@ -112,7 +112,7 @@ namespace nano_vis
 			return true;
 		}
 		
-		public void ReloadData(NanoVis nano_vis)
+		override public void ReloadData(NanoVis nano_vis)
 		{
 			nano_vis.vis_atom.UpdateVolume( grid );
 		}
@@ -121,7 +121,7 @@ namespace nano_vis
 		 * Draw3D
 		 * draws 3d stuff :
 		---------------------------------------------------------------------*/
-		public void Draw2D (NanoVis nano_vis)
+		override public void Draw2D (NanoVis nano_vis)
 		{
 			if (ShowDensity) {
 				for (float s=-1; s<=1; s+=0.01f) {
@@ -146,7 +146,7 @@ namespace nano_vis
 		 * Draw3D
 		 * draws 3d stuff :
 		---------------------------------------------------------------------*/
-		public void Draw3D (NanoVis nano_vis)
+		override public void Draw3D (NanoVis nano_vis)
 		{
 			VisAtom	vis_atom	 = nano_vis.vis_atom;
 			OBMolAtomIter	a_it = new OBMolAtomIter(mol);

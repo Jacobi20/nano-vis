@@ -37,7 +37,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="OBDotNet, Version=0.2.0.0, Culture=neutral, PublicKeyToken=3069c9c4f488e4bd, processorArchitecture=MSIL" />
-    <Reference Include="SampleFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86" />
+    <Reference Include="SampleFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\SampleFramework\SampleFramework.dll</HintPath>
+    </Reference>
     <Reference Include="SlimDX, Version=2.0.8.42, Culture=neutral, PublicKeyToken=b1b0c32fd1ffe4f9, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\SlimDX SDK (August 2009)\Bin\x86\SlimDX.dll</HintPath>
@@ -59,6 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="VisBase.cs" />
     <Compile Include="VisCube.cs" />
     <Compile Include="Molecule.cs" />
     <Compile Include="NanoVis.cs" />
