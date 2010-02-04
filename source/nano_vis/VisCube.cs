@@ -29,6 +29,13 @@ namespace nano_vis
 		Vector3	trace_p1;
 		bool	trace_updated;
 		OBAtom	atom_under_cursor = null;
+		bool	right_click;
+
+		public override	bool		HasAnimation	(  ) { return false; }
+		public override void		SetTime			( float current ) {}
+		public override	void		GetTiming		( out float start, out float end, out float current ) {
+			start = end = current = 0;
+		}
 
 		/*---------------------------------------------------------------------
 		 * ctor :
@@ -40,6 +47,7 @@ namespace nano_vis
 			BondRadius		=	0.10f;
 			BondColor		=	Color.White;
 			UseVDWRadius	=	true;
+			ShowDensity		=	true;
 		
 			//
 			//	Load molecule :
@@ -69,7 +77,6 @@ namespace nano_vis
 				Debug.WriteLine("MinValue :   " + grid.GetMinValue());
 				Debug.WriteLine("Attribute :  " + grid.GetAttribute());
 				Debug.WriteLine("Points num : " + grid.GetNumberOfPoints());
-				OBVector3	v;
 			}		
 		}
 		
@@ -78,9 +85,22 @@ namespace nano_vis
 		---------------------------------------------------------------------*/
 		override public void UpdateTraceRay( Vector3 p0, Vector3 p1 )
 		{
-			trace_p0		=	p0;
-			trace_p1		=	p1;
-			trace_updated	=	true;
+			trace_p0			=	p0;
+			trace_p1			=	p1;
+			trace_updated		=	true;
+		}
+
+		public override void Focus( NanoVis nano_vis )
+		{
+			if (atom_under_cursor==null) {
+				return;
+			}
+			Vector3 pos;
+			pos.X = (float)atom_under_cursor.GetX();
+			pos.Y = (float)atom_under_cursor.GetY();
+			pos.Z = (float)atom_under_cursor.GetZ();
+		
+			nano_vis.Move( pos );
 		}
 		
 		bool TraceAgainstSphere( Vector3 center, float radius, Vector3 begin, Vector3 end, out float time )
@@ -153,6 +173,10 @@ namespace nano_vis
 			OBMolBondIter	b_it = new OBMolBondIter(mol);
 			
 			float time		=	1;
+			
+			if (trace_updated) {
+				atom_under_cursor = null;
+			}
 									
 			for (;;) {
 			
@@ -161,13 +185,12 @@ namespace nano_vis
 				}
 				OBAtom	a = a_it.Current;
 			    
-				CDoubleArray	coord	= a.GetCoordinate();
 				VectorDouble	color   = elem_table.GetRGB((int)a.GetAtomicNum());
 				Vector3 pos;
 				Vector4 clr;
-				pos.X = (float)coord.getitem(0);
-				pos.Y = (float)coord.getitem(1);
-				pos.Z = (float)coord.getitem(2);
+				pos.X = (float)a.GetX();
+				pos.Y = (float)a.GetY();
+				pos.Z = (float)a.GetZ();
 				
 				clr.X = (float)color[0];
 				clr.Y = (float)color[1];
@@ -203,11 +226,12 @@ namespace nano_vis
 					break;
 				}
 				
-				OBBond	b = b_it.Current;
-				CDoubleArray c1 = b.GetBeginAtom().GetCoordinate();
-				CDoubleArray c2 = b.GetEndAtom().GetCoordinate();
-				Vector3 p1 = new Vector3((float)c1.getitem(0), (float)c1.getitem(1), (float)c1.getitem(2));
-				Vector3 p2 = new Vector3((float)c2.getitem(0), (float)c2.getitem(1), (float)c2.getitem(2));
+				OBBond	b	= b_it.Current;
+				OBAtom	a1	= b.GetBeginAtom();
+				OBAtom	a2	= b.GetEndAtom();
+				
+				Vector3 p1 = new Vector3((float)a1.GetX(), (float)a1.GetY(), (float)a1.GetZ());
+				Vector3 p2 = new Vector3((float)a2.GetX(), (float)a2.GetY(), (float)a2.GetZ());
 				float len = (p1-p2).Length();
 				
 				vis_atom.DrawStick(p1, p2-p1, len, BondRadius, new Vector4(BondColor.R/256.0f, BondColor.G/256.0f, BondColor.B/256.0f, 1) );
