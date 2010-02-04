@@ -37,16 +37,19 @@ namespace nano_vis
 		{	
 			this.d3ddev	=	d3ddev;
 			string error = "";
+			Debug.WriteLine("Compiling shaders...");
+			
 			try {
-				atom_fx =	Effect.FromFile(d3ddev, "atom.fx",		ShaderFlags.None);
-				wire_fx =	Effect.FromFile(d3ddev, "wire.fx",		ShaderFlags.None);
-				vol_fx	=	Effect.FromFile(d3ddev, "volume.fx",	ShaderFlags.None);
-				
+				atom_fx =	Effect.FromFile(d3ddev, "atom.fx",		null, null, null, ShaderFlags.None, null, out error);
+				wire_fx =	Effect.FromFile(d3ddev, "wire.fx",		null, null, null, ShaderFlags.None, null, out error);
+				vol_fx	=	Effect.FromFile(d3ddev, "volume.fx",	null, null, null, ShaderFlags.None, null, out error);
 			} catch (Exception ex) {
 				Debug.WriteLine(ex.Message);
 				Debug.WriteLine(error);
 				throw;
 			}
+
+			Debug.WriteLine("Done.");
 			
 			Mesh stick	=	Mesh.CreateCylinder(d3ddev, 1, 1, 1, 32, 1);
 			Mesh ball	=	Mesh.CreateSphere(d3ddev, 1, 32, 16);
@@ -222,6 +225,10 @@ namespace nano_vis
 		}
 		
 		
+		/*---------------------------------------------------------------------
+		 * Drawing stuff :
+		---------------------------------------------------------------------*/
+
 		public void DrawVolume(float slice)
 		{
 			SetupVolume(Matrix.Identity, matrix_view, matrix_proj);
@@ -250,6 +257,10 @@ namespace nano_vis
 		}
 		
 		
+		/*---------------------------------------------------------------------
+		 * Drawing stuff :
+		---------------------------------------------------------------------*/
+
 		public void DrawCage(Vector3 center, Vector3 xyz_size, float tail_size, Vector4 color) 
 		{
 			SetupAxis(Matrix.Identity, matrix_view, matrix_proj);

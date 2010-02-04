@@ -38,6 +38,8 @@ namespace nano_vis
 		float	cam_aspect		=	1.0f;
 		
 		float	view_distance	=	30;
+		Vector3	target_focus_point		=	new Vector3(0,0,0);
+		Vector3	current_focus_point		=	new Vector3(0,0,0);
 		Matrix	view_rotation	=	new Matrix();
 		Matrix	view_offset		=	new Matrix();
 		int		old_mouse_x;
@@ -83,6 +85,7 @@ namespace nano_vis
 			Window.KeyDown			+=	Window_KeyDown;
 			Window.MouseMove		+=	Window_MouseMove;
 			Window.StartPosition	=	FormStartPosition.CenterScreen;
+			Window.MouseClick		+=  Window_MouseClick;
 			
 			camera.FieldOfView	=	(float)(Math.PI / 4);
 			camera.NearPlane	=	1.0f;
@@ -136,6 +139,7 @@ namespace nano_vis
 			if (e.KeyCode == Keys.F1) {
 				GraphicsDeviceManager.ToggleFullScreen();
 			}
+			
 			if (e.KeyCode == Keys.F2) {
 				if (form_settings.IsDisposed) {
 					InitSettingsWindow();
@@ -144,7 +148,12 @@ namespace nano_vis
 					form_settings.Show(Window);
 				}
 			}
-			else if (e.KeyCode == Keys.Escape) {
+			
+			if (e.KeyCode == Keys.F) {
+				vis_base.Focus(this);
+			}
+			
+			if (e.KeyCode == Keys.Escape) {
 				Exit();
 			}
 		}
@@ -181,6 +190,13 @@ namespace nano_vis
 			old_mouse_x	=	e.X;
 			old_mouse_y	=	e.Y;
 		}
+
+		private void Window_MouseClick(object sender, MouseEventArgs e)
+		{
+			if (e.Button==MouseButtons.Left) {
+				vis_base.Focus(this);
+			}
+		}
 		
 		public void DrawText ( int x, int y, string text )
 		{
@@ -190,6 +206,11 @@ namespace nano_vis
 		public void DrawTextBig ( int x, int y, string text )
 		{
 			font_big.DrawString(null, text, x,y, new Color4(1,1,1,1));
+		}
+
+		public void Move ( Vector3 pos )
+		{
+			target_focus_point	=	pos;
 		}
 
 		/*---------------------------------------------------------------------
@@ -223,6 +244,8 @@ namespace nano_vis
 		---------------------------------------------------------------------*/
 		protected override void Draw(GameTime gameTime)
 		{
+			current_focus_point	=	Vector3.Lerp(current_focus_point, target_focus_point, 0.04f);
+		
 			Matrix	view	=	Matrix.Identity;
 					view	*=	view_offset;
 					view	*=	view_rotation;
@@ -269,7 +292,7 @@ namespace nano_vis
 
 				Vector3 mol_center = new Vector3(0,0,0);		
 
-				view_offset	=	Matrix.Translation( -mol_center );
+				view_offset	=	Matrix.Translation( -current_focus_point );
 				//vis_atom.DrawAxis( mol_center );
 				
 				vis_base.Draw3D(this);
