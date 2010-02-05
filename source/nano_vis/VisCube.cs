@@ -24,6 +24,8 @@ namespace nano_vis
 		public float		AtomScale	{ get; set; }
 		public bool			UseVDWRadius{ get; set; }
 		public bool			ShowDensity	{ get; set; }
+		public bool			ShowAtoms	{ get; set; }
+		public uint			SliceNum	{ get; set; }
 		
 		Vector3	trace_p0;
 		Vector3	trace_p1;
@@ -48,6 +50,7 @@ namespace nano_vis
 			BondColor		=	Color.White;
 			UseVDWRadius	=	true;
 			ShowDensity		=	true;
+			SliceNum		=	100;
 		
 			//
 			//	Load molecule :
@@ -144,9 +147,7 @@ namespace nano_vis
 		override public void Draw2D (NanoVis nano_vis)
 		{
 			if (ShowDensity) {
-				for (float s=-1; s<=1; s+=0.01f) {
-					nano_vis.vis_atom.DrawVolume(s);
-				}
+				nano_vis.vis_atom.DrawVolume(Math.Max(SliceNum,1));
 			}
 		
 			if (atom_under_cursor==null) {
@@ -217,7 +218,9 @@ namespace nano_vis
 					vis_atom.DrawCage(pos, new Vector3(2*radius, 2*radius, 2*radius), 0.5f*radius, new Vector4(1,1,1,1));
 				}
 				
-				vis_atom.DrawBall(pos, radius, clr);
+				if (ShowAtoms) {
+					vis_atom.DrawBall(pos, radius, clr);
+				}
 			}	
 			
 			uint i=0;
@@ -234,7 +237,9 @@ namespace nano_vis
 				Vector3 p2 = new Vector3((float)a2.GetX(), (float)a2.GetY(), (float)a2.GetZ());
 				float len = (p1-p2).Length();
 				
-				vis_atom.DrawStick(p1, p2-p1, len, BondRadius, new Vector4(BondColor.R/256.0f, BondColor.G/256.0f, BondColor.B/256.0f, 1) );
+				if (ShowAtoms) {
+					vis_atom.DrawStick(p1, p2-p1, len, BondRadius, new Vector4(BondColor.R/256.0f, BondColor.G/256.0f, BondColor.B/256.0f, 1) );
+				}
 			}
 		}
 		
