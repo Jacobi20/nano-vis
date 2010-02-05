@@ -73,7 +73,7 @@ namespace nano_vis
 		/*---------------------------------------------------------------------
 		 * Init :
 		---------------------------------------------------------------------*/
-		public NanoVis()
+		public NanoVis(string type, string path)
 		{
 			Debug.WriteLine("INIT : NanoVis");
 			ClearColor = Color.Black;
@@ -105,8 +105,12 @@ namespace nano_vis
             dev.BackBufferHeight	= InitialHeight;
             dev.MultisampleType		= MultisampleType.FourSamples;
 			
-			
-			vis_base	=	new VisCube("test1.cube");
+
+			if (type=="CUBE") {
+				vis_base	=	new VisCube(path);
+			} else {
+				throw new Exception(type + " wrong visualizer type");
+			}
 			
 			GraphicsDeviceManager.ChangeDevice(dev);
 			//GraphicsDeviceManager.ChangeDevice(DeviceVersion.Direct3D9, true, InitialWidth, InitialHeight);
@@ -245,6 +249,7 @@ namespace nano_vis
 		protected override void Draw(GameTime gameTime)
 		{
 			current_focus_point	=	Vector3.Lerp(current_focus_point, target_focus_point, 0.04f);
+			view_offset	=	Matrix.Translation( -current_focus_point );
 		
 			Matrix	view	=	Matrix.Identity;
 					view	*=	view_offset;
@@ -289,11 +294,11 @@ namespace nano_vis
 				vis_atom.matrix_view	=	matrix_view;
 				vis_atom.light_dir		=	new Vector4(0,0,1,0);
 				vis_atom.view_dir		=	Vector4.Transform( new Vector4(0,0,1,0), Matrix.Invert(view_rotation));
+				vis_atom.view_point		=	Vector4.Transform( new Vector4(0,0,0,1), Matrix.Invert(matrix_view));
 
 				Vector3 mol_center = new Vector3(0,0,0);		
 
-				view_offset	=	Matrix.Translation( -current_focus_point );
-				//vis_atom.DrawAxis( mol_center );
+				vis_atom.DrawAxis( mol_center );
 				
 				vis_base.Draw3D(this);
 				

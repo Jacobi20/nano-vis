@@ -22,10 +22,12 @@ namespace nano_vis
 		public	Matrix	matrix_proj;
 		public	Vector4	light_dir;
 		public  Vector4 view_dir;
+		public  Vector4 view_point;
 		
 		Mesh	stick;
 		Mesh	ball;
 		VolumeTexture	volume_data = null;
+		Texture			palette = null;
 		OBVector3	vx;
 		OBVector3	vy;
 		OBVector3	vz;
@@ -38,6 +40,8 @@ namespace nano_vis
 			this.d3ddev	=	d3ddev;
 			string error = "";
 			Debug.WriteLine("Compiling shaders...");
+			
+			SetPalette("palette.tga");
 			
 			try {
 				atom_fx =	Effect.FromFile(d3ddev, "atom.fx",		null, null, null, ShaderFlags.None, null, out error);
@@ -86,6 +90,11 @@ namespace nano_vis
 		/*---------------------------------------------------------------------
 		 * 
 		---------------------------------------------------------------------*/
+		public void SetPalette(string path) 
+		{
+			palette	=	Texture.FromFile(d3ddev, path);
+		}
+		
 		public void UpdateVolume( OBGridData grid )
 		{
 			int nx=100, ny=100, nz=100;
@@ -174,8 +183,20 @@ namespace nano_vis
 			vol_fx.SetValue("matrix_world",		w );
 			vol_fx.SetValue("matrix_view",		v );
 			vol_fx.SetValue("matrix_proj",		p );
+			vol_fx.SetValue("view_point",		view_point );
+			
+			Matrix	box_matrix = Matrix.Identity;
+			Vector3 vvx = new Vector3((float)vx.x(), (float)vx.y(), (float)vx.z());
+			Vector3 vvy = new Vector3((float)vy.x(), (float)vy.y(), (float)vy.z());
+			Vector3 vvz = new Vector3((float)vz.x(), (float)vz.y(), (float)vz.z());
+			box_matrix.set_Rows(0, new Vector4(50*vvx, 0));
+			box_matrix.set_Rows(1, new Vector4(50*vvy, 0));
+			box_matrix.set_Rows(2, new Vector4(50*vvz, 0));
+
+			vol_fx.SetValue("matrix_box",		box_matrix );
 			
 			vol_fx.SetTexture("volume_data_tex", volume_data);
+			vol_fx.SetTexture("palette_tex", palette);
 		}
 
 		/*---------------------------------------------------------------------
@@ -192,13 +213,15 @@ namespace nano_vis
 		};
 		
 		protected struct VertUV {
-			public VertUV(Vector3 _p, uint _c, Vector2 _uv, Vector2 _uv1) {
+			public VertUV(Vector3 _p, uint _c, Vector2 _uv, Vector2 _uv1, Vector3 _n) {
 				p	= _p;
 				c	= _c;
 				uv	= _uv;
 				uv1	= _uv1;
+				n	= _n;
 			}
 			Vector3 p;
+			Vector3 n;
 			uint	c;
 			Vector2 uv;
 			Vector2 uv1;
@@ -224,37 +247,6 @@ namespace nano_vis
 		    wire_fx.End();
 		}
 		
-		
-		/*---------------------------------------------------------------------
-		 * Drawing stuff :
-		---------------------------------------------------------------------*/
-
-		public void DrawVolume(float slice)
-		{
-			SetupVolume(Matrix.Identity, matrix_view, matrix_proj);
-			
-			vol_fx.Begin();
-			vol_fx.BeginPass(0);
-			
-//			float BA = 0.529177249f;
-			float BA = 50.0f;
-			
-			float z	=	slice * (float)vz.z() * BA;
-			float w =   slice / 2.0f + 0.5f;
-			
-				VertUV[]	verts = {
-					new VertUV(new Vector3(+1*(float)vx.x()*BA, +1*(float)vy.y()*BA, z), 0xFF00FF00, new Vector2(1,1), new Vector2(w,0)), 
-					new VertUV(new Vector3(-1*(float)vx.x()*BA, +1*(float)vy.y()*BA, z), 0xFF000000, new Vector2(0,1), new Vector2(w,0)), 
-					new VertUV(new Vector3(-1*(float)vx.x()*BA, -1*(float)vy.y()*BA, z), 0x00000000, new Vector2(0,0), new Vector2(w,0)), 
-					new VertUV(new Vector3(+1*(float)vx.x()*BA, -1*(float)vy.y()*BA, z), 0x0000FF00, new Vector2(1,0), new Vector2(w,0)),
-				};
-			
-				d3ddev.VertexFormat	=	VertexFormat.Position | VertexFormat.Diffuse | VertexFormat.Texture2;
-				d3ddev.DrawUserPrimitives<VertUV>(PrimitiveType.TriangleFan, 2, verts);
-			
-			vol_fx.EndPass();
-			vol_fx.End();
-		}
 		
 		
 		/*---------------------------------------------------------------------
@@ -361,6 +353,64 @@ namespace nano_vis
 
 			atom_fx.EndPass();
 			atom_fx.End();
+		}
+		/*---------------------------------------------------------------------
+		 * Drawing stuff :
+		---------------------------------------------------------------------*/
+
+		public void DrawVolume(uint steps)
+		{
+			SetupVolume(Matrix.Identity, matrix_view, matrix_proj);
+			
+			vol_fx.Begin();
+			vol_fx.BeginPass(0);
+
+			d3ddev.VertexFormat	=	VertexFormat.Position | VertexFormat.Diffuse | VertexFormat.Texture2 | VertexFormat.Normal;
+
+			//	Z planes :
+			for (uint i=0; i<steps; i++) {			
+				float	z	=	((float) i / (float) steps) * 2 - 1;
+				float	s	=	((float) i / (float) steps);
+				VertUV[]	verts = {
+					new VertUV(new Vector3(+1, +1, z), 0xFF00FF00, new Vector2(1,1), new Vector2(s,0), new Vector3(0,0,1)), 
+					new VertUV(new Vector3(-1, +1, z), 0xFF000000, new Vector2(0,1), new Vector2(s,0), new Vector3(0,0,1)), 
+					new VertUV(new Vector3(-1, -1, z), 0x00000000, new Vector2(0,0), new Vector2(s,0), new Vector3(0,0,1)), 
+					new VertUV(new Vector3(+1, -1, z), 0x0000FF00, new Vector2(1,0), new Vector2(s,0), new Vector3(0,0,1)),
+				};
+				d3ddev.DrawUserPrimitives<VertUV>(PrimitiveType.TriangleFan, 2, verts);
+			}			
+
+			for (uint i=0; i<steps; i++) {			
+			    float	z	=	((float) i / (float) steps) * 2 - 1;
+			    float	s	=	((float) i / (float) steps);
+			    VertUV[]	verts = {
+			        new VertUV(new Vector3(+1, z, +1), 0xFF00FF00, new Vector2(1,s), new Vector2(1,0), new Vector3(0,1,0)), 
+			        new VertUV(new Vector3(-1, z, +1), 0xFF000000, new Vector2(0,s), new Vector2(1,0), new Vector3(0,1,0)), 
+			        new VertUV(new Vector3(-1, z, -1), 0x00000000, new Vector2(0,s), new Vector2(0,0), new Vector3(0,1,0)), 
+			        new VertUV(new Vector3(+1, z, -1), 0x0000FF00, new Vector2(1,s), new Vector2(0,0), new Vector3(0,1,0)),
+			    };
+			    d3ddev.DrawUserPrimitives<VertUV>(PrimitiveType.TriangleFan, 2, verts);
+			}			
+
+			for (uint i=0; i<steps; i++) {			
+			    float	z	=	((float) i / (float) steps) * 2 - 1;
+			    float	s	=	((float) i / (float) steps);
+			    VertUV[]	verts = {
+			        new VertUV(new Vector3( z, +1, +1), 0xFF00FF00, new Vector2(s,1), new Vector2(1,0), new Vector3(1,0,0)), 
+			        new VertUV(new Vector3( z, -1, +1), 0xFF000000, new Vector2(s,0), new Vector2(1,0), new Vector3(1,0,0)), 
+			        new VertUV(new Vector3( z, -1, -1), 0x00000000, new Vector2(s,0), new Vector2(0,0), new Vector3(1,0,0)), 
+			        new VertUV(new Vector3( z, +1, -1), 0x0000FF00, new Vector2(s,1), new Vector2(0,0), new Vector3(1,0,0)),
+			    };
+			    d3ddev.DrawUserPrimitives<VertUV>(PrimitiveType.TriangleFan, 2, verts);
+			}			
+
+
+			vol_fx.EndPass();
+			vol_fx.End();
+		}
+		
+		public void DrawVolumeSlices ( BoundingBox box )
+		{
 		}
 		
 	}
