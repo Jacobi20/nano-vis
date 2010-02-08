@@ -11,7 +11,7 @@ using OpenBabel;
 
 namespace nano_vis
 {
-	abstract class VisBase
+	public abstract class VisBase
 	{
 		public abstract	void		UpdateTraceRay	( Vector3 p0, Vector3 p1 );
 		public abstract	void		Focus			( NanoVis nano_vis );

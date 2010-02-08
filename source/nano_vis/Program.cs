@@ -16,9 +16,9 @@ namespace nano_vis
 		[STAThread]
 		static void Main()
 		{
-			Thread.CurrentThread.CurrentCulture	=	new CultureInfo("");
+			//Thread.CurrentThread.CurrentCulture	=	new CultureInfo("");
 		
-            using (NanoVis nano_vis = new NanoVis("CUBE", "test1.cube"))
+            using (NanoVis nano_vis = new NanoVis("CUBE", "test3.cube"))
             {
 				nano_vis.Run();
 			}

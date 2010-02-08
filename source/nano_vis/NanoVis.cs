@@ -26,7 +26,7 @@ namespace nano_vis
 	  CustomData13 = 16397, CustomData14 = 16398, CustomData15 = 16399
 	}
 
-	class NanoVis : Game
+	public class NanoVis : Game
 	{
 		public VisAtom	vis_atom	;
 		public VisBase	vis_base;
