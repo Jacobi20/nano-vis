@@ -56,6 +56,7 @@ namespace nano_vis
 			UseVDWRadius	=	true;
 			ShowDensity		=	true;
 			SliceNum		=	100;
+			ShowAtoms		=	true;
 		
 			//
 			//	Load molecule :
@@ -239,7 +240,9 @@ namespace nano_vis
 			}	
 			
 			nano_vis.vis_atom.DrawBalls(balls);
+
 			
+			VisAtom.Stick[]	sticks = new VisAtom.Stick[mol.NumBonds()];
 			
 			i	=	0;		
 			for (;;i++) {
@@ -255,10 +258,13 @@ namespace nano_vis
 				Vector3 p2 = new Vector3((float)a2.GetX(), (float)a2.GetY(), (float)a2.GetZ());
 				float len = (p1-p2).Length();
 				
-				if (ShowAtoms) {
-					vis_atom.DrawStick(p1, p2-p1, len, BondRadius, new Vector4(BondColor.R/256.0f, BondColor.G/256.0f, BondColor.B/256.0f, 1) );
-				}
+				//if (ShowAtoms) {
+				//    vis_atom.DrawStick(p1, p2-p1, len, BondRadius, new Vector4(BondColor.R/256.0f, BondColor.G/256.0f, BondColor.B/256.0f, 1) );
+				//}
+				sticks[i]	=	new VisAtom.Stick(p1, p2-p1, new Vector4(BondColor.R/256.0f, BondColor.G/256.0f, BondColor.B/256.0f, 1), len, BondRadius );
 			}
+			
+			nano_vis.vis_atom.DrawSticks( sticks );
 		}
 		
 		

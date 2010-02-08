@@ -270,6 +270,7 @@ namespace nano_vis
 					vis_base.Draw2D(this);
 					
 					font.DrawString(null, 
+						"FPS: " + gameTime.FramesPerSecond + "\r\n" +
 						"Press F2 to edit visualizer options", 
 						Window.ClientRectangle, 
 						DrawTextFormat.Bottom | DrawTextFormat.Left, 

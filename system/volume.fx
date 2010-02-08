@@ -103,7 +103,7 @@ float4	PSMainTrace( in VS_OUTPUT input, float2 vpos : VPOS ) : COLOR0
 	
 	float3 v = normalize(input.pos3d - view_point.xyz);
 	float3 n = input.normal;
-	float scale = 0.2 * abs(dot(v, n));
+	float scale = abs(dot(v, n));
 	
 	rgba.a *= scale;
 
