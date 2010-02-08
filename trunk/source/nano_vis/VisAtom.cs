@@ -61,7 +61,6 @@ namespace nano_vis
                 new VertexElement(0, 0,  DeclarationType.Float3, DeclarationMethod.Default, DeclarationUsage.Position, 0),
 				new VertexElement(0, 12, DeclarationType.Float3, DeclarationMethod.Default, DeclarationUsage.Normal, 0),
 				new VertexElement(0, 24, DeclarationType.Float3, DeclarationMethod.Default, DeclarationUsage.TextureCoordinate, 0),
-				new VertexElement(0, 36, DeclarationType.Float4, DeclarationMethod.Default, DeclarationUsage.Color, 0),
 				VertexElement.VertexDeclarationEnd
             };
 			
@@ -172,9 +171,7 @@ namespace nano_vis
 			atom_fx.SetValue("matrix_world",	w );
 			atom_fx.SetValue("matrix_view",		v );
 			atom_fx.SetValue("matrix_proj",		p );
-			atom_fx.SetValue("matrix_w_it",		InvTranspose( w ) );
 
-			atom_fx.SetValue("matrix_wv_it",	InvTranspose( w * v ) );
 			atom_fx.SetValue("light_dir",		Vector4.Normalize(lightdir));
 			atom_fx.SetValue("view_dir",		Vector4.Normalize(viewdir));
 			atom_fx.SetValue("atom_color",		color);
@@ -323,31 +320,81 @@ namespace nano_vis
 		    wire_fx.End();
 		}
 
-		public void DrawStick(Vector3 position, Vector3 direction, float length, float radius, Vector4 color)
+		/*---------------------------------------------------------------------
+		 * Sticks :
+		---------------------------------------------------------------------*/
+		public struct Stick {
+				public Stick ( Vector3 p, Vector3 d, Vector4 c, float l, float r) {
+					position	=	p;
+					direction	=	d;
+					color		=	c;
+					length		=	l;
+					radius		=	r;
+				}
+				public Vector3	position;
+				public Vector3	direction;
+				public Vector4	color;
+				public float	length;
+				public float	radius;
+				
+			}
+
+		public void DrawSticks(Stick[] sticks)
 		{
-			Vector3 dir		= Vector3.Normalize(direction);
-			Vector3 up		= new Vector3(0,0,1);
+			atom_fx.Technique = "solid_body";
+			atom_fx.SetValue("matrix_view",		matrix_view );
+			atom_fx.SetValue("matrix_proj",		matrix_proj );
+			atom_fx.SetValue("light_dir",		Vector4.Normalize(light_dir));
+			atom_fx.SetValue("view_dir",		Vector4.Normalize(view_dir));
 			
-			if (Math.Abs(Vector3.Dot(dir, up))==1) {
-				up = new Vector3(1,0,0);
+			EffectHandle	h_matrix_world	=	atom_fx.GetParameter(null, "matrix_world");
+			EffectHandle	h_atom_color	=	atom_fx.GetParameter(null, "atom_color");
+
+			atom_fx.Begin();
+			atom_fx.BeginPass(0);
+
+			d3ddev.VertexDeclaration	=	new VertexDeclaration(d3ddev, stick.GetDeclaration());
+			d3ddev.SetStreamSource( 0, stick.VertexBuffer, 0, 36);
+			d3ddev.Indices	=	stick.IndexBuffer;
+		
+			for (uint i=0; i<sticks.Length; i++) {
+				Stick	s	=	sticks[i];
+			
+				Vector3 dir		= Vector3.Normalize(s.direction);
+				Vector3 up		= new Vector3(0,0,1);
+				
+				if (Math.Abs(Vector3.Dot(dir, up))==1) {
+					up = new Vector3(1,0,0);
+				}
+				
+				Matrix	w	=	Matrix.Identity;
+						w	*=	Matrix.Scaling(s.radius, s.radius, s.length);
+						w	*=	Matrix.Translation(0,0, 0.5f * s.length);
+						w	*=	Matrix.Invert(Matrix.LookAtLH(s.position, s.position + dir, up));
+
+				atom_fx.SetValue(h_matrix_world,	w );
+				atom_fx.SetValue(h_atom_color,		s.color);
+				
+				atom_fx.CommitChanges();
+
+				d3ddev.DrawIndexedPrimitives( PrimitiveType.TriangleList, 0, 0, stick.VertexCount, 0, stick.FaceCount);
 			}
 			
-			Matrix	w	=	Matrix.Identity;
-					w	*=	Matrix.Scaling(radius, radius, length);
-					w	*=	Matrix.Translation(0,0, 0.5f * length);
-					w	*=	Matrix.Invert(Matrix.LookAtLH(position, position + dir, up));
+			h_matrix_world.Dispose();
+			h_atom_color.Dispose();
 
-			SetupSolid( w, matrix_view, matrix_proj, light_dir, view_dir, color );
+			d3ddev.VertexDeclaration.Dispose();
+			d3ddev.VertexDeclaration = null;
 
-		    atom_fx.Begin();
-		    atom_fx.BeginPass(0);
-
-				stick.DrawSubset(0);
-
-		    atom_fx.EndPass();
-		    atom_fx.End();
+			atom_fx.EndPass();
+			atom_fx.End();
 		}
 		
+		
+		/*---------------------------------------------------------------------
+		 * Balls :
+		---------------------------------------------------------------------*/
+			
 		public struct Ball {
 				public Ball(Vector3 p, Vector4 c, float r) {
 					pos		=	p;
@@ -359,42 +406,52 @@ namespace nano_vis
 				public float	radius;
 			}
 			
-			
+
 		public void DrawBalls(Ball[] balls) 
 		{
+			atom_fx.Technique = "solid_body";
+			atom_fx.SetValue("matrix_view",		matrix_view );
+			atom_fx.SetValue("matrix_proj",		matrix_proj );
+			atom_fx.SetValue("light_dir",		Vector4.Normalize(light_dir));
+			atom_fx.SetValue("view_dir",		Vector4.Normalize(view_dir));
+			
+			EffectHandle	h_matrix_world	=	atom_fx.GetParameter(null, "matrix_world");
+			EffectHandle	h_atom_color	=	atom_fx.GetParameter(null, "atom_color");
+
+			atom_fx.Begin();
+			atom_fx.BeginPass(0);
+
+			d3ddev.VertexDeclaration	=	new VertexDeclaration(d3ddev, ball.GetDeclaration());
+			d3ddev.SetStreamSource( 0, ball.VertexBuffer, 0, 36);
+			d3ddev.Indices	=	ball.IndexBuffer;
+
 			for (uint i=0; i<balls.Length; i++) {
 			
 				Ball b = balls[i];
 
 				Matrix	w	=	Matrix.Identity;
-						w	*=	Matrix.Scaling(b.radius, b.radius, b.radius);
-						w	*=	Matrix.Translation(b.pos);
-				SetupSolid( w, matrix_view, matrix_proj, light_dir, view_dir, b.color );
+				        w	*=	Matrix.Scaling(b.radius, b.radius, b.radius);
+				        w	*=	Matrix.Translation(b.pos);
 
-				atom_fx.Begin();
-				atom_fx.BeginPass(0);
+				atom_fx.SetValue(h_matrix_world,	w );
+				atom_fx.SetValue(h_atom_color,		b.color);
+				
+				atom_fx.CommitChanges();
 
-					ball.DrawSubset(0);
-
-				atom_fx.EndPass();
-				atom_fx.End();
+				d3ddev.DrawIndexedPrimitives( PrimitiveType.TriangleList, 0, 0, ball.VertexCount, 0, ball.FaceCount);
 			}
+			
+			h_matrix_world.Dispose();
+			h_atom_color.Dispose();
+
+			
+			d3ddev.VertexDeclaration.Dispose();
+			d3ddev.VertexDeclaration = null;
+
+			atom_fx.EndPass();
+			atom_fx.End();
 		}
 		
-		
-		public void DrawBall(Vector3 position, float radius, Vector4 color)
-		{
-
-			//SetupSolid( w, matrix_view, matrix_proj, light_dir, view_dir, color );
-
-			//atom_fx.Begin();
-			//atom_fx.BeginPass(0);
-
-			//    ball.DrawSubset(0);
-
-			//atom_fx.EndPass();
-			//atom_fx.End();
-		}
 		/*---------------------------------------------------------------------
 		 * Drawing stuff :
 		---------------------------------------------------------------------*/

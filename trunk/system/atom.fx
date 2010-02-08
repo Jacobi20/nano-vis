@@ -7,8 +7,6 @@
 float4x4	matrix_world 	;
 float4x4	matrix_view 	;
 float4x4	matrix_proj 	;
-float4x4	matrix_w_it		;	
-float4x4	matrix_wv_it	;	
 float4		light_dir		;
 float4		view_dir		;
 float4		atom_color		;
@@ -16,7 +14,6 @@ float4		atom_color		;
 
 struct VS_INPUT {
 	float3 	pos 	: POSITION0;
-	float4	color	: COLOR0;
 	float3	normal	: NORMAL;
 };
 
@@ -38,7 +35,7 @@ VS_OUTPUT VSMain( VS_INPUT input )
 	float4	pos		=	float4(input.pos.xyz, 1);
 	float4	normal	=	float4(input.normal.xyz, 0);
 	
-	normal			=	normalize(mul(normal, matrix_w_it));
+	normal			=	normalize(mul(normal, matrix_world));
 	
 	pos				=	mul(pos, matrix_world);
 	pos				=	mul(pos, matrix_view);
@@ -46,7 +43,7 @@ VS_OUTPUT VSMain( VS_INPUT input )
 	
 	output.pos		=	pos;
 	output.normal	=	normal;
-	output.color	=	input.color;
+	output.color	=	float4(1,1,1,1);
 	
 	return output;
 }
