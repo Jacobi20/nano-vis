@@ -86,6 +86,7 @@ namespace nano_vis
 			Window.MouseMove		+=	Window_MouseMove;
 			Window.StartPosition	=	FormStartPosition.CenterScreen;
 			Window.MouseClick		+=  Window_MouseClick;
+			Window.Icon				=	(Icon)Resource1.icon2.Clone();
 			
 			camera.FieldOfView	=	(float)(Math.PI / 4);
 			camera.NearPlane	=	1.0f;
@@ -298,7 +299,7 @@ namespace nano_vis
 
 				Vector3 mol_center = new Vector3(0,0,0);		
 
-				vis_atom.DrawAxis( mol_center );
+				//vis_atom.DrawAxis( mol_center );
 				
 				vis_base.Draw3D(this);
 				

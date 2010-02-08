@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using nano_vis;
+using System.Threading;
+using System.Globalization;
 
 namespace test1
 {
@@ -14,9 +16,9 @@ namespace test1
 		[STAThread]
 		static void Main()
 		{
-			//Thread.CurrentThread.CurrentCulture	=	new CultureInfo("");
+			Thread.CurrentThread.CurrentCulture	=	new CultureInfo("");
 		
-            using (NanoVis nano_vis = new NanoVis("CUBE", "test3.cube"))
+            using (NanoVis nano_vis = new NanoVis("CUBE", "test1.cube"))
             {
 				nano_vis.Run();
 			}
