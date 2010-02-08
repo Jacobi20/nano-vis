@@ -6,12 +6,13 @@ using System.Diagnostics;
 using SampleFramework;
 using SlimDX;
 using SlimDX.Direct3D9;
+using System.Windows.Forms;
 using OpenBabel;
 
 
 namespace nano_vis
 {
-	class VisAtom : IDisposable
+	public class VisAtom : IDisposable
 	{
 		Device	d3ddev;
 		Effect	atom_fx;
@@ -40,8 +41,6 @@ namespace nano_vis
 			this.d3ddev	=	d3ddev;
 			string error = "";
 			Debug.WriteLine("Compiling shaders...");
-			
-			SetPalette("palette.tga");
 			
 			try {
 				atom_fx =	Effect.FromFile(d3ddev, "atom.fx",		null, null, null, ShaderFlags.None, null, out error);
@@ -85,6 +84,7 @@ namespace nano_vis
 			if (stick	!=	null	)	{	stick.Dispose();		}
 			if (ball	!=	null	)	{	ball.Dispose();			}
 			if (volume_data!=null	)	{	volume_data.Dispose();	}			
+			if (palette	!=	null	)	{	palette.Dispose();		}
 		}
 
 		/*---------------------------------------------------------------------
@@ -92,12 +92,23 @@ namespace nano_vis
 		---------------------------------------------------------------------*/
 		public void SetPalette(string path) 
 		{
-			palette	=	Texture.FromFile(d3ddev, path);
+			if (palette!=null) palette.Dispose();
+			palette = null;
+			try {
+				palette	=	Texture.FromFile(d3ddev, path);
+			} catch (Exception ex) {
+				MessageBox.Show (null, "File \""+ path + "\" not found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 		}
 		
 		public void UpdateVolume( OBGridData grid )
 		{
+			//VectorInt vi  = grid.GetNumberOfSteps();
+		
 			int nx=100, ny=100, nz=100;
+			//nx=	vi[0];
+			//ny=	vi[1];
+			//nz=	vi[2];
 			
 			vx	=	grid.GetXAxis();
 			vy	=	grid.GetYAxis();
@@ -337,22 +348,52 @@ namespace nano_vis
 		    atom_fx.End();
 		}
 		
+		public struct Ball {
+				public Ball(Vector3 p, Vector4 c, float r) {
+					pos		=	p;
+					color	=	c;
+					radius	=	r;
+				}
+				public Vector3	pos;
+				public Vector4 color;
+				public float	radius;
+			}
+			
+			
+		public void DrawBalls(Ball[] balls) 
+		{
+			for (uint i=0; i<balls.Length; i++) {
+			
+				Ball b = balls[i];
+
+				Matrix	w	=	Matrix.Identity;
+						w	*=	Matrix.Scaling(b.radius, b.radius, b.radius);
+						w	*=	Matrix.Translation(b.pos);
+				SetupSolid( w, matrix_view, matrix_proj, light_dir, view_dir, b.color );
+
+				atom_fx.Begin();
+				atom_fx.BeginPass(0);
+
+					ball.DrawSubset(0);
+
+				atom_fx.EndPass();
+				atom_fx.End();
+			}
+		}
+		
 		
 		public void DrawBall(Vector3 position, float radius, Vector4 color)
 		{
-			Matrix	w	=	Matrix.Identity;
-					w	*=	Matrix.Scaling(radius, radius, radius);
-					w	*=	Matrix.Translation(position);
 
-			SetupSolid( w, matrix_view, matrix_proj, light_dir, view_dir, color );
+			//SetupSolid( w, matrix_view, matrix_proj, light_dir, view_dir, color );
 
-			atom_fx.Begin();
-			atom_fx.BeginPass(0);
+			//atom_fx.Begin();
+			//atom_fx.BeginPass(0);
 
-				ball.DrawSubset(0);
+			//    ball.DrawSubset(0);
 
-			atom_fx.EndPass();
-			atom_fx.End();
+			//atom_fx.EndPass();
+			//atom_fx.End();
 		}
 		/*---------------------------------------------------------------------
 		 * Drawing stuff :

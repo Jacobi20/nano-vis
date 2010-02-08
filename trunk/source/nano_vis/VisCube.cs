@@ -18,6 +18,9 @@ namespace nano_vis
 		OBConversion	conv;
 		OBGridData		grid;
 		OBElementTable	elem_table;
+
+		bool	palette_changed	=	true;
+		string	palette_path	=	"palette.tga";
 		
 		public Color		BondColor	{ get; set; }
 		public float		BondRadius	{ get; set; }
@@ -26,12 +29,14 @@ namespace nano_vis
 		public bool			ShowDensity	{ get; set; }
 		public bool			ShowAtoms	{ get; set; }
 		public uint			SliceNum	{ get; set; }
+		public string		palette		{ get { return palette_path; } set { palette_path = value; palette_changed = true; } }
 		
 		Vector3	trace_p0;
 		Vector3	trace_p1;
 		bool	trace_updated;
 		OBAtom	atom_under_cursor = null;
 		bool	right_click;
+		
 
 		public override	bool		HasAnimation	(  ) { return false; }
 		public override void		SetTime			( float current ) {}
@@ -63,8 +68,8 @@ namespace nano_vis
 			    throw new Exception("cann`t set input format");
 			}
 			
-			if (!conv.ReadFile(mol, "test1.cube")) {
-			    throw new Exception("cann`t open \"test.cube\" file");
+			if (!conv.ReadFile(mol, filepath)) {
+			    throw new Exception("cann`t open \""+filepath+"\" file");
 			}
 						
 			mol.FindRingAtomsAndBonds();
@@ -169,6 +174,12 @@ namespace nano_vis
 		---------------------------------------------------------------------*/
 		override public void Draw3D (NanoVis nano_vis)
 		{
+			if (palette_changed) {
+				palette_changed	=	false;
+				nano_vis.vis_atom.SetPalette( palette );
+			}
+		
+		
 			VisAtom	vis_atom	 = nano_vis.vis_atom;
 			OBMolAtomIter	a_it = new OBMolAtomIter(mol);
 			OBMolBondIter	b_it = new OBMolBondIter(mol);
@@ -178,8 +189,11 @@ namespace nano_vis
 			if (trace_updated) {
 				atom_under_cursor = null;
 			}
-									
-			for (;;) {
+			
+			VisAtom.Ball[]	balls = new VisAtom.Ball[mol.NumAtoms()];
+			
+			uint i=0;
+			for (;; i++) {
 			
 				if (!a_it.MoveNext()) {
 					break;
@@ -218,12 +232,16 @@ namespace nano_vis
 					vis_atom.DrawCage(pos, new Vector3(2*radius, 2*radius, 2*radius), 0.5f*radius, new Vector4(1,1,1,1));
 				}
 				
-				if (ShowAtoms) {
-					vis_atom.DrawBall(pos, radius, clr);
-				}
+				//if (ShowAtoms) {
+				//    vis_atom.DrawBall(pos, radius, clr);
+				//}
+				balls[i] = new VisAtom.Ball(pos, clr, radius);
 			}	
 			
-			uint i=0;
+			nano_vis.vis_atom.DrawBalls(balls);
+			
+			
+			i	=	0;		
 			for (;;i++) {
 				if (!b_it.MoveNext()) {
 					break;
