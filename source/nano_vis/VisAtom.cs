@@ -54,7 +54,7 @@ namespace nano_vis
 
 			Debug.WriteLine("Done.");
 			
-			Mesh stick	=	Mesh.CreateCylinder(d3ddev, 1, 1, 1, 32, 1);
+			Mesh stick	=	Mesh.CreateCylinder(d3ddev, 1, 1, 1, 16, 1);
 			Mesh ball	=	Mesh.CreateSphere(d3ddev, 1, 32, 16);
 
             VertexElement[] decl = new VertexElement[] {
@@ -135,10 +135,24 @@ namespace nano_vis
 				for (int j=0; j<ny; j++) {
 					for (int k=0; k<nz; k++) {
 					
+						double value = grid.GetValue(i+0, j+0, k+0);
+						
+						//if (i>1 && i<nx-1 &&
+						//    j>1 && j<ny-1 &&
+						//    k>1 && k<nz-1 ) {
+						//    value += grid.GetValue(i-1, j+0, k+0);
+						//    value += grid.GetValue(i+1, j+0, k+0);
+						//    value += grid.GetValue(i+0, j-1, k+0);
+						//    value += grid.GetValue(i+0, j+1, k+0);
+						//    value += grid.GetValue(i+0, j-1, k+0);
+						//    value += grid.GetValue(i+0, j+1, k+0);
+						//    value/=7;
+						//}
+					
 						int pos	=	4*i + j * box.RowPitch + k * box.SlicePitch;
 						box.Data.Seek(pos, System.IO.SeekOrigin.Begin);
 					
-						box.Data.Write<float>( (float) grid.GetValue(i,j,k)  );
+						box.Data.Write<float>( (float) value );
 					}
 				}
 			}		
@@ -185,21 +199,24 @@ namespace nano_vis
 			wire_fx.SetValue("matrix_proj",		p );
 		}
 
-		public void SetupVolume ( Matrix w, Matrix v, Matrix p )
+		public void SetupVolume ( Matrix w, Matrix v, Matrix p, uint slice_num, float vol_scale )
 		{
 			vol_fx.Technique = "volume";
 			vol_fx.SetValue("matrix_world",		w );
 			vol_fx.SetValue("matrix_view",		v );
 			vol_fx.SetValue("matrix_proj",		p );
 			vol_fx.SetValue("view_point",		view_point );
+			vol_fx.SetValue("slice_num",		(float)slice_num);
+			vol_fx.SetValue("vol_scale",		(float)vol_scale);
 			
 			Matrix	box_matrix = Matrix.Identity;
 			Vector3 vvx = new Vector3((float)vx.x(), (float)vx.y(), (float)vx.z());
 			Vector3 vvy = new Vector3((float)vy.x(), (float)vy.y(), (float)vy.z());
 			Vector3 vvz = new Vector3((float)vz.x(), (float)vz.y(), (float)vz.z());
-			box_matrix.set_Rows(0, new Vector4(50*vvx, 0));
-			box_matrix.set_Rows(1, new Vector4(50*vvy, 0));
-			box_matrix.set_Rows(2, new Vector4(50*vvz, 0));
+			//box_matrix *= Matrix.Translation(-0.005f,-0.005f,-0.005f);
+			box_matrix.set_Rows(0, new Vector4(50.5f*vvx, 0));
+			box_matrix.set_Rows(1, new Vector4(50.5f*vvy, 0));
+			box_matrix.set_Rows(2, new Vector4(50.5f*vvz, 0));
 
 			vol_fx.SetValue("matrix_box",		box_matrix );
 			
@@ -364,13 +381,13 @@ namespace nano_vis
 				Vector3 up		= new Vector3(0,0,1);
 				
 				if (Math.Abs(Vector3.Dot(dir, up))==1) {
-					up = new Vector3(1,0,0);
+				    up = new Vector3(1,0,0);
 				}
 				
 				Matrix	w	=	Matrix.Identity;
-						w	*=	Matrix.Scaling(s.radius, s.radius, s.length);
-						w	*=	Matrix.Translation(0,0, 0.5f * s.length);
-						w	*=	Matrix.Invert(Matrix.LookAtLH(s.position, s.position + dir, up));
+				        w	*=	Matrix.Scaling(s.radius, s.radius, s.length);
+				        w	*=	Matrix.Translation(0,0, 0.5f * s.length);
+				        w	*=	Matrix.Invert(Matrix.LookAtLH(s.position, s.position + dir, up));
 
 				atom_fx.SetValue(h_matrix_world,	w );
 				atom_fx.SetValue(h_atom_color,		s.color);
@@ -456,9 +473,9 @@ namespace nano_vis
 		 * Drawing stuff :
 		---------------------------------------------------------------------*/
 
-		public void DrawVolume(uint steps)
+		public void DrawVolume(uint steps, float vol_scale)
 		{
-			SetupVolume(Matrix.Identity, matrix_view, matrix_proj);
+			SetupVolume(Matrix.Identity, matrix_view, matrix_proj, steps, vol_scale);
 			
 			vol_fx.Begin();
 			vol_fx.BeginPass(0);

@@ -43,7 +43,7 @@ VS_OUTPUT VSMain( VS_INPUT input )
 	
 	output.pos		=	pos;
 	output.normal	=	normal;
-	output.color	=	float4(1,1,1,1);
+	output.color	=	atom_color;
 	
 	return output;
 }
@@ -66,7 +66,7 @@ float4 PSMain(VS_OUTPUT input) : COLOR0
 	float4	h		= normalize(view_dir + light_dir);
 	float n_dot_h 	= 0*pow(saturate(dot(h, normalize(input.normal) )), 64);
 
-	return pow(0.5 * (n_dot_l * atom_color + n_dot_v), 0.7) + 0.7*n_dot_h;
+	return pow(0.5 * (n_dot_l * input.color + n_dot_v), 0.7) + 0.7*n_dot_h;
 }
 
 /*-----------------------------------------------------------------------------

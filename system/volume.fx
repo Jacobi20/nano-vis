@@ -9,6 +9,8 @@ float4x4	matrix_view 	;
 float4x4	matrix_proj 	;
 float4x4	matrix_box		;
 float4		view_point		;
+float		slice_num		;
+float		vol_scale		;
 
 // float    time                 ;
 // float4x4 matrix_proj          ;
@@ -106,6 +108,8 @@ float4	PSMainTrace( in VS_OUTPUT input, float2 vpos : VPOS ) : COLOR0
 	float scale = abs(dot(v, n));
 	
 	rgba.a *= scale;
+	rgba.a /= slice_num;
+	rgba.a *= vol_scale;
 
 	return rgba;
 }
