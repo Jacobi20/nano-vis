@@ -127,8 +127,8 @@ technique volume
 		ZWriteEnable 		= FALSE;
 		CullMode 			= NONE;
 		AlphaBlendEnable 	= TRUE;
-		VertexShader 		= compile vs_3_0 VSMain();
-		PixelShader 		= compile ps_3_0 PSMainTrace();
+		VertexShader 		= compile vs_2_0 VSMain();
+		PixelShader 		= compile ps_2_0 PSMainTrace();
 	}
 }
 
