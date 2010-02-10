@@ -213,10 +213,10 @@ namespace nano_vis
 			Vector3 vvx = new Vector3((float)vx.x(), (float)vx.y(), (float)vx.z());
 			Vector3 vvy = new Vector3((float)vy.x(), (float)vy.y(), (float)vy.z());
 			Vector3 vvz = new Vector3((float)vz.x(), (float)vz.y(), (float)vz.z());
-			//box_matrix *= Matrix.Translation(-0.005f,-0.005f,-0.005f);
-			box_matrix.set_Rows(0, new Vector4(50.5f*vvx, 0));
-			box_matrix.set_Rows(1, new Vector4(50.5f*vvy, 0));
-			box_matrix.set_Rows(2, new Vector4(50.5f*vvz, 0));
+			box_matrix *= Matrix.Translation(-0.1f,-0.1f,-0.1f);
+			box_matrix.set_Rows(0, new Vector4(50.0f*vvx, 0));	// there is a size of the grid
+			box_matrix.set_Rows(1, new Vector4(50.0f*vvy, 0));
+			box_matrix.set_Rows(2, new Vector4(50.0f*vvz, 0));
 
 			vol_fx.SetValue("matrix_box",		box_matrix );
 			

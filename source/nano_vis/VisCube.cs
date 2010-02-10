@@ -76,7 +76,7 @@ namespace nano_vis
 			}
 						
 			mol.FindRingAtomsAndBonds();
-			//mol.Center();
+			mol.Center();
 			
 			VectorpData    data_set = mol.GetAllData(openbabelcsharp.GridData);
 
