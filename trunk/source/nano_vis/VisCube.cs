@@ -22,6 +22,7 @@ namespace nano_vis
 		bool	palette_changed	=	true;
 		string	palette_path	=	"palette.tga";
 		
+		public float		VolumeScale	{ get; set; }
 		public Color		BondColor	{ get; set; }
 		public float		BondRadius	{ get; set; }
 		public float		AtomScale	{ get; set; }
@@ -57,6 +58,7 @@ namespace nano_vis
 			ShowDensity		=	true;
 			SliceNum		=	100;
 			ShowAtoms		=	true;
+			VolumeScale		=	100;
 		
 			//
 			//	Load molecule :
@@ -74,7 +76,7 @@ namespace nano_vis
 			}
 						
 			mol.FindRingAtomsAndBonds();
-			mol.Center();
+			//mol.Center();
 			
 			VectorpData    data_set = mol.GetAllData(openbabelcsharp.GridData);
 
@@ -153,7 +155,7 @@ namespace nano_vis
 		override public void Draw2D (NanoVis nano_vis)
 		{
 			if (ShowDensity) {
-				nano_vis.vis_atom.DrawVolume(Math.Max(SliceNum,1));
+				nano_vis.vis_atom.DrawVolume(Math.Max(SliceNum,1), VolumeScale);
 			}
 		
 			if (atom_under_cursor==null) {
@@ -173,6 +175,29 @@ namespace nano_vis
 		 * Draw3D
 		 * draws 3d stuff :
 		---------------------------------------------------------------------*/
+		VisAtom.Ball	GetBallFromAtom(OBAtom a) {
+			VectorDouble	color   = elem_table.GetRGB((int)a.GetAtomicNum());
+			Vector3 pos;
+			Vector4 clr;
+			pos.X = (float)a.GetX();
+			pos.Y = (float)a.GetY();
+			pos.Z = (float)a.GetZ();
+			
+			clr.X = (float)color[0];
+			clr.Y = (float)color[1];
+			clr.Z = (float)color[2];
+			clr.W = 1;
+
+			float vdwr = 1;
+			if (UseVDWRadius) {				
+				vdwr = (float)elem_table.GetVdwRad( (int)a.GetAtomicNum() );
+			}
+			float radius = AtomScale * vdwr;
+			
+			return new VisAtom.Ball(pos, clr, radius);
+		}
+		
+		
 		override public void Draw3D (NanoVis nano_vis)
 		{
 			if (palette_changed) {
@@ -187,6 +212,7 @@ namespace nano_vis
 			
 			float time		=	1;
 			
+			OBAtom	old_atom_under_cursor = atom_under_cursor;
 			if (trace_updated) {
 				atom_under_cursor = null;
 			}
@@ -200,46 +226,32 @@ namespace nano_vis
 					break;
 				}
 				OBAtom	a = a_it.Current;
-			    
-				VectorDouble	color   = elem_table.GetRGB((int)a.GetAtomicNum());
-				Vector3 pos;
-				Vector4 clr;
-				pos.X = (float)a.GetX();
-				pos.Y = (float)a.GetY();
-				pos.Z = (float)a.GetZ();
 				
-				clr.X = (float)color[0];
-				clr.Y = (float)color[1];
-				clr.Z = (float)color[2];
-				clr.W = 1;
-
-				float vdwr = 1;
-				if (UseVDWRadius) {				
-					vdwr = (float)elem_table.GetVdwRad( (int)a.GetAtomicNum() );
-				}
-				float radius = AtomScale * vdwr;
+				VisAtom.Ball	ball	=	GetBallFromAtom(a);
 
 				if (trace_updated) {
-					float t;
-					if (TraceAgainstSphere(pos, radius, trace_p0, trace_p1, out t)) {
-						if (t<time) {
-							time = t;
-							atom_under_cursor = a;
-						}
-					}
+				    float t;
+				    if (TraceAgainstSphere(ball.pos, ball.radius, trace_p0, trace_p1, out t)) {
+				        if (t<time) {
+				            time = t;
+				            atom_under_cursor = a;
+				        }
+				    }
 				}
 				
-				if (atom_under_cursor==a) {
-					vis_atom.DrawCage(pos, new Vector3(2*radius, 2*radius, 2*radius), 0.5f*radius, new Vector4(1,1,1,1));
-				}
-				
-				//if (ShowAtoms) {
-				//    vis_atom.DrawBall(pos, radius, clr);
-				//}
-				balls[i] = new VisAtom.Ball(pos, clr, radius);
+				balls[i] = ball;
 			}	
 			
-			nano_vis.vis_atom.DrawBalls(balls);
+			if (ShowAtoms) {
+				nano_vis.vis_atom.DrawBalls(balls);
+			}
+
+			if (atom_under_cursor!=null) {
+				VisAtom.Ball ball = GetBallFromAtom(atom_under_cursor);
+				float r = ball.radius;
+				vis_atom.DrawCage(ball.pos, new Vector3(2*r, 2*r, 2*r), 0.5f*r, new Vector4(1,1,1,1));
+			}
+				
 
 			
 			VisAtom.Stick[]	sticks = new VisAtom.Stick[mol.NumBonds()];
@@ -264,7 +276,9 @@ namespace nano_vis
 				sticks[i]	=	new VisAtom.Stick(p1, p2-p1, new Vector4(BondColor.R/256.0f, BondColor.G/256.0f, BondColor.B/256.0f, 1), len, BondRadius );
 			}
 			
-			nano_vis.vis_atom.DrawSticks( sticks );
+			if (ShowAtoms) {
+				nano_vis.vis_atom.DrawSticks( sticks );
+			}
 		}
 		
 		
