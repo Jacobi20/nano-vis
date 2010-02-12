@@ -87,6 +87,7 @@ namespace nano_vis
 			Window.StartPosition	=	FormStartPosition.CenterScreen;
 			Window.MouseClick		+=  Window_MouseClick;
 			Window.Icon				=	(Icon)Resource1.icon2.Clone();
+			Window.FormBorderStyle	=	FormBorderStyle.FixedSingle;
 			
 			camera.FieldOfView	=	(float)(Math.PI / 4);
 			camera.NearPlane	=	1.0f;
@@ -142,7 +143,7 @@ namespace nano_vis
 			// F1 toggles between full screen and windowed mode
 			// Escape quits the application
 			if (e.KeyCode == Keys.F1) {
-				GraphicsDeviceManager.ToggleFullScreen();
+				//GraphicsDeviceManager.ToggleFullScreen();
 			}
 			
 			if (e.KeyCode == Keys.F2) {
