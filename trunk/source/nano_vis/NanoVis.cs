@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SampleFramework;
 using SlimDX;
 using SlimDX.Direct3D9;
 using OpenBabel;
+using System.Threading;
 
 namespace nano_vis
 {
@@ -73,7 +75,7 @@ namespace nano_vis
 		/*---------------------------------------------------------------------
 		 * Init :
 		---------------------------------------------------------------------*/
-		public NanoVis(string type, string path)
+		public NanoVis(string type, string path, AutoResetEvent auto_reset_event)
 		{
 			Debug.WriteLine("INIT : NanoVis");
 			ClearColor = Color.Black;
@@ -112,6 +114,10 @@ namespace nano_vis
 				vis_base	=	new VisCube(path);
 			} else {
 				throw new Exception(type + " wrong visualizer type");
+			}
+
+			if (auto_reset_event!=null) {			
+				auto_reset_event.Set();
 			}
 			
 			GraphicsDeviceManager.ChangeDevice(dev);
@@ -190,7 +196,7 @@ namespace nano_vis
 				//angle_y	+= 0.01f*dy;
 			}
 			if (e.Button==MouseButtons.Right) {
-				view_distance *= (float)Math.Pow(1.01f, (float)dy);
+				view_distance *= (float)Math.Pow(1.01f, -(float)dy);
 			}
 		
 			old_mouse_x	=	e.X;
