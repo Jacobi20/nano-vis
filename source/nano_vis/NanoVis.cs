@@ -75,7 +75,7 @@ namespace nano_vis
 		/*---------------------------------------------------------------------
 		 * Init :
 		---------------------------------------------------------------------*/
-		public NanoVis(string type, string path, AutoResetEvent auto_reset_event)
+		public NanoVis(string type, string path, EventWaitHandle auto_reset_event)
 		{
 			Debug.WriteLine("INIT : NanoVis");
 			ClearColor = Color.Black;
