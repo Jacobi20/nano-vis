@@ -90,6 +90,7 @@ namespace nano_vis
 			Window.MouseClick		+=  Window_MouseClick;
 			Window.Icon				=	(Icon)Resource1.icon2.Clone();
 			Window.FormBorderStyle	=	FormBorderStyle.FixedSingle;
+			Window.MaximizeBox		=	false;
 			
 			camera.FieldOfView	=	(float)(Math.PI / 4);
 			camera.NearPlane	=	1.0f;
