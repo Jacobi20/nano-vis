@@ -32,6 +32,7 @@ namespace nano_vis
 		OBVector3	vx;
 		OBVector3	vy;
 		OBVector3	vz;
+		int nx, ny, nz;
 	
 		/*---------------------------------------------------------------------
 		 * VisAtom
@@ -102,12 +103,10 @@ namespace nano_vis
 		
 		public void UpdateVolume( OBGridData grid )
 		{
-			//VectorInt vi  = grid.GetNumberOfSteps();
-		
-			int nx=100, ny=100, nz=100;
-			//nx=	vi[0];
-			//ny=	vi[1];
-			//nz=	vi[2];
+			VectorInt vi  = grid.GetNumberOfSteps();
+			nx=	vi[0];
+			ny=	vi[1];
+			nz=	vi[2];
 			
 			vx	=	grid.GetXAxis();
 			vy	=	grid.GetYAxis();
@@ -137,18 +136,6 @@ namespace nano_vis
 					
 						double value = grid.GetValue(i+0, j+0, k+0);
 						
-						//if (i>1 && i<nx-1 &&
-						//    j>1 && j<ny-1 &&
-						//    k>1 && k<nz-1 ) {
-						//    value += grid.GetValue(i-1, j+0, k+0);
-						//    value += grid.GetValue(i+1, j+0, k+0);
-						//    value += grid.GetValue(i+0, j-1, k+0);
-						//    value += grid.GetValue(i+0, j+1, k+0);
-						//    value += grid.GetValue(i+0, j-1, k+0);
-						//    value += grid.GetValue(i+0, j+1, k+0);
-						//    value/=7;
-						//}
-					
 						int pos	=	4*i + j * box.RowPitch + k * box.SlicePitch;
 						box.Data.Seek(pos, System.IO.SeekOrigin.Begin);
 					
@@ -213,9 +200,9 @@ namespace nano_vis
 			Vector3 vvx = new Vector3((float)vx.x(), (float)vx.y(), (float)vx.z());
 			Vector3 vvy = new Vector3((float)vy.x(), (float)vy.y(), (float)vy.z());
 			Vector3 vvz = new Vector3((float)vz.x(), (float)vz.y(), (float)vz.z());
-			box_matrix.set_Rows(0, new Vector4(50.0f*vvx, 0));	// there is a size of the grid
-			box_matrix.set_Rows(1, new Vector4(50.0f*vvy, 0));
-			box_matrix.set_Rows(2, new Vector4(50.0f*vvz, 0));
+			box_matrix.set_Rows(0, new Vector4(0.5f*nx*vvx, 0));	// there is a size of the grid
+			box_matrix.set_Rows(1, new Vector4(0.5f*ny*vvy, 0));
+			box_matrix.set_Rows(2, new Vector4(0.5f*nz*vvz, 0));
 
 			//float offsetx = -0.005f; vvx
 			//float offsety = -0.005f;

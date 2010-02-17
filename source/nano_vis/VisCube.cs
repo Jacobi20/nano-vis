@@ -67,13 +67,26 @@ namespace nano_vis
 			conv		=	new OBConversion();
 			mol			=	new OBMol();
 			
-			if (!conv.SetInFormat("CUBE")) {
-			    throw new Exception("cann`t set input format");
+			if (true) {
+			    if (!conv.SetInFormat("CUBE")) {
+			        throw new Exception("Неправильный формат данных");
+			    }
+				
+			    if (!conv.ReadFile(mol, filepath)) {
+			        throw new Exception("Не могу открыть файл \""+filepath+"\"");
+			    }
 			}
+						
+			//string str_data = System.IO.File.ReadAllText(filepath);
 			
-			if (!conv.ReadFile(mol, filepath)) {
-			    throw new Exception("cann`t open \""+filepath+"\" file");
-			}
+			
+			//if (!conv.SetInFormat("CUBE")) {
+			//    throw new Exception("Неправильный формат данных");
+			//}
+			
+			//if (!conv.ReadString(mol, str_data)) {
+			//    throw new Exception("Не могу открыть файл \""+filepath+"\"");
+			//}
 						
 			mol.FindRingAtomsAndBonds();
 			mol.Center();
