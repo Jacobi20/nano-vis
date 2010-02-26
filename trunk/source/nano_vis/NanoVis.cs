@@ -92,6 +92,16 @@ namespace nano_vis
 			Window.FormBorderStyle	=	FormBorderStyle.FixedSingle;
 			Window.MaximizeBox		=	false;
 			
+			//	DEMO :
+			Window.StartPosition	=	FormStartPosition.Manual;
+			Window.FormBorderStyle	=	FormBorderStyle.None;
+			Window.Top				=	0;
+			Window.Left				=	0;
+			Window.Height			=	768;
+			Window.Width			=	1024;
+			Window.Size				=	new Size(1024, 768);
+			
+			
 			camera.FieldOfView	=	(float)(Math.PI / 4);
 			camera.NearPlane	=	1.0f;
 			camera.FarPlane		=	1000.0f;
