@@ -18,7 +18,7 @@ namespace test1
 		{
 			Thread.CurrentThread.CurrentCulture	=	new CultureInfo("");
 		
-            using (NanoVis nano_vis = new NanoVis("CUBE", "test2.cube", null))
+            using (NanoVis nano_vis = new NanoVis("CUBE", "test4.cube", null))
             {
 				nano_vis.Run();
 			}
