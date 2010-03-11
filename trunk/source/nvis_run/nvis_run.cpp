@@ -21,3 +21,114 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 	THE SOFTWARE.
 */
+
+
+#include "nvis_run.h"
+
+/*-----------------------------------------------------------------------------
+	NVis runner :
+-----------------------------------------------------------------------------*/
+
+void PrintCB ( void *s ) 
+{
+	ELogMessage_s	msg;
+	Log()->GetLogLastMessage( msg );
+	printf("%s\r\n", msg.message);
+}
+
+
+//
+//	NVisInit
+//
+void NVisInit( void )
+{
+	Log()->SetWriteCB(PrintCB, NULL);
+
+	InitCoreSubsystems();
+	
+	Linker()->GetConfig()->LoadConfig();
+	
+	Linker()->LinkDLLNanoVis("nano_vis.dll");
+}
+
+
+//
+//	NVisShutdown
+//
+void NVisShutdown( void )
+{
+	Linker()->LinkNanoVis(NULL);
+	
+	Linker()->GetConfig()->SaveConfig();
+
+	ShutdownCoreSubsystems();
+}
+
+
+//
+//	NVisFrame
+//
+void NVisFrame( uint dtime )
+{
+	IPxNanoVis	nvis	=	Linker()->GetNanoVis();
+	nvis->RenderFrame( dtime );
+}
+
+
+
+BOOL WINAPI ConsoleHandleRoutine(DWORD dwCtrlType)
+{
+	if (dwCtrlType==CTRL_CLOSE_EVENT) {
+		printf("\r\n");
+		printf("**** IMMEDIATE TERMINATION ****\r\n");
+		printf("\r\n");
+		
+		TerminateProcess(0, 0);
+		return TRUE;
+	}
+	
+	return FALSE;
+}
+
+
+
+//
+//	main
+//
+int main(int argc, const char **argv)
+{
+	uint	old_time	=	System()->Milliseconds();
+	uint	time		=	System()->Milliseconds();
+	MSG		msg = {0};
+
+	SetConsoleCtrlHandler( ConsoleHandleRoutine, TRUE );
+
+	try {
+	
+		NVisInit();
+
+		while ( WM_QUIT != msg.message )
+		{
+			if( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )		
+			{			
+				TranslateMessage( &msg );		
+				DispatchMessage( &msg );				
+			}		
+			else			
+			{
+				time = System()->Milliseconds();
+				
+				NVisFrame(time - old_time);
+				
+				old_time = time;
+			}
+
+		}
+
+		NVisShutdown();
+		
+	} catch (exception &e) {
+		FATAL(e.what());
+	}
+	
+}
