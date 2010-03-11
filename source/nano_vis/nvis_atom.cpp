@@ -23,10 +23,34 @@
 */
 
 
-#pragma once
+#include "nvis_local.h"
 
 /*-----------------------------------------------------------------------------
-	NVis runner :
+	Atom visializer :
 -----------------------------------------------------------------------------*/
 
-#include "../core/core.h"
+//
+//	ENanoVis::InitAtomRend
+//
+void ENanoVis::InitAtomRend( void )
+{
+	LOG_INIT("Atom renderer");
+	
+	atom_fx	=	CompileEffect("atom.fx");
+	
+	HRCALL( D3DXCreateSphere( d3ddev, 1.0f, 32, 16,		&mesh_ball, NULL) );
+	HRCALL( D3DXCreateCylinder( d3ddev, 1.0f, 1.0f, 1.0f, 16, 1.0f, &mesh_stick, NULL) );
+}
+
+
+//
+//	ENanoVis::ShutdownAtomRend
+//
+void ENanoVis::ShutdownAtomRend( void )
+{
+	LOG_SHUTDOWN("Atom renderer");
+	
+	SAFE_RELEASE( atom_fx );
+	SAFE_RELEASE( mesh_ball );
+	SAFE_RELEASE( mesh_stick );
+}
