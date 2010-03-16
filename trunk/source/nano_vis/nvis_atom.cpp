@@ -25,6 +25,13 @@
 
 #include "nvis_local.h"
 
+#include "openbabel/mol.h"
+#include "openbabel/obconversion.h"
+
+#pragma comment( lib, "../ob/lib/openbabel-2.lib" )
+
+using namespace OpenBabel;
+
 /*-----------------------------------------------------------------------------
 	Atom visializer :
 -----------------------------------------------------------------------------*/
@@ -54,3 +61,17 @@ void ENanoVis::ShutdownAtomRend( void )
 	SAFE_RELEASE( mesh_ball );
 	SAFE_RELEASE( mesh_stick );
 }
+
+
+//
+//	ENanoVis::LoadData
+//
+void ENanoVis::LoadData( const char *path )
+{
+	OBConversion	conv;
+	OBMol			mol;
+	VERIFY( conv.SetInFormat("CUBE") );
+	VERIFY( conv.ReadFile(&mol, path) );
+}
+
+

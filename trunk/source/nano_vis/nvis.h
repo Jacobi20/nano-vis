@@ -36,17 +36,29 @@ struct  EVidState_s	{
 	};
 
 
+struct EAtomBall_s {
+		float			vdw_radius;
+		D3DXVECTOR4		color;
+		D3DXVECTOR4		position;
+	};
+	
+struct EAtomStick_s {
+		D3DXVECTOR4		color;
+		D3DXVECTOR4		pos0, pos1;
+	};	
+
+
 class ENanoVis : public INanoVis {
 	public:
-							ENanoVis	( void );
-							~ENanoVis	( void );
-	
-		virtual void		RenderFrame	( uint dtime );
-		virtual void		LoadData	( const char *path );
+							ENanoVis			( void );
+							~ENanoVis			( void );
+												
+		virtual void		RenderFrame			( uint dtime );
+		virtual void		LoadData			( const char *path );
 		
-		void		GetScreenSize		( uint &w, uint &h );
-		void		*GetWndDescriptor	( void );
-		ID3DXEffect *CompileEffect		( const char *path );
+		void				GetScreenSize		( uint &w, uint &h );
+		void				*GetWndDescriptor	( void );
+		ID3DXEffect			*CompileEffect		( const char *path );
 
 	public:
 		IDirect3D9			*d3d;
@@ -59,6 +71,9 @@ class ENanoVis : public INanoVis {
 		ID3DXEffect	*atom_fx;
 		ID3DXMesh	*mesh_ball;
 		ID3DXMesh	*mesh_stick;
+		
+		vector<EAtomBall_s>		balls;
+		vector<EAtomStick_s>	sticks;
 	
 	protected:
 		void		InitDisplay			( void );
