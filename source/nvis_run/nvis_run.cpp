@@ -49,6 +49,7 @@ void NVisInit( void )
 	Linker()->GetConfig()->LoadConfig();
 	
 	Linker()->LinkDLLNanoVis("nano_vis.dll");
+	Linker()->GetNanoVis()->LoadData("test01.cube");
 }
 
 

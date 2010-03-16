@@ -79,16 +79,6 @@ void ENanoVis::RenderFrame( uint dtime )
     HRCALL( d3ddev->Present( NULL, NULL, NULL, NULL ) );
 }
 
-
-//
-//	ENanoVis::LoadData
-//
-void ENanoVis::LoadData( const char *path )
-{
-
-}
-
-
 /*-----------------------------------------------------------------------------
 	Resource registering stuff :
 -----------------------------------------------------------------------------*/
