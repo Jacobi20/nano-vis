@@ -28,7 +28,11 @@
 #include "openbabel/mol.h"
 #include "openbabel/obconversion.h"
 
-#pragma comment( lib, "../ob/lib/openbabel-2.lib" )
+#ifdef _DEBUG
+	#pragma comment( lib, "../obsdk/lib/debug/openbabel-2.lib" )
+#else
+	#pragma comment( lib, "../obsdk/lib/release/openbabel-2.lib" )
+#endif
 
 using namespace OpenBabel;
 
