@@ -56,9 +56,13 @@ class ENanoVis : public INanoVis {
 		virtual void		RenderFrame			( uint dtime );
 		virtual void		LoadData			( const char *path );
 		
+		virtual void		RenderShot			( void );
+		
 		void				GetScreenSize		( uint &w, uint &h );
 		void				*GetWndDescriptor	( void );
 		ID3DXEffect			*CompileEffect		( const char *path );
+		
+		
 
 	public:
 		IDirect3D9			*d3d;
@@ -74,7 +78,7 @@ class ENanoVis : public INanoVis {
 		
 		vector<EAtomBall_s>		balls;
 		vector<EAtomStick_s>	sticks;
-	
+		
 	protected:
 		void		InitDisplay			( void );
 		void		InitDirect3D		( void );

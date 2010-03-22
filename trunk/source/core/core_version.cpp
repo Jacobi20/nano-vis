@@ -28,8 +28,8 @@
 
 #include "../core/core.h"
 
-#define PROJECT_NAME	"Eclipse Engine"
-#define VERSION			"2.00"
+#define PROJECT_NAME	"NanoVis"
+#define VERSION			"1.00"
 
 #ifdef _DEBUG
 #define BUILD_CONFIG	"debug"
@@ -38,8 +38,8 @@
 #endif
 
 #define BUILD_DATE		__DATE__
-#define SVN_REVISION 	"1835"
-#define SVN_DATE     	"2010/03/11 16:29:23"
+#define SVN_REVISION 	"40"
+#define SVN_DATE     	"2010/03/22 11:41:54"
 
 #define PLATFORM_NAME	"win-x86"
 

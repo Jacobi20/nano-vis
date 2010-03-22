@@ -25,6 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="copy_obbin_d.bat"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -99,7 +100,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Copying OpenBabel binaries"
-				CommandLine="xcopy &quot;..\obsdk\bin\release/*.dll&quot; &quot;..\..\system&quot;"
+				CommandLine="copy_obbin_r.bat"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"

@@ -71,9 +71,12 @@ ENanoVis::~ENanoVis( void )
 void ENanoVis::RenderFrame( uint dtime )
 {
 	int clear_flags = D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER|D3DCLEAR_STENCIL;
-	HRCALL( d3ddev->Clear(0, NULL, clear_flags, D3DCOLOR_ARGB(0x00,0xF0,0x00,0x80), 1.0f, 0 ) );	
+	//HRCALL( d3ddev->Clear(0, NULL, clear_flags, D3DCOLOR_ARGB(0x00,0xF0,0x00,0x80), 1.0f, 0 ) );	
+	HRCALL( d3ddev->Clear(0, NULL, clear_flags, D3DCOLOR_ARGB(0x00,0x00,0x00,0x00), 1.0f, 0 ) );	
 
     HRCALL( d3ddev->BeginScene() );
+    
+    RenderShot();
 
 	HRCALL( d3ddev->EndScene() );
     HRCALL( d3ddev->Present( NULL, NULL, NULL, NULL ) );
