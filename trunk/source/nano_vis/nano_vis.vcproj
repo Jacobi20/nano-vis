@@ -98,6 +98,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="Copying OpenBabel binaries"
+				CommandLine="xcopy &quot;..\obsdk\bin\release/*.dll&quot; &quot;..\..\system&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
