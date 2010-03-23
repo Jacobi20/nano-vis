@@ -38,8 +38,8 @@
 #endif
 
 #define BUILD_DATE		__DATE__
-#define SVN_REVISION 	"40"
-#define SVN_DATE     	"2010/03/22 11:41:54"
+#define SVN_REVISION 	"41"
+#define SVN_DATE     	"2010/03/22 19:40:39"
 
 #define PLATFORM_NAME	"win-x86"
 

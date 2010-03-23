@@ -40,7 +40,7 @@ void PrintCB ( void *s )
 //
 //	NVisInit
 //
-void NVisInit( void )
+DLL_EXPORT void NVisInit( void )
 {
 	Log()->SetWriteCB(PrintCB, NULL);
 
@@ -56,7 +56,7 @@ void NVisInit( void )
 //
 //	NVisShutdown
 //
-void NVisShutdown( void )
+DLL_EXPORT void NVisShutdown( void )
 {
 	Linker()->LinkNanoVis(NULL);
 	
@@ -69,12 +69,21 @@ void NVisShutdown( void )
 //
 //	NVisFrame
 //
-void NVisFrame( uint dtime )
+DLL_EXPORT void NVisFrame( uint dtime )
 {
 	IPxNanoVis	nvis	=	Linker()->GetNanoVis();
 	nvis->RenderFrame( dtime );
 }
 
+
+//
+//
+//
+DLL_EXPORT	void NVisSnapshot( float distance, float yaw, float pitch, float roll )
+{
+	IPxNanoVis	nvis	=	Linker()->GetNanoVis();
+	nvis->RenderSnapshot(distance, yaw, pitch, roll); 
+}
 
 
 BOOL WINAPI ConsoleHandleRoutine(DWORD dwCtrlType)

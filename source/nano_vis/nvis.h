@@ -54,9 +54,10 @@ class ENanoVis : public INanoVis {
 							~ENanoVis			( void );
 												
 		virtual void		RenderFrame			( uint dtime );
+		virtual void		RenderSnapshot		( float distance, float yaw, float pitch, float roll );
 		virtual void		LoadData			( const char *path );
 		
-		virtual void		RenderShot			( void );
+		virtual void		RenderShot			( float distance, float yaw, float pitch, float roll );
 		
 		void				GetScreenSize		( uint &w, uint &h );
 		void				*GetWndDescriptor	( void );
