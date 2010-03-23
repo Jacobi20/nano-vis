@@ -66,7 +66,8 @@ float4 PSMain(VS_OUTPUT input) : COLOR0
 	float4	h		= normalize(view_dir + light_dir);
 	float n_dot_h 	= 0*pow(saturate(dot(h, normalize(input.normal) )), 64);
 
-	return pow(0.5 * (n_dot_l * input.color + n_dot_v), 0.7) + 0.7*n_dot_h;
+	float4 result = pow(0.5 * (n_dot_l * input.color + n_dot_v), 0.7) + 0.7*n_dot_h;
+	return float4(result.rgb, 1);
 }
 
 /*-----------------------------------------------------------------------------
@@ -91,6 +92,8 @@ technique solid_body
 		ZWriteEnable		= TRUE;
 		CullMode 			= CW;
 		AlphaBlendEnable	= FALSE;
+		ColorWriteEnable	=	RED|GREEN|BLUE;
+
 
 		VertexShader 		= compile vs_2_0 VSMain();
 		PixelShader 		= compile ps_2_0 PSMain();

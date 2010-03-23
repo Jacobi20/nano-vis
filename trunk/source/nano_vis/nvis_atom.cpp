@@ -113,17 +113,20 @@ void ENanoVis::LoadData( const char *path )
 //
 //	ENanoVis::RenderShot
 //
-void ENanoVis::RenderShot( void )
+void ENanoVis::RenderShot( float distance, float yaw, float pitch, float roll )
 {
 	if (!atom_fx) return;
 	
 	D3DXMATRIX	world;
-	D3DXMATRIX	view, view_i;
+	D3DXMATRIX	view, view_i, r_yaw, r_pitch, r_roll;
 	D3DXMATRIX	proj;
 
 	D3DXMatrixIdentity( &world );	
-	D3DXMatrixRotationAxis( &view, &D3DXVECTOR3(1,1,1), deg2rad(0.1*System()->Milliseconds()) );
-	D3DXMatrixOrthoRH( &proj, 32, 24, -16, 16 );
+	D3DXMatrixRotationZ( &r_yaw,		deg2rad(yaw) );
+	D3DXMatrixRotationY( &r_pitch,	deg2rad(pitch) );
+	D3DXMatrixRotationX( &r_roll,	deg2rad(roll) );
+	view	=	r_roll * r_pitch * r_yaw;
+	D3DXMatrixOrthoRH( &proj, 16, 12, -16, 16 );
 	
 	D3DXMatrixInverse( &view_i, NULL, &view );
 	
@@ -169,4 +172,13 @@ void ENanoVis::RenderShot( void )
 	
 	
 	HRCALL( atom_fx->End() );
+	
+	//
+	//	make screen shot :
+	//
+	IDirect3DSurface9	*surf;
+	d3ddev->GetRenderTarget(0, &surf);
+	
+	HRCALL( D3DXSaveSurfaceToFile("shot.png", D3DXIFF_PNG, surf, NULL, NULL) );
+	
 }
