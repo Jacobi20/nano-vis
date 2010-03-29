@@ -49,7 +49,6 @@ DLL_EXPORT void NVisInit( void )
 	Linker()->GetConfig()->LoadConfig();
 	
 	Linker()->LinkDLLNanoVis("nano_vis.dll");
-	Linker()->GetNanoVis()->LoadData("test01.cube");
 }
 
 
@@ -77,13 +76,15 @@ DLL_EXPORT void NVisFrame( uint dtime )
 
 
 //
+//	NVisCommand
 //
-//
-DLL_EXPORT	void NVisSnapshot( float distance, float yaw, float pitch, float roll )
+DLL_EXPORT void NVisCommand( const char *cmd )
 {
+	LOGF("command : %s", cmd);
+
 	IPxNanoVis	nvis	=	Linker()->GetNanoVis();
-	nvis->RenderSnapshot(distance, yaw, pitch, roll); 
-}
+	nvis->RenderSnapshot( cmd );
+}										 
 
 
 BOOL WINAPI ConsoleHandleRoutine(DWORD dwCtrlType)

@@ -494,6 +494,10 @@
 			Name="Lua Ext"
 			>
 			<File
+				RelativePath=".\lua_ext.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\lua_ext.h"
 				>
 			</File>

@@ -54,21 +54,22 @@ class ENanoVis : public INanoVis {
 							~ENanoVis			( void );
 												
 		virtual void		RenderFrame			( uint dtime );
-		virtual void		RenderSnapshot		( float distance, float yaw, float pitch, float roll );
+		virtual void		RenderSnapshot		( const char *command );
 		virtual void		LoadData			( const char *path );
 		
-		virtual void		RenderShot			( float distance, float yaw, float pitch, float roll );
+		virtual void		RenderShot			( lua_State *L );
 		
 		void				GetScreenSize		( uint &w, uint &h );
 		void				*GetWndDescriptor	( void );
 		ID3DXEffect			*CompileEffect		( const char *path );
 		
-		
+		static	int			NVisSnapshot		( lua_State *L );
 
 	public:
 		IDirect3D9			*d3d;
 		IDirect3DDevice9	*d3ddev;
 		EVidState_s			vid_state;
+		IPxShell			shell;
 		
 	protected:
 		void		InitAtomRend		( void );
@@ -96,6 +97,13 @@ class ENanoVis : public INanoVis {
 		IPxVar		d3d_fullscr;
 		IPxVar		d3d_xpos;
 		IPxVar		d3d_ypos;
+		
+		struct cached_mol_s {
+			OpenBabel::OBMol	mol;
+			EName	name;
+		};
+		
+		vector<cached_mol_s>	cached_mols;
 
 	static void		ListDisplayModes_f	( ENanoVis *self, int argc, char **argv );
 	
