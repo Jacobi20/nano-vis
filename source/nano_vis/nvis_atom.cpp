@@ -25,8 +25,6 @@
 
 #include "nvis_local.h"
 
-#include "openbabel/mol.h"
-#include "openbabel/obconversion.h"
 
 
 #ifdef _DEBUG
@@ -68,7 +66,9 @@ void ENanoVis::InitAtomRend( void )
 
 	SAFE_RELEASE( mesh_temp_ball );
 	SAFE_RELEASE( mesh_temp_stick );
-	
+
+	//	register Lua func :
+	lua_register( shell->Lua(), "NVisSnapshot", NVisSnapshot );
 }
 
 
@@ -95,8 +95,8 @@ void ENanoVis::LoadData( const char *path )
 
 	OBConversion	conv;
 	OBMol			mol;
-	VERIFY( conv.SetInFormat("CUBE") );
-	VERIFY( conv.ReadFile(&mol, path) );
+	if (!conv.SetInFormat("CUBE") )		{ RAISE_EXCEPTION(va("failed to set CUBE format")); }
+	if (!conv.ReadFile(&mol, path) )	{ RAISE_EXCEPTION(va("failed to read '%s'", path)); }
 	
 	LOGF("Molecule has %d atoms", mol.NumAtoms());
 	LOGF("Molecule has %d bonds", mol.NumBonds());	
@@ -105,26 +105,64 @@ void ENanoVis::LoadData( const char *path )
 	
 	LOGF("Loading complete.");
 	g_mol	=	mol;
+}
+
+
+//
+//	ENanoVis::NVisSnapshot
+//
+int ENanoVis::NVisSnapshot( lua_State *L )
+{
+	ENanoVis *self = Linker()->GetNanoVis().To<ENanoVis>();
+	self->RenderShot(L);
 	
-	
+	return 0;
 }
 
 
 //
 //	ENanoVis::RenderShot
 //
-void ENanoVis::RenderShot( float distance, float yaw, float pitch, float roll )
+void ENanoVis::RenderShot( lua_State *L )
 {
 	if (!atom_fx) return;
+
+	//
+	//	read table :
+	//	
+	EName	path	=	"";
+	EName	shot	=	"shot.png";
+	float	yaw		=	0;
+	float	roll	=	0;
+	float	pitch	=	0;
+	LuaGetField( L, 1, "yaw",	yaw		);
+	LuaGetField( L, 1, "roll",	roll	);
+	LuaGetField( L, 1, "pitch",	pitch	);
+	LuaGetField( L, 1, "path",	path	);
+
+	//
+	//	load data :
+	//	
+	try {
+		if (path=="") {
+			RAISE_EXCEPTION("path is not specified");
+		}
+		Linker()->GetNanoVis()->LoadData(path.Name());
+	} catch (exception &e) {
+		LOG_ERROR("LoadData() failed : %s", e.what());
+	}
 	
+	//
+	//	setup view :
+	//	
 	D3DXMATRIX	world;
 	D3DXMATRIX	view, view_i, r_yaw, r_pitch, r_roll;
 	D3DXMATRIX	proj;
 
 	D3DXMatrixIdentity( &world );	
 	D3DXMatrixRotationZ( &r_yaw,		deg2rad(yaw) );
-	D3DXMatrixRotationY( &r_pitch,	deg2rad(pitch) );
-	D3DXMatrixRotationX( &r_roll,	deg2rad(roll) );
+	D3DXMatrixRotationY( &r_pitch,		deg2rad(pitch) );
+	D3DXMatrixRotationX( &r_roll,		deg2rad(roll) );
 	view	=	r_roll * r_pitch * r_yaw;
 	D3DXMatrixOrthoRH( &proj, 16, 12, -16, 16 );
 	
@@ -179,6 +217,5 @@ void ENanoVis::RenderShot( float distance, float yaw, float pitch, float roll )
 	IDirect3DSurface9	*surf;
 	d3ddev->GetRenderTarget(0, &surf);
 	
-	HRCALL( D3DXSaveSurfaceToFile("shot.png", D3DXIFF_PNG, surf, NULL, NULL) );
-	
+	HRCALL( D3DXSaveSurfaceToFile(shot.Name(), D3DXIFF_PNG, surf, NULL, NULL) );
 }

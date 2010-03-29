@@ -58,4 +58,7 @@
 //
 //	local headers :
 //
+#include "openbabel/mol.h"
+#include "openbabel/obconversion.h"
+
 #include "nvis.h"
