@@ -32,5 +32,4 @@ class INanoVis : public IDisposable {
 	public:
 		virtual void		RenderFrame		( uint dtime ) = 0;
 		virtual void		RenderSnapshot	( const char *command ) = 0;
-		virtual void		LoadData		( const char *path ) = 0;
 	};
