@@ -84,13 +84,18 @@ void ENanoVis::ShutdownAtomRend( void )
 	SAFE_RELEASE( mesh_stick );
 }
 
-OBMol	g_mol;
 
 //
 //	ENanoVis::LoadData
 //
-void ENanoVis::LoadData( const char *path )
+OBMol *ENanoVis::LoadData( const char *path )
 {
+	for (uint i=0; i<cached_mols.size(); i++) {
+		if (cached_mols[i]->name==path) {
+			return &cached_mols[i]->mol;
+		}
+	}
+
 	LOGF("Loading : %s\r\n", path);
 
 	OBConversion	conv;
@@ -103,8 +108,13 @@ void ENanoVis::LoadData( const char *path )
 	
 	mol.Center();			    
 	
+	EPxCachedMol	cmol = new ECachedMol();
+	cmol->name	=	path;
+	cmol->mol	=	mol;
+	cached_mols.push_back(cmol);
+	
 	LOGF("Loading complete.");
-	g_mol	=	mol;
+	return &cmol->mol;
 }
 
 
@@ -143,14 +153,17 @@ void ENanoVis::RenderShot( lua_State *L )
 	//
 	//	load data :
 	//	
+	OBMol *g_mol = NULL;
 	try {
 		if (path=="") {
 			RAISE_EXCEPTION("path is not specified");
 		}
-		Linker()->GetNanoVis()->LoadData(path.Name());
+		g_mol = LoadData(path.Name());
 	} catch (exception &e) {
 		LOG_ERROR("LoadData() failed : %s", e.what());
 	}
+	
+	
 	
 	//
 	//	setup view :
@@ -191,8 +204,8 @@ void ENanoVis::RenderShot( lua_State *L )
 	for (uint i=0; i<n; i++) {
 		atom_fx->BeginPass(i);
 		
-			for (int i=1; i<=g_mol.NumAtoms(); i++) {
-				OBAtom	*a	=	g_mol.GetAtom(i);
+			for (int i=1; i<=g_mol->NumAtoms(); i++) {
+				OBAtom	*a	=	g_mol->GetAtom(i);
 				
 				double *xyz = a->GetCoordinate();
 				
@@ -219,3 +232,15 @@ void ENanoVis::RenderShot( lua_State *L )
 	
 	HRCALL( D3DXSaveSurfaceToFile(shot.Name(), D3DXIFF_PNG, surf, NULL, NULL) );
 }
+
+
+
+
+
+
+
+
+
+
+
+

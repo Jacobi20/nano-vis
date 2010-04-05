@@ -29,6 +29,8 @@
 	Nano vis :
 -----------------------------------------------------------------------------*/
 
+using namespace OpenBabel;
+
 struct  EVidState_s	{
 		bool	fullscr;
 		int		mode;
@@ -46,6 +48,18 @@ struct EAtomStick_s {
 		D3DXVECTOR4		color;
 		D3DXVECTOR4		pos0, pos1;
 	};	
+	
+
+class ECachedMol;
+typedef hard_ref<ECachedMol> EPxCachedMol;
+
+class ECachedMol : public IDisposable {
+	public:
+		OBMol	mol;
+		EName	name;
+	protected:
+	};
+
 
 
 class ENanoVis : public INanoVis {
@@ -55,7 +69,7 @@ class ENanoVis : public INanoVis {
 												
 		virtual void		RenderFrame			( uint dtime );
 		virtual void		RenderSnapshot		( const char *command );
-		virtual void		LoadData			( const char *path );
+		virtual OBMol		*LoadData			( const char *path );
 		
 		virtual void		RenderShot			( lua_State *L );
 		
@@ -98,12 +112,7 @@ class ENanoVis : public INanoVis {
 		IPxVar		d3d_xpos;
 		IPxVar		d3d_ypos;
 		
-		struct cached_mol_s {
-			OpenBabel::OBMol	mol;
-			EName	name;
-		};
-		
-		vector<cached_mol_s>	cached_mols;
+		vector<EPxCachedMol>	cached_mols;
 
 	static void		ListDisplayModes_f	( ENanoVis *self, int argc, char **argv );
 	
