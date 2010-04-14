@@ -60,5 +60,6 @@
 //
 #include "openbabel/mol.h"
 #include "openbabel/obconversion.h"
+#include "openbabel/griddata.h"
 
 #include "nvis.h"

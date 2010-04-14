@@ -54,6 +54,7 @@ void ENanoVis::InitAtomRend( void )
 	LOG_INIT("Atom renderer");
 	
 	atom_fx	=	CompileEffect("atom.fx");
+	vol_fx	=	CompileEffect("volume.fx");
 	
 	HRCALL( D3DXCreateSphere( d3ddev, 1.0f, 32, 16,		&mesh_ball, NULL) );
 	HRCALL( D3DXCreateCylinder( d3ddev, 1.0f, 1.0f, 1.0f, 16, 1.0f, &mesh_stick, NULL) );
@@ -80,6 +81,7 @@ void ENanoVis::ShutdownAtomRend( void )
 	LOG_SHUTDOWN("Atom renderer");
 	
 	SAFE_RELEASE( atom_fx );
+	SAFE_RELEASE( vol_fx );
 	SAFE_RELEASE( mesh_ball );
 	SAFE_RELEASE( mesh_stick );
 }
@@ -88,16 +90,19 @@ void ENanoVis::ShutdownAtomRend( void )
 //
 //	ENanoVis::LoadData
 //
-OBMol *ENanoVis::LoadData( const char *path )
+EPxCachedMol	ENanoVis::LoadData( const char *path )
 {
 	for (uint i=0; i<cached_mols.size(); i++) {
 		if (cached_mols[i]->name==path) {
-			return &cached_mols[i]->mol;
+			return cached_mols[i];
 		}
 	}
 
 	LOGF("Loading : %s\r\n", path);
 
+	//
+	//	read molecule :
+	//
 	OBConversion	conv;
 	OBMol			mol;
 	if (!conv.SetInFormat("CUBE") )		{ RAISE_EXCEPTION(va("failed to set CUBE format")); }
@@ -106,15 +111,79 @@ OBMol *ENanoVis::LoadData( const char *path )
 	LOGF("Molecule has %d atoms", mol.NumAtoms());
 	LOGF("Molecule has %d bonds", mol.NumBonds());	
 	
-	mol.Center();			    
+	mol.Center();			 
+
+	//
+	//	read grid data :
+	//	
+	std::vector<OBGenericData*>	data_set = mol.GetAllData( OBGenericDataType::GridData );
+	IDirect3DVolumeTexture9	*vol = NULL;
+
+	for (int i=0; i<data_set.size(); i++) {
+		LOGF("reading data set entry : %d", i);
+		OBGenericData *data = data_set[i];
+		OBGridData	  *grid = (OBGridData*)data;
+		
+		LOGF("max value  : %g", grid->GetMaxValue());
+		LOGF("min value  : %g", grid->GetMinValue());
+		LOGF("attribute  : %s", grid->GetAttribute().c_str());
+		LOGF("points num : %d", grid->GetNumberOfPoints());
+
+		SAFE_RELEASE( vol );
+		LoadVolumeData( grid, &vol );
+	}		
+	
+	
 	
 	EPxCachedMol	cmol = new ECachedMol();
-	cmol->name	=	path;
-	cmol->mol	=	mol;
+	cmol->name		=	path;
+	cmol->mol		=	mol;
+	cmol->volume	=	vol;	
+	
 	cached_mols.push_back(cmol);
 	
 	LOGF("Loading complete.");
-	return &cmol->mol;
+	return cmol;
+}
+
+
+//
+//	ENanoVis::LoadVolumeData
+//
+void ENanoVis::LoadVolumeData( const OBGridData *grid, IDirect3DVolumeTexture9 **vol )
+{
+	*vol	=	NULL;
+	
+	int steps[3];
+	int nx, ny, nz;
+	
+	grid->GetNumberOfSteps(steps);
+	nx = steps[0];
+	ny = steps[1];
+	nz = steps[2];
+	
+	HRCALL( d3ddev->CreateVolumeTexture(nx, ny, nz, 1, 0, D3DFMT_R32F, D3DPOOL_MANAGED, vol, NULL ));
+	
+	ASSERT(vol);
+	
+	D3DLOCKED_BOX box;
+	(*vol)->LockBox(0, &box, NULL, 0);
+	
+		float *bits = (float*)box.pBits;
+	
+		for (int i=0; i<nx; i++) {
+			for (int j=0; j<ny; j++) {
+				for (int k=0; k<nz; k++) {
+				
+					double value = grid->GetValue(i+0, j+0, k+0);
+					
+					int pos	=	sizeof(float) * i + j * box.RowPitch + k * box.SlicePitch;
+					bits[pos/sizeof(float)] = value;
+				}
+			}
+		}		
+	
+	(*vol)->UnlockBox(0);
 }
 
 
@@ -160,15 +229,17 @@ void ENanoVis::RenderShot( lua_State *L )
 	//	load data :
 	//	
 	OBMol *g_mol = NULL;
+	EPxCachedMol	cmol;
 	try {
 		if (path=="") {
 			RAISE_EXCEPTION("path is not specified");
 		}
-		g_mol = LoadData(path.Name());
+		cmol = LoadData(path.Name());
 	} catch (exception &e) {
 		LOG_ERROR("LoadData() failed : %s", e.what());
 	}
-	
+
+	g_mol	=	&cmol->mol;	
 	
 	
 	//
@@ -276,6 +347,8 @@ void ENanoVis::RenderShot( lua_State *L )
 	
 	HRCALL( atom_fx->End() );
 	
+	//RenderVolume(
+	
 	//
 	//	make screen shot :
 	//
@@ -286,7 +359,96 @@ void ENanoVis::RenderShot( lua_State *L )
 }
 
 
+//
+//	ENanoVis::RenderVolume
+//
+void ENanoVis::RenderVolume( OBGridData *grid,  IDirect3DVolumeTexture9 **vol, D3DXMATRIX &w, D3DXMATRIX &v, D3DXMATRIX &p, D3DXVECTOR4 &view_point, int slice_num, float intens_scale )
+{
+	if (vol_fx) return;
+	
+	//
+	//	setup :
+	//		
+	IDirect3DTexture9	*palette;
+	HRCALL( D3DXCreateTextureFromFile( d3ddev, "palettes/palette2.tga",  &palette) );
+	
+	HRCALL( vol_fx->SetTechnique("volume") );
 
+		HRCALL( vol_fx->SetMatrix	("matrix_world",	&w ) );
+		HRCALL( vol_fx->SetMatrix	("matrix_view",		&v ) );
+		HRCALL( vol_fx->SetMatrix	("matrix_proj",		&p ) );
+		HRCALL( vol_fx->SetVector	("view_point",		&view_point ) );
+		HRCALL( vol_fx->SetInt		("slice_num",		slice_num) );
+		HRCALL( vol_fx->SetFloat	("vol_scale",		intens_scale) );
+		
+		vector3 vx, vy, vz;
+		grid->GetAxes(vx, vy, vz);
+		
+		D3DXMATRIX	box_matrix;
+		D3DXMatrixIdentity( &box_matrix );
+		box_matrix(0, 0) = vx.x();	box_matrix(0, 1) = vx.y();	box_matrix(0, 2) = vx.z();	box_matrix(0, 3) = 0;
+		box_matrix(1, 0) = vy.x();	box_matrix(1, 1) = vy.y();	box_matrix(1, 2) = vy.z();	box_matrix(1, 3) = 0;
+		box_matrix(2, 0) = vz.x();	box_matrix(2, 1) = vz.y();	box_matrix(2, 2) = vz.z();	box_matrix(2, 3) = 0;
+		box_matrix(3, 0) = 0;		box_matrix(3, 1) = 0;		box_matrix(3, 2) = 0;		box_matrix(3, 3) = 1;
+		
+		HRCALL( vol_fx->SetMatrix("matrix_box",			&box_matrix ) );
+		HRCALL( vol_fx->SetTexture("volume_data_tex",	*vol) );
+		HRCALL( vol_fx->SetTexture("palette_tex",		palette) );
+		
+	//
+	//	rendering :
+	//		
+	struct vert_s {
+		vert_s (D3DXVECTOR3	_p,
+				D3DXVECTOR3 _n,
+				UINT		_c,
+				D3DXVECTOR2	_uv0,
+				D3DXVECTOR2	_uv1) {
+			p	=	_p;
+			n	=	_n;
+			c	=	_c;
+			uv0	=	_uv0;
+			uv1	=	_uv1;
+		}
+
+		D3DXVECTOR3	p;
+		D3DXVECTOR3 n;
+		UINT		c;
+		D3DXVECTOR2	uv0;
+		D3DXVECTOR2	uv1;
+	};
+	
+	HRCALL( d3ddev->SetFVF(D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_DIFFUSE | D3DFVF_TEX2 ));
+	
+	uint n;
+	HRCALL( vol_fx->Begin(&n, 0) );
+	
+	for (uint pass=0; pass<n; pass++) {
+		vol_fx->BeginPass(pass);
+		
+		uint steps = slice_num;
+
+			//	Z planes :
+			for (uint i=0; i<steps; i++) {			
+				float	z	=	((float) i / (float) steps) * 2 - 1;
+				float	s	=	((float) i / (float) steps);
+				vert_s	verts[] = {
+					vert_s(D3DXVECTOR3(+1, +1, z), D3DXVECTOR3(0,0,1), 0xFF00FF00, D3DXVECTOR2(1,1), D3DXVECTOR2(s,0)), 
+					vert_s(D3DXVECTOR3(-1, +1, z), D3DXVECTOR3(0,0,1), 0xFF000000, D3DXVECTOR2(0,1), D3DXVECTOR2(s,0)), 
+					vert_s(D3DXVECTOR3(-1, -1, z), D3DXVECTOR3(0,0,1), 0x00000000, D3DXVECTOR2(0,0), D3DXVECTOR2(s,0)), 
+					vert_s(D3DXVECTOR3(+1, -1, z), D3DXVECTOR3(0,0,1), 0x0000FF00, D3DXVECTOR2(1,0), D3DXVECTOR2(s,0)),
+				};
+				d3ddev->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(vert_s));
+			}			
+
+			
+		
+		
+		vol_fx->EndPass();
+	}
+	
+	HRCALL( vol_fx->End() );
+}
 
 
 
