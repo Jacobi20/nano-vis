@@ -55,8 +55,15 @@ typedef hard_ref<ECachedMol> EPxCachedMol;
 
 class ECachedMol : public IDisposable {
 	public:
+		ECachedMol	( void ) {
+			volume = NULL;
+		}
+		~ECachedMol	( void ) {
+			SAFE_RELEASE( volume );
+		}
 		OBMol	mol;
 		EName	name;
+		IDirect3DVolumeTexture9	*volume;
 	protected:
 	};
 
@@ -67,9 +74,9 @@ class ENanoVis : public INanoVis {
 							ENanoVis			( void );
 							~ENanoVis			( void );
 												
-		virtual void		RenderFrame			( uint dtime );
-		virtual void		RenderSnapshot		( const char *command );
-		virtual OBMol		*LoadData			( const char *path );
+		virtual void			RenderFrame			( uint dtime );
+		virtual void			RenderSnapshot		( const char *command );
+		virtual EPxCachedMol	LoadData			( const char *path );
 		
 		virtual void		RenderShot			( lua_State *L );
 		
@@ -88,9 +95,12 @@ class ENanoVis : public INanoVis {
 	protected:
 		void		InitAtomRend		( void );
 		void		ShutdownAtomRend	( void );
-		ID3DXEffect	*atom_fx;
-		ID3DXMesh	*mesh_ball;
-		ID3DXMesh	*mesh_stick;
+		void		LoadVolumeData		( const OBGridData *grid, IDirect3DVolumeTexture9 **vol );
+		void		RenderVolume		( OBGridData *grid,  IDirect3DVolumeTexture9 **vol, D3DXMATRIX &w, D3DXMATRIX &v, D3DXMATRIX &p, D3DXVECTOR4 &view_point, int slice_num, float intens_scale );
+		ID3DXEffect				*atom_fx;
+		ID3DXEffect				*vol_fx;
+		ID3DXMesh				*mesh_ball;
+		ID3DXMesh				*mesh_stick;
 		
 		vector<EAtomBall_s>		balls;
 		vector<EAtomStick_s>	sticks;
