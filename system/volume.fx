@@ -119,8 +119,7 @@ float4	PSMainTrace( in VS_OUTPUT input, float2 vpos : VPOS ) : COLOR0
 
 -----------------------------------------------------------------------------*/
 
-technique volume
-{
+technique volume{
 	pass Pass_0 {
 		DestBlend 			= INVSRCALPHA;
 		SrcBlend 			= SRCALPHA;

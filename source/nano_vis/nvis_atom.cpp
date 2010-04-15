@@ -116,13 +116,16 @@ EPxCachedMol	ENanoVis::LoadData( const char *path )
 	//
 	//	read grid data :
 	//	
+	OBGridData *grid;
+	
 	std::vector<OBGenericData*>	data_set = mol.GetAllData( OBGenericDataType::GridData );
 	IDirect3DVolumeTexture9	*vol = NULL;
 
 	for (int i=0; i<data_set.size(); i++) {
 		LOGF("reading data set entry : %d", i);
 		OBGenericData *data = data_set[i];
-		OBGridData	  *grid = (OBGridData*)data;
+		
+		grid = (OBGridData*)data;
 		
 		LOGF("max value  : %g", grid->GetMaxValue());
 		LOGF("min value  : %g", grid->GetMinValue());
@@ -139,6 +142,7 @@ EPxCachedMol	ENanoVis::LoadData( const char *path )
 	cmol->name		=	path;
 	cmol->mol		=	mol;
 	cmol->volume	=	vol;	
+	cmol->grid		=	grid;
 	
 	cached_mols.push_back(cmol);
 	
@@ -248,7 +252,7 @@ void ENanoVis::RenderShot( lua_State *L )
 	D3DXMATRIX	world;
 	D3DXMATRIX	view, view_i, r_yaw, r_pitch, r_roll, z_view_offset;
 	D3DXMATRIX	proj;
-
+	
 	//	setup view matrix :
 	D3DXMatrixIdentity		( &world );	
 	D3DXMatrixRotationZ		( &r_yaw,			deg2rad(yaw) );
@@ -256,6 +260,8 @@ void ENanoVis::RenderShot( lua_State *L )
 	D3DXMatrixRotationX		( &r_roll,			deg2rad(roll) );
 	D3DXMatrixTranslation	( &z_view_offset,	0,0, -distance );
 	view	=	r_roll * r_pitch * r_yaw * z_view_offset;
+
+
 
 	//	setup projection :	
 	D3DXMatrixPerspectiveRH( &proj, 0.100f, 0.075f, 0.075f, 1000 );
@@ -270,7 +276,10 @@ void ENanoVis::RenderShot( lua_State *L )
 	D3DXVECTOR4		light_dir	( 0, 0, 1, 0);
 	D3DXVECTOR4		view_dir	( 0, 0,-1, 0);
 	D3DXVECTOR4		atom_color	( 1, 1, 1, 1);
+	D3DXVECTOR4		view_point	( 0, 0,-distance, 0);
+	D3DXVec4Transform( &view_point, &view_point, &view );
 	D3DXVec4Transform( &view_dir, &view_dir, &view_i );
+	D3DXVec4Transform( &view_point, &view_point, &view_i );
 
 	HRCALL( atom_fx->SetVector("light_dir",		&light_dir) );
 	HRCALL( atom_fx->SetVector("view_dir",		&view_dir) );
@@ -347,7 +356,7 @@ void ENanoVis::RenderShot( lua_State *L )
 	
 	HRCALL( atom_fx->End() );
 	
-	//RenderVolume(
+	RenderVolume(cmol->grid, &cmol->volume, world, view, proj, view_point, 100, 0.5);
 	
 	//
 	//	make screen shot :
@@ -365,6 +374,9 @@ void ENanoVis::RenderShot( lua_State *L )
 void ENanoVis::RenderVolume( OBGridData *grid,  IDirect3DVolumeTexture9 **vol, D3DXMATRIX &w, D3DXMATRIX &v, D3DXMATRIX &p, D3DXVECTOR4 &view_point, int slice_num, float intens_scale )
 {
 	if (vol_fx) return;
+	
+	ASSERT(grid);
+	ASSERT(vol);
 	
 	//
 	//	setup :
@@ -427,6 +439,34 @@ void ENanoVis::RenderVolume( OBGridData *grid,  IDirect3DVolumeTexture9 **vol, D
 		vol_fx->BeginPass(pass);
 		
 		uint steps = slice_num;
+
+			//	Z planes :
+			for (uint i=0; i<steps; i++) {			
+				float	z	=	((float) i / (float) steps) * 2 - 1;
+				float	s	=	((float) i / (float) steps);
+				vert_s	verts[] = {
+					vert_s(D3DXVECTOR3(+1, +1, z), D3DXVECTOR3(0,0,1), 0xFF00FF00, D3DXVECTOR2(1,1), D3DXVECTOR2(s,0)), 
+					vert_s(D3DXVECTOR3(-1, +1, z), D3DXVECTOR3(0,0,1), 0xFF000000, D3DXVECTOR2(0,1), D3DXVECTOR2(s,0)), 
+					vert_s(D3DXVECTOR3(-1, -1, z), D3DXVECTOR3(0,0,1), 0x00000000, D3DXVECTOR2(0,0), D3DXVECTOR2(s,0)), 
+					vert_s(D3DXVECTOR3(+1, -1, z), D3DXVECTOR3(0,0,1), 0x0000FF00, D3DXVECTOR2(1,0), D3DXVECTOR2(s,0)),
+				};
+				d3ddev->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(vert_s));
+			}			
+
+
+			//	Z planes :
+			for (uint i=0; i<steps; i++) {			
+				float	z	=	((float) i / (float) steps) * 2 - 1;
+				float	s	=	((float) i / (float) steps);
+				vert_s	verts[] = {
+					vert_s(D3DXVECTOR3(+1, +1, z), D3DXVECTOR3(0,0,1), 0xFF00FF00, D3DXVECTOR2(1,1), D3DXVECTOR2(s,0)), 
+					vert_s(D3DXVECTOR3(-1, +1, z), D3DXVECTOR3(0,0,1), 0xFF000000, D3DXVECTOR2(0,1), D3DXVECTOR2(s,0)), 
+					vert_s(D3DXVECTOR3(-1, -1, z), D3DXVECTOR3(0,0,1), 0x00000000, D3DXVECTOR2(0,0), D3DXVECTOR2(s,0)), 
+					vert_s(D3DXVECTOR3(+1, -1, z), D3DXVECTOR3(0,0,1), 0x0000FF00, D3DXVECTOR2(1,0), D3DXVECTOR2(s,0)),
+				};
+				d3ddev->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(vert_s));
+			}			
+
 
 			//	Z planes :
 			for (uint i=0; i<steps; i++) {			
