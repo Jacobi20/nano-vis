@@ -239,8 +239,14 @@ void ENanoVis::RenderShot( lua_State *L )
 			RAISE_EXCEPTION("path is not specified");
 		}
 		cmol = LoadData(path.Name());
+		
+		if (!cmol) {
+			RAISE_EXCEPTION(va("'%s' not found", path.Name()));
+		}
+		
 	} catch (exception &e) {
 		LOG_ERROR("LoadData() failed : %s", e.what());
+		return;
 	}
 
 	g_mol	=	&cmol->mol;	
@@ -454,32 +460,32 @@ void ENanoVis::RenderVolume( OBGridData *grid,  IDirect3DVolumeTexture9 **vol, D
 			}			
 
 
-			//	Z planes :
-			for (uint i=0; i<steps; i++) {			
-				float	z	=	((float) i / (float) steps) * 2 - 1;
-				float	s	=	((float) i / (float) steps);
-				vert_s	verts[] = {
-					vert_s(D3DXVECTOR3(+1, +1, z), D3DXVECTOR3(0,0,1), 0xFF00FF00, D3DXVECTOR2(1,1), D3DXVECTOR2(s,0)), 
-					vert_s(D3DXVECTOR3(-1, +1, z), D3DXVECTOR3(0,0,1), 0xFF000000, D3DXVECTOR2(0,1), D3DXVECTOR2(s,0)), 
-					vert_s(D3DXVECTOR3(-1, -1, z), D3DXVECTOR3(0,0,1), 0x00000000, D3DXVECTOR2(0,0), D3DXVECTOR2(s,0)), 
-					vert_s(D3DXVECTOR3(+1, -1, z), D3DXVECTOR3(0,0,1), 0x0000FF00, D3DXVECTOR2(1,0), D3DXVECTOR2(s,0)),
-				};
-				d3ddev->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(vert_s));
-			}			
+			////	Z planes :
+			//for (uint i=0; i<steps; i++) {			
+			//	float	z	=	((float) i / (float) steps) * 2 - 1;
+			//	float	s	=	((float) i / (float) steps);
+			//	vert_s	verts[] = {
+			//		vert_s(D3DXVECTOR3(+1, +1, z), D3DXVECTOR3(0,0,1), 0xFF00FF00, D3DXVECTOR2(1,1), D3DXVECTOR2(s,0)), 
+			//		vert_s(D3DXVECTOR3(-1, +1, z), D3DXVECTOR3(0,0,1), 0xFF000000, D3DXVECTOR2(0,1), D3DXVECTOR2(s,0)), 
+			//		vert_s(D3DXVECTOR3(-1, -1, z), D3DXVECTOR3(0,0,1), 0x00000000, D3DXVECTOR2(0,0), D3DXVECTOR2(s,0)), 
+			//		vert_s(D3DXVECTOR3(+1, -1, z), D3DXVECTOR3(0,0,1), 0x0000FF00, D3DXVECTOR2(1,0), D3DXVECTOR2(s,0)),
+			//	};
+			//	d3ddev->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(vert_s));
+			//}			
 
 
-			//	Z planes :
-			for (uint i=0; i<steps; i++) {			
-				float	z	=	((float) i / (float) steps) * 2 - 1;
-				float	s	=	((float) i / (float) steps);
-				vert_s	verts[] = {
-					vert_s(D3DXVECTOR3(+1, +1, z), D3DXVECTOR3(0,0,1), 0xFF00FF00, D3DXVECTOR2(1,1), D3DXVECTOR2(s,0)), 
-					vert_s(D3DXVECTOR3(-1, +1, z), D3DXVECTOR3(0,0,1), 0xFF000000, D3DXVECTOR2(0,1), D3DXVECTOR2(s,0)), 
-					vert_s(D3DXVECTOR3(-1, -1, z), D3DXVECTOR3(0,0,1), 0x00000000, D3DXVECTOR2(0,0), D3DXVECTOR2(s,0)), 
-					vert_s(D3DXVECTOR3(+1, -1, z), D3DXVECTOR3(0,0,1), 0x0000FF00, D3DXVECTOR2(1,0), D3DXVECTOR2(s,0)),
-				};
-				d3ddev->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(vert_s));
-			}			
+			////	Z planes :
+			//for (uint i=0; i<steps; i++) {			
+			//	float	z	=	((float) i / (float) steps) * 2 - 1;
+			//	float	s	=	((float) i / (float) steps);
+			//	vert_s	verts[] = {
+			//		vert_s(D3DXVECTOR3(+1, +1, z), D3DXVECTOR3(0,0,1), 0xFF00FF00, D3DXVECTOR2(1,1), D3DXVECTOR2(s,0)), 
+			//		vert_s(D3DXVECTOR3(-1, +1, z), D3DXVECTOR3(0,0,1), 0xFF000000, D3DXVECTOR2(0,1), D3DXVECTOR2(s,0)), 
+			//		vert_s(D3DXVECTOR3(-1, -1, z), D3DXVECTOR3(0,0,1), 0x00000000, D3DXVECTOR2(0,0), D3DXVECTOR2(s,0)), 
+			//		vert_s(D3DXVECTOR3(+1, -1, z), D3DXVECTOR3(0,0,1), 0x0000FF00, D3DXVECTOR2(1,0), D3DXVECTOR2(s,0)),
+			//	};
+			//	d3ddev->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(vert_s));
+			//}			
 
 			
 		
