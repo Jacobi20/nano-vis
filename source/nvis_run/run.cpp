@@ -71,7 +71,7 @@ DLL_EXPORT void NVisShutdown( void )
 DLL_EXPORT void NVisFrame( uint dtime )
 {
 	IPxNanoVis	nvis	=	Linker()->GetNanoVis();
-	nvis->RenderFrame( dtime );
+	nvis->RenderSnapshot( "dofile('run.lua');" );
 }
 
 
@@ -115,7 +115,7 @@ int main(int argc, const char **argv)
 	SetConsoleCtrlHandler( ConsoleHandleRoutine, TRUE );
 
 	try {
-	
+							  
 		NVisInit();
 
 		while ( WM_QUIT != msg.message )
@@ -132,6 +132,8 @@ int main(int argc, const char **argv)
 				NVisFrame(time - old_time);
 				
 				old_time = time;
+				
+				Sleep(10);
 			}
 
 		}
