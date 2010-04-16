@@ -72,7 +72,6 @@ VS_OUTPUT VSMain( VS_INPUT input )
 	float4	pos		=	float4(input.pos.xyz, 1);
 	float4	norm	=	float4(input.normal.xyz, 0);
 
-
 	pos				=	mul(pos, matrix_box);
 	pos				=	mul(pos, matrix_world);
 	output.pos3d	=	pos.xyz / pos.w;
@@ -106,7 +105,7 @@ float4	PSMainTrace( in VS_OUTPUT input, float2 vpos : VPOS ) : COLOR0
 	
 	float3 v = normalize(input.pos3d - view_point.xyz);
 	float3 n = input.normal;
-	float scale = abs(dot(v, n));
+	float scale = 1;//abs(dot(v, n));
 	
 	rgba.a *= scale;
 	rgba.a /= slice_num;
