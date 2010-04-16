@@ -33,7 +33,20 @@ void PrintCB ( void *s )
 {
 	ELogMessage_s	msg;
 	Log()->GetLogLastMessage( msg );
-	printf("%s\r\n", msg.message);
+
+	switch (msg.msg_type) {
+		case LOG_MSG_INFO			:	printf("   %s\r\n", msg.message);	break;
+		case LOG_MSG_WARNING		:	printf("W->%s\r\n", msg.message);	break;
+		case LOG_MSG_ERROR			:	printf("E->%s\r\n", msg.message);	break;
+		case LOG_MSG_FATAL			:	printf("F->%s\r\n", msg.message);	break;
+		case LOG_MSG_DEBUG			:	printf("D->%s\r\n", msg.message);	break;
+		case LOG_MSG_ACTION			:	printf("   %s\r\n", msg.message);	break;
+		case LOG_MSG_ACTION_OK		:	printf("   %s\r\n", msg.message);	break;
+		case LOG_MSG_ACTION_FAILED	:	printf("   %s\r\n", msg.message);	break;
+		case LOG_MSG_DIMMED			:	printf("L->%s\r\n", msg.message);	break;
+		default						:	printf("%s\r\n", msg.message);	break;
+	}
+
 }
 
 
@@ -133,7 +146,7 @@ int main(int argc, const char **argv)
 				
 				old_time = time;
 				
-				Sleep(10);
+				Sleep(1);
 			}
 
 		}

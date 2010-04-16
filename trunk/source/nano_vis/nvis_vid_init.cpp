@@ -322,6 +322,7 @@ void ENanoVis::InitDirect3D(void)
 	d3dpp.EnableAutoDepthStencil	=	TRUE;
 	d3dpp.AutoDepthStencilFormat	=	D3DFMT_D24S8;
 	d3dpp.BackBufferFormat			=	D3DFMT_A8R8G8B8;
+	d3dpp.MultiSampleType			=	D3DMULTISAMPLE_4_SAMPLES;
 
 #define PERF_HUD
 #ifdef PERF_HUD	

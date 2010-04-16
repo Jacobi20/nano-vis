@@ -63,7 +63,6 @@ class ECachedMol : public IDisposable {
 		}
 		OBMol		mol;
 		EName		name;
-		OBGridData	*grid;
 		IDirect3DVolumeTexture9	*volume;
 	protected:
 	};
@@ -92,12 +91,13 @@ class ENanoVis : public INanoVis {
 		IDirect3DDevice9	*d3ddev;
 		EVidState_s			vid_state;
 		IPxShell			shell;
+		OBElementTable		elem_table;
 		
 	protected:
 		void		InitAtomRend		( void );
 		void		ShutdownAtomRend	( void );
 		void		LoadVolumeData		( const OBGridData *grid, IDirect3DVolumeTexture9 **vol );
-		void		RenderVolume		( OBGridData *grid,  IDirect3DVolumeTexture9 **vol, D3DXMATRIX &w, D3DXMATRIX &v, D3DXMATRIX &p, D3DXVECTOR4 &view_point, int slice_num, float intens_scale );
+		void		RenderVolume		( lua_State *L, EPxCachedMol cmol, D3DXMATRIX &w, D3DXMATRIX &v, D3DXMATRIX &p, D3DXVECTOR4 &view_point );
 		ID3DXEffect				*atom_fx;
 		ID3DXEffect				*vol_fx;
 		ID3DXMesh				*mesh_ball;
