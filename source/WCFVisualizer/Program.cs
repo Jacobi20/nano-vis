@@ -36,6 +36,15 @@ namespace WCFVisualizer
                 Console.WriteLine("Failed");
                 Console.WriteLine(ex);
                 Console.ForegroundColor = ConsoleColor.Gray;
+                try
+                {
+                    Visualizer.Instance.Close();
+                }
+                catch (Exception ex0)
+                {
+                    return;
+                }
+
                 return;
             }
 
