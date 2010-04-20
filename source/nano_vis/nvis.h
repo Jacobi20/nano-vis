@@ -61,6 +61,7 @@ class ECachedMol : public IDisposable {
 		~ECachedMol	( void ) {
 			SAFE_RELEASE( volume );
 		}
+		vector3		center;
 		OBMol		mol;
 		EName		name;
 		IDirect3DVolumeTexture9	*volume;

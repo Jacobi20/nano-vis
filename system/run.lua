@@ -1,12 +1,15 @@
+
+
+
 NVisSnapshot {
 	-- data stuff --
-	path			=	"download/test01.cube";
+	path			=	"download/bf3.cube";
 	
 	-- position --
-	yaw				=	0;
-	roll			=	-50;
-	pitch			=	0;
-	distance		=	8;
+	yaw				=	10;
+	roll			=	-10;
+	pitch			=	-101;
+	distance		=	5;
 	
 	-- ball&stick stuff
 	atom_scale		=	0.1;
@@ -14,6 +17,6 @@ NVisSnapshot {
 	use_vdw_radius	=	true;
 	
 	-- volume stuff --
-	slice_num		=	500;
-	intens_scale	=	100;
+	slice_num		=	1500;
+	intens_scale	=	200;
 }
