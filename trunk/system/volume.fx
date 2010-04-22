@@ -11,7 +11,8 @@ float4x4	matrix_box		;
 float4		view_point		;
 float		slice_num		;
 float		vol_scale		;
-
+float		value_low		;
+float		value_high		;
 // float    time                 ;
 // float4x4 matrix_proj          ;
 // float4x4 matrix_wv            ;
@@ -101,6 +102,9 @@ float4	PSMainTrace( in VS_OUTPUT input, float2 vpos : VPOS ) : COLOR0
 	float4 sample 	= 0;
 	float3 uvw    	= float3(input.uv0.xy, input.uv1.x);
 	float4 s  		= tex3D(volume_data_sm, uvw + offs);
+	
+	s	=	saturate(s.r * (value_high - value_low) + value_low) / (value_high - value_low);
+	
 	float4 rgba		= tex2D(palette_sm, float2(s.r, 0.5));
 	
 	float3 v = normalize(input.pos3d - view_point.xyz);

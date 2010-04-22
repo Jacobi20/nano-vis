@@ -390,8 +390,13 @@ void ENanoVis::RenderVolume( lua_State *L, EPxCachedMol cmol, D3DXMATRIX &w, D3D
 	int		slice_num		=	100; 
 	float	intens_scale	=	100;
 	
+	float	value_low		=	0;
+	float	value_high		=	1;
+	
 	LuaGetField( L, 1, "slice_num",		slice_num	);
 	LuaGetField( L, 1, "intens_scale",	intens_scale);
+	LuaGetField( L, 1, "value_low",		value_low	);
+	LuaGetField( L, 1, "value_high",	value_high	);
 	
 	std::vector<OBGenericData*>	data_set = cmol->mol.GetAllData( OBGenericDataType::GridData );
 
@@ -418,6 +423,8 @@ void ENanoVis::RenderVolume( lua_State *L, EPxCachedMol cmol, D3DXMATRIX &w, D3D
 		HRCALL( vol_fx->SetVector	("view_point",		&view_point ) );
 		HRCALL( vol_fx->SetInt		("slice_num",		slice_num) );
 		HRCALL( vol_fx->SetFloat	("vol_scale",		intens_scale) );
+		HRCALL( vol_fx->SetFloat	("value_low",		value_low	) );
+		HRCALL( vol_fx->SetFloat	("value_high",		value_high	) );
 		
 		vector3 vx, vy, vz;
 		vector3	pos	=	grid->GetOriginVector();
