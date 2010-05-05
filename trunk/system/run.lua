@@ -3,14 +3,14 @@
 
 NVisSnapshot {
 	-- data stuff --
-	path			=	"download/O8mgpc40a2.cube";
-	-- path			=	"download/vitaminc.cube";
+	--path			=	"download/O8mgpc40a2.cube";
+	path			=	"download/vitaminc.cube";
 	
 	-- position --
-	yaw				=	90;
-	roll			=	90;
+	yaw				=	0;
+	roll			=	-40;
 	pitch			=	0;
-	distance		=	190;
+	distance		=	10;
 	
 	-- ball&stick stuff
 	atom_scale		=	0.1;
@@ -19,8 +19,8 @@ NVisSnapshot {
 	
 	-- volume stuff --
 	slice_num		=	1500;
-	intens_scale	=	800;
+	intens_scale	=	200;
 	
-	value_low		=	0.60;	
-	value_high		=	0.65;
+	value_low		=	0.0;	
+	value_high		=	1.0;
 }
