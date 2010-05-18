@@ -207,6 +207,7 @@ void ENanoVis::RenderShot( lua_State *L )
 	//
 	//	read table :
 	//	
+	bool	skip_shot		=	false;
 	EName	path			=	"";
 	EName	shot			=	"shot.png";
 	float	yaw				=	0;
@@ -216,6 +217,7 @@ void ENanoVis::RenderShot( lua_State *L )
 	float	atom_scale		=	0.1f;
 	float	bond_radius		=	0.03f;
 	bool	use_vdw_radius	=	true;
+	LuaGetField( L, 1, "skip_shot",			skip_shot		);
 	LuaGetField( L, 1, "yaw",				yaw				);
 	LuaGetField( L, 1, "roll",				roll			);
 	LuaGetField( L, 1, "pitch",				pitch			);
@@ -373,10 +375,12 @@ void ENanoVis::RenderShot( lua_State *L )
 	//
 	//	make screen shot :
 	//
-	IDirect3DSurface9	*surf;
-	d3ddev->GetRenderTarget(0, &surf);
-	
-	HRCALL( D3DXSaveSurfaceToFile(shot.Name(), D3DXIFF_PNG, surf, NULL, NULL) );
+	if (!skip_shot) {
+		IDirect3DSurface9	*surf;
+		d3ddev->GetRenderTarget(0, &surf);
+		
+		HRCALL( D3DXSaveSurfaceToFile(shot.Name(), D3DXIFF_PNG, surf, NULL, NULL) );
+	}
 }
 
 
