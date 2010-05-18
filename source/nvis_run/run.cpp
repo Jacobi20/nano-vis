@@ -49,6 +49,13 @@ void PrintCB ( void *s )
 
 }
 
+static bool can_quit = false;
+
+int quit(lua_State *L) {
+	can_quit	=	true;
+	return 0;
+}
+
 
 //
 //	NVisInit
@@ -61,7 +68,13 @@ DLL_EXPORT void NVisInit( void )
 	
 	Linker()->GetConfig()->LoadConfig();
 	
+	lua_State *L = Linker()->GetShell()->Lua();
+	
+	lua_register(L, "quit", quit);
+	
 	Linker()->LinkDLLNanoVis("nano_vis.dll");
+	
+	Linker()->GetInputSystem()->SetTargetWindow( Linker()->GetNanoVis()->GetWindowDescriptor() );
 }
 
 
@@ -84,7 +97,13 @@ DLL_EXPORT void NVisShutdown( void )
 DLL_EXPORT void NVisFrame( uint dtime )
 {
 	IPxNanoVis	nvis	=	Linker()->GetNanoVis();
-	nvis->RenderSnapshot( "dofile('run.lua');" );
+	
+	const char *command = va("if NVisFrame then NVisFrame(%g); end", 0.001*(float)dtime);
+	
+	nvis->RenderSnapshot( command );
+	
+	Linker()->GetInputSystem()->SetInputMode(IN_KB_SCAN);
+	Linker()->GetInputSystem()->ProcessInput();
 }
 
 
@@ -143,10 +162,12 @@ int main(int argc, const char **argv)
 				time = System()->Milliseconds();
 				
 				NVisFrame(time - old_time);
+
+				if (can_quit) {
+					break;
+				}
 				
 				old_time = time;
-				
-				Sleep(1);
 			}
 
 		}

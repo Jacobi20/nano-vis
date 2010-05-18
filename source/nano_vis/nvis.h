@@ -74,6 +74,8 @@ class ENanoVis : public INanoVis {
 	public:
 							ENanoVis			( void );
 							~ENanoVis			( void );
+
+		virtual void	*		GetWindowDescriptor	( void ) { return vid_state.h_wnd; }
 												
 		virtual void			RenderFrame			( uint dtime );
 		virtual void			RenderSnapshot		( const char *command );
