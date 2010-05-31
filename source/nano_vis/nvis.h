@@ -99,7 +99,7 @@ class ENanoVis : public INanoVis {
 	protected:
 		void		InitAtomRend		( void );
 		void		ShutdownAtomRend	( void );
-		void		LoadVolumeData		( const OBGridData *grid, IDirect3DVolumeTexture9 **vol );
+		void		LoadVolumeData		( const OBGridData *grid, IDirect3DVolumeTexture9 **vol, const char *raw_file = NULL );
 		void		RenderVolume		( lua_State *L, EPxCachedMol cmol, D3DXMATRIX &w, D3DXMATRIX &v, D3DXMATRIX &p, D3DXVECTOR4 &view_point );
 		ID3DXEffect				*atom_fx;
 		ID3DXEffect				*vol_fx;
