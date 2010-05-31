@@ -24,16 +24,19 @@
 
 #include "../core/core.h"
 
+
 /*-----------------------------------------------------------------------------
-	Linker stuff :
+	Main :
 -----------------------------------------------------------------------------*/
 
 void LogCallBack(void *p) 
 {
 	uint msg_coloring[LOG_MSG_MAX];
+	char *msg_prefix[LOG_MSG_MAX];
 	
 	for (uint i=0; i< LOG_MSG_MAX; i++) {
-		msg_coloring[ i ] = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+		msg_coloring[ i ]	= FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+		msg_prefix[ i ]		= "";
 	}
 	
 	msg_coloring[ LOG_MSG_INFO		]	=	FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
@@ -42,6 +45,13 @@ void LogCallBack(void *p)
 	msg_coloring[ LOG_MSG_FATAL		]	=	FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE;
 	msg_coloring[ LOG_MSG_DEBUG		]	=	FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE;
 	msg_coloring[ LOG_MSG_DIMMED	]	=	FOREGROUND_INTENSITY;
+
+	msg_prefix[ LOG_MSG_INFO		]	=	"       ";
+	msg_prefix[ LOG_MSG_WARNING		]	=	"WARNING";
+	msg_prefix[ LOG_MSG_ERROR		]	=	"ERROR  ";
+	msg_prefix[ LOG_MSG_FATAL		]	=	"FATAL  ";
+	msg_prefix[ LOG_MSG_DEBUG		]	=	"DEBUG  ";
+	msg_prefix[ LOG_MSG_DIMMED		]	=	"LUA    ";
 
 	HANDLE hcon	=	GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -52,23 +62,143 @@ void LogCallBack(void *p)
 	//	set appropriate color :
 	SetConsoleTextAttribute(hcon, msg_coloring[ msg.msg_type ]);
 	
-	printf("%s\r\n", msg.message);
+	printf("%s : %s\r\n", msg_prefix[msg.msg_type], msg.message);
 
 	//	restore color :
 	SetConsoleTextAttribute(hcon, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }
 
 
-int main(int argc, const char **argv) 
+
+static bool can_quit = false;
+
+int quit(lua_State *L) {
+	can_quit	=	true;
+	return 0;
+}
+
+
+//
+//	NVisInit
+//
+DLL_EXPORT void NavyInit( void )
 {
-	Log()->SetWriteCB( LogCallBack, NULL );
+	Log()->SetWriteCB(LogCallBack, NULL);
 
 	InitCoreSubsystems();
 	
+	Linker()->GetConfig()->LoadConfig();
 	
+	lua_State *L = Linker()->GetShell()->Lua();
 	
-	ShutdownCoreSubsystems();
+	lua_register(L, "quit", quit);
+	
+	Linker()->LinkDLLSciVis("scivis.dll");
+	
+	Linker()->GetInputSystem()->SetTargetWindow( Linker()->GetSciVis()->GetWindowDescriptor() );
+}
 
-	getch();
+
+//
+//	NVisShutdown
+//
+DLL_EXPORT void NavyShutdown( void )
+{
+	Linker()->LinkSciVis(NULL);
+	
+	Linker()->GetConfig()->SaveConfig();
+
+	ShutdownCoreSubsystems();
+}
+
+
+//
+//	NVisFrame
+//
+DLL_EXPORT void NavyFrame( uint dtime )
+{
+	IPxSciVis	nvis	=	Linker()->GetSciVis();
+	
+	const char *command = va("if NVisFrame then NVisFrame(%g); end", 0.001*(float)dtime);
+	
+	nvis->RenderSnapshot( command );
+	
+	Linker()->GetInputSystem()->SetInputMode(IN_KB_SCAN);
+	Linker()->GetInputSystem()->ProcessInput();
+}
+
+
+//
+//	NVisCommand
+//
+DLL_EXPORT void NVisCommand( const char *cmd )
+{
+	LOGF("command : %s", cmd);
+
+	IPxSciVis	nvis	=	Linker()->GetSciVis();
+	nvis->RenderSnapshot( cmd );
+}										 
+
+
+BOOL WINAPI ConsoleHandleRoutine(DWORD dwCtrlType)
+{
+	if (dwCtrlType==CTRL_CLOSE_EVENT) {
+		printf("\r\n");
+		printf("**** IMMEDIATE TERMINATION ****\r\n");
+		printf("\r\n");
+		
+		TerminateProcess(0, 0);
+		return TRUE;
+	}
+	
+	return FALSE;
+}
+
+
+
+//
+//	main
+//
+int main(int argc, const char **argv)
+{
+	uint	old_time	=	System()->Milliseconds();
+	uint	time		=	System()->Milliseconds();
+	MSG		msg = {0};
+
+	SetConsoleCtrlHandler( ConsoleHandleRoutine, TRUE );
+
+	try {
+							  
+		NavyInit();
+
+		while ( WM_QUIT != msg.message )
+		{
+			if( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )		
+			{			
+				TranslateMessage( &msg );		
+				DispatchMessage( &msg );				
+			}		
+			else			
+			{
+				time = System()->Milliseconds();
+				
+				NavyFrame(time - old_time);
+
+				if (can_quit) {
+					break;
+				}
+				
+				old_time = time;
+			}
+
+		}
+
+		NavyShutdown();
+		
+	} catch (exception &e) {
+		FATAL(e.what());
+	}
 	
 }
+
+
