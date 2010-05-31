@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="f0ea6c10-ed65-4cc6-aad7-1515ce451766" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:8731/Design_Time_Addresses/WCFVisualizer/VisualizerService/" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="item.xsd" MetadataType="Schema" ID="a4d7aae4-251c-43b2-9be0-7de1ca92c6b8" SourceId="1" SourceUrl="http://localhost:8731/Design_Time_Addresses/WCFVisualizer/VisualizerService/?xsd=xsd0" />
+    <MetadataFile FileName="VisualizerService.wsdl" MetadataType="Wsdl" ID="dc1ff58a-1bf0-4d11-9230-53a4c28f8404" SourceId="1" SourceUrl="http://localhost:8731/Design_Time_Addresses/WCFVisualizer/VisualizerService/?wsdl" />
+    <MetadataFile FileName="item.disco" MetadataType="Disco" ID="bdde8e72-d7e0-4707-9994-8d0c0d3bf0c5" SourceId="1" SourceUrl="http://localhost:8731/Design_Time_Addresses/WCFVisualizer/VisualizerService/?disco" />
+    <MetadataFile FileName="item1.xsd" MetadataType="Schema" ID="f9e902b5-081d-4b52-9b92-a1fa93d059ca" SourceId="1" SourceUrl="http://localhost:8731/Design_Time_Addresses/WCFVisualizer/VisualizerService/?xsd=xsd3" />
+    <MetadataFile FileName="item2.xsd" MetadataType="Schema" ID="ef3e3bac-13bb-443b-9008-1e2abc14c805" SourceId="1" SourceUrl="http://localhost:8731/Design_Time_Addresses/WCFVisualizer/VisualizerService/?xsd=xsd2" />
+    <MetadataFile FileName="item3.xsd" MetadataType="Schema" ID="0d5a6c4b-ab5a-4c54-80e9-e294e5f97330" SourceId="1" SourceUrl="http://localhost:8731/Design_Time_Addresses/WCFVisualizer/VisualizerService/?xsd=xsd1" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>
