@@ -27,7 +27,7 @@ state = {
 	yaw		=	0;
 	roll	=	0;
 	pitch	=	0;
-	dist	=	10;
+	dist	=	100;
 }   
 
 function _YawInc()   state.yaw_inc		=	true; end
@@ -50,8 +50,8 @@ function DistDec()  state.dist_dec		=	false; end
                     
 function NVisFrame(dtime)
 
-	local	rotation = 100;
-	print(dtime);
+	local	rotation = 3;
+	--print(dtime);
 	dtime = 4;
 
 	if state.yaw_inc	then	state.yaw	=	state.yaw 	+ dtime * rotation; end;
@@ -65,8 +65,9 @@ function NVisFrame(dtime)
                                                     
 	NVisSnapshot {
 		-- data stuff --
-		--path			=	"download/O8mgpc40a2.cube";
-		path			=	"download/vitaminc.cube";
+		path			=	"download/O8mgpc40a2.cube";
+		--path			=	"download/vitaminc.cube";
+		--path			=	"download/test01.cube";
 		skip_shot		=	true;
 		
 		-- position --
@@ -81,11 +82,11 @@ function NVisFrame(dtime)
 		use_vdw_radius	=	true;
 		
 		-- volume stuff --
-		slice_num		=	100;
-		intens_scale	=	200;
+		slice_num		=	700;
+		intens_scale	=	700;
 		
 		value_low		=	0.0;	
-		value_high		=	1.0;
+		value_high		=	0.7;
 	}
 
 end

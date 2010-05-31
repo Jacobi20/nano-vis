@@ -136,7 +136,7 @@ EPxCachedMol	ENanoVis::LoadData( const char *path )
 		LOGF("points num : %d", grid->GetNumberOfPoints());
 
 		SAFE_RELEASE( vol );
-		LoadVolumeData( grid, &vol );
+		LoadVolumeData( grid, &vol, va("%s.%s", path, "raw") );
 		cmol->volume	=	vol;	
 	}		
 	
@@ -151,7 +151,7 @@ EPxCachedMol	ENanoVis::LoadData( const char *path )
 //
 //	ENanoVis::LoadVolumeData
 //
-void ENanoVis::LoadVolumeData( const OBGridData *grid, IDirect3DVolumeTexture9 **vol )
+void ENanoVis::LoadVolumeData( const OBGridData *grid, IDirect3DVolumeTexture9 **vol, const char *raw_file /* = NULL */ )
 {
 	*vol	=	NULL;
 	
@@ -164,6 +164,12 @@ void ENanoVis::LoadVolumeData( const OBGridData *grid, IDirect3DVolumeTexture9 *
 	
 	ASSERT(vol);
 	
+	FILE *fraw = NULL;
+	if (raw_file) {
+		fraw = fopen(raw_file, "wb");
+	}
+	
+	
 	D3DLOCKED_BOX box;
 	(*vol)->LockBox(0, &box, NULL, 0);
 	
@@ -174,12 +180,22 @@ void ENanoVis::LoadVolumeData( const OBGridData *grid, IDirect3DVolumeTexture9 *
 				for (int k=0; k<nz; k++) {
 				
 					double value = grid->GetValue(i+0, j+0, k+0);
+
+					unsigned char bin_value = 255 * Clamp<float>(value, 0,1);
+
+					if (fraw) {
+						fwrite(&bin_value, 1, 1, fraw);
+					}
 					
 					int pos	=	sizeof(float) * i + j * box.RowPitch + k * box.SlicePitch;
 					bits[pos/sizeof(float)] = value;
 				}
 			}
 		}		
+		
+	if (fraw) {
+		fclose(fraw);
+	}
 	
 	(*vol)->UnlockBox(0);
 }
