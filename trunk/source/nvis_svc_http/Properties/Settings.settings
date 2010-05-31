@@ -1,9 +1,0 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="nvis_svc_http.Properties" GeneratedClassName="Settings">
-  <Profiles />
-  <Settings>
-    <Setting Name="nvis_svc_http_EntryPointService_EntryPointService" Type="(Web Service URL)" Scope="Application">
-      <Value Profile="(Default)">http://exon/ServicesDev/EntryPointService.asmx</Value>
-    </Setting>
-  </Settings>
-</SettingsFile>
