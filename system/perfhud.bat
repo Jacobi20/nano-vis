@@ -1,1 +1,0 @@
-"C:\Program Files (x86)\NVIDIA Corporation\NVIDIA PerfHUD 6\NVPerfHUD.exe" run.exe
