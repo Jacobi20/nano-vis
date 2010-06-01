@@ -48,20 +48,27 @@ class ESciVis : public ISciVis {
 		
 		void					GetScreenSize		( uint &w, uint &h );
 		ID3DXEffect				*CompileEffect		( const char *path );
+		ID3DXMesh				*CreateMesh			( IPxTriMesh mesh );
+		ID3DXMesh				*LoadMesh			( const char *fspath, const char *hpath );
+		void					DrawMesh			( ID3DXMesh *mesh );
 		
 		void					InitRender			( void );
 		void					ShutdownRender		( void );
 		void					RenderView			( lua_State * L );
 		static int				SCI_RenderView		( lua_State * L );
+		static int				SCI_ReloadShaders	( lua_State * L );
 		
 	public:
 		IDirect3D9			*d3d;
 		IDirect3DDevice9	*d3ddev;
 		EVidState_s			vid_state;
 		IPxShell			shell;
+		IPxGeometryEngine	ge;
+		IPxFileSystem		fs;
 		
 	protected:
-		
+		ID3DXMesh			*ship;
+		ID3DXEffect			*shader_fx;
 		
 	protected:
 		void		InitDisplay			( void );

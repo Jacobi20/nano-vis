@@ -264,15 +264,6 @@ void ESciVis::GetScreenSize(uint &w, uint &h)
 
 
 //
-//	ESciVis::GetWndDescriptor
-//
-void *ESciVis::GetWndDescriptor(void)
-{
-	return (void*)vid_state.h_wnd;
-}
-
-
-//
 //	ESciVis::WndProc
 //
 LRESULT	ESciVis::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
