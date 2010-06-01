@@ -93,6 +93,7 @@ DLL_EXPORT void NavyInit( void )
 	
 	lua_register(L, "quit", quit);
 	
+	Linker()->LinkDLLGeometryEngine("geometry_engine.dll");
 	Linker()->LinkDLLSciVis("scivis.dll");
 	
 	Linker()->GetInputSystem()->SetTargetWindow( Linker()->GetSciVis()->GetWindowDescriptor() );
@@ -105,6 +106,7 @@ DLL_EXPORT void NavyInit( void )
 DLL_EXPORT void NavyShutdown( void )
 {
 	Linker()->LinkSciVis(NULL);
+	Linker()->LinkGeometryEngine(NULL);
 	
 	Linker()->GetConfig()->SaveConfig();
 
@@ -119,7 +121,7 @@ DLL_EXPORT void NavyFrame( uint dtime )
 {
 	IPxSciVis	nvis	=	Linker()->GetSciVis();
 	
-	const char *command = va("if NVisFrame then NVisFrame(%g); end", 0.001*(float)dtime);
+	const char *command = va("if SciVisFrame then SciVisFrame(%g); end", 0.001*(float)dtime);
 	
 	nvis->RenderSnapshot( command );
 	
