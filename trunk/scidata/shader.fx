@@ -71,7 +71,9 @@ float4 PSMainXRay(VS_OUTPUT input, uniform float4 color) : COLOR0
 	float n_dot_h 	= 0*pow(saturate(dot(h, normalize(input.normal) )), 64);
 	
 	//	grid :
-	float grid = length(pow(1-abs(2*frac(0.1*input.mpos)-1), 10));
+	float grid 	= pow(1-abs(2*frac(0.2*input.mpos)-1), 10).x
+				+ pow(1-abs(2*frac(0.2*input.mpos)-1), 10).y
+				+ pow(1-abs(2*frac(0.2*input.mpos)-1), 10).z;
 	
 	//
 	float4 result = 0;

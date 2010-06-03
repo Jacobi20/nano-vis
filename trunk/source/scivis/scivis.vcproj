@@ -203,6 +203,22 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Stuff"
+			>
+			<File
+				RelativePath=".\linear\generator.h"
+				>
+			</File>
+			<File
+				RelativePath=".\linear\linear.h"
+				>
+			</File>
+			<File
+				RelativePath=".\linear\matrix.h"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

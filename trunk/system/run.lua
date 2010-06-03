@@ -63,6 +63,7 @@ function SciVisFrame(dtime)
 	if state.dist_dec	then	state.dist	=	state.dist	/ 1.03; 	end;
                                                     
 	SCI_RenderView {
+		dtime			=	dtime;
 		yaw				=	state.yaw;
 		roll			=	state.roll;
 		pitch			=	state.pitch;

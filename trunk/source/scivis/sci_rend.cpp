@@ -24,6 +24,10 @@
 
 
 #include "sci_local.h"
+#include "linear/linear.h"
+#include "waves/waves.h"
+#include "waves/newave.h"
+
 
 /*-----------------------------------------------------------------------------
 	Nano vis :
@@ -42,7 +46,10 @@ void ESciVis::InitRender( void )
 
 	//	read file :	
 	ship		=	LoadMesh(SHIP_FS_PATH, SHIP_H_PATH);
+	sea			=	LoadMesh(SHIP_FS_PATH, "|sea");
 	shader_fx	=	CompileEffect(SHADER_FX);
+	
+	change_papams_to_base_reson();
 }
 
 
@@ -81,6 +88,14 @@ int ESciVis::SCI_ReloadShaders( lua_State * L )
 	return 0;
 }
 
+
+
+void ESciVis::Simulate( float dtime )
+{
+	dT = dtime * 10;
+	init_boukh_wave();
+}
+
 //
 //	ESciVis::RenderView
 //
@@ -90,35 +105,44 @@ void ESciVis::RenderView( lua_State * L )
 		return;
 	}
 
+	float	dtime			=	0.016;
 	float	yaw				=	0;
 	float	roll			=	0;
 	float	pitch			=	0;
 	float	distance		=	10;
+	LuaGetField( L, 1, "dtime",				dtime			);
 	LuaGetField( L, 1, "yaw",				yaw				);
 	LuaGetField( L, 1, "roll",				roll			);
 	LuaGetField( L, 1, "pitch",				pitch			);
 	LuaGetField( L, 1, "distance",			distance		);
+	
+	//
+	//	simulate :
+	//
+	Simulate(dtime);
 
 	//
 	//	setup view :
 	//
-	D3DXMATRIX	world;
+	D3DXMATRIX	world, ship_yaw, ship_roll, ship_pitch, ship_heaving;
 	D3DXMATRIX	view, view_i, rz, ry, rx, z_view_offset;
 	D3DXMATRIX	proj;
-	//D3DXMATRIX	z_up, z_up1, z_up2;
-	//D3DXMatrixIdentity(&z_up);
-	//D3DXMatrixRotationZ(&z_up1, -PI);
-	//D3DXMatrixRotationX(&z_up2,  PI);
-	//z_up = z_up1 * z_up2;
-						
+
+	//	setup world matrix :
+	D3DXMatrixIdentity		( &world );	
+	D3DXMatrixRotationZ		( &ship_yaw		,	deg2rad(Xi) );
+	D3DXMatrixRotationX		( &ship_roll	,	Q			);
+	D3DXMatrixRotationY		( &ship_pitch	,	F			);
+	D3DXMatrixTranslation	( &ship_heaving	,	0, 0,	E	); 
+	
+	world	=	ship_yaw * ship_roll * ship_pitch * ship_heaving;
+
+	//	setup view matrix :
 	D3DXMATRIX	z_up(	 0, 0, 1, 0,
 						 1, 0, 0, 0,
 						 0, 1, 0, 0,
 						 0, 0, 0, 1	);
-					
 	
-	//	setup view matrix :
-	D3DXMatrixIdentity		( &world );	
 	D3DXMatrixRotationX		( &rx,	deg2rad(roll) );
 	D3DXMatrixRotationY		( &ry,	deg2rad(pitch) );
 	D3DXMatrixRotationZ		( &rz,	deg2rad(yaw) );
@@ -149,7 +173,7 @@ void ESciVis::RenderView( lua_State * L )
 	HRCALL( shader_fx->SetMatrix("matrix_proj",	&proj) );
 
 	//
-	//	draw mesh :
+	//	draw ship :
 	//
 	uint n;
 	HRCALL( shader_fx->SetTechnique("solid_body") );
@@ -160,6 +184,26 @@ void ESciVis::RenderView( lua_State * L )
 		HRCALL( shader_fx->BeginPass(pass) );
 	
 		ship->DrawSubset(0);
+		
+		HRCALL( shader_fx->EndPass() );
+	}
+
+	HRCALL( shader_fx->End() );
+
+	//
+	//	draw sea :
+	//
+	D3DXMatrixIdentity		( &world );	
+	HRCALL( shader_fx->SetMatrix("matrix_world",	&world) );
+	
+	HRCALL( shader_fx->SetTechnique("solid_body") );
+	HRCALL( shader_fx->Begin(&n, 0) );
+	
+	for (uint pass=0; pass<n; pass++) {
+	
+		HRCALL( shader_fx->BeginPass(pass) );
+	
+		sea->DrawSubset(0);
 		
 		HRCALL( shader_fx->EndPass() );
 	}
