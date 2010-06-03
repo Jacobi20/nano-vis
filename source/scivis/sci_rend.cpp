@@ -45,8 +45,12 @@ void ESciVis::InitRender( void )
 	LOG_INIT("Scientific renderer");
 
 	//	read file :	
-	ship		=	LoadMesh(SHIP_FS_PATH, SHIP_H_PATH);
-	sea			=	LoadMesh(SHIP_FS_PATH, "|sea");
+	mesh_ship	=	LoadMesh(SHIP_FS_PATH, SHIP_H_PATH);
+	mesh_sea	=	LoadMesh(SHIP_FS_PATH, "|sea");
+	
+	ship		=	CreateMesh( mesh_ship );
+	sea			=	CreateMesh( mesh_sea );
+	
 	shader_fx	=	CompileEffect(SHADER_FX);
 	
 	change_papams_to_base_reson();
@@ -105,7 +109,7 @@ void ESciVis::RenderView( lua_State * L )
 		return;
 	}
 
-	float	dtime			=	0.016;
+	float	dtime			=	0.016f;
 	float	yaw				=	0;
 	float	roll			=	0;
 	float	pitch			=	0;

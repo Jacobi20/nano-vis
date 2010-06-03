@@ -49,8 +49,9 @@ class ESciVis : public ISciVis {
 		void					GetScreenSize		( uint &w, uint &h );
 		ID3DXEffect				*CompileEffect		( const char *path );
 		ID3DXMesh				*CreateMesh			( IPxTriMesh mesh );
-		ID3DXMesh				*LoadMesh			( const char *fspath, const char *hpath );
+		IPxTriMesh				LoadMesh			( const char *fspath, const char *hpath );
 		void					DrawMesh			( ID3DXMesh *mesh );
+		void					UpdateMeshVertices	( ID3DXMesh *d3dmesh, const IPxTriMesh trimesh );
 		
 		void					InitRender			( void );
 		void					ShutdownRender		( void );
@@ -69,6 +70,8 @@ class ESciVis : public ISciVis {
 		IPxFileSystem		fs;
 		
 	protected:
+		IPxTriMesh			mesh_ship;
+		IPxTriMesh			mesh_sea;
 		ID3DXMesh			*ship;
 		ID3DXMesh			*sea;
 		ID3DXEffect			*shader_fx;
