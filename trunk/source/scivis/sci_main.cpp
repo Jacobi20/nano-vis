@@ -168,21 +168,22 @@ ID3DXEffect *ESciVis::CompileEffect( const char *path )
 	Resource registering stuff :
 -----------------------------------------------------------------------------*/
 
+struct vertex_s {
+	EVec3   pos;
+	EVec3   normal;
+	EVec2   uv;
+};
+
+const D3DVERTEXELEMENT9 VERTEX_DECL_STATIC[] = {
+	{ 0, offsetof(vertex_s, pos			), D3DDECLTYPE_FLOAT3,	D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION,	0 },
+	{ 0, offsetof(vertex_s, normal		), D3DDECLTYPE_FLOAT3,	D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL,		0 },
+	{ 0, offsetof(vertex_s, uv			), D3DDECLTYPE_FLOAT2,	D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD,   0 },
+	D3DDECL_END()
+};
+
+
 ID3DXMesh *ESciVis::CreateMesh( IPxTriMesh mesh )
 {
-	struct vertex_s {
-		EVec3   pos;
-		EVec3   normal;
-		EVec2   uv;
-	};
-
-	const D3DVERTEXELEMENT9 VERTEX_DECL_STATIC[] = {
-		{ 0, offsetof(vertex_s, pos			), D3DDECLTYPE_FLOAT3,	D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION,	0 },
-		{ 0, offsetof(vertex_s, normal		), D3DDECLTYPE_FLOAT3,	D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL,		0 },
-		{ 0, offsetof(vertex_s, uv			), D3DDECLTYPE_FLOAT2,	D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD,   0 },
-		D3DDECL_END()
-	};
-
 	uint		 num_tris	=	mesh->GetTriangleNum();
 	uint		 num_verts	=	mesh->GetVertexNum();
 	ID3DXMesh	*d3dmesh		=	NULL;
@@ -228,7 +229,7 @@ ID3DXMesh *ESciVis::CreateMesh( IPxTriMesh mesh )
 //
 //	ESciVis::LoadMesh
 //
-ID3DXMesh *ESciVis::LoadMesh( const char *fspath, const char *hpath )
+IPxTriMesh ESciVis::LoadMesh( const char *fspath, const char *hpath )
 {
 	LOGF("Loading : %s %s", fspath, hpath);
 
@@ -252,7 +253,7 @@ ID3DXMesh *ESciVis::LoadMesh( const char *fspath, const char *hpath )
 		
 		IPxSceneNode snode = scene->GetNodeByPath(hpath);
 		
-		return CreateMesh( snode->GetMesh() );
+		return snode->GetMesh();
 		
 	} catch (exception &e) {
 		LOG_WARNING("failed to load: %s", e.what());
@@ -260,6 +261,50 @@ ID3DXMesh *ESciVis::LoadMesh( const char *fspath, const char *hpath )
 	}
 }
 
+
+//
+//	ESciVis::UpdateMeshVertices
+//
+void ESciVis::UpdateMeshVertices( ID3DXMesh *d3dmesh, const IPxTriMesh mesh )
+{
+	uint	num_tris	=	mesh->GetTriangleNum();
+	uint	num_verts	=	mesh->GetVertexNum();
+	
+	ASSERT( num_tris  == d3dmesh->GetNumFaces() );
+	ASSERT( num_verts == d3dmesh->GetNumVertices() );
+
+	vertex_s *vb_ptr = NULL;
+	//uint	 *ib_ptr = NULL;
+	
+	IDirect3DVertexBuffer9	*vb	=	NULL;	
+	//IDirect3DIndexBuffer9	*ib	=	NULL;	
+	d3dmesh->GetVertexBuffer( &vb );
+	//d3dmesh->GetIndexBuffer( &ib );
+	
+	HRCALL( vb->Lock(0, 0, (void**)&vb_ptr, D3DLOCK_DISCARD ) );
+	//HRCALL( ib->Lock(0, 0, (void**)&ib_ptr, D3DLOCK_DISCARD ) );
+	
+	for (uint i=0; i<num_verts; i++) {
+		EVertex v = mesh->GetVertex(i);
+		vb_ptr[i].pos		= v.position;
+		vb_ptr[i].normal	= v.normal;
+		vb_ptr[i].uv		= v.uv0;
+	}
+
+	//for (uint i=0; i<num_tris; i++) {
+	//	uint i0, i1, i2;
+	//	mesh->GetTriangle(i, i0, i1, i2);
+	//	ib_ptr[i*3 + 0] = i0;
+	//	ib_ptr[i*3 + 1] = i1;
+	//	ib_ptr[i*3 + 2] = i2;
+	//}
+
+	vb->Unlock();
+	//ib->Unlock();
+	
+	SAFE_RELEASE(vb);
+	//SAFE_RELEASE(ib);
+}
 
 //
 //	ESciVis::DrawMesh
