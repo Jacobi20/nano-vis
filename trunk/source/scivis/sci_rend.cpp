@@ -46,7 +46,7 @@ void ESciVis::InitRender( void )
 
 	//	read file :	
 	mesh_ship	=	LoadMesh(SHIP_FS_PATH, SHIP_H_PATH);
-	mesh_sea	=	LoadMesh(SHIP_FS_PATH, "|sea");
+	mesh_sea	=	LoadMesh(SHIP_FS_PATH, "|sea2d");
 	
 	ship		=	CreateMesh( mesh_ship );
 	sea			=	CreateMesh( mesh_sea );
@@ -93,12 +93,30 @@ int ESciVis::SCI_ReloadShaders( lua_State * L )
 }
 
 
+float wave_pos2D_x(float x)
+{
+	float t = iterat;
+	
+	cf = 15.0f/6.0f;
+	x *= cf;
+
+	float S=0.0;
+	for(int i=0; i<NN; i++) {
+		float W	=	Wmin + i * dW;
+		float K	=	W * W / g;//g==9.81f
+		S += A_2D[i] * cos(K*x - W*t + Fi_2D[i]);		
+	}
+	return S;
+}
+
 
 void ESciVis::Simulate( float dtime )
 {
 	dT = dtime * 10;
 	init_boukh_wave();
 }
+
+
 
 //
 //	ESciVis::RenderView
@@ -134,9 +152,9 @@ void ESciVis::RenderView( lua_State * L )
 
 	//	setup world matrix :
 	D3DXMatrixIdentity		( &world );	
-	D3DXMatrixRotationZ		( &ship_yaw		,	deg2rad(Xi) );
+	D3DXMatrixRotationZ		( &ship_yaw		,	deg2rad(Xi+180) );
 	D3DXMatrixRotationX		( &ship_roll	,	Q			);
-	D3DXMatrixRotationY		( &ship_pitch	,	F			);
+	D3DXMatrixRotationY		( &ship_pitch	,	-F			);
 	D3DXMatrixTranslation	( &ship_heaving	,	0, 0,	E	); 
 	
 	world	=	ship_yaw * ship_roll * ship_pitch * ship_heaving;
@@ -197,6 +215,16 @@ void ESciVis::RenderView( lua_State * L )
 	//
 	//	draw sea :
 	//
+	for (uint i=0; i<mesh_sea->GetVertexNum(); i++) {
+		EVertex		v = mesh_sea->GetVertex(i);
+		
+		v.position.z	=	wave_pos2D_x(v.position.x);
+		
+		mesh_sea->SetVertex(i, v);
+	}
+	
+	UpdateMeshVertices( sea, mesh_sea );
+	
 	D3DXMatrixIdentity		( &world );	
 	HRCALL( shader_fx->SetMatrix("matrix_world",	&world) );
 	
