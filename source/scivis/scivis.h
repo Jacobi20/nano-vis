@@ -58,6 +58,8 @@ class ESciVis : public ISciVis {
 		static int				SCI_RenderView		( lua_State * L );
 		static int				SCI_ReloadShaders	( lua_State * L );
 		
+		void					Simulate			( float dtime );
+		
 	public:
 		IDirect3D9			*d3d;
 		IDirect3DDevice9	*d3ddev;
@@ -68,6 +70,7 @@ class ESciVis : public ISciVis {
 		
 	protected:
 		ID3DXMesh			*ship;
+		ID3DXMesh			*sea;
 		ID3DXEffect			*shader_fx;
 		
 	protected:
