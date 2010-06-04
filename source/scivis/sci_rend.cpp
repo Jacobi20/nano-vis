@@ -54,6 +54,8 @@ void ESciVis::InitRender( void )
 	shader_fx	=	CompileEffect(SHADER_FX);
 	
 	change_papams_to_base_reson();
+	
+	Xi	=	90;
 }
 
 
@@ -132,12 +134,15 @@ void ESciVis::RenderView( lua_State * L )
 	float	roll			=	0;
 	float	pitch			=	0;
 	float	distance		=	10;
+	float	ship_course		=	0;
 	LuaGetField( L, 1, "dtime",				dtime			);
 	LuaGetField( L, 1, "yaw",				yaw				);
 	LuaGetField( L, 1, "roll",				roll			);
 	LuaGetField( L, 1, "pitch",				pitch			);
 	LuaGetField( L, 1, "distance",			distance		);
 	
+	LuaGetField( L, 1, "ship_course",		ship_course		);
+	Xi	=	ship_course;
 	//
 	//	simulate :
 	//
@@ -157,7 +162,7 @@ void ESciVis::RenderView( lua_State * L )
 	D3DXMatrixRotationY		( &ship_pitch	,	-F			);
 	D3DXMatrixTranslation	( &ship_heaving	,	0, 0,	E	); 
 	
-	world	=	ship_yaw * ship_roll * ship_pitch * ship_heaving;
+	world	=	ship_roll * ship_pitch * ship_yaw * ship_heaving;
 
 	//	setup view matrix :
 	D3DXMATRIX	z_up(	 0, 0, 1, 0,
@@ -222,6 +227,7 @@ void ESciVis::RenderView( lua_State * L )
 		
 		mesh_sea->SetVertex(i, v);
 	}
+	mesh_sea->ComputeNormals();
 	
 	UpdateMeshVertices( sea, mesh_sea );
 	

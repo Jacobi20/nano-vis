@@ -48,10 +48,13 @@ function PitchInc() state.pitch_inc		=	false; end
 function PitchDec() state.pitch_dec		=	false; end
 function DistInc()  state.dist_inc		=	false; end
 function DistDec()  state.dist_dec		=	false; end
+
+game_time = 0;
                     
 function SciVisFrame(dtime)
 
 	local	rotation = 90;
+	game_time = game_time + dtime;
 
 	if state.yaw_inc	then	state.yaw	=	state.yaw 	+ dtime * rotation; end;
 	if state.yaw_dec	then	state.yaw	=	state.yaw 	- dtime * rotation; end;
@@ -63,6 +66,7 @@ function SciVisFrame(dtime)
 	if state.dist_dec	then	state.dist	=	state.dist	/ 1.03; 	end;
                                                     
 	SCI_RenderView {
+		ship_course		=	0;	--45*( math.sin(game_time*0.2) + 0.7*math.sin(game_time*0.3));
 		dtime			=	dtime;
 		yaw				=	state.yaw;
 		roll			=	state.roll;
