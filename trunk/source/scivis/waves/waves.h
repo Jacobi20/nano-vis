@@ -18,8 +18,8 @@ const int		MAXGRID =	80;			//Размер сетки
 const float		ETA_min	=	-Pi/2.	;
 const float		ETA_max	=	Pi/2.	;
 const float		dETA	=	(ETA_max-ETA_min)/(float)NNet;
-const float		L		=	100.0f	;	//Длина
-const float		B		=	15.0f	;	//Ширина
+const float		L		=	50.0f	;	//Длина
+const float		B		=	7.0f	;	//Ширина
 const int		Sm		=	81.0f	;	//Площадь шпангоута
 const float		V		=	0 /*14.0f*/  ;  //Скорость судна, (m/s)
 

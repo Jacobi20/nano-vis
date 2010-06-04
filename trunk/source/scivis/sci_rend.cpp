@@ -33,7 +33,7 @@
 	Nano vis :
 -----------------------------------------------------------------------------*/
 
-#define SHIP_FS_PATH		"../scidata/boat.esx"
+#define SHIP_FS_PATH		"../scidata/uboat.esx"
 #define SHIP_H_PATH			"|boat1"
 #define SHADER_FX			"../scidata/shader.fx"
 
