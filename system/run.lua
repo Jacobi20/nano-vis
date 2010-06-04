@@ -66,7 +66,7 @@ function SciVisFrame(dtime)
 	if state.dist_dec	then	state.dist	=	state.dist	/ 1.03; 	end;
                                                     
 	SCI_RenderView {
-		ship_course		=	0;	--45*( math.sin(game_time*0.2) + 0.7*math.sin(game_time*0.3));
+		ship_course		=	45*( math.sin(game_time*0.02) + 0.7*math.sin(game_time*0.03));
 		dtime			=	dtime;
 		yaw				=	state.yaw;
 		roll			=	state.roll;
