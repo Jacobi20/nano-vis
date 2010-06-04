@@ -184,6 +184,10 @@
 				RelativePath=".\sci_vid_init.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\waves\waves.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -216,6 +220,10 @@
 			</File>
 			<File
 				RelativePath=".\linear\matrix.h"
+				>
+			</File>
+			<File
+				RelativePath=".\waves\newave.h"
 				>
 			</File>
 		</Filter>
