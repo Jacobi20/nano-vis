@@ -29,6 +29,22 @@
 	Nano vis :
 -----------------------------------------------------------------------------*/
 
+struct vertex_s {
+	EVec3   pos;
+	EVec3   normal;
+	EVec4	color;
+	EVec2   uv;
+};
+
+const D3DVERTEXELEMENT9 VERTEX_DECL_STATIC[] = {
+	{ 0, offsetof(vertex_s, pos			), D3DDECLTYPE_FLOAT3,	D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION,	0 },
+	{ 0, offsetof(vertex_s, normal		), D3DDECLTYPE_FLOAT3,	D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL,		0 },
+	{ 0, offsetof(vertex_s, color		), D3DDECLTYPE_FLOAT4,	D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR	,   0 },
+	{ 0, offsetof(vertex_s, uv			), D3DDECLTYPE_FLOAT2,	D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD,   0 },
+	D3DDECL_END()
+};
+
+
 struct  EVidState_s	{
 		bool	fullscr;
 		int		mode;
@@ -77,9 +93,11 @@ class ESciVis : public ISciVis {
 		ID3DXEffect			*shader_fx;
 
 		//	PhysX stuff :		
-		void				InitPhysX	( void );
+		void				InitPhysX		( void );
 		void				ShutdownPhysX	( void );
-		void				FramePhysX	( float dtime );
+		void				FramePhysX		( float dtime );
+		void				DebugPhysX		( const D3DXMATRIX &w, const D3DXMATRIX &v, const D3DXMATRIX &p );
+		NxActor			*	CreatePhysBox	( float sx, float sy, float sz, const EVec4 &pos );
 		
 		ErrorStream			error_stream;
 		EAllocator			allocator;

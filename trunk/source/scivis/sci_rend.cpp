@@ -55,6 +55,8 @@ void ESciVis::InitRender( void )
 	
 	change_papams_to_base_reson();
 	
+	ship_body	=	CreatePhysBox( 100, 10, 10, EVec4(0,0, 10,1));
+	
 	Xi	=	90;
 }
 
@@ -268,5 +270,7 @@ void ESciVis::RenderView( lua_State * L )
 	}
 
 	HRCALL( shader_fx->End() );
+	
+	DebugPhysX(world, view, proj);
 }
 
