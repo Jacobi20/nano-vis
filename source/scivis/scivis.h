@@ -75,6 +75,18 @@ class ESciVis : public ISciVis {
 		ID3DXMesh			*ship;
 		ID3DXMesh			*sea;
 		ID3DXEffect			*shader_fx;
+
+		//	PhysX stuff :		
+		void				InitPhysX	( void );
+		void				ShutdownPhysX	( void );
+		void				FramePhysX	( float dtime );
+		
+		ErrorStream			error_stream;
+		EAllocator			allocator;
+		NxPhysicsSDK		*nx;
+		NxScene				*nx_scene;
+		NxCookingInterface	*nx_cook;
+		NxActor				*ship_body;
 		
 	protected:
 		void		InitDisplay			( void );
@@ -94,3 +106,4 @@ class ESciVis : public ISciVis {
 	static void		ListDisplayModes_f	( ESciVis *self, int argc, char **argv );
 	static LRESULT	WndProc				( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	};
+

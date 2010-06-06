@@ -112,6 +112,25 @@ float wave_pos2D_x(float x)
 }
 
 
+float wave_pos2D_x_fast(float x)
+{
+	float t = iterat;
+	
+	cf = 15.0f/6.0f;
+	x *= cf;
+	
+	uint stride = 1;
+
+	float S=0.0;
+	for(int i=0; i<NN; i+=stride) {
+		float W	=	Wmin + i * dW;
+		float K	=	W * W / g;//g==9.81f
+		S += (float)stride * A_2D[i] * cos(K*x - W*t + Fi_2D[i]);		
+	}
+	return S;
+}
+
+
 void ESciVis::Simulate( float dtime )
 {
 	dT = dtime * 10;
@@ -146,6 +165,8 @@ void ESciVis::RenderView( lua_State * L )
 	//
 	//	simulate :
 	//
+	FramePhysX(dtime);
+	
 	Simulate(dtime);
 
 	//
@@ -223,7 +244,7 @@ void ESciVis::RenderView( lua_State * L )
 	for (uint i=0; i<mesh_sea->GetVertexNum(); i++) {
 		EVertex		v = mesh_sea->GetVertex(i);
 		
-		v.position.z	=	wave_pos2D_x(v.position.x);
+		v.position.z	=	wave_pos2D_x_fast(v.position.x);
 		
 		mesh_sea->SetVertex(i, v);
 	}

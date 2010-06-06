@@ -22,47 +22,26 @@
     THE SOFTWARE.
 */
 
-
 #pragma once
 
+
 /*-----------------------------------------------------------------------------
-	Nano vis :
+	Allocator :
 -----------------------------------------------------------------------------*/
 
-#define NOMINMAX
+#undef malloc
+#undef realloc
+#undef free
 
-#include "../core/core.h"
-
-#ifdef _DEBUG
-#	define D3D_DEBUG_INFO
-#endif
-
-#define D3D_DEBUG_INFO
-
-#include <d3d9.h>
-#include <d3dx9.h>
-
-#define	WIN32_LEAN_AND_MEAN
-#define	VC_EXTRALEAN
-#include <windows.h>
-
-#pragma comment (lib, "d3dxof.lib")
-#pragma comment (lib, "dxguid.lib")
-#pragma comment (lib, "d3dx9.lib")
-#pragma comment (lib, "d3d9.lib")
-#pragma comment (lib, "winmm.lib")
-
-
-#define CHECK_CRITICAL(expr) if (FAILED(expr)) { SYS_Error(ERR_FATAL, va("%s() : %s failed", __FUNCTION__, #expr)); }
-
-#define SAFE_RELEASE(obj) if (obj) { obj->Release(); obj = NULL; }
-
-
-#include <NxPhysics.h>
-#include "nxaux/error_stream.h"
-#include "nxaux/stream.h"
-#include "nxaux/allocator.h"
-
-
-#include "sci_interfaces.h"
-#include "scivis.h"
+class EAllocator : public NxUserAllocator  { 
+	public:   
+						EAllocator		( void );
+						~EAllocator		( void );
+		virtual void	*malloc			( NxU32 size );
+		virtual void	*mallocDEBUG	( NxU32 size, const char *fileName, int line );
+		virtual void	*realloc		( void * memory, NxU32 size );
+		virtual void	free			( void * memory );
+	
+	private:
+		volatile LONG	num_allocs;
+	};

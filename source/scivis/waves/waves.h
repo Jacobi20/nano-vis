@@ -308,18 +308,20 @@ float Pitching (float F,float  DF,float  x,float  t)//2D
 }//Pitching
 
 //=========Шаг метода Рунге-Кутта=========
-void RK_Step(float x,	float t)
-{//RK_Step
+void RK_Step( float x, float t )
+{
 	float dX=/*dT*V*cos(Xi/57.3f)*//*grid_step*/0 ;
-	//===Бортовая качка===
-	float K1=Rolling (Q, DQ, x, t)*dT ;
-	float K2=Rolling (Q+DQ*dT/2.0f, DQ+K1/2.0f, x+dX/2 ,t+dT/2.0f)*dT ;
-	float K3=Rolling (Q+DQ*dT/2.0f+K1*dT/4.0f, DQ+K2/2.0f, x+dX/2, t+dT/2.0f)*dT ;
-	float K4=Rolling (Q+DQ*dT+K2*dT/2.0f, DQ+K3, t+dT, x+dX)*dT ;
+
+	float K1=Rolling (Q,							DQ,				x,			t			) * dT ;
+	float K2=Rolling (Q + DQ*dT/2.0f,				DQ + K1/2.0f,	x + dX/2,	t + dT/2.0f	) * dT ;
+	float K3=Rolling (Q + DQ*dT/2.0f + K1*dT/4.0f,	DQ + K2/2.0f,	x + dX/2,	t + dT/2.0f	) * dT ;
+	float K4=Rolling (Q + DQ*dT + K2*dT/2.0f,		DQ + K3,		t + dT,		x + dX		) * dT ;
+	
 	//==Вычисление текущего значения функции==
 	Q=Q + DQ*dT + (K1 + K2 + K3)*dT/6.0f ;//Q
 	//==Вычисление текущего значения производной==
 	DQ=DQ + (K1 + 2.0f*K2 + 2.0f*K3 + K4)/6.0f ;//Q'
+
 	//===Вертикальная качка и килевая качка===
 	K1=Heaving(E, DE, F, DF, x, t)*dT ;
 	float M1=Pitching (F, DF, x, t)*dT ;
@@ -342,7 +344,7 @@ void RK_Step(float x,	float t)
 	//==Вычисление текущего значения функции==
 	E += DE*dT + (K1 + K2 + K3)*dT/6.0f ;
 	F += DF*dT + (M1 + M2 + M3)*dT/6.0f ;
-}//RK_Step
+}
 
 //=========Координаты узлов сетки трёхмерного воления==========
 void wave_pos3D(Matrix& pos,float t)
