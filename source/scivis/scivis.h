@@ -77,6 +77,8 @@ class ESciVis : public ISciVis {
 		
 		void					Simulate			( float dtime );
 		
+		void					UpdateBoat			( float dtime );
+		
 	public:
 		IDirect3D9			*d3d;
 		IDirect3DDevice9	*d3ddev;
@@ -97,7 +99,10 @@ class ESciVis : public ISciVis {
 		void				ShutdownPhysX	( void );
 		void				FramePhysX		( float dtime );
 		void				DebugPhysX		( const D3DXMATRIX &w, const D3DXMATRIX &v, const D3DXMATRIX &p );
-		NxActor			*	CreatePhysBox	( float sx, float sy, float sz, const EVec4 &pos );
+		NxActor			*	CreatePhysBox	( float sx, float sy, float sz, const EVec4 &pos, const EQuat &orient, float mass );
+		
+		void				DebugLine		( EVec3 p0, EVec3 p1, EVec4 color );
+		void				DebugLine		( NxVec3 p0, NxVec3 p1, EVec4 color );
 		
 		ErrorStream			error_stream;
 		EAllocator			allocator;

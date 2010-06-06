@@ -25,10 +25,10 @@ state = {
 	pitch_dec	=	false;
 	dist_inc	=	false;
 	dist_dec	=	false;
-	yaw		=	0;
+	yaw		=	90;
 	roll	=	0;
-	pitch	=	0;
-	dist	=	500;
+	pitch	=	10;
+	dist	=	100;
 }   
 
 function _YawInc()   state.yaw_inc		=	true; end

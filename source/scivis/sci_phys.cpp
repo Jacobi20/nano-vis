@@ -52,7 +52,7 @@ void ESciVis::InitPhysX( void )
 
     // Create the scene
     NxSceneDesc sceneDesc;
-    sceneDesc.gravity               = NxVec3(0,0,-9.8f);
+    sceneDesc.gravity               = NxVec3(0,0,0);
 	sceneDesc.simType				= NX_SIMULATION_SW;
     nx_scene = nx->createScene(sceneDesc);	
 	
@@ -83,7 +83,6 @@ void ESciVis::ShutdownPhysX( void )
 	if (nx)  nx->release();
 }
 
-
 //
 //	ESciVis::FramePhysX
 //
@@ -99,22 +98,30 @@ void ESciVis::FramePhysX( float dtime )
 //
 //
 //
-NxActor	* ESciVis::CreatePhysBox( float sx, float sy, float sz, const EVec4 &pos )
+NxActor	* ESciVis::CreatePhysBox( float sx, float sy, float sz, const EVec4 &pos, const EQuat &orient, float mass )
 {
 	NxActorDesc actorDesc;
 	NxBodyDesc	bodyDesc;
+	
+	NxQuat	q;
+	q.x	= orient.x;
+	q.y	= orient.y;
+	q.z	= orient.z;
+	q.w	= orient.w;
 
 	//
 	NxBoxShapeDesc boxDesc;
 	boxDesc.dimensions	= NxVec3(sx/2, sy/2, sz/2);
 	actorDesc.shapes.pushBack(&boxDesc);
 
-	actorDesc.density		= 1.0f;
 	actorDesc.body			= &bodyDesc;
 	actorDesc.globalPose.t	= NxVec3(pos.x, pos.y, pos.z);
+	actorDesc.globalPose.M	= q;
+	
+	bodyDesc.mass			= mass;
 
 	NxActor *pActor = nx_scene->createActor(actorDesc);
-	assert(pActor);
+	ASSERT(pActor);
 
 	return pActor;
 }
@@ -131,6 +138,8 @@ static EVec4	Bytes2Color(uint bytes)
 	return c;
 }
 
+
+
 //
 //	ESciVis::DebugPhysX
 //
@@ -143,7 +152,7 @@ void ESciVis::DebugPhysX( const D3DXMATRIX &w, const D3DXMATRIX &v, const D3DXMA
 	const NxDebugRenderable *dbg_rend = nx_scene->getDebugRenderable();
 
 	uint n;
-	HRCALL( shader_fx->SetTechnique("solid_body") );
+	HRCALL( shader_fx->SetTechnique("debug") );
 	HRCALL( shader_fx->Begin(&n, 0) );
 	
 	for (uint pass=0; pass<n; pass++) {
@@ -170,6 +179,51 @@ void ESciVis::DebugPhysX( const D3DXMATRIX &w, const D3DXMATRIX &v, const D3DXMA
 			
 			lines++;            
 		}            
+		
+		HRCALL( shader_fx->EndPass() );
+	}
+
+	HRCALL( shader_fx->End() );
+	
+	SAFE_RELEASE( line_decl );
+}
+
+
+
+void ESciVis::DebugLine( NxVec3 p0, NxVec3 p1, EVec4 color )
+{
+	DebugLine( EVec3(p0.x, p0.y, p0.z), EVec3(p1.x, p1.y, p1.z), color );
+}
+
+//
+//	ESciVis::DebugLine
+//
+void ESciVis::DebugLine( EVec3 p0, EVec3 p1, EVec4 color )
+{
+	IDirect3DVertexDeclaration9 *line_decl	=	NULL;
+	HRCALL( d3ddev->CreateVertexDeclaration( VERTEX_DECL_STATIC, &line_decl ) );
+	HRCALL( d3ddev->SetVertexDeclaration( line_decl ) );
+
+	uint n;
+	HRCALL( shader_fx->SetTechnique("debug") );
+	HRCALL( shader_fx->Begin(&n, 0) );
+	
+	for (uint pass=0; pass<n; pass++) {
+	
+		HRCALL( shader_fx->BeginPass(pass) );
+
+		vertex_s verts[2];
+		
+		verts[0].normal	=	EVec3(0,0,0);
+		verts[0].pos	=	p0;
+		verts[0].color	=	color;
+		verts[0].uv		=	EVec2(0,0);
+		verts[1].normal	=	EVec3(0,0,0);
+		verts[1].pos	=	p1;
+		verts[1].color	=	color;
+		verts[1].uv		=	EVec2(0,0);
+		
+		HRCALL( d3ddev->DrawPrimitiveUP(D3DPT_LINELIST, 1, &verts, sizeof(vertex_s)) );
 		
 		HRCALL( shader_fx->EndPass() );
 	}

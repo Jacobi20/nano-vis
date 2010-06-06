@@ -15,6 +15,7 @@ float4		obj_color		;
 struct VS_INPUT {
 	float3 	pos 	: POSITION0;
 	float3	normal	: NORMAL;
+	float4	color	: COLOR;
 };
 
 struct VS_OUTPUT {
@@ -46,7 +47,7 @@ VS_OUTPUT VSMain( VS_INPUT input )
 	output.mpos		=	float4(input.pos.xyz, 1);
 	output.pos		=	pos;
 	output.normal	=	normal;
-	output.color	=	obj_color;
+	output.color	=	input.color;
 	
 	return output;
 }

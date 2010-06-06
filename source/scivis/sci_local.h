@@ -29,7 +29,14 @@
 	Nano vis :
 -----------------------------------------------------------------------------*/
 
+//	PhysX stuff :
 #define NOMINMAX
+#include "NxPhysics.h"
+
+//	global.h :
+#undef _malloca
+#include "../core/core.h"
+
 
 #include "../core/core.h"
 
@@ -58,7 +65,6 @@
 #define SAFE_RELEASE(obj) if (obj) { obj->Release(); obj = NULL; }
 
 
-#include <NxPhysics.h>
 #include "nxaux/error_stream.h"
 #include "nxaux/stream.h"
 #include "nxaux/allocator.h"
