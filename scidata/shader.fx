@@ -95,9 +95,26 @@ float4 PSColor(VS_OUTPUT input, uniform float4 color) : COLOR0 {
 	return color;
 }
 
+float4 PSMain(VS_OUTPUT input) : COLOR0 {
+	return input.color;
+}
+
 /*-----------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------*/
+
+technique debug {
+	pass p0 {
+		ZEnable 			= 	TRUE;
+		ZWriteEnable		= 	FALSE;
+		CullMode 			= 	NONE;
+		AlphaBlendEnable	= 	FALSE;
+		ColorWriteEnable	=	RED|GREEN|BLUE;
+		VertexShader 		= 	compile vs_2_0 VSMain();
+		PixelShader 		= 	compile ps_2_0 PSMain();
+	}
+}
+
 
 technique solid_body
 {

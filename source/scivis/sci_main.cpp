@@ -51,8 +51,8 @@ ESciVis::ESciVis( void )
 	lua_register( L, "SCI_RenderView",		SCI_RenderView );
 	lua_register( L, "SCI_ReloadShaders",	SCI_ReloadShaders );
 	
-	InitRender();
 	InitPhysX();
+	InitRender();
 		
 	LOG_SPLIT("");
 }
@@ -65,8 +65,8 @@ ESciVis::~ESciVis( void )
 {
 	LOG_SPLIT("SciVis shutting down");
 	
-	ShutdownPhysX();
 	ShutdownRender();
+	ShutdownPhysX();
 	
 	ShutdownDirect3D();
 	ShutdownDisplay();
@@ -170,20 +170,6 @@ ID3DXEffect *ESciVis::CompileEffect( const char *path )
 	Resource registering stuff :
 -----------------------------------------------------------------------------*/
 
-struct vertex_s {
-	EVec3   pos;
-	EVec3   normal;
-	EVec2   uv;
-};
-
-const D3DVERTEXELEMENT9 VERTEX_DECL_STATIC[] = {
-	{ 0, offsetof(vertex_s, pos			), D3DDECLTYPE_FLOAT3,	D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION,	0 },
-	{ 0, offsetof(vertex_s, normal		), D3DDECLTYPE_FLOAT3,	D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL,		0 },
-	{ 0, offsetof(vertex_s, uv			), D3DDECLTYPE_FLOAT2,	D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD,   0 },
-	D3DDECL_END()
-};
-
-
 ID3DXMesh *ESciVis::CreateMesh( IPxTriMesh mesh )
 {
 	uint		 num_tris	=	mesh->GetTriangleNum();
@@ -208,6 +194,7 @@ ID3DXMesh *ESciVis::CreateMesh( IPxTriMesh mesh )
 		vb_ptr[i].pos		= v.position;
 		vb_ptr[i].normal	= v.normal;
 		vb_ptr[i].uv		= v.uv0;
+		vb_ptr[i].color		= v.color0;
 	}
 
 	for (uint i=0; i<num_tris; i++) {
