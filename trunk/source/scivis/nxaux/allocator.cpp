@@ -23,46 +23,46 @@
 */
 
 
-#pragma once
+#include "../sci_local.h"
 
 /*-----------------------------------------------------------------------------
-	Nano vis :
+	Allocator :
 -----------------------------------------------------------------------------*/
 
-#define NOMINMAX
+EAllocator::EAllocator( void )
+{
+	LOG_INIT("PhysX allocator");
+	num_allocs = 0;
+}
 
-#include "../core/core.h"
+EAllocator::~EAllocator( void )
+{
+	LOG_SHUTDOWN("PhysX allocator");
+	if (num_allocs!=0) {
+		LOG_WARNING(va("PhysX allocator: %d blocks are not freed", num_allocs));
+	}	
+}
 
-#ifdef _DEBUG
-#	define D3D_DEBUG_INFO
-#endif
+void *EAllocator::malloc( NxU32 size )
+{
+	InterlockedIncrement(&num_allocs);
+	return ::malloc(size);
+	
+}
 
-#define D3D_DEBUG_INFO
+void *EAllocator::mallocDEBUG( NxU32 size,const char *fileName, int line )
+{
+	InterlockedIncrement(&num_allocs);
+	return ::malloc(size);
+}
 
-#include <d3d9.h>
-#include <d3dx9.h>
+void *EAllocator::realloc( void * memory, NxU32 size )
+{
+	return ::realloc(memory, size);
+}
 
-#define	WIN32_LEAN_AND_MEAN
-#define	VC_EXTRALEAN
-#include <windows.h>
-
-#pragma comment (lib, "d3dxof.lib")
-#pragma comment (lib, "dxguid.lib")
-#pragma comment (lib, "d3dx9.lib")
-#pragma comment (lib, "d3d9.lib")
-#pragma comment (lib, "winmm.lib")
-
-
-#define CHECK_CRITICAL(expr) if (FAILED(expr)) { SYS_Error(ERR_FATAL, va("%s() : %s failed", __FUNCTION__, #expr)); }
-
-#define SAFE_RELEASE(obj) if (obj) { obj->Release(); obj = NULL; }
-
-
-#include <NxPhysics.h>
-#include "nxaux/error_stream.h"
-#include "nxaux/stream.h"
-#include "nxaux/allocator.h"
-
-
-#include "sci_interfaces.h"
-#include "scivis.h"
+void EAllocator::free( void * memory )
+{
+	InterlockedDecrement(&num_allocs);
+	return ::free(memory);
+}

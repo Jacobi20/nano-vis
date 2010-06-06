@@ -52,6 +52,7 @@ ESciVis::ESciVis( void )
 	lua_register( L, "SCI_ReloadShaders",	SCI_ReloadShaders );
 	
 	InitRender();
+	InitPhysX();
 		
 	LOG_SPLIT("");
 }
@@ -64,6 +65,7 @@ ESciVis::~ESciVis( void )
 {
 	LOG_SPLIT("SciVis shutting down");
 	
+	ShutdownPhysX();
 	ShutdownRender();
 	
 	ShutdownDirect3D();
