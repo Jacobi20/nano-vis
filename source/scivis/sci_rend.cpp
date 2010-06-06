@@ -40,10 +40,10 @@
 const float	SHIP_LENGTH		=	105;		//	m
 const float	SHIP_WIDTH		=	6;			//	m
 const float	SHIP_HEIGHT		=	7;			//	m
-const float	SHIP_MASS		=	2200000;	//	kg
-const float SHIP_CM_OFFSET	=	-1;
+const float	SHIP_MASS		=	2000000;	//	kg
+const float SHIP_CM_OFFSET	=	-0.7;
 const float WATER_DENSITY	=	1000;		//	kg/m^3
-const float SHIP_CX			=	0.4f;
+const float SHIP_CX			=	0.3f;
 
 
 //
@@ -111,25 +111,27 @@ int ESciVis::SCI_ReloadShaders( lua_State * L )
 
 
 float WaveFormZ(float x, float t) {
-	x*=2;
+	x*=3;
+	t/=4;
 	float S=0.0;
 	for(int i=0; i<NN; i++) {
 		float W	=	Wmin + i * dW;
 		float K	=	W * W / g;//g==9.81f
 		S += A_2D[i] * cos(K*x - W*t + Fi_2D[i]);		
 	}
-	return 0.5 * S;
+	return 0.7 * S;
 }
 
 float WaveFormX(float x, float t) {
-	x*=2;
+	x*=3;
+	t/=4;
 	float S=0.0;
 	for(int i=0; i<NN; i++) {
 		float W	=	Wmin + i * dW;
 		float K	=	W * W / g;//g==9.81f
 		S += A_2D[i] * sin(K*x - W*t + Fi_2D[i]);		
 	}
-	return 0.5 * S;
+	return 0.7 * S;
 }
 
 float wave_pos2D_x(float x)
@@ -271,7 +273,7 @@ void ESciVis::UpdateBoat( float dtime )
 				
 				float wh = wave_pos2D_x(pos.x);		//	wave height
 				
-				NxVec3	pvel = ship_body->getPointVelocity( NxVec3(pos.x, pos.y, pos.z) );
+				NxVec3	pvel = ship_body->getPointVelocity( NxVec3(pos.x, pos.y, pos.z) ) - wave_vel2D_x(pos.x);
 
 				bool skip_hydro_dynamic = false;
 				if (j==1 && k==1 && !(i==0 || i==FEM_X-1)) skip_hydro_dynamic = true;
@@ -286,7 +288,7 @@ void ESciVis::UpdateBoat( float dtime )
 				
 				
 				if (!skip_hydro_dynamic) {
-					fx = FEM_HydroDynamicForce(pvel + wave_vel2D_x(pos.x), pos, dx, dy, dz, wh, normal);		//	dynamic force
+					fx = FEM_HydroDynamicForce(pvel, pos, dx, dy, dz, wh, normal);		//	dynamic force
 				}
 				
 				
