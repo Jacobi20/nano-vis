@@ -27,7 +27,7 @@ state = {
 	dist_dec	=	false;
 	yaw		=	90;
 	roll	=	0;
-	pitch	=	10;
+	pitch	=	5;
 	dist	=	100;
 }   
 
@@ -53,7 +53,7 @@ game_time = 0;
                     
 function SciVisFrame(dtime)
 
-	local	rotation = 90;
+	local	rotation = 60;
 	game_time = game_time + dtime;
 
 	if state.yaw_inc	then	state.yaw	=	state.yaw 	+ dtime * rotation; end;

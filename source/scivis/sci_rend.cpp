@@ -43,7 +43,7 @@ const float	SHIP_HEIGHT		=	7;			//	m
 const float	SHIP_MASS		=	2200000;	//	kg
 const float SHIP_CM_OFFSET	=	-1;
 const float WATER_DENSITY	=	1000;		//	kg/m^3
-const float SHIP_CX			=	0.6;
+const float SHIP_CX			=	0.4f;
 
 
 //
@@ -65,7 +65,7 @@ void ESciVis::InitRender( void )
 	change_papams_to_base_reson();
 	
 	EQuat		q	=	QuatRotationAxis( deg2rad(20), EVec3(1,1,1));
-	ship_body		=	CreatePhysBox( SHIP_LENGTH, SHIP_WIDTH, SHIP_HEIGHT, EVec4(0,0, 30,1), q, SHIP_MASS);
+	ship_body		=	CreatePhysBox( SHIP_LENGTH, SHIP_WIDTH, SHIP_HEIGHT, EVec4(0,0, 50,1), q, SHIP_MASS);
 	
 	Xi	=	90;
 }
@@ -140,7 +140,7 @@ float wave_pos2D_x(float x)
 NxVec3 wave_vel2D_x(float x)
 {
 	float t  = iterat;
-	float dt = 0.01;
+	float dt = 0.01f;
 	float dz = WaveFormZ(x, t+dt) - WaveFormZ(x, t);
 	float dx = WaveFormX(x, t+dt) - WaveFormX(x, t);
 	
@@ -167,11 +167,17 @@ float FEM_StaticWaveForce( EVec4 pos, float szx, float szy, float szz, float wav
 }
 
 
-NxVec3 FEM_HydroDynamicForce( NxVec3 velocity, EVec4 pos, float szx, float szy, float szz, float wave_height ) 
+NxVec3 FEM_HydroDynamicForce( NxVec3 velocity, EVec4 pos, float szx, float szy, float szz, float wave_height, NxVec3 normal ) 
 {
 	if (velocity.magnitude()<0.001) {
 		return NxVec3(0,0,0);
 	}
+	
+	float cos_normal_flow = abs(velocity.dot( normal ));
+	
+	//	add some viscosity
+	cos_normal_flow = 0.05 + 0.95*cos_normal_flow;
+	
 
 	float wh = wave_height;
 	
@@ -186,7 +192,7 @@ NxVec3 FEM_HydroDynamicForce( NxVec3 velocity, EVec4 pos, float szx, float szy, 
 		Vm = 7;
 	}
 	
-	float Fm	=	- SHIP_CX * Vm*Vm * S * WATER_DENSITY / 2 * frac;
+	float Fm	=	- SHIP_CX * Vm*Vm * S * WATER_DENSITY / 2 * frac * cos_normal_flow;
 	
 	NxVec3 nvel = velocity;
 	nvel.normalize();
@@ -194,6 +200,26 @@ NxVec3 FEM_HydroDynamicForce( NxVec3 velocity, EVec4 pos, float szx, float szy, 
 	return nvel * Fm;
 }
 
+
+NxVec3 CapsuleNormal( EVec4 pos ) {
+	float hszy = (SHIP_WIDTH/2 + SHIP_HEIGHT/2) / 2;
+	float hszx = SHIP_LENGTH / 2 - 2*hszy;
+	
+	NxVec3 n(0,0,0);
+	
+	if ( abs(pos.x) < hszx ) {
+		n = NxVec3(0, pos.y, pos.z);
+	} else
+	if ( pos.x > hszx ) {
+		n = NxVec3(pos.x - hszx, pos.y, pos.z);
+	} else 
+	if ( pos.x < -hszx ) {
+		n = NxVec3(pos.x + hszx, pos.y, pos.z);
+	}
+
+	n.normalize();
+	return n;
+}
 
 //
 //
@@ -238,6 +264,8 @@ void ESciVis::UpdateBoat( float dtime )
 				float z = -(0.5 * SHIP_HEIGHT) + 0.5*dz + dz * (float)k;
 
 				EVec4  pos(x,y,z,0);
+				NxVec3 normal = CapsuleNormal( pos );
+				
 				pos =  QuatRotateVector(pos, q);
 				pos += p;			
 				
@@ -258,8 +286,7 @@ void ESciVis::UpdateBoat( float dtime )
 				
 				
 				if (!skip_hydro_dynamic) {
-					fx = FEM_HydroDynamicForce(pvel + wave_vel2D_x(pos.x), pos, dx, dy, dz, wh);		//	dynamic force
-					fx *= angular_hydrodynamic_force_weight;
+					fx = FEM_HydroDynamicForce(pvel + wave_vel2D_x(pos.x), pos, dx, dy, dz, wh, normal);		//	dynamic force
 				}
 				
 				
@@ -270,38 +297,12 @@ void ESciVis::UpdateBoat( float dtime )
 				//DebugLine( EVec3(pos.x, pos.y, pos.z), EVec3(pos.x, pos.y, pos.z + fs/SHIP_MASS*40), EVec4(0,0,1,1));
 				//DebugLine( NxVec3(pos.x, pos.y, pos.z), NxVec3(pos.x, pos.y, pos.z) + fx/SHIP_MASS*40, EVec4(1,0,0,1));
 				//DebugLine( NxVec3(pos.x, pos.y, pos.z), NxVec3(pos.x, pos.y, pos.z) + pvel, EVec4(0,1,0,1));
+
+				//DebugLine( NxVec3(pos.x, pos.y, pos.z), NxVec3(pos.x, pos.y, pos.z) + normal * 5, EVec4(1,1,1,1));
 			}
 		}
 	}
 
-	dx = SHIP_LENGTH / FEM_X;
-	dy = SHIP_WIDTH  / 1;
-	dz = SHIP_HEIGHT / 1;
-
-	for (uint i=0; i<FEM_X; i++) {
-				
-		float x = -(0.5 * SHIP_LENGTH) + 0.5*dx + dx * (float)i;
-		float y = 0;
-		float z = 0;
-
-		EVec4  pos(x,y,z,0);
-		pos =  QuatRotateVector(pos, q);
-		pos += p;			
-		
-		float wh = wave_pos2D_x(pos.x);		//	wave height
-		
-		NxVec3	pvel = ship_body->getPointVelocity( NxVec3(pos.x, pos.y, pos.z) );
-
-		NxVec3	fx = NxVec3(0,0,0);
-
-		fx = FEM_HydroDynamicForce(pvel + wave_vel2D_x(pos.x), pos, dx, dy, dz, wh);		//	dynamic force
-		fx *= (1-angular_hydrodynamic_force_weight);
-		
-		ship_body->addForceAtPos( fx, NxVec3(pos.x, pos.y, pos.z) );
-		
-		//DebugLine( NxVec3(pos.x, pos.y, pos.z), NxVec3(pos.x, pos.y, pos.z) + fx/SHIP_MASS*40, EVec4(1,0,0,1));
-		//DebugLine( NxVec3(pos.x, pos.y, pos.z), NxVec3(pos.x, pos.y, pos.z) + pvel, EVec4(0,1,0,1));
-	}
 }
 
 
