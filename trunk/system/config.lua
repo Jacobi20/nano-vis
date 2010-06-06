@@ -2,9 +2,9 @@
 -- warning: syntax errors will cause configuration resetting --
 
 cfg.SetVar('d3d_fullscr'                , false);
-cfg.SetVar('d3d_mode'                   , 0);
-cfg.SetVar('d3d_xpos'                   , 432);
-cfg.SetVar('d3d_ypos'                   , 271);
+cfg.SetVar('d3d_mode'                   , 2);
+cfg.SetVar('d3d_xpos'                   , 212);
+cfg.SetVar('d3d_ypos'                   , 197);
 
 
 -- key bindings --
