@@ -232,3 +232,38 @@ void ESciVis::DebugLine( EVec3 p0, EVec3 p1, EVec4 color )
 	
 	SAFE_RELEASE( line_decl );
 }
+
+
+/*-----------------------------------------------------------------------------
+	Vector conversion :
+-----------------------------------------------------------------------------*/
+
+NxVec3 ESciVis::ToNxVec3( const EVec3 &v )
+{
+	return NxVec3( v.x, v.y, v.z );
+}
+
+
+NxQuat ESciVis::ToNxQuat( const EQuat &q )
+{
+	NxQuat nxq;
+	nxq.x	=	q.x;
+	nxq.y	=	q.y;
+	nxq.z	=	q.z;
+	nxq.w	=	q.w;
+	return nxq;
+}
+
+
+EVec3 ESciVis::ToEVec3( const NxVec3 &v )
+{
+	return EVec3( v.x, v.y, v.z );
+}
+
+
+EQuat ESciVis::ToEQuat( const NxQuat &q )
+{
+	return EQuat( q.x, q.y, q.z, q.w );
+}
+
+
