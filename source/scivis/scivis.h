@@ -78,6 +78,8 @@ class ESciVis : public ISciVis {
 		void					Simulate			( float dtime );
 		
 		void					UpdateBoat			( float dtime );
+		void					UpdateBoatHDF		( float dtime, const EVec4 &position, const EQuat &orient );
+		void					UpdateBoatHSF		( float dtime, const EVec4 &position, const EQuat &orient );
 		
 	public:
 		IDirect3D9			*d3d;
@@ -90,6 +92,7 @@ class ESciVis : public ISciVis {
 	protected:
 		IPxTriMesh			mesh_ship;
 		IPxTriMesh			mesh_sea;
+		IPxTriMesh			mesh_flow;
 		ID3DXMesh			*ship;
 		ID3DXMesh			*sea;
 		ID3DXEffect			*shader_fx;
@@ -103,6 +106,11 @@ class ESciVis : public ISciVis {
 		
 		void				DebugLine		( EVec3 p0, EVec3 p1, EVec4 color );
 		void				DebugLine		( NxVec3 p0, NxVec3 p1, EVec4 color );
+		
+		NxVec3				ToNxVec3		( const EVec3 &v );
+		NxQuat				ToNxQuat		( const EQuat &q );
+		EVec3				ToEVec3			( const NxVec3 &v );
+		EQuat				ToEQuat			( const NxQuat &q );
 		
 		ErrorStream			error_stream;
 		EAllocator			allocator;
@@ -129,4 +137,3 @@ class ESciVis : public ISciVis {
 	static void		ListDisplayModes_f	( ESciVis *self, int argc, char **argv );
 	static LRESULT	WndProc				( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	};
-
