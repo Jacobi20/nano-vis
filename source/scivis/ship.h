@@ -22,54 +22,31 @@
     THE SOFTWARE.
 */
 
-
 #pragma once
 
 /*-----------------------------------------------------------------------------
 	Nano vis :
 -----------------------------------------------------------------------------*/
 
-//	PhysX stuff :
-#define NOMINMAX
-#include "NxPhysics.h"
+class	IWaving;
+class	IShip;
+typedef hard_ref<IWaving>	IPxWaving;
+typedef hard_ref<IShip>		IPxShip;
 
-//	global.h :
-#undef _malloca
-#include "../core/core.h"
-
-
-#include "../core/core.h"
-
-#ifdef _DEBUG
-#	define D3D_DEBUG_INFO
-#endif
-
-#define D3D_DEBUG_INFO
-
-#include <d3d9.h>
-#include <d3dx9.h>
-
-#define	WIN32_LEAN_AND_MEAN
-#define	VC_EXTRALEAN
-#include <windows.h>
-
-#pragma comment (lib, "d3dxof.lib")
-#pragma comment (lib, "dxguid.lib")
-#pragma comment (lib, "d3dx9.lib")
-#pragma comment (lib, "d3d9.lib")
-#pragma comment (lib, "winmm.lib")
+typedef IWaving	*	(*CreateWaving_f)	( lua_State *L, int idx );
+typedef IShip	*	(*CreateShip_f)		( lua_State *L, int idx );
 
 
-#define CHECK_CRITICAL(expr) if (FAILED(expr)) { SYS_Error(ERR_FATAL, va("%s() : %s failed", __FUNCTION__, #expr)); }
 
-#define SAFE_RELEASE(obj) if (obj) { obj->Release(); obj = NULL; }
-
-
-#include "nxaux/error_stream.h"
-#include "nxaux/stream.h"
-#include "nxaux/allocator.h"
-
-
-#include "sci_interfaces.h"
-#include "ship.h"
-#include "scivis.h"
+class IWaving : public IDisposable {
+	public:
+		virtual EVec4		GetVelocity	( const EVec4 &init_pos, float time ) const = 0;
+		virtual EVec4		GetPosition	( const EVec4 &init_pos, float time ) const = 0;
+	};
+	
+	
+class IShip : public IDisposable {
+	public:
+		virtual void		Simulate	( float dtime, IPxWaving waving ) = 0;
+		virtual void		GetPose		( EVec4 &position, EVec4 &orient ) = 0;
+	};

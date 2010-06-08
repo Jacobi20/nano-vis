@@ -45,6 +45,7 @@ const float SHIP_CM_OFFSET	=  -0.7f;
 const float WATER_DENSITY	=	1000;		//	kg/m^3
 const float SHIP_CX			=	0.2f;
 
+IWaving *create_boukh_waving(lua_State *L, int idx);
 
 //
 //	ESciVis::InitRender
@@ -65,9 +66,11 @@ void ESciVis::InitRender( void )
 	
 	change_papams_to_base_reson();
 	
-	EQuat		q	=	QuatRotationAxis( deg2rad(0), EVec3(1,1,1));
-	ship_body		=	CreatePhysBox( SHIP_LENGTH, SHIP_WIDTH, SHIP_HEIGHT, EVec4(-100,0,10,1), q, SHIP_MASS);
-	ship_body->setLinearVelocity( NxVec3(50,0,0) );
+	waving		=	create_boukh_waving( NULL, 0 );
+	
+	EQuat		q	=	QuatRotationAxis( deg2rad(20), EVec3(1,1,1));
+	ship_body		=	CreatePhysBox( SHIP_LENGTH, SHIP_WIDTH, SHIP_HEIGHT, EVec4(0,0,20,1), q, SHIP_MASS);
+	ship_body->setLinearVelocity( NxVec3(0,0,0) );
 	
 	Xi	=	90;
 }
@@ -112,44 +115,44 @@ int ESciVis::SCI_ReloadShaders( lua_State * L )
 
 
 
-float WaveFormZ(float x, float t) {
-	x*=3;
-	t/=4;
-	float S=0.0;
-	for(int i=0; i<NN; i++) {
-		float W	=	Wmin + i * dW;
-		float K	=	W * W / g;//g==9.81f
-		S += A_2D[i] * cos(K*x - W*t + Fi_2D[i]);		
-	}
-	return 0.0 * S;
-}
-
-float WaveFormX(float x, float t) {
-	x*=3;
-	t/=4;
-	float S=0.0;
-	for(int i=0; i<NN; i++) {
-		float W	=	Wmin + i * dW;
-		float K	=	W * W / g;//g==9.81f
-		S += A_2D[i] * sin(K*x - W*t + Fi_2D[i]);		
-	}
-	return 0.0 * S;
-}
-
-float wave_pos2D_x(float x)
-{
-	return WaveFormZ(x, iterat);
-}
-
-EVec3 wave_vel2D_x(float x)
-{
-	float t  = iterat;
-	float dt = 0.01f;
-	float dz = WaveFormZ(x, t+dt) - WaveFormZ(x, t);
-	float dx = WaveFormX(x, t+dt) - WaveFormX(x, t);
-	
-	return EVec3(dx/dt, 0, dz/dt);
-}
+//float WaveFormZ(float x, float t) {
+//	x*=3;
+//	t/=4;
+//	float S=0.0;
+//	for(int i=0; i<NN; i++) {
+//		float W	=	Wmin + i * dW;
+//		float K	=	W * W / g;//g==9.81f
+//		S += A_2D[i] * cos(K*x - W*t + Fi_2D[i]);		
+//	}
+//	return 0.7 * S;
+//}
+//
+//float WaveFormX(float x, float t) {
+//	x*=3;
+//	t/=4;
+//	float S=0.0;
+//	for(int i=0; i<NN; i++) {
+//		float W	=	Wmin + i * dW;
+//		float K	=	W * W / g;//g==9.81f
+//		S += A_2D[i] * sin(K*x - W*t + Fi_2D[i]);		
+//	}
+//	return 0.7 * S;
+//}
+//
+//float wave_pos2D_x(float x)
+//{
+//	return WaveFormZ(x, iterat);
+//}
+//
+//EVec3 wave_vel2D_x(float x)
+//{
+//	float t  = iterat;
+//	float dt = 0.01f;
+//	float dz = WaveFormZ(x, t+dt) - WaveFormZ(x, t);
+//	float dx = WaveFormX(x, t+dt) - WaveFormX(x, t);
+//	
+//	return EVec3(dx/dt, 0, dz/dt);
+//}
 
 
 //
@@ -225,6 +228,11 @@ NxVec3 CapsuleNormal( EVec4 pos ) {
 	return n;
 }
 
+
+//const NxVec3	forward	( 5000000,0,0);
+//const NxVec3	backward(-5000000,0,0);
+//NxVec3	turbine_force = forward;
+
 //
 //
 //
@@ -239,6 +247,10 @@ void ESciVis::UpdateBoat( float dtime )
 
 	
 	ship_body->addForceAtLocalPos( gravity, NxVec3(0,0,SHIP_CM_OFFSET));
+	
+	//if (p.x>50)  turbine_force = backward;
+	//if (p.x<-50) turbine_force = forward;
+	//ship_body->addForce( turbine_force );
 	
 	UpdateBoatHSF( dtime, p, q );
 	UpdateBoatHDF( dtime, p, q );
@@ -276,20 +288,12 @@ void ESciVis::UpdateBoatHSF( float dtime, const EVec4 &position, const EQuat &or
 				pos =  QuatRotateVector(pos, orient);
 				pos += position;			
 				
-				float wh = wave_pos2D_x(pos.x);		//	wave height
-				
-				NxVec3	pvel = ship_body->getPointVelocity( NxVec3(pos.x, pos.y, pos.z) ) - ToNxVec3( wave_vel2D_x(pos.x) );
+				float	wh = waving->GetPosition(EVec4(pos.x, pos.y, pos.z, 1), global_simulation_time).z;
 
 				float	fs = FEM_StaticWaveForce(pos, dx, dy, dz, wh);					//	static force
-				NxVec3	fx = NxVec3(0,0,0);
-				
-				fx = FEM_HydroDynamicForce(pvel, pos, dx, dy, dz, wh, normal);		//	dynamic force
-				
 				
 				ship_body->addForceAtPos( NxVec3(0,0,fs), NxVec3(pos.x, pos.y, pos.z) );
-				
-				//ship_body->addForceAtPos( fx, NxVec3(pos.x, pos.y, pos.z) );
-				
+
 				//DebugLine( EVec3(pos.x, pos.y, pos.z), EVec3(pos.x, pos.y, pos.z + fs/SHIP_MASS*40), EVec4(0,0,1,1));
 				//DebugLine( NxVec3(pos.x, pos.y, pos.z), NxVec3(pos.x, pos.y, pos.z) + fx/SHIP_MASS*40, EVec4(1,0,0,1));
 				//DebugLine( NxVec3(pos.x, pos.y, pos.z), NxVec3(pos.x, pos.y, pos.z) + pvel, EVec4(0,1,0,1));
@@ -314,8 +318,8 @@ void ESciVis::UpdateBoatHDF( float dtime, const EVec4 &position, const EQuat &or
 		float fe_area		=	mesh_flow->TriangleArea(i);
 		EVec3 fe_vel_global	=	ToEVec3( ship_body->getPointVelocity( ToNxVec3(fe_pos) ) );
 		
-		EVec3 flow_vel		=	wave_vel2D_x(fe_pos.x);
-		float wave_h		=	wave_pos2D_x(fe_pos.x);
+		EVec3 flow_vel		=	Vec4ToVec3( waving->GetVelocity( Vec3ToPoint4(fe_pos), global_simulation_time ) );
+		float wave_h		=				waving->GetPosition( Vec3ToPoint4(fe_pos), global_simulation_time ).z;
 		
 		if (wave_h < fe_pos.z) {	
 			continue;
@@ -332,7 +336,7 @@ void ESciVis::UpdateBoatHDF( float dtime, const EVec4 &position, const EQuat &or
 		//	0.1 - stupid viscosity addition		
 		//	0.5 - just front or back pressure 
 		//  sqrt(0.5) - because lifting force is maximum at PI/4
-		const float	Cxx		=	0.2;
+		const float	Cxx		=	2.0;
 		const float Cyy		=	0.0;
 		float Cx			=	Cxx * 0.5 * (0.9 * abs(cos_vel_norm) + 0.1);	
 		float Cy			=	Cyy * 0.5 * sqrt(0.5) * cos_2_vel_norm;
@@ -354,7 +358,7 @@ void ESciVis::UpdateBoatHDF( float dtime, const EVec4 &position, const EQuat &or
 		//	draw force :
 		//DebugLine( ToNxVec3(fe_pos), ToNxVec3(fe_pos) + vhd_force * 0.0001, EVec4(1,0,0,1));
 		//DebugLine( ToNxVec3(fe_pos), ToNxVec3(fe_pos + fe_normal * 5),		EVec4(0,1,0,1));
-		DebugLine( ToNxVec3(fe_pos), ToNxVec3(fe_pos + fe_vel * 5),		EVec4(0,1,0,1));
+		//DebugLine( ToNxVec3(fe_pos), ToNxVec3(fe_pos + fe_vel * 5),		EVec4(0,1,0,1));
 	}
 }
 
@@ -365,8 +369,7 @@ void ESciVis::UpdateBoatHDF( float dtime, const EVec4 &position, const EQuat &or
 //
 void ESciVis::Simulate( float dtime )
 {
-	dT = dtime * 10;
-	init_boukh_wave();
+	global_simulation_time += dtime;
 }
 
 
@@ -379,7 +382,7 @@ void ESciVis::RenderView( lua_State * L )
 	if (!shader_fx) {
 		return;
 	}
-
+	
 	float	dtime			=	0.016f;
 	float	yaw				=	0;
 	float	roll			=	0;
@@ -418,14 +421,14 @@ void ESciVis::RenderView( lua_State * L )
 	
 	world	=	ship_roll * ship_pitch * ship_yaw * ship_heaving;
 	
-	if (true) {
+	//if (true) {
 		NxQuat	nxq	=	ship_body->getGlobalOrientationQuat();
 		NxVec3	nxv	=	ship_body->getGlobalPosition();
 		EQuat	q	=	EQuat(nxq.x, nxq.y, nxq.z, nxq.w);
 		EVec4	p	=	EVec4(nxv.x, nxv.y, nxv.z, 1);
 		
 		world		=	(QuatToMatrix(q) * Matrix4Translate(p)).Ptr();
-	}
+	//}
 
 	//	setup view matrix :
 	D3DXMATRIX	z_up(	 0, 0, 1, 0,
@@ -438,6 +441,25 @@ void ESciVis::RenderView( lua_State * L )
 	D3DXMatrixRotationZ		( &rz,	deg2rad(yaw) );
 	D3DXMatrixTranslation	( &z_view_offset,	0,0, -distance );
 	view	=	 rz * ry * rx * z_up * z_view_offset;
+	
+	if (false) {
+		EMatrix4	z_up(	 0, 0, 1, 0,
+							 1, 0, 0, 0,
+							 0, 1, 0, 0,
+							 0, 0, 0, 1	);
+		EMatrix4 R, T, V, O, R1;
+		EMatrix4 rx, ry, rz;
+		rx = Matrix4RotateX( deg2rad(roll) );
+		ry = Matrix4RotateY( deg2rad(pitch) );
+		rz = Matrix4RotateZ( deg2rad(yaw) );
+		O = Matrix4Translate( QuatRotateVector( -EVec4(3,0,8,0), q) );
+		R = QuatToMatrix( QuatInverse(q) );
+		T = Matrix4Translate( -p );
+		R1= Matrix4RotateZ( PI );
+		V = T * O * R * R1 * rz * ry * rx * z_up;
+		
+		view	=	D3DXMATRIX(V.Ptr());
+	}
 	
 	D3DXMatrixInverse( &view_i, NULL, &view );
 
@@ -486,7 +508,7 @@ void ESciVis::RenderView( lua_State * L )
 	for (uint i=0; i<mesh_sea->GetVertexNum(); i++) {
 		EVertex		v = mesh_sea->GetVertex(i);
 		
-		v.position.z	=	wave_pos2D_x(v.position.x);
+		v.position.z	=	waving->GetPosition( Vec3ToPoint4(v.position), global_simulation_time ).z;
 		
 		mesh_sea->SetVertex(i, v);
 	}
