@@ -195,11 +195,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ship_naive.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\nxaux\stream.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\waves\waves.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\waving_boukh.cpp"
 				>
 			</File>
 		</Filter>
@@ -229,6 +237,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ship.h"
+				>
+			</File>
+			<File
 				RelativePath=".\nxaux\stream.h"
 				>
 			</File>
@@ -250,6 +262,10 @@
 			</File>
 			<File
 				RelativePath=".\waves\newave.h"
+				>
+			</File>
+			<File
+				RelativePath=".\waves\waves.h"
 				>
 			</File>
 		</Filter>

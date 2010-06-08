@@ -38,6 +38,8 @@ DLL_EXPORT ISciVis	*CreateSciVis	( void ) {	return new ESciVis(); }
 //
 ESciVis::ESciVis( void )
 {
+	global_simulation_time	=	0;
+
 	LOG_SPLIT("SciVis initialization");
 	
 	shell	=	Linker()->GetShell();
@@ -53,7 +55,7 @@ ESciVis::ESciVis( void )
 	
 	InitPhysX();
 	InitRender();
-		
+	
 	LOG_SPLIT("");
 }
 

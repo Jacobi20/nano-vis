@@ -82,6 +82,8 @@ class ESciVis : public ISciVis {
 		void					UpdateBoatHSF		( float dtime, const EVec4 &position, const EQuat &orient );
 		
 	public:
+		float				global_simulation_time;
+	
 		IDirect3D9			*d3d;
 		IDirect3DDevice9	*d3ddev;
 		EVidState_s			vid_state;
@@ -90,6 +92,9 @@ class ESciVis : public ISciVis {
 		IPxFileSystem		fs;
 		
 	protected:
+		IPxWaving			waving;
+		IPxShip				ship_model;
+	
 		IPxTriMesh			mesh_ship;
 		IPxTriMesh			mesh_sea;
 		IPxTriMesh			mesh_flow;
