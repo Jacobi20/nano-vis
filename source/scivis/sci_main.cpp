@@ -28,6 +28,7 @@
 
 DLL_EXPORT ISciVis	*CreateSciVis	( void ) {	return new ESciVis(); }
 
+ESciVis	*sci_vis = NULL;
 
 /*-----------------------------------------------------------------------------
 	Nano vis :
@@ -38,6 +39,8 @@ DLL_EXPORT ISciVis	*CreateSciVis	( void ) {	return new ESciVis(); }
 //
 ESciVis::ESciVis( void )
 {
+	sci_vis	=	this;
+
 	global_simulation_time	=	0;
 
 	LOG_SPLIT("SciVis initialization");
@@ -66,6 +69,9 @@ ESciVis::ESciVis( void )
 ESciVis::~ESciVis( void )
 {
 	LOG_SPLIT("SciVis shutting down");
+
+	ship_model	=	NULL;
+	
 	
 	ShutdownRender();
 	ShutdownPhysX();

@@ -46,6 +46,7 @@ const float WATER_DENSITY	=	1000;		//	kg/m^3
 const float SHIP_CX			=	0.2f;
 
 IWaving *create_boukh_waving(lua_State *L, int idx);
+IShip	*create_naive_ship	(lua_State *L, int idx);
 
 //
 //	ESciVis::InitRender
@@ -53,6 +54,7 @@ IWaving *create_boukh_waving(lua_State *L, int idx);
 void ESciVis::InitRender( void )
 {
 	LOG_INIT("Scientific renderer");
+	
 
 	//	read file :	
 	mesh_ship	=	LoadMesh(SHIP_FS_PATH, SHIP_H_PATH);
@@ -66,6 +68,7 @@ void ESciVis::InitRender( void )
 	
 	change_papams_to_base_reson();
 	
+	ship_model	=	create_naive_ship( NULL, 0 );
 	waving		=	create_boukh_waving( NULL, 0 );
 	
 	EQuat		q	=	QuatRotationAxis( deg2rad(20), EVec3(1,1,1));
