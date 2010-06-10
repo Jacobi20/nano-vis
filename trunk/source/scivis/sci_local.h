@@ -64,6 +64,8 @@
 
 #define SAFE_RELEASE(obj) if (obj) { obj->Release(); obj = NULL; }
 
+class ESciVis;
+extern ESciVis	*sci_vis;
 
 #include "nxaux/error_stream.h"
 #include "nxaux/stream.h"

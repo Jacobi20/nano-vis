@@ -119,7 +119,20 @@ technique debug {
 
 technique solid_body
 {
-	pass XRayBack
+	pass Wire
+	{
+		FillMode			=	WIREFRAME;
+		DestBlend 			= 	SRCCOLOR;
+		SrcBlend 			= 	ZERO;
+		ZEnable 			= 	TRUE;
+		ZWriteEnable		= 	TRUE;
+		CullMode 			= 	NONE;
+		AlphaBlendEnable	= 	FALSE;
+		ColorWriteEnable	=	RED|GREEN|BLUE;
+		VertexShader 		= 	compile vs_2_0 VSMain();
+		PixelShader 		= 	compile ps_2_0 PSColor(1);
+	}
+	/*pass XRayBack
 	{
 		DestBlend 			= 	ONE;
 		SrcBlend 			= 	ONE;
@@ -154,5 +167,5 @@ technique solid_body
 		ColorWriteEnable	=	RED|GREEN|BLUE;
 		VertexShader 		= 	compile vs_2_0 VSMain();
 		PixelShader 		= 	compile ps_2_0 PSMainXRay(float4(1,1,1,1));
-	}
+	}*/
 }

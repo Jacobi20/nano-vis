@@ -68,6 +68,8 @@ class ESciVis : public ISciVis {
 		IPxTriMesh				LoadMesh			( const char *fspath, const char *hpath );
 		void					DrawMesh			( ID3DXMesh *mesh );
 		void					UpdateMeshVertices	( ID3DXMesh *d3dmesh, const IPxTriMesh trimesh );
+		NxActor				*	CreatePhysBox		( float sx, float sy, float sz, const EVec4 &pos, const EQuat &orient, float mass );
+		NxScene				*	GetNxScene			( void ) { return nx_scene; }
 		
 		void					InitRender			( void );
 		void					ShutdownRender		( void );
@@ -107,7 +109,6 @@ class ESciVis : public ISciVis {
 		void				ShutdownPhysX	( void );
 		void				FramePhysX		( float dtime );
 		void				DebugPhysX		( const D3DXMATRIX &w, const D3DXMATRIX &v, const D3DXMATRIX &p );
-		NxActor			*	CreatePhysBox	( float sx, float sy, float sz, const EVec4 &pos, const EQuat &orient, float mass );
 		
 		void				DebugLine		( EVec3 p0, EVec3 p1, EVec4 color );
 		void				DebugLine		( NxVec3 p0, NxVec3 p1, EVec4 color );

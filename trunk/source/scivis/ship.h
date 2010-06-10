@@ -36,6 +36,11 @@ typedef hard_ref<IShip>		IPxShip;
 typedef IWaving	*	(*CreateWaving_f)	( lua_State *L, int idx );
 typedef IShip	*	(*CreateShip_f)		( lua_State *L, int idx );
 
+struct ERendEnv_s {
+		EMatrix4	matrix_view;
+		EMatrix4	matrix_proj;
+		EVec4		view_pos;
+	};
 
 
 class IWaving : public IDisposable {
@@ -49,4 +54,5 @@ class IShip : public IDisposable {
 	public:
 		virtual void		Simulate	( float dtime, IPxWaving waving ) = 0;
 		virtual void		GetPose		( EVec4 &position, EVec4 &orient ) = 0;
+		virtual void		Render		( ERendEnv_s *rend_env ) = 0;
 	};
