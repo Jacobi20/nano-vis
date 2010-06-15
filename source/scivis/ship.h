@@ -45,14 +45,18 @@ struct ERendEnv_s {
 
 class IWaving : public IDisposable {
 	public:
-		virtual EVec4		GetVelocity	( const EVec4 &init_pos, float time ) const = 0;
-		virtual EVec4		GetPosition	( const EVec4 &init_pos, float time ) const = 0;
+		virtual void		Update			( float dtime ) = 0;
+		virtual void		ReloadShader	( void ) = 0;
+		virtual EVec4		GetVelocity		( const EVec4 &init_pos ) const = 0;
+		virtual EVec4		GetPosition		( const EVec4 &init_pos ) const = 0;
+		virtual float		GetWaveSlopX	( const EVec4 &init_pos ) const = 0;
 	};
 	
 	
 class IShip : public IDisposable {
 	public:
-		virtual void		Simulate	( float dtime, IPxWaving waving ) = 0;
-		virtual void		GetPose		( EVec4 &position, EVec4 &orient ) = 0;
-		virtual void		Render		( ERendEnv_s *rend_env ) = 0;
+		virtual void		Simulate		( float dtime, IPxWaving waving ) = 0;
+		virtual void		ReloadShader	( void ) = 0;
+		virtual void		GetPose			( EVec4 &position, EQuat &orient ) = 0;
+		virtual void		Render			( ERendEnv_s *rend_env ) = 0;
 	};

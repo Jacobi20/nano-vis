@@ -238,13 +238,13 @@ void ESciVis::DebugLine( EVec3 p0, EVec3 p1, EVec4 color )
 	Vector conversion :
 -----------------------------------------------------------------------------*/
 
-NxVec3 ESciVis::ToNxVec3( const EVec3 &v )
+NxVec3 ToNxVec3( const EVec3 &v )
 {
 	return NxVec3( v.x, v.y, v.z );
 }
 
 
-NxQuat ESciVis::ToNxQuat( const EQuat &q )
+NxQuat ToNxQuat( const EQuat &q )
 {
 	NxQuat nxq;
 	nxq.x	=	q.x;
@@ -255,13 +255,13 @@ NxQuat ESciVis::ToNxQuat( const EQuat &q )
 }
 
 
-EVec3 ESciVis::ToEVec3( const NxVec3 &v )
+EVec3 ToEVec3( const NxVec3 &v )
 {
 	return EVec3( v.x, v.y, v.z );
 }
 
 
-EQuat ESciVis::ToEQuat( const NxQuat &q )
+EQuat ToEQuat( const NxQuat &q )
 {
 	return EQuat( q.x, q.y, q.z, q.w );
 }
