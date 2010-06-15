@@ -29,6 +29,8 @@
 	Nano vis :
 -----------------------------------------------------------------------------*/
 
+const uint ROLL_HISTORY_SIZE	=	8192;
+
 struct vertex_s {
 	EVec3   pos;
 	EVec3   normal;
@@ -113,10 +115,8 @@ class ESciVis : public ISciVis {
 		void				DebugLine		( EVec3 p0, EVec3 p1, EVec4 color );
 		void				DebugLine		( NxVec3 p0, NxVec3 p1, EVec4 color );
 		
-		NxVec3				ToNxVec3		( const EVec3 &v );
-		NxQuat				ToNxQuat		( const EQuat &q );
-		EVec3				ToEVec3			( const NxVec3 &v );
-		EQuat				ToEQuat			( const NxQuat &q );
+		uint				rolling_history_ptr;
+		EVec4				rolling_history[ROLL_HISTORY_SIZE];
 		
 		ErrorStream			error_stream;
 		EAllocator			allocator;

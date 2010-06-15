@@ -8,7 +8,7 @@ float4x4	matrix_world 	;
 float4x4	matrix_view 	;
 float4x4	matrix_proj 	;
 float4		light_dir		;
-float4		view_dir		;
+float4		view_pos		;
 float4		obj_color		;
 
 
@@ -23,7 +23,8 @@ struct VS_OUTPUT {
 	float4 color	: COLOR0;
 	
 	float4 mpos		: TEXCOORD1;	// model space position
-	float4 normal	: TEXCOORD2;
+	float4 wpos		: TEXCOORD2;	// world space position
+	float4 normal	: TEXCOORD3;	// world space normal
 };
 
 
@@ -39,12 +40,13 @@ VS_OUTPUT VSMain( VS_INPUT input )
 	float4	normal	=	float4(input.normal.xyz, 0);
 	
 	normal			=	normalize(mul(normal, matrix_world));
-	
+
+	output.mpos		=	pos;
 	pos				=	mul(pos, matrix_world);
+	output.wpos		=	pos;
 	pos				=	mul(pos, matrix_view);
 	pos				=	mul(pos, matrix_proj);
 	
-	output.mpos		=	float4(input.pos.xyz, 1);
 	output.pos		=	pos;
 	output.normal	=	normal;
 	output.color	=	input.color;
@@ -65,6 +67,7 @@ VS_OUTPUT VSMain( VS_INPUT input )
 float4 PSMainXRay(VS_OUTPUT input, uniform float4 color) : COLOR0
 {
 	//	light  :
+	float4 view_dir	= normalize(view_pos - input.wpos);
 	float n_dot_l 	= 0*pow(saturate(0.7+0.3*dot(input.normal, light_dir)), 2);
 	float n_dot_v 	= 1*pow(saturate(1 - abs(dot(input.normal, view_dir ))), 2);
 	
@@ -109,7 +112,9 @@ technique debug {
 		ZEnable 			= 	TRUE;
 		ZWriteEnable		= 	FALSE;
 		CullMode 			= 	NONE;
-		AlphaBlendEnable	= 	FALSE;
+		DestBlend 			= 	INVSRCALPHA;
+		SrcBlend 			= 	SRCALPHA;
+		AlphaBlendEnable	= 	TRUE;
 		ColorWriteEnable	=	RED|GREEN|BLUE;
 		VertexShader 		= 	compile vs_2_0 VSMain();
 		PixelShader 		= 	compile ps_2_0 PSMain();
@@ -119,21 +124,7 @@ technique debug {
 
 technique solid_body
 {
-	pass Wire
-	{
-		FillMode			=	WIREFRAME;
-		DestBlend 			= 	SRCCOLOR;
-		SrcBlend 			= 	ZERO;
-		ZEnable 			= 	TRUE;
-		ZWriteEnable		= 	TRUE;
-		CullMode 			= 	NONE;
-		AlphaBlendEnable	= 	FALSE;
-		ColorWriteEnable	=	RED|GREEN|BLUE;
-		VertexShader 		= 	compile vs_2_0 VSMain();
-		PixelShader 		= 	compile ps_2_0 PSColor(1);
-	}
-	/*pass XRayBack
-	{
+	pass XRayBack {
 		DestBlend 			= 	ONE;
 		SrcBlend 			= 	ONE;
 		ZEnable 			= 	TRUE;
@@ -144,8 +135,7 @@ technique solid_body
 		VertexShader 		= 	compile vs_2_0 VSMain();
 		PixelShader 		= 	compile ps_2_0 PSMainXRay(1);
 	}
-	pass Black
-	{
+	pass Black {
 		DestBlend 			= 	SRCCOLOR;
 		SrcBlend 			= 	ZERO;
 		ZEnable 			= 	TRUE;
@@ -156,8 +146,7 @@ technique solid_body
 		VertexShader 		= 	compile vs_2_0 VSMain();
 		PixelShader 		= 	compile ps_2_0 PSColor(0.3);
 	}
-	pass XRay
-	{
+	pass XRay {
 		DestBlend 			= 	ONE;
 		SrcBlend 			= 	ONE;
 		ZEnable 			= 	TRUE;
@@ -167,5 +156,5 @@ technique solid_body
 		ColorWriteEnable	=	RED|GREEN|BLUE;
 		VertexShader 		= 	compile vs_2_0 VSMain();
 		PixelShader 		= 	compile ps_2_0 PSMainXRay(float4(1,1,1,1));
-	}*/
+	}
 }

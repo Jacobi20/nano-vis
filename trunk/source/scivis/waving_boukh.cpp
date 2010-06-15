@@ -32,13 +32,19 @@ const float GRAVITY		=	9.81f;
 
 class EWavingBoukh : public IWaving {
 	public:
-							EWavingBoukh	( lua_State *L, int idx );
-							~EWavingBoukh	( void );
-		
-		virtual	EVec4		GetVelocity		( const EVec4 &init_pos, float time ) const;
-		virtual	EVec4		GetPosition		( const EVec4 &init_pos, float time ) const;
+							EWavingBoukh		( lua_State *L, int idx );
+							~EWavingBoukh		( void );
+											
+		virtual void		Update				( float dtime );
+		virtual void		ReloadShader		( void );
+		virtual	EVec4		GetVelocity			( const EVec4 &init_pos ) const;
+		virtual	EVec4		GetPosition			( const EVec4 &init_pos ) const;
+		virtual float		GetWaveSlopX		( const EVec4 &init_pos ) const;
 		
 	protected:
+		float	time;
+		EVec4				GetPositionAtTime	( const EVec4 &init_pos, float time ) const;
+	
 		void				InitGenerator	( void );
 	
 		float	h3		;	// --- высота волный 3%-ой обеспеченности, м --- 	 			
@@ -63,13 +69,23 @@ IWaving	*create_boukh_waving(lua_State *L, int idx) { return new EWavingBoukh(L,
 
 EWavingBoukh::EWavingBoukh( lua_State *L, int idx )
 {
+	time	=	0;
+
 	Wmax	=	 5.1f	;
 	W0		=	 3.51f	;
 	Wmin	=	 0.5f	;
-	BSp		=	 0.030f	;
-	ASp		=	 0.233f * 3	;
+	BSp		=	 0.030f;
+	ASp		=	 0.233f	;
 
 	h3		=	5		;
+	
+	//	extreme resonance :
+	//Wmax  = 0.5*2.0f;	// == Максимальная частота ==
+	//W0	  = 0.5*1.2f ;	//	Средняя частота волны, рад/c
+	//BSp   = 0.5*1.3f ;	// == Параметр формы спектра ==
+	//ASp   = 10;		// == Параметр масштаба спектра ==
+	//Wmin  = 0.5*0.2f ;	//	Минимальная частота
+	
 	InitGenerator();
 }
 
@@ -96,11 +112,19 @@ EWavingBoukh::~EWavingBoukh( void )
 }
 
 
-EVec4 EWavingBoukh::GetPosition( const EVec4 &init_pos, float time ) const
+void EWavingBoukh::Update( float dtime )
+{
+	time	+=	dtime;
+}
+
+
+EVec4 EWavingBoukh::GetPositionAtTime( const EVec4 &init_pos, float time ) const
 {
 	float sum_sin = 0.0;
 	float sum_cos = 0.0;
 	
+	
+#if 0	
 	float dW = (Wmax-Wmin)/(float)NN;
 	
 	float x	= init_pos.x;
@@ -115,16 +139,46 @@ EVec4 EWavingBoukh::GetPosition( const EVec4 &init_pos, float time ) const
 		sum_sin += A_2D[i] * s;		
 		sum_cos += A_2D[i] * c;		
 	}
-	return EVec4(sum_sin, 0, sum_sin, 1);
+#else
+	float wx	=	0.1f;
+	float wt	=	0.3f;
+	float A		=	0;
+	sum_sin		=	sin( wx * PI * init_pos.x  +  wt * PI * time );
+	sum_cos		=	cos( wx * PI * init_pos.x  +  wt * PI * time );
+#endif	
+	return EVec4(A*sum_sin, 0, A*sum_sin, 1);
 }
 
 
-EVec4 EWavingBoukh::GetVelocity( const EVec4 &init_pos, float time ) const
+float EWavingBoukh::GetWaveSlopX( const EVec4 &init_pos ) const
+{
+	EVec4	p	=	init_pos;
+	float	dx	=	0.01f;
+	EVec4	p0	=	GetPosition( EVec4( p.x,		p.y, p.z, 1 ) );
+	EVec4	p1	=	GetPosition( EVec4( p.x + dx,	p.y, p.z, 1 ) );
+	if (p1.x <= p0.x) {
+		LOG_WARNING("wave slope is to large!");
+	}
+	return atan2( (p1.z - p0.z), (p1.x - p0.x) );
+}
+
+
+EVec4 EWavingBoukh::GetPosition( const EVec4 &init_pos ) const
+{
+	return GetPositionAtTime( init_pos, time );
+}
+
+
+EVec4 EWavingBoukh::GetVelocity( const EVec4 &init_pos ) const
 {
 	float dt = 0.00390625;	//	1 / 256
-	EVec4 p1 = GetPosition(init_pos, time);
-	EVec4 p2 = GetPosition(init_pos, time + dt);
+	EVec4 p1 = GetPositionAtTime(init_pos, time);
+	EVec4 p2 = GetPositionAtTime(init_pos, time + dt);
 	return (p2 - p1) / dt;
 }
 
+void EWavingBoukh::ReloadShader( void )
+{
+
+}
 

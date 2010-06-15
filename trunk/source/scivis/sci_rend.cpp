@@ -55,27 +55,20 @@ void ESciVis::InitRender( void )
 {
 	LOG_INIT("Scientific renderer");
 	
+	
+	rolling_history_ptr	=	NULL;
+	memset(rolling_history, 0, sizeof(rolling_history));
+	
 
 	//	read file :	
-	mesh_ship	=	LoadMesh(SHIP_FS_PATH, SHIP_H_PATH);
 	mesh_sea	=	LoadMesh(SHIP_FS_PATH, "|sea2d");
-	mesh_flow	=	LoadMesh(SHIP_FS_PATH, "|flowsurf");
-	
-	ship		=	CreateMesh( mesh_ship );
 	sea			=	CreateMesh( mesh_sea );
-	
 	shader_fx	=	CompileEffect(SHADER_FX);
 	
 	change_papams_to_base_reson();
 	
 	ship_model	=	create_naive_ship( NULL, 0 );
 	waving		=	create_boukh_waving( NULL, 0 );
-	
-	EQuat		q	=	QuatRotationAxis( deg2rad(20), EVec3(1,1,1));
-	ship_body		=	CreatePhysBox( SHIP_LENGTH, SHIP_WIDTH, SHIP_HEIGHT, EVec4(0,0,20,1), q, SHIP_MASS);
-	ship_body->setLinearVelocity( NxVec3(0,0,0) );
-	
-	Xi	=	90;
 }
 
 
@@ -86,7 +79,6 @@ void ESciVis::ShutdownRender( void )
 {
 	LOG_SHUTDOWN("Scientific renderer");
 
-	SAFE_RELEASE(ship);
 	SAFE_RELEASE(shader_fx);
 }
 
@@ -112,50 +104,11 @@ int ESciVis::SCI_ReloadShaders( lua_State * L )
 	ESciVis *self = Linker()->GetSciVis().As<ESciVis>();
 	
 	self->shader_fx	=	self->CompileEffect(SHADER_FX);
+	self->ship_model->ReloadShader();
 	
 	return 0;
 }
 
-
-
-//float WaveFormZ(float x, float t) {
-//	x*=3;
-//	t/=4;
-//	float S=0.0;
-//	for(int i=0; i<NN; i++) {
-//		float W	=	Wmin + i * dW;
-//		float K	=	W * W / g;//g==9.81f
-//		S += A_2D[i] * cos(K*x - W*t + Fi_2D[i]);		
-//	}
-//	return 0.7 * S;
-//}
-//
-//float WaveFormX(float x, float t) {
-//	x*=3;
-//	t/=4;
-//	float S=0.0;
-//	for(int i=0; i<NN; i++) {
-//		float W	=	Wmin + i * dW;
-//		float K	=	W * W / g;//g==9.81f
-//		S += A_2D[i] * sin(K*x - W*t + Fi_2D[i]);		
-//	}
-//	return 0.7 * S;
-//}
-//
-//float wave_pos2D_x(float x)
-//{
-//	return WaveFormZ(x, iterat);
-//}
-//
-//EVec3 wave_vel2D_x(float x)
-//{
-//	float t  = iterat;
-//	float dt = 0.01f;
-//	float dz = WaveFormZ(x, t+dt) - WaveFormZ(x, t);
-//	float dx = WaveFormX(x, t+dt) - WaveFormX(x, t);
-//	
-//	return EVec3(dx/dt, 0, dz/dt);
-//}
 
 
 //
@@ -264,47 +217,6 @@ void ESciVis::UpdateBoat( float dtime )
 //
 void ESciVis::UpdateBoatHSF( float dtime, const EVec4 &position, const EQuat &orient )
 {
-	uint FEM_X	=	20;
-	uint FEM_Y	=	4;
-	uint FEM_Z	=	4;
-	
-	float dx = SHIP_LENGTH / FEM_X;
-	float dy = SHIP_WIDTH  / FEM_Y;
-	float dz = SHIP_HEIGHT / FEM_Z;
-	
-	for (uint i=0; i<FEM_X; i++) {
-		for (uint j=0; j<FEM_Y; j++) {
-			for (uint k=0; k<FEM_Z; k++) {
-			
-				if (j==0 && k==0) continue;
-				if (j==0 && k==3) continue;
-				if (j==3 && k==3) continue;
-				if (j==3 && k==0) continue;
-				
-				float x = -(0.5 * SHIP_LENGTH) + 0.5*dx + dx * (float)i;
-				float y = -(0.5 * SHIP_WIDTH ) + 0.5*dy + dy * (float)j;
-				float z = -(0.5 * SHIP_HEIGHT) + 0.5*dz + dz * (float)k;
-
-				EVec4  pos(x,y,z,0);
-				NxVec3 normal = CapsuleNormal( pos );
-				
-				pos =  QuatRotateVector(pos, orient);
-				pos += position;			
-				
-				float	wh = waving->GetPosition(EVec4(pos.x, pos.y, pos.z, 1), global_simulation_time).z;
-
-				float	fs = FEM_StaticWaveForce(pos, dx, dy, dz, wh);					//	static force
-				
-				ship_body->addForceAtPos( NxVec3(0,0,fs), NxVec3(pos.x, pos.y, pos.z) );
-
-				//DebugLine( EVec3(pos.x, pos.y, pos.z), EVec3(pos.x, pos.y, pos.z + fs/SHIP_MASS*40), EVec4(0,0,1,1));
-				//DebugLine( NxVec3(pos.x, pos.y, pos.z), NxVec3(pos.x, pos.y, pos.z) + fx/SHIP_MASS*40, EVec4(1,0,0,1));
-				//DebugLine( NxVec3(pos.x, pos.y, pos.z), NxVec3(pos.x, pos.y, pos.z) + pvel, EVec4(0,1,0,1));
-
-				//DebugLine( NxVec3(pos.x, pos.y, pos.z), NxVec3(pos.x, pos.y, pos.z) + normal * 5, EVec4(1,1,1,1));
-			}
-		}
-	}
 }
 
 
@@ -314,55 +226,6 @@ void ESciVis::UpdateBoatHSF( float dtime, const EVec4 &position, const EQuat &or
 //
 void ESciVis::UpdateBoatHDF( float dtime, const EVec4 &position, const EQuat &orient )
 {
-	for (uint i=0; i<mesh_flow->GetTriangleNum(); i++) {
-		
-		EVec3 fe_pos		=	QuatRotateVector( mesh_flow->TriangleCenter(i), orient ) + EVec3(position.Ptr());
-		EVec3 fe_normal		=	QuatRotateVector( mesh_flow->TriangleNormal(i), orient );
-		float fe_area		=	mesh_flow->TriangleArea(i);
-		EVec3 fe_vel_global	=	ToEVec3( ship_body->getPointVelocity( ToNxVec3(fe_pos) ) );
-		
-		EVec3 flow_vel		=	Vec4ToVec3( waving->GetVelocity( Vec3ToPoint4(fe_pos), global_simulation_time ) );
-		float wave_h		=				waving->GetPosition( Vec3ToPoint4(fe_pos), global_simulation_time ).z;
-		
-		if (wave_h < fe_pos.z) {	
-			continue;
-		}
-		
-		//	element velocity relative to flow :
-		EVec3 fe_vel		=	fe_vel_global - flow_vel;
-		
-		//	cosine angle between velocity and normal :
-		float cos_vel_norm		=	Vec3Dot( Vec3Normalize( fe_vel ), fe_normal );
-		float cos_2_vel_norm	=	2 * (cos_vel_norm * cos_vel_norm) - 1;
-		float cos_sign			=	1 ? -1 : cos_vel_norm > 0;
-
-		//	0.1 - stupid viscosity addition		
-		//	0.5 - just front or back pressure 
-		//  sqrt(0.5) - because lifting force is maximum at PI/4
-		const float	Cxx		=	2.0;
-		const float Cyy		=	0.0;
-		float Cx			=	Cxx * 0.5 * (0.9 * abs(cos_vel_norm) + 0.1);	
-		float Cy			=	Cyy * 0.5 * sqrt(0.5) * cos_2_vel_norm;
-		
-		float hd_force_x	=	Cx * Vec3LengthSqr( fe_vel ) * fe_area * WATER_DENSITY / 2;
-		float hd_force_y	=	Cy * Vec3LengthSqr( fe_vel ) * fe_area * WATER_DENSITY / 2;
-		
-		//	compute vectors of force applying :
-		EVec3 force_x_dir	=	Vec3Normalize( fe_vel ) * cos_sign;
-		EVec3 force_y_dir	=	- Vec3Normalize( Vec3Cross( fe_vel, Vec3Cross( fe_normal, fe_vel ) ) ) * cos_sign;
-		
-		EVec3 vhd_force_x	=	force_x_dir * hd_force_x;
-		EVec3 vhd_force_y	=	force_y_dir * hd_force_y;
-		
-		//	add force :
-		NxVec3	vhd_force	=	ToNxVec3( vhd_force_x + vhd_force_y );
-		ship_body->addForceAtPos( vhd_force, ToNxVec3(fe_pos) );
-
-		//	draw force :
-		//DebugLine( ToNxVec3(fe_pos), ToNxVec3(fe_pos) + vhd_force * 0.0001, EVec4(1,0,0,1));
-		//DebugLine( ToNxVec3(fe_pos), ToNxVec3(fe_pos + fe_normal * 5),		EVec4(0,1,0,1));
-		//DebugLine( ToNxVec3(fe_pos), ToNxVec3(fe_pos + fe_vel * 5),		EVec4(0,1,0,1));
-	}
 }
 
 
@@ -403,7 +266,9 @@ void ESciVis::RenderView( lua_State * L )
 	//
 	//	simulate :
 	//
-	UpdateBoat(dtime);
+	//UpdateBoat(dtime);
+	waving->Update( dtime );
+	ship_model->Simulate( dtime, waving );
 	FramePhysX(dtime);
 	
 	Simulate(dtime);
@@ -421,17 +286,6 @@ void ESciVis::RenderView( lua_State * L )
 	D3DXMatrixRotationX		( &ship_roll	,	Q			);
 	D3DXMatrixRotationY		( &ship_pitch	,	-F			);
 	D3DXMatrixTranslation	( &ship_heaving	,	0, 0,	E	); 
-	
-	world	=	ship_roll * ship_pitch * ship_yaw * ship_heaving;
-	
-	//if (true) {
-		NxQuat	nxq	=	ship_body->getGlobalOrientationQuat();
-		NxVec3	nxv	=	ship_body->getGlobalPosition();
-		EQuat	q	=	EQuat(nxq.x, nxq.y, nxq.z, nxq.w);
-		EVec4	p	=	EVec4(nxv.x, nxv.y, nxv.z, 1);
-		
-		world		=	(QuatToMatrix(q) * Matrix4Translate(p)).Ptr();
-	//}
 
 	//	setup view matrix :
 	D3DXMATRIX	z_up(	 0, 0, 1, 0,
@@ -445,24 +299,6 @@ void ESciVis::RenderView( lua_State * L )
 	D3DXMatrixTranslation	( &z_view_offset,	0,0, -distance );
 	view	=	 rz * ry * rx * z_up * z_view_offset;
 	
-	if (false) {
-		EMatrix4	z_up(	 0, 0, 1, 0,
-							 1, 0, 0, 0,
-							 0, 1, 0, 0,
-							 0, 0, 0, 1	);
-		EMatrix4 R, T, V, O, R1;
-		EMatrix4 rx, ry, rz;
-		rx = Matrix4RotateX( deg2rad(roll) );
-		ry = Matrix4RotateY( deg2rad(pitch) );
-		rz = Matrix4RotateZ( deg2rad(yaw) );
-		O = Matrix4Translate( QuatRotateVector( -EVec4(3,0,8,0), q) );
-		R = QuatToMatrix( QuatInverse(q) );
-		T = Matrix4Translate( -p );
-		R1= Matrix4RotateZ( PI );
-		V = T * O * R * R1 * rz * ry * rx * z_up;
-		
-		view	=	D3DXMATRIX(V.Ptr());
-	}
 	
 	D3DXMatrixInverse( &view_i, NULL, &view );
 
@@ -473,16 +309,15 @@ void ESciVis::RenderView( lua_State * L )
 	D3DXVECTOR4		light_dir	( 0, 0, 1, 0);
 	D3DXVECTOR4		view_dir	( 0, 0,-1, 0);
 	D3DXVECTOR4		atom_color	( 1, 1, 1, 1);
-	D3DXVECTOR4		view_point	( 0, 0,-distance, 0);
-	D3DXVec4Transform( &view_point, &view_point, &view );
+	D3DXVECTOR4		view_pos	( 0, 0, 0, 1);
+	D3DXVec4Transform( &view_pos, &view_pos, &view_i );
 	D3DXVec4Transform( &view_dir, &view_dir, &view_i );
-	D3DXVec4Transform( &view_point, &view_point, &view_i );
 
 	//
 	//	commit shader consts :
 	//
 	HRCALL( shader_fx->SetVector("light_dir",		&light_dir) );
-	HRCALL( shader_fx->SetVector("view_dir",		&view_dir) );
+	HRCALL( shader_fx->SetVector("view_pos",		&view_pos) );
 	HRCALL( shader_fx->SetMatrix("matrix_world",	&world) );
 	HRCALL( shader_fx->SetMatrix("matrix_view",	&view) );
 	HRCALL( shader_fx->SetMatrix("matrix_proj",	&proj) );
@@ -490,20 +325,12 @@ void ESciVis::RenderView( lua_State * L )
 	//
 	//	draw ship :
 	//
-	uint n;
-	HRCALL( shader_fx->SetTechnique("solid_body") );
-	HRCALL( shader_fx->Begin(&n, 0) );
+	ERendEnv_s	renv;
+	renv.matrix_proj	=	EMatrix4((FLOAT*)proj);
+	renv.matrix_view	=	EMatrix4((FLOAT*)view);
+	renv.view_pos		=	EVec4((FLOAT*)view_pos);
 	
-	for (uint pass=0; pass<n; pass++) {
-	
-		HRCALL( shader_fx->BeginPass(pass) );
-	
-		ship->DrawSubset(0);
-		
-		HRCALL( shader_fx->EndPass() );
-	}
-
-	HRCALL( shader_fx->End() );
+	ship_model->Render( &renv );
 
 	//
 	//	draw sea :
@@ -511,7 +338,7 @@ void ESciVis::RenderView( lua_State * L )
 	for (uint i=0; i<mesh_sea->GetVertexNum(); i++) {
 		EVertex		v = mesh_sea->GetVertex(i);
 		
-		v.position.z	=	waving->GetPosition( Vec3ToPoint4(v.position), global_simulation_time ).z;
+		v.position.z	=	waving->GetPosition( Vec3ToPoint4(v.position) ).z;
 		
 		mesh_sea->SetVertex(i, v);
 	}
@@ -522,9 +349,10 @@ void ESciVis::RenderView( lua_State * L )
 	D3DXMatrixIdentity		( &world );	
 	HRCALL( shader_fx->SetMatrix("matrix_world",	&world) );
 	
+	uint n;	
 	HRCALL( shader_fx->SetTechnique("solid_body") );
 	HRCALL( shader_fx->Begin(&n, 0) );
-	
+
 	for (uint pass=0; pass<n; pass++) {
 	
 		HRCALL( shader_fx->BeginPass(pass) );
@@ -536,6 +364,86 @@ void ESciVis::RenderView( lua_State * L )
 
 	HRCALL( shader_fx->End() );
 	
+	//	-------------------------------------------------
+	//	show rolling graph :
+	//	-------------------------------------------------
+	if (true) {
+		float yaw, pitch, roll;
+		EVec4 p;
+		EQuat q;	
+		ship_model->GetPose( p, q );
+		QuatToAngles(q, yaw, pitch, roll);
+		
+		EVec4 roll_record(yaw, pitch, roll, 1);
+		rolling_history[ (rolling_history_ptr) % ROLL_HISTORY_SIZE ] = roll_record;
+		rolling_history_ptr ++;
+		
+		for (uint i=0; i<ROLL_HISTORY_SIZE; i++) {
+			rolling_history[i].w *= 0.999f;
+		}
+	}
+
+	IDirect3DVertexDeclaration9 *line_decl	=	NULL;
+	HRCALL( d3ddev->CreateVertexDeclaration( VERTEX_DECL_STATIC, &line_decl ) );
+	HRCALL( d3ddev->SetVertexDeclaration( line_decl ) );
+
+	D3DXMatrixIdentity( &world );
+	D3DXMatrixIdentity( &view );
+	uint w, h;
+	GetScreenSize(w, h);
+	D3DXMatrixOrthoOffCenterRH( &proj, 0, w, h, 0, -9999,9999 );
+	HRCALL( shader_fx->SetMatrix("matrix_world",	&world) );
+	HRCALL( shader_fx->SetMatrix("matrix_view",	&view) );
+	HRCALL( shader_fx->SetMatrix("matrix_proj",	&proj) );
+
+	vertex_s verts[ROLL_HISTORY_SIZE];	
+
+	//	rolling :	
+	for (uint i=0; i<ROLL_HISTORY_SIZE; i++) {
+		verts[i].color	=	EVec4(1,1,0.5, rolling_history[i].w);
+		verts[i].normal	=	EVec3(0,0,0);
+		verts[i].pos	=	EVec3(0.125 * i, rolling_history[i].z + 40, 0);
+		verts[i].uv		=	EVec2(0,0);
+	}
+
+	HRCALL( shader_fx->SetTechnique("debug") );
+	HRCALL( shader_fx->Begin(&n, 0) );
+
+	for (uint pass=0; pass<n; pass++) {
+	
+		HRCALL( shader_fx->BeginPass(pass) );
+	
+		HRCALL( d3ddev->DrawPrimitiveUP(D3DPT_LINESTRIP, ROLL_HISTORY_SIZE-1, verts, sizeof(vertex_s)) );
+		
+		HRCALL( shader_fx->EndPass() );
+	}
+
+	HRCALL( shader_fx->End() );
+
+	//	pitching :	
+	for (uint i=0; i<ROLL_HISTORY_SIZE; i++) {
+		verts[i].color	=	EVec4(1,1,0.5, rolling_history[i].w);
+		verts[i].normal	=	EVec3(0,0,0);
+		verts[i].pos	=	EVec3(0.125 * i, rolling_history[i].y + 80, 0);
+		verts[i].uv		=	EVec2(0,0);
+	}
+
+	HRCALL( shader_fx->SetTechnique("debug") );
+	HRCALL( shader_fx->Begin(&n, 0) );
+
+	for (uint pass=0; pass<n; pass++) {
+	
+		HRCALL( shader_fx->BeginPass(pass) );
+	
+		HRCALL( d3ddev->DrawPrimitiveUP(D3DPT_LINESTRIP, ROLL_HISTORY_SIZE-1, verts, sizeof(vertex_s)) );
+		
+		HRCALL( shader_fx->EndPass() );
+	}
+
+	HRCALL( shader_fx->End() );
+
+
 	//DebugPhysX(world, view, proj);
+	SAFE_RELEASE( line_decl );
 }
 
