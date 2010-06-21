@@ -67,11 +67,13 @@ class ESciVis : public ISciVis {
 		void					GetScreenSize		( uint &w, uint &h );
 		ID3DXEffect				*CompileEffect		( const char *path );
 		ID3DXMesh				*CreateMesh			( IPxTriMesh mesh );
-		IPxTriMesh				LoadMesh			( const char *fspath, const char *hpath );
+		IPxTriMesh				LoadMesh			( const char *path );
 		void					DrawMesh			( ID3DXMesh *mesh );
 		void					UpdateMeshVertices	( ID3DXMesh *d3dmesh, const IPxTriMesh trimesh );
 		NxActor				*	CreatePhysBox		( float sx, float sy, float sz, const EVec4 &pos, const EQuat &orient, float mass );
+		NxActor				*	CreatePhysMesh		( IPxTriMesh mesh, const EVec4 &pos, const EQuat &orient, float mass );
 		NxScene				*	GetNxScene			( void ) { return nx_scene; }
+		NxConvexMesh		*	BuildConvexMesh		( const IPxTriMesh input_mesh );
 		
 		void					InitRender			( void );
 		void					ShutdownRender		( void );
@@ -79,6 +81,7 @@ class ESciVis : public ISciVis {
 		static int				SCI_RenderView		( lua_State * L );
 		static int				SCI_ReloadShaders	( lua_State * L );
 		static int				SCI_CreateShip		( lua_State * L );
+		static int				SCI_CreateShip2		( lua_State * L );
 		
 		void					Simulate			( float dtime );
 		
@@ -99,6 +102,7 @@ class ESciVis : public ISciVis {
 	protected:
 		IPxWaving			waving;
 		IPxShip				ship_model;
+		IPxShip				ship_model2;
 	
 		IPxTriMesh			mesh_ship;
 		IPxTriMesh			mesh_sea;
