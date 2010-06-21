@@ -27,7 +27,7 @@
 /*-----------------------------------------------------------------------------
 	Waving :
 -----------------------------------------------------------------------------*/
-const uint	NN			=	100;
+const uint	NN			=	50;
 const float GRAVITY		=	9.81f;
 
 class EWavingBoukh : public IWaving {
@@ -122,10 +122,10 @@ EVec4 EWavingBoukh::GetPositionAtTime( const EVec4 &init_pos, float time ) const
 {
 	float sum_sin = 0.0;
 	float sum_cos = 0.0;
-	float A		=	1;
+	float A		=	3;
 	
 	
-#if 0
+#if 1
 	
 	float dW = (Wmax-Wmin)/(float)NN;
 	

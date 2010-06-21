@@ -53,13 +53,14 @@ const float SHIP_CX				=	0.2f;
 
 class EShipNaive : public IShip {
 	public:
-							EShipNaive		( lua_State *L, int idx );
-							~EShipNaive		( void );
+							EShipNaive				( lua_State *L, int idx );
+							~EShipNaive				( void );
 					
-		virtual void		Simulate		( float dtime, IPxWaving waving );
-		virtual void		ReloadShader	( void );
-		virtual void		GetPose			( EVec4 &position, EQuat &orient );
-		virtual void		Render			( ERendEnv_s *rend_env );
+		virtual void		Simulate				( float dtime, IPxWaving waving );
+		virtual void		ReloadShader			( void );
+		virtual void		GetPose					( EVec4 &position, EQuat &orient );
+		virtual void		Render					( ERendEnv_s *rend_env );
+		virtual void		ApplyForceAtLocalPoint	( const EVec4 &pos, const EVec4 &force );
 		
 	protected:
 		bool				numeric;
@@ -200,6 +201,15 @@ EShipNaive::~EShipNaive( void )
 void EShipNaive::ReloadShader( void )
 {
 	shader_fx		=	sci_vis->CompileEffect( "../scidata/shader.fx" );
+}
+
+
+//
+//	ApplyForceAtLocalPoint
+//
+void EShipNaive::ApplyForceAtLocalPoint( const EVec4 &pos, const EVec4 &force )
+{
+	ship_body->addForceAtLocalPos( NxVec3( force.x, force.y, force.z ), NxVec3( pos.x, pos.y, pos.z ) );
 }
 
 

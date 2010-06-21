@@ -55,8 +55,9 @@ class IWaving : public IDisposable {
 	
 class IShip : public IDisposable {
 	public:
-		virtual void		Simulate		( float dtime, IPxWaving waving ) = 0;
-		virtual void		ReloadShader	( void ) = 0;
-		virtual void		GetPose			( EVec4 &position, EQuat &orient ) = 0;
-		virtual void		Render			( ERendEnv_s *rend_env ) = 0;
+		virtual void		Simulate				( float dtime, IPxWaving waving ) = 0;
+		virtual void		ReloadShader			( void ) = 0;
+		virtual void		GetPose					( EVec4 &position, EQuat &orient ) = 0;
+		virtual void		Render					( ERendEnv_s *rend_env ) = 0;
+		virtual void		ApplyForceAtLocalPoint	( const EVec4 &pos, const EVec4 &force ) = 0;
 	};

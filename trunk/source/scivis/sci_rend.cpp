@@ -112,6 +112,23 @@ int ESciVis::SCI_CreateShip2( lua_State * L )
 }
 
 
+int ESciVis::SCI_ShipForce( lua_State * L )
+{
+	ESciVis *self = Linker()->GetSciVis().As<ESciVis>();
+	
+	EVec4 force =	LuaRequireVec4( L, 1, "force"	);
+	EVec4 pos	=	LuaRequireVec4( L, 2, "pos"		);
+	
+	EVec4 p;
+	EQuat q;
+	self->ship_model->GetPose(p, q);
+	force = QuatRotateVector( force, q );
+	
+	self->ship_model->ApplyForceAtLocalPoint( pos, force );
+
+	return 0;
+}
+
 //
 //
 //
@@ -271,7 +288,7 @@ void ESciVis::RenderView( lua_State * L )
 
 	HRCALL( shader_fx->End() );
 	
-	DebugPhysX(world, view, proj);
+	//DebugPhysX(world, view, proj);
 		
 	
 	//	-------------------------------------------------
