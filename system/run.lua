@@ -81,14 +81,14 @@ game_time = 0;
 -------------------------------------------------------------------------------
 SCI_CreateShip {
 	--	comuting method :
-	numeric		=	false;
+	numeric		=	true;
 	
 	-- 	pose :
-	yaw			=	math.rad(30);
-	roll		=	math.rad(0);
+	yaw			=	math.rad(-30);
+	roll		=	math.rad(10);
 	pitch		=	math.rad(0);
-	pos_x		=	-20;
-	pos_y		=	-20;
+	pos_x		=	0;
+	pos_y		=	0;
 	pos_z		=	0;
 	
 	-- 	ship params :
@@ -100,26 +100,26 @@ SCI_CreateShip {
 	mesh_stat	=	"../scidata/uboat.esx|stat";
 }   
                     
-SCI_CreateShip2 {
-	--	comuting method :
-	numeric		=	false;
+-- SCI_CreateShip2 {
+	-- --	comuting method :
+	-- numeric		=	false;
 	
-	-- 	pose :
-	yaw			=	math.rad(30);
-	roll		=	math.rad(0);
-	pitch		=	math.rad(0);
-	pos_x		=	20;
-	pos_y		=	20;
-	pos_z		=	0;
+	-- -- 	pose :
+	-- yaw			=	math.rad(-40);
+	-- roll		=	math.rad(30);
+	-- pitch		=	math.rad(50);
+	-- pos_x		=	20;
+	-- pos_y		=	20;
+	-- pos_z		=	80;
 	
-	-- 	ship params :
-	ship_mass	=	1000000;
+	-- -- 	ship params :
+	-- ship_mass	=	1000000;
 
-	-- 	ship geometry :
-	mesh_vis	=	"../scidata/boat.esx|boat1";
-	mesh_flow	=	"../scidata/boat.esx|stat";
-	mesh_stat	=	"../scidata/boat.esx|stat";
-}  
+	-- -- 	ship geometry :
+	-- mesh_vis	=	"../scidata/boat.esx|boat1";
+	-- mesh_flow	=	"../scidata/boat.esx|stat";
+	-- mesh_stat	=	"../scidata/boat.esx|stat";
+-- }  
                     
 
 -------------------------------------------------------------------------------
