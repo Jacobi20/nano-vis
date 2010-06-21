@@ -32,9 +32,9 @@
 -----------------------------------------------------------------------------*/
 
 #define USE_NUMERIC		numeric
-#define SHIP_LENGTH		ship_length			
-#define SHIP_WIDTH		ship_width			
-#define SHIP_HEIGHT		ship_height			
+#define SHIP_LENGTH		ship_param.length			
+#define SHIP_WIDTH		ship_param.width			
+#define SHIP_HEIGHT		ship_param.height			
 #define SHIP_MASS		ship_mass			
 
 #define SHIP_INERTIA_X	(0.5 * SHIP_MASS * (0.5*SHIP_WIDTH * 0.5*SHIP_WIDTH))
@@ -81,9 +81,18 @@ class EShipNaive : public IShip {
 		float	ship_height	;
 		float	ship_mass	;
 		
+		void	ComputeShipParams	( void );
+		
+		struct {
+			float	length;
+			float	width;
+			float	height;
+		} ship_param;
+		
 	
 		IPxTriMesh		mesh_vis;
 		IPxTriMesh		mesh_flow;
+		IPxTriMesh		mesh_stat;
 		ID3DXMesh		*d3d_mesh_vis;
 		ID3DXEffect		*shader_fx;
 		
@@ -104,13 +113,24 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 	//
 	//	create meshes :
 	//
-	mesh_vis		=	sci_vis->LoadMesh("../scidata/uboat.esx", "|boat1");
-	mesh_flow		=	sci_vis->LoadMesh("../scidata/uboat.esx", "|flowsurf");
-	d3d_mesh_vis	=	sci_vis->CreateMesh( mesh_vis );
+	EName	mesh_vis;
+	EName	mesh_flow;
+	EName	mesh_stat;
+	
+	LuaGetField(L, idx, "mesh_vis", mesh_vis);
+	LuaGetField(L, idx, "mesh_flow", mesh_flow);
+	LuaGetField(L, idx, "mesh_stat", mesh_stat);
+	
+	this->mesh_vis		=	sci_vis->LoadMesh(mesh_vis.Name());
+	this->mesh_flow		=	sci_vis->LoadMesh(mesh_flow.Name());
+	this->mesh_stat		=	sci_vis->LoadMesh(mesh_stat.Name());
+	d3d_mesh_vis		=	sci_vis->CreateMesh( this->mesh_vis );
 	
 	//
 	//	read ship params :
 	//
+	LuaGetField( L, idx, "numeric",	numeric	);
+
 	float yaw = 0, pitch = 0, roll = 0;
 	LuaGetField( L, idx, "yaw",		yaw		);
 	LuaGetField( L, idx, "pitch",	pitch	);
@@ -121,11 +141,6 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 	LuaGetField( L, idx, "pos_y",	pos_y	);
 	LuaGetField( L, idx, "pos_z",	pos_z	);
 	
-	LuaGetField( L, idx, "numeric",	numeric	);
-	
-	LuaGetField( L, idx, "ship_length", ship_length	);
-	LuaGetField( L, idx, "ship_width",	ship_width	);
-	LuaGetField( L, idx, "ship_height", ship_height	);
 	LuaGetField( L, idx, "ship_mass",	ship_mass	);
 
 	num_roll		=	roll;
@@ -141,7 +156,9 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 					*	QuatRotationAxis( roll	,	EVec3(1,0,0));
 
 	EVec4		p	=	EVec4(pos_x, pos_y, pos_z, 1);
-	ship_body		=	sci_vis->CreatePhysBox( SHIP_LENGTH, SHIP_WIDTH, SHIP_HEIGHT, p, q, SHIP_MASS);
+	ship_body		=	sci_vis->CreatePhysMesh( this->mesh_stat, p, q, SHIP_MASS);
+
+	ComputeShipParams();
 
 	//
 	//	load shaders :
@@ -150,6 +167,25 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 }
 
 
+//
+//	EShipNaive::ComputeShipParams
+//
+void EShipNaive::ComputeShipParams( void )
+{
+	EBBox	bbox		=	mesh_stat->ComputeBBox();
+	ship_param.length	=	bbox.Max().x - bbox.Min().x;
+	ship_param.width	=	bbox.Max().y - bbox.Min().y;
+	ship_param.height	=	bbox.Max().z - bbox.Min().z;
+	
+	LOGF("ship length   (L)	=	%g", ship_param.length	);
+	LOGF("ship width    (W)	=	%g", ship_param.width	);
+	LOGF("ship height   (H)	=	%g", ship_param.height	);
+}
+
+
+//
+//
+//
 EShipNaive::~EShipNaive( void )
 {
 	sci_vis->GetNxScene()->releaseActor( *ship_body );
@@ -158,12 +194,18 @@ EShipNaive::~EShipNaive( void )
 }
 
 
+//
+//	EShipNaive::ReloadShader
+//
 void EShipNaive::ReloadShader( void )
 {
 	shader_fx		=	sci_vis->CompileEffect( "../scidata/shader.fx" );
 }
 
 
+//
+//	EShipNaive::Simulate
+//
 void EShipNaive::Simulate( float dtime, IPxWaving waving )
 {
 	if (USE_NUMERIC) {
@@ -442,7 +484,7 @@ template<typename Func> void RungeKutta2( Func func, float dt, float &x, float &
 void EShipNaive::EulerStep( float dt, IPxWaving waving )
 {
 	const float N1		= (0.1 * SHIP_LENGTH	* SHIP_WIDTH);	//	Hanovich (formula 56)
-	const float N2		= (1.086 * SHIP_LENGTH * (SHIP_WIDTH * SHIP_WIDTH * SHIP_WIDTH * SHIP_WIDTH));	// devided by 'roll_d'
+	const float N2		= (0.086 * SHIP_LENGTH * (SHIP_WIDTH * SHIP_WIDTH * SHIP_WIDTH * SHIP_WIDTH));	// devided by 'roll_d'
 	const float M		= (SHIP_MASS);
 	const float S		= (SHIP_LENGTH			* SHIP_WIDTH);
 	const float lamda	= (SHIP_COEFF_BLOCK	* WATER_DENSITY);

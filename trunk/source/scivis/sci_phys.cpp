@@ -26,6 +26,7 @@
 #include "sci_local.h"
 
 #include <NxPhysics.h>
+#include <NxCooking.h>
 
 /*-----------------------------------------------------------------------------
 	Nano vis :
@@ -61,6 +62,14 @@ void ESciVis::InitPhysX( void )
 		nx_scene = nx->createScene(sceneDesc);  
 		if(!nx_scene) return;
 	}
+	
+	//	coocking lib :
+	nx_cook	=	NxGetCookingLib(NX_PHYSICS_SDK_VERSION);
+	if (!nx_cook) {
+		RAISE_EXCEPTION("NxGetCookingLib() failed");
+	}
+	nx_cook->NxInitCooking();
+	
 
 	// Create the default material
 	NxMaterial* defaultMaterial = nx_scene->getMaterialFromIndex(0); 
@@ -77,11 +86,22 @@ void ESciVis::ShutdownPhysX( void )
 {
 	LOG_SHUTDOWN("PhysX");
 
+	if (nx_cook) {
+		nx_cook->NxCloseCooking();
+		nx_cook = NULL;
+	}
+
     if (nx_scene) {
 		nx->releaseScene(*nx_scene);
+		nx_scene = NULL;
 	}
-	if (nx)  nx->release();
+	
+	if (nx)  {
+		nx->release();
+		nx = NULL;
+	}
 }
+
 
 //
 //	ESciVis::FramePhysX
@@ -96,7 +116,7 @@ void ESciVis::FramePhysX( float dtime )
 
 
 //
-//
+//	ESciVis::CreatePhysBox
 //
 NxActor	* ESciVis::CreatePhysBox( float sx, float sy, float sz, const EVec4 &pos, const EQuat &orient, float mass )
 {
@@ -127,8 +147,91 @@ NxActor	* ESciVis::CreatePhysBox( float sx, float sy, float sz, const EVec4 &pos
 }
 
 
+//
+//	ESciVis::CreatePhysMesh
+//
+NxActor *ESciVis::CreatePhysMesh( IPxTriMesh mesh, const EVec4 &pos, const EQuat &orient, float mass )
+{
+	NxVec3	p	=	ToNxVec3( EVec3(pos.x, pos.y, pos.z) );
+	NxQuat	q	=	ToNxQuat( orient );
+	
+	//	actor descriptor
+	NxActorDesc actor_desc;
+	NxBodyDesc	body_desc;
 
-static EVec4	Bytes2Color(uint bytes) 
+	NxActor *actor = NULL;	
+
+	//	setup actor shape :
+	NxConvexShapeDesc shape_desc;
+	shape_desc.meshData		=	BuildConvexMesh( mesh );
+	shape_desc.localPose.t	=	NxVec3(0, 0, 0);
+	shape_desc.group		=	0;
+	actor_desc.shapes.pushBack(&shape_desc);
+
+	ASSERT(shape_desc.isValid());
+
+	//	setup actor :
+	actor_desc.body			= &body_desc;
+	actor_desc.density		= 0;
+	actor_desc.globalPose.t	= p;	
+	actor_desc.globalPose.M	= NxMat33(q);
+	actor_desc.group		= 0;
+	
+	//	setup body :
+	body_desc.mass			= mass;
+	
+	ASSERT(body_desc.isValid());
+	ASSERT(actor_desc.isValid());
+
+	//	create actor :
+	actor = nx_scene->createActor(actor_desc);
+	ASSERT(actor);
+	
+	return actor;	
+}	
+	
+
+//
+//	EPhysXPhysEngine::BuildConvexMesh
+//
+NxConvexMesh *ESciVis::BuildConvexMesh( const IPxTriMesh input_mesh )
+{
+	//IPxTriMesh	mesh	=	input_mesh->Clone();
+	//mesh->SetFormat( GE_MESH_POSITION );
+	//mesh->MergeVertices();				//This command causes convex cook crash
+
+	NxConvexMeshDesc	convex_mesh_desc;
+
+	NxArray<NxVec3>	verts;
+	
+	for (uint i=0; i<input_mesh->GetVertexNum(); i++) {
+		EVertex v;
+		v = input_mesh->GetVertex(i);
+		verts.push_back( NxVec3(v.position.x, v.position.y, v.position.z) );
+	}
+
+    convex_mesh_desc.numVertices		= input_mesh->GetVertexNum();
+    convex_mesh_desc.pointStrideBytes	= sizeof(NxVec3);
+    convex_mesh_desc.points				= &verts[0];
+	convex_mesh_desc.flags				= NX_CF_COMPUTE_CONVEX;
+	
+	ASSERT( convex_mesh_desc.isValid() );
+
+	MemoryWriteBuffer	buf;	
+	bool r = nx_cook->NxCookConvexMesh(convex_mesh_desc, buf);
+	
+	if (!r) {
+		RAISE_EXCEPTION("mesh contains to many vertices");
+	}
+
+	return nx->createConvexMesh(MemoryReadBuffer(buf.data));
+}
+
+
+//
+//	Bytes2Color
+//
+static EVec4 Bytes2Color(uint bytes) 
 {
 	EVec4 c;
 	c.x	=	((bytes >> 24) & 0xFF) / 255.0f;
@@ -137,7 +240,6 @@ static EVec4	Bytes2Color(uint bytes)
 	c.w	=	((bytes >>  0) & 0xFF) / 255.0f;
 	return c;
 }
-
 
 
 //

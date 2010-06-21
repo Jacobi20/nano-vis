@@ -56,6 +56,7 @@ ESciVis::ESciVis( void )
 	lua_register( L, "SCI_RenderView",		SCI_RenderView );
 	lua_register( L, "SCI_ReloadShaders",	SCI_ReloadShaders );
 	lua_register( L, "SCI_CreateShip",		SCI_CreateShip );
+	lua_register( L, "SCI_CreateShip2",		SCI_CreateShip2 );
 	
 	InitPhysX();
 	InitRender();
@@ -72,6 +73,7 @@ ESciVis::~ESciVis( void )
 	LOG_SPLIT("SciVis shutting down");
 
 	ship_model	=	NULL;
+	ship_model2	=	NULL;
 	
 	
 	ShutdownRender();
@@ -227,14 +229,24 @@ ID3DXMesh *ESciVis::CreateMesh( IPxTriMesh mesh )
 //
 //	ESciVis::LoadMesh
 //
-IPxTriMesh ESciVis::LoadMesh( const char *fspath, const char *hpath )
+IPxTriMesh ESciVis::LoadMesh( const char *path )
 {
-	LOGF("Loading : %s %s", fspath, hpath);
+	string spath = path;
+	uint n = spath.find('|');
+
+	if (n==string::npos) {
+		RAISE_EXCEPTION("path must be <file path|hierarchy path>");
+	}
+
+	string			fpath	=	spath.substr(0, n);
+	string			hpath	=	spath.substr(n); 
+
+	LOGF("Loading : %s %s", fpath.c_str(), hpath.c_str());
 
 	try {
 		IPxScene	scene	=	ge->CreateScene();
 
-		IPxFile	f = fs->FileOpen(fspath, FS_OPEN_READ);
+		IPxFile	f = fs->FileOpen(fpath.c_str(), FS_OPEN_READ);
 		vector<char>	buffer;
 		buffer.resize(f->Size()+1, '\0');
 		
@@ -249,7 +261,7 @@ IPxTriMesh ESciVis::LoadMesh( const char *fspath, const char *hpath )
 
 		scene->ReadXML( xscene );
 		
-		IPxSceneNode snode = scene->GetNodeByPath(hpath);
+		IPxSceneNode snode = scene->GetNodeByPath(hpath.c_str());
 		
 		return snode->GetMesh();
 		

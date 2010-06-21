@@ -32,8 +32,6 @@
 	Nano vis :
 -----------------------------------------------------------------------------*/
 
-#define SHIP_FS_PATH		"../scidata/uboat.esx"
-#define SHIP_H_PATH			"|boat1"
 #define SHADER_FX			"../scidata/shader.fx"
 
 const float	SHIP_LENGTH		=	105;		//	m
@@ -60,13 +58,14 @@ void ESciVis::InitRender( void )
 	
 
 	//	read file :	
-	mesh_sea	=	LoadMesh(SHIP_FS_PATH, "|sea2d");
+	mesh_sea	=	LoadMesh("../scidata/uboat.esx|sea2d");
 	sea			=	CreateMesh( mesh_sea );
 	shader_fx	=	CompileEffect(SHADER_FX);
 	
 	change_papams_to_base_reson();
 	
 	ship_model	=	NULL;
+	ship_model2	=	NULL;
 	waving		=	create_boukh_waving( NULL, 0 );
 }
 
@@ -105,6 +104,13 @@ int ESciVis::SCI_CreateShip( lua_State * L )
 	return 0;
 }
 
+int ESciVis::SCI_CreateShip2( lua_State * L )
+{
+	ESciVis *self = Linker()->GetSciVis().As<ESciVis>();
+	self->ship_model2	=	create_naive_ship( L, 1 );
+	return 0;
+}
+
 
 //
 //
@@ -118,126 +124,6 @@ int ESciVis::SCI_ReloadShaders( lua_State * L )
 	
 	return 0;
 }
-
-
-
-//
-//
-//
-float FEM_StaticWaveForce( EVec4 pos, float szx, float szy, float szz, float wave_height ) 
-{
-	float wh = wave_height;		//	wave height
-
-	float frac = (wh - (pos.z - 0.5f*szz)) / szz;
-	frac = Clamp<float>(frac, 0,1);
-
-	//float frac = 0;
-	//if (pos.z<wh) {
-	//	frac = 1;
-	//}
-	
-	return frac * szx * szy * szz * WATER_DENSITY * 9.8;
-}
-
-
-NxVec3 FEM_HydroDynamicForce( NxVec3 velocity, EVec4 pos, float szx, float szy, float szz, float wave_height, NxVec3 normal ) 
-{
-	if (velocity.magnitude()<0.001) {
-		return NxVec3(0,0,0);
-	}
-	
-	float cos_normal_flow = abs(velocity.dot( normal ));
-	
-	//	add some viscosity
-	cos_normal_flow = 0.05 + 0.95*cos_normal_flow;
-	
-
-	float wh = wave_height;
-	
-	float frac = 0;
-	if (pos.z<wh) {
-		frac = 1;
-	}
-	
-	float S		=	sqrt((szx * szy * szz) * (szx * szy * szz));	//	average square
-	float Vm	=	velocity.magnitude();						//	velocity abs value
-	if (Vm>7) {
-		Vm = 7;
-	}
-	
-	float Fm	=	- SHIP_CX * Vm*Vm * S * WATER_DENSITY / 2 * frac * cos_normal_flow;
-	
-	NxVec3 nvel = velocity;
-	nvel.normalize();
-	
-	return nvel * Fm;
-}
-
-
-NxVec3 CapsuleNormal( EVec4 pos ) {
-	float hszy = (SHIP_WIDTH/2 + SHIP_HEIGHT/2) / 2;
-	float hszx = SHIP_LENGTH / 2 - 2*hszy;
-	
-	NxVec3 n(0,0,0);
-	
-	if ( abs(pos.x) < hszx ) {
-		n = NxVec3(0, pos.y, pos.z);
-	} else
-	if ( pos.x > hszx ) {
-		n = NxVec3(pos.x - hszx, pos.y, pos.z);
-	} else 
-	if ( pos.x < -hszx ) {
-		n = NxVec3(pos.x + hszx, pos.y, pos.z);
-	}
-
-	n.normalize();
-	return n;
-}
-
-
-//const NxVec3	forward	( 5000000,0,0);
-//const NxVec3	backward(-5000000,0,0);
-//NxVec3	turbine_force = forward;
-
-//
-//
-//
-void ESciVis::UpdateBoat( float dtime )
-{
-	NxVec3 gravity	=	NxVec3(0,0,-9.8f) * SHIP_MASS;
-	
-	NxQuat	nxq	=	ship_body->getGlobalOrientationQuat();
-	NxVec3	nxv	=	ship_body->getGlobalPosition();
-	EQuat	q	=	EQuat(nxq.x, nxq.y, nxq.z, nxq.w);
-	EVec4	p	=	EVec4(nxv.x, nxv.y, nxv.z, 1);
-
-	
-	ship_body->addForceAtLocalPos( gravity, NxVec3(0,0,SHIP_CM_OFFSET));
-	
-	//if (p.x>50)  turbine_force = backward;
-	//if (p.x<-50) turbine_force = forward;
-	//ship_body->addForce( turbine_force );
-	
-	UpdateBoatHSF( dtime, p, q );
-	UpdateBoatHDF( dtime, p, q );
-}
-
-//
-//	ESciVis::UpdateBoatHSF
-//
-void ESciVis::UpdateBoatHSF( float dtime, const EVec4 &position, const EQuat &orient )
-{
-}
-
-
-//
-//	ESciVis::UpdateBoatHDF
-//	- updates hydrodynamic forces 
-//
-void ESciVis::UpdateBoatHDF( float dtime, const EVec4 &position, const EQuat &orient )
-{
-}
-
 
 
 //
@@ -281,6 +167,9 @@ void ESciVis::RenderView( lua_State * L )
 	
 	if (ship_model) {
 		ship_model->Simulate( dtime, waving );
+	}
+	if (ship_model2) {
+		ship_model2->Simulate( dtime, waving );
 	}
 	FramePhysX(dtime);
 	
@@ -346,6 +235,9 @@ void ESciVis::RenderView( lua_State * L )
 	if (ship_model) {
 		ship_model->Render( &renv );
 	}
+	if (ship_model2) {
+		ship_model2->Render( &renv );
+	}
 
 	//
 	//	draw sea :
@@ -378,6 +270,9 @@ void ESciVis::RenderView( lua_State * L )
 	}
 
 	HRCALL( shader_fx->End() );
+	
+	DebugPhysX(world, view, proj);
+		
 	
 	//	-------------------------------------------------
 	//	show rolling graph :
@@ -461,7 +356,6 @@ void ESciVis::RenderView( lua_State * L )
 	HRCALL( shader_fx->End() );
 
 
-	//DebugPhysX(world, view, proj);
 	SAFE_RELEASE( line_decl );
 }
 
