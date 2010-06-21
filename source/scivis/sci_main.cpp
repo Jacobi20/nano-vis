@@ -53,10 +53,11 @@ ESciVis::ESciVis( void )
 	InitDirect3D();
 	
 	lua_State *L = shell->Lua();
-	lua_register( L, "SCI_RenderView",		SCI_RenderView );
+	lua_register( L, "SCI_RenderView",		SCI_RenderView	);
 	lua_register( L, "SCI_ReloadShaders",	SCI_ReloadShaders );
-	lua_register( L, "SCI_CreateShip",		SCI_CreateShip );
+	lua_register( L, "SCI_CreateShip",		SCI_CreateShip	);
 	lua_register( L, "SCI_CreateShip2",		SCI_CreateShip2 );
+	lua_register( L, "SCI_ShipForce",		SCI_ShipForce	);
 	
 	InitPhysX();
 	InitRender();

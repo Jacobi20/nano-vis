@@ -82,6 +82,7 @@ class ESciVis : public ISciVis {
 		static int				SCI_ReloadShaders	( lua_State * L );
 		static int				SCI_CreateShip		( lua_State * L );
 		static int				SCI_CreateShip2		( lua_State * L );
+		static int				SCI_ShipForce		( lua_State * L );
 		
 		void					Simulate			( float dtime );
 		
