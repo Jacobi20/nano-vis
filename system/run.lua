@@ -1,6 +1,6 @@
 
 -----------------------------------------------------------------------
---	FRAME :
+--	setup and control :
 -----------------------------------------------------------------------
 
 unbindAll()
@@ -50,7 +50,29 @@ function DistInc()  state.dist_inc		=	false; end
 function DistDec()  state.dist_dec		=	false; end
 
 game_time = 0;
+
+-------------------------------------------------------------------------------
+--	create ship :
+-------------------------------------------------------------------------------
+SCI_CreateShip {
+	numeric		=	true;
+	yaw			=	math.rad(0);
+	roll		=	math.rad(10);
+	pitch		=	math.rad(0);
+	pos_x		=	0;
+	pos_y		=	0;
+	pos_z		=	0;
+	
+	ship_length	=	105;
+	ship_width	=	6;
+	ship_height	=	7;
+	ship_mass	=	1653750;
+}
                     
+
+-------------------------------------------------------------------------------
+--	frame :
+-------------------------------------------------------------------------------
 function SciVisFrame(dtime)
 
 	local	rotation = 60;

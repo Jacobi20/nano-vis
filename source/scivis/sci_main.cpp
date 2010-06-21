@@ -55,6 +55,7 @@ ESciVis::ESciVis( void )
 	lua_State *L = shell->Lua();
 	lua_register( L, "SCI_RenderView",		SCI_RenderView );
 	lua_register( L, "SCI_ReloadShaders",	SCI_ReloadShaders );
+	lua_register( L, "SCI_CreateShip",		SCI_CreateShip );
 	
 	InitPhysX();
 	InitRender();

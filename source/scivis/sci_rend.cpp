@@ -28,7 +28,6 @@
 #include "waves/waves.h"
 #include "waves/newave.h"
 
-
 /*-----------------------------------------------------------------------------
 	Nano vis :
 -----------------------------------------------------------------------------*/
@@ -67,7 +66,7 @@ void ESciVis::InitRender( void )
 	
 	change_papams_to_base_reson();
 	
-	ship_model	=	create_naive_ship( NULL, 0 );
+	ship_model	=	NULL;
 	waving		=	create_boukh_waving( NULL, 0 );
 }
 
@@ -92,6 +91,17 @@ int ESciVis::SCI_RenderView( lua_State * L )
 	
 	self->RenderView( L );
 	
+	return 0;
+}
+
+
+//
+//	ESciVis::SCI_CreateShip
+//
+int ESciVis::SCI_CreateShip( lua_State * L )
+{
+	ESciVis *self = Linker()->GetSciVis().As<ESciVis>();
+	self->ship_model	=	create_naive_ship( L, 1 );
 	return 0;
 }
 
@@ -268,7 +278,10 @@ void ESciVis::RenderView( lua_State * L )
 	//
 	//UpdateBoat(dtime);
 	waving->Update( dtime );
-	ship_model->Simulate( dtime, waving );
+	
+	if (ship_model) {
+		ship_model->Simulate( dtime, waving );
+	}
 	FramePhysX(dtime);
 	
 	Simulate(dtime);
@@ -330,7 +343,9 @@ void ESciVis::RenderView( lua_State * L )
 	renv.matrix_view	=	EMatrix4((FLOAT*)view);
 	renv.view_pos		=	EVec4((FLOAT*)view_pos);
 	
-	ship_model->Render( &renv );
+	if (ship_model) {
+		ship_model->Render( &renv );
+	}
 
 	//
 	//	draw sea :
@@ -371,15 +386,18 @@ void ESciVis::RenderView( lua_State * L )
 		float yaw, pitch, roll;
 		EVec4 p;
 		EQuat q;	
-		ship_model->GetPose( p, q );
+		
+		if (ship_model) {
+			ship_model->GetPose( p, q );
+		}
 		QuatToAngles(q, yaw, pitch, roll);
 		
-		EVec4 roll_record(yaw, pitch, roll, 1);
+		EVec4 roll_record(yaw, p.z*10, roll, 1);
 		rolling_history[ (rolling_history_ptr) % ROLL_HISTORY_SIZE ] = roll_record;
 		rolling_history_ptr ++;
 		
 		for (uint i=0; i<ROLL_HISTORY_SIZE; i++) {
-			rolling_history[i].w *= 0.999f;
+			rolling_history[i].w *= 0.9999f;
 		}
 	}
 
@@ -402,7 +420,7 @@ void ESciVis::RenderView( lua_State * L )
 	for (uint i=0; i<ROLL_HISTORY_SIZE; i++) {
 		verts[i].color	=	EVec4(1,1,0.5, rolling_history[i].w);
 		verts[i].normal	=	EVec3(0,0,0);
-		verts[i].pos	=	EVec3(0.125 * i, rolling_history[i].z + 40, 0);
+		verts[i].pos	=	EVec3(0.125 * i, -rolling_history[i].z + 40, 0);
 		verts[i].uv		=	EVec2(0,0);
 	}
 
@@ -424,7 +442,7 @@ void ESciVis::RenderView( lua_State * L )
 	for (uint i=0; i<ROLL_HISTORY_SIZE; i++) {
 		verts[i].color	=	EVec4(1,1,0.5, rolling_history[i].w);
 		verts[i].normal	=	EVec3(0,0,0);
-		verts[i].pos	=	EVec3(0.125 * i, rolling_history[i].y + 80, 0);
+		verts[i].pos	=	EVec3(0.125 * i, -rolling_history[i].y + 80, 0);
 		verts[i].uv		=	EVec2(0,0);
 	}
 

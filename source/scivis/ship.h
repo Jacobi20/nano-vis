@@ -49,7 +49,7 @@ class IWaving : public IDisposable {
 		virtual void		ReloadShader	( void ) = 0;
 		virtual EVec4		GetVelocity		( const EVec4 &init_pos ) const = 0;
 		virtual EVec4		GetPosition		( const EVec4 &init_pos ) const = 0;
-		virtual float		GetWaveSlopX	( const EVec4 &init_pos ) const = 0;
+		virtual float		GetWaveSlopeX	( const EVec4 &init_pos ) const = 0;
 	};
 	
 	
