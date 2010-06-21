@@ -39,7 +39,7 @@ class EWavingBoukh : public IWaving {
 		virtual void		ReloadShader		( void );
 		virtual	EVec4		GetVelocity			( const EVec4 &init_pos ) const;
 		virtual	EVec4		GetPosition			( const EVec4 &init_pos ) const;
-		virtual float		GetWaveSlopX		( const EVec4 &init_pos ) const;
+		virtual float		GetWaveSlopeX		( const EVec4 &init_pos ) const;
 		
 	protected:
 		float	time;
@@ -122,13 +122,16 @@ EVec4 EWavingBoukh::GetPositionAtTime( const EVec4 &init_pos, float time ) const
 {
 	float sum_sin = 0.0;
 	float sum_cos = 0.0;
+	float A		=	1;
 	
 	
-#if 0	
+#if 0
+	
 	float dW = (Wmax-Wmin)/(float)NN;
 	
-	float x	= init_pos.x;
-	float t = time;
+	float x	= init_pos.x*2;
+	float t = time * 2;
+	A = 1;
 
 	for(int i=0; i<NN; i++) {
 		float W	=	Wmin + i * dW;
@@ -141,25 +144,24 @@ EVec4 EWavingBoukh::GetPositionAtTime( const EVec4 &init_pos, float time ) const
 	}
 #else
 	float wx	=	0.1f;
-	float wt	=	0.3f;
-	float A		=	0;
+	float wt	=	0.5f;
 	sum_sin		=	sin( wx * PI * init_pos.x  +  wt * PI * time );
 	sum_cos		=	cos( wx * PI * init_pos.x  +  wt * PI * time );
 #endif	
-	return EVec4(A*sum_sin, 0, A*sum_sin, 1);
+	return EVec4(A*sum_sin, 0, A*sum_sin, 0);
 }
 
 
-float EWavingBoukh::GetWaveSlopX( const EVec4 &init_pos ) const
+float EWavingBoukh::GetWaveSlopeX( const EVec4 &init_pos ) const
 {
 	EVec4	p	=	init_pos;
-	float	dx	=	0.01f;
+	float	dx	=	0.1f;
 	EVec4	p0	=	GetPosition( EVec4( p.x,		p.y, p.z, 1 ) );
 	EVec4	p1	=	GetPosition( EVec4( p.x + dx,	p.y, p.z, 1 ) );
-	if (p1.x <= p0.x) {
-		LOG_WARNING("wave slope is to large!");
-	}
-	return atan2( (p1.z - p0.z), (p1.x - p0.x) );
+	//if (p1.x <= p0.x) {
+	//	LOG_WARNING("wave slope is to large!");
+	//}
+	return atan2( p1.z - p0.z, dx );
 }
 
 
