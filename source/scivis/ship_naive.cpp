@@ -142,7 +142,9 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 	LuaGetField( L, idx, "pos_y",	pos_y	);
 	LuaGetField( L, idx, "pos_z",	pos_z	);
 	
+	float cmass_offset;
 	LuaGetField( L, idx, "ship_mass",	ship_mass	);
+	LuaGetField( L, idx, "cmass_offset",cmass_offset);
 
 	num_roll		=	roll;
 	num_roll_d		=	0;
@@ -158,6 +160,10 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 
 	EVec4		p	=	EVec4(pos_x, pos_y, pos_z, 1);
 	ship_body		=	sci_vis->CreatePhysMesh( this->mesh_stat, p, q, SHIP_MASS);
+	NxVec3		cm	=	ship_body->getCMassLocalPosition();
+	//cm.z += cmass_offset;
+	//ship_body->setCMassOffsetLocalPosition(cm);
+	//ship_body->updateMassFromShapes( 0, SHIP_MASS );
 
 	ComputeShipParams();
 
@@ -178,9 +184,24 @@ void EShipNaive::ComputeShipParams( void )
 	ship_param.width	=	bbox.Max().y - bbox.Min().y;
 	ship_param.height	=	bbox.Max().z - bbox.Min().z;
 	
-	LOGF("ship length   (L)	=	%g", ship_param.length	);
-	LOGF("ship width    (W)	=	%g", ship_param.width	);
-	LOGF("ship height   (H)	=	%g", ship_param.height	);
+	LOGF("ship length         (L)	=   %g", ship_param.length	);
+	LOGF("ship width          (W)	=   %g", ship_param.width	);
+	LOGF("ship height         (H)	=   %g", ship_param.height	);
+	
+	NxMat33	inertia_tensor = ship_body->getGlobalInertiaTensor();
+	
+	//	X-axis 
+	float	Ix	=	inertia_tensor(0,0);
+	LOGF("ship inertia moment (Ix)  =   %g", Ix);
+	
+	//	metacentric height :
+	NxVec3	Cm	=	ship_body->getCMassLocalPosition();
+	float   V	=	ship_mass / WATER_DENSITY;			//	water volume
+	float	L	=	ship_param.length;
+	float	B	=	ship_param.width;
+	float	Ixwl=	L * B*B*B / 12.0f;					//	Ix waterline
+	float	Hmc	=	Ixwl / V + Cm.z;
+	LOGF("metacentric height  (Hmc) =   %g", Hmc);
 }
 
 
@@ -286,13 +307,13 @@ void EShipNaive::Render( ERendEnv_s *rend_env )
 
 void EShipNaive::UpdateForces( float dtime, IPxWaving waving )
 {
-	NxVec3 gravity	=	NxVec3(0,0,-9.8f) * SHIP_MASS;
+	//NxVec3 gravity	=	NxVec3(0,0,-9.8f) * SHIP_MASS;
 	
 	EQuat	q;
 	EVec4	p;
 	GetPose(p, q);
 	
-	ship_body->addForceAtLocalPos( gravity, NxVec3(0,0,SHIP_CM_OFFSET));
+	//ship_body->addForceAtLocalPos( gravity, NxVec3(0,0,SHIP_CM_OFFSET));
 	
 	UpdateHSF( dtime, waving );
 	UpdateHDF( dtime, waving );
@@ -329,10 +350,10 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 		for (uint j=0; j<FEM_Y; j++) {
 			for (uint k=0; k<FEM_Z; k++) {
 			
-				if (j==0 && k==0) continue;
-				if (j==0 && k==3) continue;
-				if (j==3 && k==3) continue;
-				if (j==3 && k==0) continue;
+				//if (j==0 && k==0) continue;
+				//if (j==0 && k==3) continue;
+				//if (j==3 && k==3) continue;
+				//if (j==3 && k==0) continue;
 				
 				float x = -(0.5 * SHIP_LENGTH) + 0.5*dx + dx * (float)i;
 				float y = -(0.5 * SHIP_WIDTH ) + 0.5*dy + dy * (float)j;
@@ -431,9 +452,6 @@ void EShipNaive::UpdateHDF( float dtime, IPxWaving waving )
 //	zeta_d'		=	- 1 / M  *  ( lamda * S * zeta  +  N1 * zeta_d )
 //	zeta'		=	
 //
-
-
-
 class expr_zeta_dd {
 	public:
 		float	N1;
@@ -456,17 +474,6 @@ class expr_roll_dd {
 		}
 	};
 
-/*
-static float EShipNaive::expr_zeta_dd ( float zeta, float zeta_d, float zeta_w )	
-{	
-	return - ( lamda * S * (zeta - zeta_w)  +  N1 * zeta_d ) / M;	
-}
-
-static float EShipNaive::expr_roll_dd ( float roll, float roll_d, float roll_w )	
-{	
-	return - ( N2 * roll_d * abs(roll_d) + M * 9.8 * MCH * (roll + roll_w) ) / I; 
-}
-*/
 
 template<typename Func> void Euler2( Func func, float dt, float &x, float &dx, float a )
 {

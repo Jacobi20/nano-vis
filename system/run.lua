@@ -81,18 +81,19 @@ game_time = 0;
 -------------------------------------------------------------------------------
 SCI_CreateShip {
 	--	comuting method :
-	numeric		=	true;
+	numeric		=	false;
 	
 	-- 	pose :
-	yaw			=	math.rad(-30);
-	roll		=	math.rad(10);
+	yaw			=	math.rad(0);
+	roll		=	math.rad(0);
 	pitch		=	math.rad(0);
 	pos_x		=	0;
-	pos_y		=	0;
+	pos_y		=	-20;
 	pos_z		=	0;
 	
 	-- 	ship params :
 	ship_mass	=	1653750;
+	cmass_offset=	-1;
 
 	-- 	ship geometry :
 	mesh_vis	=	"../scidata/uboat.esx|boat1";
@@ -100,26 +101,27 @@ SCI_CreateShip {
 	mesh_stat	=	"../scidata/uboat.esx|stat";
 }   
                     
--- SCI_CreateShip2 {
-	-- --	comuting method :
-	-- numeric		=	false;
+SCI_CreateShip2 {
+	--	comuting method :
+	numeric		=	false;
 	
-	-- -- 	pose :
-	-- yaw			=	math.rad(-40);
-	-- roll		=	math.rad(30);
-	-- pitch		=	math.rad(50);
-	-- pos_x		=	20;
-	-- pos_y		=	20;
-	-- pos_z		=	80;
+	-- 	pose :
+	yaw			=	math.rad(0);
+	roll		=	math.rad(0);
+	pitch		=	math.rad(0);
+	pos_x		=	0;
+	pos_y		=	20;
+	pos_z		=	0;
 	
-	-- -- 	ship params :
-	-- ship_mass	=	1000000;
+	-- 	ship params :
+	ship_mass	=	1000000;
+	cmass_offset=	-1;
 
-	-- -- 	ship geometry :
-	-- mesh_vis	=	"../scidata/boat.esx|boat1";
-	-- mesh_flow	=	"../scidata/boat.esx|stat";
-	-- mesh_stat	=	"../scidata/boat.esx|stat";
--- }  
+	-- 	ship geometry :
+	mesh_vis	=	"../scidata/boat.esx|boat1";
+	mesh_flow	=	"../scidata/boat.esx|stat";
+	mesh_stat	=	"../scidata/boat.esx|stat";
+}  
                     
 
 -------------------------------------------------------------------------------
@@ -137,7 +139,7 @@ function DriveShip()
 		SCI_ShipForce( vmath.vec4(0,0,-16537500,0), vmath.vec4(0,0,0,1));
 	end
 	if state.sunking then
-		SCI_ShipForce( vmath.vec4(0,0,-1000000,0), vmath.vec4(0,0,0,1));
+		SCI_ShipForce( vmath.vec4(0,0,-2000000,0), vmath.vec4(0,0,0,1));
 	end
 end
 
