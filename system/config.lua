@@ -3,8 +3,8 @@
 
 cfg.SetVar('d3d_fullscr'                , false);
 cfg.SetVar('d3d_mode'                   , 2);
-cfg.SetVar('d3d_xpos'                   , 148);
-cfg.SetVar('d3d_ypos'                   , 94);
+cfg.SetVar('d3d_xpos'                   , 147);
+cfg.SetVar('d3d_ypos'                   , 95);
 
 
 -- key bindings --

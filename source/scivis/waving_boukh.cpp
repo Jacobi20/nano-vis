@@ -129,9 +129,9 @@ EVec4 EWavingBoukh::GetPositionAtTime( const EVec4 &init_pos, float time ) const
 	
 	float dW = (Wmax-Wmin)/(float)NN;
 	
-	float x	= init_pos.x*4;
-	float t = time * 4;
-	A = 1;
+	float x	= init_pos.x*2;
+	float t = time * 2;
+	A = 1.0;
 
 	for(int i=0; i<NN; i++) {
 		float W	=	Wmin + i * dW;
