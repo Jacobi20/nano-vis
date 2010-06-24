@@ -40,9 +40,7 @@
 #define SHIP_INERTIA_X	(0.5 * SHIP_MASS * (0.5*SHIP_WIDTH * 0.5*SHIP_WIDTH))
 #define	SHIP_DRAFT		(SHIP_HEIGHT	/ 2)
 
-const float SHIP_COEFF_BLOCK	=	0.75;		//	not true Block coefficient, just L*W*H
-const float SHIP_CM_OFFSET		=  -0.7f;
-//const float MCH					=	0.56;		
+const float SHIP_COEFF_BLOCK	=	1.00;		//	not true Block coefficient, just L*W*H
 const float	ROLLING_PERIOD		=	8.56f;		//	sec
 const float MCH					=	0.5;
 
@@ -88,8 +86,10 @@ class EShipNaive : public IShip {
 			float	length;
 			float	width;
 			float	height;
+			float	cm_offset;
 		} ship_param;
 		
+		float			self_time;
 	
 		IPxTriMesh		mesh_vis;
 		IPxTriMesh		mesh_flow;
@@ -111,6 +111,8 @@ IShip * create_naive_ship( lua_State *L, int idx ) {
 
 EShipNaive::EShipNaive( lua_State *L, int idx )
 {
+	self_time	=	0;
+
 	//
 	//	create meshes :
 	//
@@ -145,6 +147,7 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 	float cmass_offset;
 	LuaGetField( L, idx, "ship_mass",	ship_mass	);
 	LuaGetField( L, idx, "cmass_offset",cmass_offset);
+	ship_param.cm_offset	=	cmass_offset;
 
 	num_roll		=	roll;
 	num_roll_d		=	0;
@@ -161,11 +164,12 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 	EVec4		p	=	EVec4(pos_x, pos_y, pos_z, 1);
 	ship_body		=	sci_vis->CreatePhysMesh( this->mesh_stat, p, q, SHIP_MASS);
 	NxVec3		cm	=	ship_body->getCMassLocalPosition();
-	//cm.z += cmass_offset;
-	//ship_body->setCMassOffsetLocalPosition(cm);
-	//ship_body->updateMassFromShapes( 0, SHIP_MASS );
+	cm.z += ship_param.cm_offset;
+	ship_body->setCMassOffsetLocalPosition(cm);
 
 	ComputeShipParams();
+	
+	ship_body->setLinearDamping(0);
 
 	//
 	//	load shaders :
@@ -190,10 +194,12 @@ void EShipNaive::ComputeShipParams( void )
 	
 	NxMat33	inertia_tensor = ship_body->getGlobalInertiaTensor();
 	
-	//	X-axis 
+	//	-----------------------------	
+	//	Moment of inertia (X-axis) :
 	float	Ix	=	inertia_tensor(0,0);
 	LOGF("ship inertia moment (Ix)  =   %g", Ix);
-	
+
+	//	-----------------------------	
 	//	metacentric height :
 	NxVec3	Cm	=	ship_body->getCMassLocalPosition();
 	float   V	=	ship_mass / WATER_DENSITY;			//	water volume
@@ -202,6 +208,12 @@ void EShipNaive::ComputeShipParams( void )
 	float	Ixwl=	L * B*B*B / 12.0f;					//	Ix waterline
 	float	Hmc	=	Ixwl / V + Cm.z;
 	LOGF("metacentric height  (Hmc) =   %g", Hmc);
+
+	//	-----------------------------	
+	//	Theortical heaving period (T1): Hanovich (formula 11) :
+	float T1 = 2 * PI * sqrt( ship_mass / WATER_DENSITY / SHIP_LENGTH / SHIP_WIDTH / 9.8 );
+	LOGF("heaving period (T)        =   %g", T1);
+	
 }
 
 
@@ -239,11 +251,14 @@ void EShipNaive::ApplyForceAtLocalPoint( const EVec4 &pos, const EVec4 &force )
 //
 void EShipNaive::Simulate( float dtime, IPxWaving waving )
 {
+	self_time += dtime;
+	
 	if (USE_NUMERIC) {
 		UpdateNumeric( dtime, waving );
 	} else {
 		UpdateForces( dtime, waving );
 	}
+	
 }
 
 
@@ -307,13 +322,13 @@ void EShipNaive::Render( ERendEnv_s *rend_env )
 
 void EShipNaive::UpdateForces( float dtime, IPxWaving waving )
 {
-	//NxVec3 gravity	=	NxVec3(0,0,-9.8f) * SHIP_MASS;
+	NxVec3 gravity	=	NxVec3(0,0,-9.8f) * SHIP_MASS;
 	
 	EQuat	q;
 	EVec4	p;
 	GetPose(p, q);
 	
-	//ship_body->addForceAtLocalPos( gravity, NxVec3(0,0,SHIP_CM_OFFSET));
+	//ship_body->addForceAtLocalPos( gravity, NxVec3(0,0,ship_param.cm_offset));
 	
 	UpdateHSF( dtime, waving );
 	UpdateHDF( dtime, waving );
@@ -346,14 +361,16 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 	float dy = SHIP_WIDTH  / FEM_Y;
 	float dz = SHIP_HEIGHT / FEM_Z;
 	
+	float total_hydro_stat_force = 0;
+	
 	for (uint i=0; i<FEM_X; i++) {
 		for (uint j=0; j<FEM_Y; j++) {
 			for (uint k=0; k<FEM_Z; k++) {
 			
-				//if (j==0 && k==0) continue;
-				//if (j==0 && k==3) continue;
-				//if (j==3 && k==3) continue;
-				//if (j==3 && k==0) continue;
+				if (j==0 && k==0) continue;
+				if (j==0 && k==3) continue;
+				if (j==3 && k==3) continue;
+				if (j==3 && k==0) continue;
 				
 				float x = -(0.5 * SHIP_LENGTH) + 0.5*dx + dx * (float)i;
 				float y = -(0.5 * SHIP_WIDTH ) + 0.5*dy + dy * (float)j;
@@ -368,6 +385,8 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 
 				float	fs = FEM_StaticWaveForce(pos, dx, dy, dz, wh);					//	static force
 				
+				total_hydro_stat_force += fs;
+				
 				ship_body->addForceAtPos( NxVec3(0,0,fs), NxVec3(pos.x, pos.y, pos.z) );
 
 				//DebugLine( EVec3(pos.x, pos.y, pos.z), EVec3(pos.x, pos.y, pos.z + fs/SHIP_MASS*40), EVec4(0,0,1,1));
@@ -378,6 +397,11 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 			}
 		}
 	}
+
+	//ship_body->addForceAtLocalPos( NxVec3(0,0,total_hydro_stat_force), NxVec3(0, 0, 0) );
+
+	//LOGF("Fnx  = %g (KN)", (total_hydro_stat_force - SHIP_MASS * 9.8) / 1000.0);
+	
 }
 
 void EShipNaive::UpdateHDF( float dtime, IPxWaving waving )
@@ -459,7 +483,8 @@ class expr_zeta_dd {
 		float	lamda;
 		float	S;
 		float operator () ( float zeta, float zeta_d, float zeta_w ) {
-			return - ( lamda * S * (zeta - zeta_w)  +  N1 * zeta_d ) / M;	
+			//LOGF("Fnum = %g (KN)", (S * zeta * 1000 * 9.8) / 1000.0);
+			return - ( 9.8 * lamda * S * (zeta - zeta_w)  +  N1 * zeta_d ) / M;	
 		}
 	};
 
@@ -500,7 +525,7 @@ template<typename Func> void RungeKutta2( Func func, float dt, float &x, float &
 
 void EShipNaive::EulerStep( float dt, IPxWaving waving )
 {
-	const float N1		= (0.1 * SHIP_LENGTH	* SHIP_WIDTH);	//	Hanovich (formula 56)
+	const float N1		= 0*(0.1 * SHIP_LENGTH	* SHIP_WIDTH);	//	Hanovich (formula 56)
 	const float N2		= (0.086 * SHIP_LENGTH * (SHIP_WIDTH * SHIP_WIDTH * SHIP_WIDTH * SHIP_WIDTH));	// devided by 'roll_d'
 	const float M		= (SHIP_MASS);
 	const float S		= (SHIP_LENGTH			* SHIP_WIDTH);
@@ -522,20 +547,18 @@ void EShipNaive::EulerStep( float dt, IPxWaving waving )
 	_expr_roll_dd.MCH	=	MCH;
 	_expr_roll_dd.I		=	I;
 
-	//Euler2( _expr_zeta_dd, dt, num_zeta, num_zeta_d, zeta_w );
-	//Euler2( _expr_roll_dd, dt, num_roll, num_roll_d, delta );
+	Euler2( _expr_zeta_dd, dt, num_zeta, num_zeta_d, zeta_w );
+	Euler2( _expr_roll_dd, dt, num_roll, num_roll_d, delta );
 
-	RungeKutta2	( _expr_zeta_dd, dt, num_zeta, num_zeta_d, zeta_w );
-	RungeKutta2	( _expr_roll_dd, dt, num_roll, num_roll_d, delta );
-	//Euler2( expr_zeta_dd, dt, num_zeta, num_zeta_d, zeta_w );
-	//Euler2( expr_roll_dd, dt, num_roll, num_roll_d, delta );
+	//RungeKutta2	( _expr_zeta_dd, dt, num_zeta, num_zeta_d, zeta_w );
+	//RungeKutta2	( _expr_roll_dd, dt, num_roll, num_roll_d, delta );
 }
 
 
 void EShipNaive::UpdateNumeric( float dtime, IPxWaving waving )
 {
-	for (uint i=0; i<10; i++) {
-		EulerStep( dtime / 10.0f, waving );
+	for (uint i=0; i<30; i++) {
+		EulerStep( dtime / 30.0f, waving );
 	}
 }
 

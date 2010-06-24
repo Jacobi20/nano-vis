@@ -296,15 +296,23 @@ void ESciVis::RenderView( lua_State * L )
 	//	-------------------------------------------------
 	if (true) {
 		float yaw, pitch, roll;
-		EVec4 p;
-		EQuat q;	
+		float yaw2, pitch2, roll2;
+		EVec4 p, p2;
+		EQuat q, q2;	
 		
 		if (ship_model) {
 			ship_model->GetPose( p, q );
 		}
+		if (ship_model2) {
+			ship_model2->GetPose( p2, q2 );
+		}
 		QuatToAngles(q, yaw, pitch, roll);
+		QuatToAngles(q2, yaw2, pitch2, roll2);
 		
-		EVec4 roll_record(yaw, p.z*10, roll, 1);
+		//EVec4 roll_record(yaw, p.z*10, roll, 1);
+		EVec4 roll_record(yaw, 20*p.z, 20*p2.z, 1);
+		//EVec4 roll_record(yaw, roll, roll2, 1);
+		
 		rolling_history[ (rolling_history_ptr) % ROLL_HISTORY_SIZE ] = roll_record;
 		rolling_history_ptr ++;
 		
