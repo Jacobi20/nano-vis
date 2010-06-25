@@ -64,6 +64,8 @@
 
 #define SAFE_RELEASE(obj) if (obj) { obj->Release(); obj = NULL; }
 
+const float GRAVITY	=	9.8f;
+
 class ESciVis;
 extern ESciVis	*sci_vis;
 

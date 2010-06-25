@@ -53,7 +53,7 @@ void ESciVis::InitPhysX( void )
 
     // Create the scene
     NxSceneDesc sceneDesc;
-    sceneDesc.gravity               = NxVec3(0,0,-9.8);
+    sceneDesc.gravity               = NxVec3(0,0,0);
 	sceneDesc.simType				= NX_SIMULATION_SW;
     nx_scene = nx->createScene(sceneDesc);	
 	

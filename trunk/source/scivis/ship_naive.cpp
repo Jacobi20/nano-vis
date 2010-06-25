@@ -42,7 +42,6 @@
 
 const float SHIP_COEFF_BLOCK	=	1.00;		//	not true Block coefficient, just L*W*H
 const float	ROLLING_PERIOD		=	8.56f;		//	sec
-const float MCH					=	0.5;
 
 const float WATER_DENSITY		=	1000;		//	kg/m^3
 
@@ -87,6 +86,13 @@ class EShipNaive : public IShip {
 			float	width;
 			float	height;
 			float	cm_offset;
+			
+			float	cx;
+			
+			float	gmt;	//	rolling metacentric height
+			float	gml;	//	pitching metacentric height
+			
+			float	Ix;		//	X-moment of inertia
 		} ship_param;
 		
 		float			self_time;
@@ -148,6 +154,8 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 	LuaGetField( L, idx, "ship_mass",	ship_mass	);
 	LuaGetField( L, idx, "cmass_offset",cmass_offset);
 	ship_param.cm_offset	=	cmass_offset;
+	
+	LuaGetField( L, idx, "cx",	ship_param.cx );
 
 	num_roll		=	roll;
 	num_roll_d		=	0;
@@ -196,8 +204,21 @@ void EShipNaive::ComputeShipParams( void )
 	
 	//	-----------------------------	
 	//	Moment of inertia (X-axis) :
-	float	Ix	=	inertia_tensor(0,0);
-	LOGF("ship inertia moment (Ix)  =   %g", Ix);
+	float Ix;
+	float rx = 0.33 * ship_param.width;
+	Ix = rx * rx * ship_mass;
+	LOGF("approx inertia moment (Ix)  =   %g", Ix);
+
+	Ix	=	inertia_tensor(1,1);
+	LOGF("ship inertia moment   (Ix)  =   %g", Ix);
+	
+	for (int i=0; i<3; i++)
+	for (int j=0; j<3; j++) {
+		LOGF("J[r=%d, c=%d] = %g", i, j, inertia_tensor(i,j));
+	}
+	
+	
+	ship_param.Ix	=	Ix;
 
 	//	-----------------------------	
 	//	metacentric height :
@@ -206,13 +227,19 @@ void EShipNaive::ComputeShipParams( void )
 	float	L	=	ship_param.length;
 	float	B	=	ship_param.width;
 	float	Ixwl=	L * B*B*B / 12.0f;					//	Ix waterline
-	float	Hmc	=	Ixwl / V + Cm.z;
+	float	Hmc	=	Ixwl / V - Cm.z;
+	ship_param.gmt	=	Hmc;
 	LOGF("metacentric height  (Hmc) =   %g", Hmc);
 
 	//	-----------------------------	
 	//	Theortical heaving period (T1): Hanovich (formula 11) :
-	float T1 = 2 * PI * sqrt( ship_mass / WATER_DENSITY / SHIP_LENGTH / SHIP_WIDTH / 9.8 );
+	float T1 = 2 * PI * sqrt( ship_mass / WATER_DENSITY / SHIP_LENGTH / SHIP_WIDTH / GRAVITY );
 	LOGF("heaving period (T)        =   %g", T1);
+
+	//	-----------------------------	
+	//	Theortical rolling period (T2): Hanovich (formula 11) :
+	float T2 = 2 * PI * sqrt( Ix / ship_mass / GRAVITY / ship_param.gmt );
+	LOGF("rolling period (T)        =   %g", T2);
 	
 }
 
@@ -328,7 +355,8 @@ void EShipNaive::UpdateForces( float dtime, IPxWaving waving )
 	EVec4	p;
 	GetPose(p, q);
 	
-	//ship_body->addForceAtLocalPos( gravity, NxVec3(0,0,ship_param.cm_offset));
+	NxVec3 cm = ship_body->getCMassLocalPosition();
+	ship_body->addForceAtLocalPos( gravity, cm );
 	
 	UpdateHSF( dtime, waving );
 	UpdateHDF( dtime, waving );
@@ -342,7 +370,7 @@ static float FEM_StaticWaveForce( EVec4 pos, float szx, float szy, float szz, fl
 	float frac = (wh - (pos.z - 0.5f*szz)) / szz;
 	frac = Clamp<float>(frac, 0,1);
 	
-	return frac * szx * szy * szz * WATER_DENSITY * 9.8;
+	return frac * szx * szy * szz * WATER_DENSITY * GRAVITY;
 }
 
 
@@ -367,10 +395,10 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 		for (uint j=0; j<FEM_Y; j++) {
 			for (uint k=0; k<FEM_Z; k++) {
 			
-				if (j==0 && k==0) continue;
-				if (j==0 && k==3) continue;
-				if (j==3 && k==3) continue;
-				if (j==3 && k==0) continue;
+				//if (j==0 && k==0) continue;
+				//if (j==0 && k==3) continue;
+				//if (j==3 && k==3) continue;
+				//if (j==3 && k==0) continue;
 				
 				float x = -(0.5 * SHIP_LENGTH) + 0.5*dx + dx * (float)i;
 				float y = -(0.5 * SHIP_WIDTH ) + 0.5*dy + dy * (float)j;
@@ -400,7 +428,7 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 
 	//ship_body->addForceAtLocalPos( NxVec3(0,0,total_hydro_stat_force), NxVec3(0, 0, 0) );
 
-	//LOGF("Fnx  = %g (KN)", (total_hydro_stat_force - SHIP_MASS * 9.8) / 1000.0);
+	//LOGF("Fnx  = %g (KN)", (total_hydro_stat_force - SHIP_MASS * GRAVITY) / 1000.0);
 	
 }
 
@@ -435,7 +463,7 @@ void EShipNaive::UpdateHDF( float dtime, IPxWaving waving )
 		//	0.1 - stupid viscosity addition		
 		//	0.5 - just front or back pressure 
 		//  sqrt(0.5) - because lifting force is maximum at PI/4
-		const float	Cxx		=	2.0;
+		const float	Cxx		=	ship_param.cx;
 		const float Cyy		=	0.0;
 		float Cx			=	Cxx * 0.5 * (0.9 * abs(cos_vel_norm) + 0.1);	
 		float Cy			=	Cyy * 0.5 * sqrt(0.5) * cos_2_vel_norm;
@@ -483,8 +511,8 @@ class expr_zeta_dd {
 		float	lamda;
 		float	S;
 		float operator () ( float zeta, float zeta_d, float zeta_w ) {
-			//LOGF("Fnum = %g (KN)", (S * zeta * 1000 * 9.8) / 1000.0);
-			return - ( 9.8 * lamda * S * (zeta - zeta_w)  +  N1 * zeta_d ) / M;	
+			//LOGF("Fnum = %g (KN)", (S * zeta * 1000 * GRAVITY) / 1000.0);
+			return - ( GRAVITY * lamda * S * (zeta - zeta_w)  +  N1 * zeta_d ) / M;	
 		}
 	};
 
@@ -495,7 +523,7 @@ class expr_roll_dd {
 		float	MCH;
 		float	I;
 		float operator () ( float roll, float roll_d, float roll_w ) {
-			return - ( N2 * roll_d * abs(roll_d) + M * 9.8 * MCH * (roll + roll_w) ) / I; 
+			return - ( N2 * roll_d * abs(roll_d) + M * GRAVITY * MCH * (roll + roll_w) ) / I; 
 		}
 	};
 
@@ -530,7 +558,7 @@ void EShipNaive::EulerStep( float dt, IPxWaving waving )
 	const float M		= (SHIP_MASS);
 	const float S		= (SHIP_LENGTH			* SHIP_WIDTH);
 	const float lamda	= (SHIP_COEFF_BLOCK	* WATER_DENSITY);
-	const float I		= (SHIP_INERTIA_X);
+	const float I		= ship_param.Ix;
 
 	float zeta_w = waving->GetPosition  ( EVec4(0,0,0,1) ).z;
 	float delta  = waving->GetWaveSlopeX ( EVec4(0,0,0,1) );
@@ -544,7 +572,7 @@ void EShipNaive::EulerStep( float dt, IPxWaving waving )
 	expr_roll_dd	_expr_roll_dd;
 	_expr_roll_dd.N2	=	N2;
 	_expr_roll_dd.M		=	M;
-	_expr_roll_dd.MCH	=	MCH;
+	_expr_roll_dd.MCH	=	ship_param.gmt;
 	_expr_roll_dd.I		=	I;
 
 	Euler2( _expr_zeta_dd, dt, num_zeta, num_zeta_d, zeta_w );

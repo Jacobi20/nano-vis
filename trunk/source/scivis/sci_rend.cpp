@@ -310,8 +310,8 @@ void ESciVis::RenderView( lua_State * L )
 		QuatToAngles(q2, yaw2, pitch2, roll2);
 		
 		//EVec4 roll_record(yaw, p.z*10, roll, 1);
-		EVec4 roll_record(yaw, 20*p.z, 20*p2.z, 1);
-		//EVec4 roll_record(yaw, roll, roll2, 1);
+		//EVec4 roll_record(yaw, 20*p.z, 20*p2.z, 1);
+		EVec4 roll_record(yaw, roll, roll2, 1);
 		
 		rolling_history[ (rolling_history_ptr) % ROLL_HISTORY_SIZE ] = roll_record;
 		rolling_history_ptr ++;
