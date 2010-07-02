@@ -85,7 +85,7 @@ SCI_CreateShip {
 	
 	-- 	pose :
 	yaw			=	math.rad(90);
-	roll		=	math.rad(1);
+	roll		=	math.rad(-10);
 	pitch		=	math.rad(0);
 	pos_x		=	20;
 	pos_y		=	0;
@@ -94,32 +94,8 @@ SCI_CreateShip {
 	-- 	ship params :
 	--ship_mass	=	1653750;
 	ship_mass	=	2205000;
-	cmass_offset=	-0.0;
-	cx			=	0;
-
-	-- 	ship geometry :
-	mesh_vis	=	"../scidata/uboat.esx|boat1";
-	mesh_flow	=	"../scidata/uboat.esx|flowsurf";
-	mesh_stat	=	"../scidata/uboat.esx|stat";
-}   
-                    
-SCI_CreateShip2 {
-	--	comuting method :
-	numeric		=	true;
-	
-	-- 	pose :
-	yaw			=	math.rad(90);
-	roll		=	math.rad(1);
-	pitch		=	math.rad(0);
-	pos_x		=	0;
-	pos_y		=	0;
-	pos_z		=	-0.0;
-	
-	-- 	ship params :
-	--ship_mass	=	1653750;
-	ship_mass	=	2205000;
-	cmass_offset=	-0.0;
-	cx			=	0;
+	cmass_offset=	-1;
+	cx			=	2;
 
 	-- 	ship geometry :
 	mesh_vis	=	"../scidata/uboat.esx|boat1";
@@ -132,22 +108,47 @@ SCI_CreateShip2 {
 	-- numeric		=	false;
 	
 	-- -- 	pose :
-	-- yaw			=	math.rad(0);
-	-- roll		=	math.rad(0);
+	-- yaw			=	math.rad(90);
+	-- roll		=	math.rad(-10);
 	-- pitch		=	math.rad(0);
-	-- pos_x		=	0; 
-	-- pos_y		=	20;
+	-- pos_x		=	0;
+	-- pos_y		=	0;
 	-- pos_z		=	0;
 	
 	-- -- 	ship params :
-	-- ship_mass	=	1000000;
+	-- --ship_mass	=	1653750;
+	-- ship_mass	=	2205000;
 	-- cmass_offset=	-1;
+	-- cx			=	2;
 
 	-- -- 	ship geometry :
-	-- mesh_vis	=	"../scidata/boat.esx|boat1";
-	-- mesh_flow	=	"../scidata/boat.esx|stat";
-	-- mesh_stat	=	"../scidata/boat.esx|stat";
--- }  
+	-- mesh_vis	=	"../scidata/uboat.esx|boat1";
+	-- mesh_flow	=	"../scidata/uboat.esx|flowsurf";
+	-- mesh_stat	=	"../scidata/uboat.esx|stat";
+-- }   
+                    
+SCI_CreateShip2 {
+	--	comuting method :
+	numeric		=	false;
+	
+	-- 	pose :
+	yaw			=	math.rad(0);
+	roll		=	math.rad(0);
+	pitch		=	math.rad(0);
+	pos_x		=	0; 
+	pos_y		=	20;
+	pos_z		=	0;
+	
+	-- 	ship params :
+	ship_mass	=	1000000;
+	cmass_offset=	-1;
+	cx			=	2;
+
+	-- 	ship geometry :
+	mesh_vis	=	"../scidata/boat.esx|boat1";
+	mesh_flow	=	"../scidata/boat.esx|stat";
+	mesh_stat	=	"../scidata/boat.esx|stat";
+}  
                     
 
 -------------------------------------------------------------------------------
