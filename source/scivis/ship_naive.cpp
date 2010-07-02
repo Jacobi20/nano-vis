@@ -178,6 +178,8 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 	ComputeShipParams();
 	
 	ship_body->setLinearDamping(0);
+	ship_body->setAngularDamping(0);
+	//ship_body->getI
 
 	//
 	//	load shaders :
@@ -212,10 +214,10 @@ void EShipNaive::ComputeShipParams( void )
 	Ix	=	inertia_tensor(1,1);
 	LOGF("ship inertia moment   (Ix)  =   %g", Ix);
 	
-	for (int i=0; i<3; i++)
-	for (int j=0; j<3; j++) {
-		LOGF("J[r=%d, c=%d] = %g", i, j, inertia_tensor(i,j));
-	}
+	//for (int i=0; i<3; i++)
+	//for (int j=0; j<3; j++) {
+	//	LOGF("J[r=%d, c=%d] = %g", i, j, inertia_tensor(i,j));
+	//}
 	
 	
 	ship_param.Ix	=	Ix;
@@ -226,8 +228,10 @@ void EShipNaive::ComputeShipParams( void )
 	float   V	=	ship_mass / WATER_DENSITY;			//	water volume
 	float	L	=	ship_param.length;
 	float	B	=	ship_param.width;
+	float	H	=	ship_param.height;
 	float	Ixwl=	L * B*B*B / 12.0f;					//	Ix waterline
-	float	Hmc	=	Ixwl / V - Cm.z;
+	float	Cb	=	-1.75;//0.5 * (L*B*H*WATER_DENSITY/ship_mass)									//	center of buoyancy;
+	float	Hmc	=	(Ixwl / V + Cb) - Cm.z;
 	ship_param.gmt	=	Hmc;
 	LOGF("metacentric height  (Hmc) =   %g", Hmc);
 
@@ -388,6 +392,11 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 	float dx = SHIP_LENGTH / FEM_X;
 	float dy = SHIP_WIDTH  / FEM_Y;
 	float dz = SHIP_HEIGHT / FEM_Z;
+	float dm = 1.0f / FEM_X / FEM_Y / FEM_Z;
+
+	NxVec3 fem_weight	=	NxVec3( 0, 0, -GRAVITY) * SHIP_MASS * dm;
+	
+	EVec3	M = EVec3(0,0,0);
 	
 	float total_hydro_stat_force = 0;
 	
@@ -412,10 +421,16 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 				float	wh = waving->GetPosition(EVec4(pos.x, pos.y, pos.z, 1)).z;
 
 				float	fs = FEM_StaticWaveForce(pos, dx, dy, dz, wh);					//	static force
+				//fs += fem_weight.z;
 				
 				total_hydro_stat_force += fs;
 				
 				ship_body->addForceAtPos( NxVec3(0,0,fs), NxVec3(pos.x, pos.y, pos.z) );
+				
+				EVec3 r = EVec3(0,y,z);
+				EVec3 f = EVec3(0,0,fs);
+				EVec3 m = Vec3Cross(r,f);
+				M = M + m;
 
 				//DebugLine( EVec3(pos.x, pos.y, pos.z), EVec3(pos.x, pos.y, pos.z + fs/SHIP_MASS*40), EVec4(0,0,1,1));
 				//DebugLine( NxVec3(pos.x, pos.y, pos.z), NxVec3(pos.x, pos.y, pos.z) + fx/SHIP_MASS*40, EVec4(1,0,0,1));
@@ -425,7 +440,18 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 			}
 		}
 	}
+	
+	
+	float roll,p,y;
+	QuatToAngles( orient, y, p, roll);
+	EVec3 r  = EVec3(0,0, sinf(deg2rad(roll)) * ship_param.cm_offset);
+	EVec3 f  = EVec3(0,0, ship_mass * GRAVITY );
+	EVec3 Mg = Vec3Cross(r, f);
+	//M += Vec3Cross(r, f);
+	
+	//ship_body->addLocalTorque(NxVec3(M.x, M.y, M.z));
 
+	//LOGF("Mx (nx)  = %g, %g", Vec3Length(M), Vec3Length(Mg));
 	//ship_body->addForceAtLocalPos( NxVec3(0,0,total_hydro_stat_force), NxVec3(0, 0, 0) );
 
 	//LOGF("Fnx  = %g (KN)", (total_hydro_stat_force - SHIP_MASS * GRAVITY) / 1000.0);
@@ -580,6 +606,7 @@ void EShipNaive::EulerStep( float dt, IPxWaving waving )
 
 	//RungeKutta2	( _expr_zeta_dd, dt, num_zeta, num_zeta_d, zeta_w );
 	//RungeKutta2	( _expr_roll_dd, dt, num_roll, num_roll_d, delta );
+	
 }
 
 
@@ -588,6 +615,8 @@ void EShipNaive::UpdateNumeric( float dtime, IPxWaving waving )
 	for (uint i=0; i<30; i++) {
 		EulerStep( dtime / 30.0f, waving );
 	}
+
+	//LOGF("Mx (num) = %g", ship_mass * GRAVITY * num_roll);
 }
 
 	

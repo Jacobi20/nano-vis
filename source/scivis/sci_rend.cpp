@@ -288,7 +288,7 @@ void ESciVis::RenderView( lua_State * L )
 
 	HRCALL( shader_fx->End() );
 	
-	//DebugPhysX(world, view, proj);
+	DebugPhysX(world, view, proj);
 		
 	
 	//	-------------------------------------------------
