@@ -22,124 +22,81 @@
     THE SOFTWARE.
 */
 
+#include <Windows.h>
 #include "../core/core.h"
 
 
 /*-----------------------------------------------------------------------------
-	Main :
+	Log callback :
 -----------------------------------------------------------------------------*/
 
-void LogCallBack(void *p) 
+class ELogCB : public ILogCB {
+	public:
+		virtual void	Callback	( ELogMessage_s &message ) 
+		{
+			uint msg_coloring[LOG_MSG_MAX];
+			char *msg_prefix[LOG_MSG_MAX];
+			
+			for (uint i=0; i< LOG_MSG_MAX; i++) {
+				msg_coloring[ i ]	= FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+				msg_prefix[ i ]		= "";
+			}
+			
+			msg_coloring[ LOG_MSG_INFO		]	=	FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+			msg_coloring[ LOG_MSG_WARNING	]	=	FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN;
+			msg_coloring[ LOG_MSG_ERROR		]	=	FOREGROUND_INTENSITY | FOREGROUND_RED;
+			msg_coloring[ LOG_MSG_FATAL		]	=	FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE;
+			msg_coloring[ LOG_MSG_DEBUG		]	=	FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE;
+			msg_coloring[ LOG_MSG_DIMMED	]	=	FOREGROUND_INTENSITY;
+
+			msg_prefix[ LOG_MSG_INFO		]	=	"       ";
+			msg_prefix[ LOG_MSG_WARNING		]	=	"WARNING";
+			msg_prefix[ LOG_MSG_ERROR		]	=	"ERROR  ";
+			msg_prefix[ LOG_MSG_FATAL		]	=	"FATAL  ";
+			msg_prefix[ LOG_MSG_DEBUG		]	=	"DEBUG  ";
+			msg_prefix[ LOG_MSG_DIMMED		]	=	"LUA    ";
+
+			HANDLE hcon	=	GetStdHandle(STD_OUTPUT_HANDLE);
+
+			ELogMessage_s	msg	=	message;
+			
+			//	set appropriate color :
+			SetConsoleTextAttribute(hcon, msg_coloring[ msg.msg_type ]);
+			
+			printf("%s : %s\r\n", msg_prefix[msg.msg_type], msg.message);
+
+			//	restore color :
+			SetConsoleTextAttribute(hcon, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+		}
+	};
+
+
+/*-----------------------------------------------------------------------------
+	Application :
+-----------------------------------------------------------------------------*/
+
+class EApp : public ICoreApp {
+	public:
+		virtual void	Init		( const EArgs &args );
+		virtual void	Frame		( uint dtime );
+		virtual void	Shutdown	( void );
+	};
+
+void EApp::Init( const EArgs &args )
 {
-	uint msg_coloring[LOG_MSG_MAX];
-	char *msg_prefix[LOG_MSG_MAX];
 	
-	for (uint i=0; i< LOG_MSG_MAX; i++) {
-		msg_coloring[ i ]	= FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
-		msg_prefix[ i ]		= "";
-	}
-	
-	msg_coloring[ LOG_MSG_INFO		]	=	FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
-	msg_coloring[ LOG_MSG_WARNING	]	=	FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN;
-	msg_coloring[ LOG_MSG_ERROR		]	=	FOREGROUND_INTENSITY | FOREGROUND_RED;
-	msg_coloring[ LOG_MSG_FATAL		]	=	FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE;
-	msg_coloring[ LOG_MSG_DEBUG		]	=	FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE;
-	msg_coloring[ LOG_MSG_DIMMED	]	=	FOREGROUND_INTENSITY;
-
-	msg_prefix[ LOG_MSG_INFO		]	=	"       ";
-	msg_prefix[ LOG_MSG_WARNING		]	=	"WARNING";
-	msg_prefix[ LOG_MSG_ERROR		]	=	"ERROR  ";
-	msg_prefix[ LOG_MSG_FATAL		]	=	"FATAL  ";
-	msg_prefix[ LOG_MSG_DEBUG		]	=	"DEBUG  ";
-	msg_prefix[ LOG_MSG_DIMMED		]	=	"LUA    ";
-
-	HANDLE hcon	=	GetStdHandle(STD_OUTPUT_HANDLE);
-
-
-	ELogMessage_s	msg;
-	Log()->GetLogLastMessage(msg);
-	
-	//	set appropriate color :
-	SetConsoleTextAttribute(hcon, msg_coloring[ msg.msg_type ]);
-	
-	printf("%s : %s\r\n", msg_prefix[msg.msg_type], msg.message);
-
-	//	restore color :
-	SetConsoleTextAttribute(hcon, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }
 
-
-
-static bool can_quit = false;
-
-int quit(lua_State *L) {
-	can_quit	=	true;
-	return 0;
+void EApp::Frame( uint dtime )
+{
+	CoreQuit();
 }
 
-
-//
-//	NVisInit
-//
-DLL_EXPORT void NavyInit( void )
+void EApp::Shutdown( void )
 {
-	Log()->SetWriteCB(LogCallBack, NULL);
 
-	InitCoreSubsystems();
-	
-	Linker()->GetConfig()->LoadConfig();
-	
-	lua_State *L = Linker()->GetShell()->Lua();
-	
-	lua_register(L, "quit", quit);
-	
-	Linker()->LinkDLLGeometryEngine("geometry_engine.dll");
-	Linker()->LinkDLLSciVis("scivis.dll");
-	
-	Linker()->GetInputSystem()->SetTargetWindow( Linker()->GetSciVis()->GetWindowDescriptor() );
 }
 
-
-//
-//	NVisShutdown
-//
-DLL_EXPORT void NavyShutdown( void )
-{
-	Linker()->LinkSciVis(NULL);
-	Linker()->LinkGeometryEngine(NULL);
-	
-	Linker()->GetConfig()->SaveConfig();
-
-	ShutdownCoreSubsystems();
-}
-
-
-//
-//	NVisFrame
-//
-DLL_EXPORT void NavyFrame( uint dtime )
-{
-	IPxSciVis	nvis	=	Linker()->GetSciVis();
-	
-	const char *command = va("if SciVisFrame then SciVisFrame(%g); end", 0.001*(float)dtime);
-	
-	nvis->RenderSnapshot( command );
-	
-	Linker()->GetInputSystem()->SetInputMode(IN_KB_SCAN);
-	Linker()->GetInputSystem()->ProcessInput();
-}
-
-
-//
-//	NVisCommand
-//
-DLL_EXPORT void NVisCommand( const char *cmd )
-{
-	LOGF("command : %s", cmd);
-
-	IPxSciVis	nvis	=	Linker()->GetSciVis();
-	nvis->RenderSnapshot( cmd );
-}										 
 
 
 BOOL WINAPI ConsoleHandleRoutine(DWORD dwCtrlType)
@@ -158,49 +115,22 @@ BOOL WINAPI ConsoleHandleRoutine(DWORD dwCtrlType)
 
 
 
+/*-----------------------------------------------------------------------------
+	main :
+-----------------------------------------------------------------------------*/
+
 //
 //	main
 //
 int main(int argc, const char **argv)
 {
-	uint	old_time	=	System()->Milliseconds();
-	uint	time		=	System()->Milliseconds();
-	MSG		msg = {0};
+	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+	//_CrtSetBreakAlloc(656);
 
 	SetConsoleCtrlHandler( ConsoleHandleRoutine, TRUE );
-
-	try {
-							  
-		NavyInit();
-
-		while ( WM_QUIT != msg.message )
-		{
-			if( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )		
-			{			
-				TranslateMessage( &msg );		
-				DispatchMessage( &msg );				
-			}		
-			else			
-			{
-				time = System()->Milliseconds();
-				
-				NavyFrame(time - old_time);
-
-				if (can_quit) {
-					break;
-				}
-				
-				old_time = time;
-			}
-
-		}
-
-		NavyShutdown();
-		
-	} catch (exception &e) {
-		FATAL(e.what());
-	}
 	
+	Log()->SetWriteCB( new ELogCB() );
+	CoreRunApp( new EApp() );
 }
 
 
