@@ -3,24 +3,27 @@
 --	setup and control :
 -----------------------------------------------------------------------
 
-unbindAll()
-bind ("F5", 	"dofile('run.lua')");
-bind ("F6", 	"SCI_ReloadShaders()");
-bind ("F10", 	"quit()");
-bind ("PGUP", 	"_DistInc()");
-bind ("PGDN", 	"_DistDec()");
-bind ("LEFT", 	"_YawDec()");
-bind ("RIGHT", 	"_YawInc()");
-bind ("UP", 	"_PitchInc()");
-bind ("DOWN", 	"_PitchDec()");
+input.unbindall()
+input.bind ("F5", 	"dofile('run.lua')");
+input.bind ("F6", 	"SCI_ReloadShaders()");
+input.bind ("F10", 	"core.quit()");
+input.bind ("PGUP", 	"_DistInc()");
+input.bind ("PGDN", 	"_DistDec()");
+input.bind ("LEFT", 	"_YawDec()");
+input.bind ("RIGHT", 	"_YawInc()");
+input.bind ("UP", 	"_PitchInc()");
+input.bind ("DOWN", 	"_PitchDec()");
 
-bind ("S",	"_ShipFW()");
-bind ("Z",  "_ShipBW()");
-bind ("A",	"_ShipSL()");
-bind ("X",  "_ShipSR()");
+input.bind ("S",	"_ShipFW()");
+input.bind ("Z",  "_ShipBW()");
+input.bind ("A",	"_ShipSL()");
+input.bind ("X",  "_ShipSR()");
 
-bind ("N", "state.submersion = not state.submersion" );
-bind ("M", "state.sunking 	= not state.sunking" );
+input.bind ("N", "state.submersion = not state.submersion" );
+input.bind ("M", "state.sunking 	= not state.sunking" );
+
+local avc = vmath.vec4(1,2,3,1);
+local x = avc.x();
 
 state = {
 	yaw_inc		=	false;
