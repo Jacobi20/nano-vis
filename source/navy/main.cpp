@@ -75,26 +75,46 @@ class ELogCB : public ILogCB {
 	Application :
 -----------------------------------------------------------------------------*/
 
+#include "..\scivis\sci_int.h"
+ISciVis	*CreateSciVis	( void );
+
 class EApp : public ICoreApp {
 	public:
 		virtual void	Init		( const EArgs &args );
 		virtual void	Frame		( uint dtime );
 		virtual void	Shutdown	( void );
+	protected:
+		hard_ref<ISciVis>	sci_vis;
 	};
+
+
 
 void EApp::Init( const EArgs &args )
 {
+	Config()->LoadConfig();
+
+	sci_vis	=	CreateSciVis();	
 	
+	InputSystem()->SetTargetWindow( sci_vis->GetWindowDescriptor() );
 }
+
 
 void EApp::Frame( uint dtime )
 {
-	CoreQuit();
+	const char *command = va("if SciVisFrame then SciVisFrame(%g); end", 0.001*(float)dtime);
+	
+	sci_vis->RenderSnapshot( command );
+	
+	InputSystem()->SetInputMode(IN_KB_SCAN);
+	InputSystem()->ProcessInput();
 }
+
 
 void EApp::Shutdown( void )
 {
-
+	sci_vis	=	NULL;
+	
+	Config()->SaveConfig();
 }
 
 

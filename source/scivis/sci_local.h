@@ -35,8 +35,6 @@
 
 //	global.h :
 #undef _malloca
-#include "../core/core.h"
-
 
 #include "../core/core.h"
 
@@ -46,12 +44,18 @@
 
 #define D3D_DEBUG_INFO
 
+
+#include "sci_int.h"
+
+
 #include <d3d9.h>
 #include <d3dx9.h>
 
 #define	WIN32_LEAN_AND_MEAN
 #define	VC_EXTRALEAN
 #include <windows.h>
+
+using namespace rapidxml;
 
 #pragma comment (lib, "d3dxof.lib")
 #pragma comment (lib, "dxguid.lib")
@@ -62,7 +66,10 @@
 
 #define CHECK_CRITICAL(expr) if (FAILED(expr)) { SYS_Error(ERR_FATAL, va("%s() : %s failed", __FUNCTION__, #expr)); }
 
-#define SAFE_RELEASE(obj) if (obj) { obj->Release(); obj = NULL; }
+#define SAFE_RELEASE(obj)	if (obj) { obj->Release(); obj = NULL; }
+#define HRCALL(expr)		if (FAILED(expr))	SIGNAL(#expr)
+#define HRCALL_THROW(expr)	if (FAILED(expr))	RAISE_EXCEPTION(#expr)
+
 
 const float GRAVITY	=	9.8f;
 

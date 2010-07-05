@@ -25,45 +25,9 @@
 
 #pragma once
 
-/*-----------------------------------------------------------------------------
-	Nano vis :
------------------------------------------------------------------------------*/
-
-#if 0
-class	ISciObject;
-class	ISciSpace;
-class	ISciView;
-
-typedef hard_ref<ISciObject>	IPxSciObject;
-typedef hard_ref<ISciSpace>		IPxSciSpace;
-typedef hard_ref<ISciView>		IPxSciView;
-
-
-const uint	SCI_VIS_NORMAL		=	0x00000000;
-
-
-ISciObject *(*ESciObjectCreator_f)(void);
-
-
-class	ISciObject : public ICoreObject {
+class ISciVis : public ICoreObject {
 	public:
-		virtual void		Visualize		( const EMatrix4 &view, const EMatrix4 &proj, uint flags ) = 0;
-		virtual void		SetPose			( const EVec4 &pos, const EQuat &orient ) = 0;
-		virtual void		GetPose			( EVec4 &pos, EQuat &orient ) const = 0;
+		virtual void			RenderFrame			( uint dtime ) = 0;
+		virtual void			RenderSnapshot		( const char *command ) = 0;
+		virtual void		*	GetWindowDescriptor	( void ) = 0;
 	};
-	
-	
-class	ISciSpace : public ICoreObject {
-	public:
-		virtual void		Visualize		( IPxSciVis vis, uint flags ) = 0;
-		virtual void		AddObject		( IPxSciObject object ) = 0;
-		virtual void		RemoveObject	( IPxSciObject object ) = 0;
-	};
-	
-	
-class	ISciView : public ICoreObject {
-	public:
-		virtual EMatrix4	GetViewMatrix	( void ) const = 0;
-		virtual EMatrix4	GetProjMatrix	( void ) const = 0;
-	};	
-#endif 

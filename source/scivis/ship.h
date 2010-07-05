@@ -43,7 +43,7 @@ struct ERendEnv_s {
 	};
 
 
-class IWaving : public IDisposable {
+class IWaving : public ICoreObject {
 	public:
 		virtual void		Update			( float dtime ) = 0;
 		virtual void		ReloadShader	( void ) = 0;
@@ -53,7 +53,7 @@ class IWaving : public IDisposable {
 	};
 	
 	
-class IShip : public IDisposable {
+class IShip : public ICoreObject {
 	public:
 		virtual void		Simulate				( float dtime, IPxWaving waving ) = 0;
 		virtual void		ReloadShader			( void ) = 0;

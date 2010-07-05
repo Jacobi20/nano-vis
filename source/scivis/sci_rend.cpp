@@ -86,8 +86,6 @@ void ESciVis::ShutdownRender( void )
 //
 int ESciVis::SCI_RenderView( lua_State * L )
 {
-	ESciVis *self = Linker()->GetSciVis().As<ESciVis>();
-	
 	self->RenderView( L );
 	
 	return 0;
@@ -99,14 +97,12 @@ int ESciVis::SCI_RenderView( lua_State * L )
 //
 int ESciVis::SCI_CreateShip( lua_State * L )
 {
-	ESciVis *self = Linker()->GetSciVis().As<ESciVis>();
 	self->ship_model	=	create_naive_ship( L, 1 );
 	return 0;
 }
 
 int ESciVis::SCI_CreateShip2( lua_State * L )
 {
-	ESciVis *self = Linker()->GetSciVis().As<ESciVis>();
 	self->ship_model2	=	create_naive_ship( L, 1 );
 	return 0;
 }
@@ -114,8 +110,6 @@ int ESciVis::SCI_CreateShip2( lua_State * L )
 
 int ESciVis::SCI_ShipForce( lua_State * L )
 {
-	ESciVis *self = Linker()->GetSciVis().As<ESciVis>();
-	
 	EVec4 force =	LuaRequireVec4( L, 1, "force"	);
 	EVec4 pos	=	LuaRequireVec4( L, 2, "pos"		);
 	
@@ -134,8 +128,6 @@ int ESciVis::SCI_ShipForce( lua_State * L )
 //
 int ESciVis::SCI_ReloadShaders( lua_State * L )
 {
-	ESciVis *self = Linker()->GetSciVis().As<ESciVis>();
-	
 	self->shader_fx	=	self->CompileEffect(SHADER_FX);
 	self->ship_model->ReloadShader();
 	

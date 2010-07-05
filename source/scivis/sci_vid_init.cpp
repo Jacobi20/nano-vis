@@ -30,7 +30,7 @@
 -----------------------------------------------------------------------------*/
 
 #define	VID_WNDCLASSNAME	"D3D Display"
-#define	VID_WNDNAME			Version()
+#define	VID_WNDNAME			"Navy"
 #define WS_WINDOW			( WS_CLIPCHILDREN | WS_CLIPSIBLINGS )
 #define WS_FULLSCR			( WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP )
 #define WBORDER				( 2*GetSystemMetrics(SM_CXFIXEDFRAME) )
