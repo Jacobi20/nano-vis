@@ -25,6 +25,13 @@
 
 #pragma once
 
+struct  EVidModeDesc_s {
+		uint	width;
+		uint	height;
+		bool	is_supported;
+	};
+
+
 /*-----------------------------------------------------------------------------
 	Nano vis :
 -----------------------------------------------------------------------------*/
@@ -54,8 +61,9 @@ struct  EVidState_s	{
 	};
 	
 
+#include "static_self.h"
 
-class ESciVis : public ISciVis {
+class ESciVis : public ISciVis, public self_ref<ESciVis> {
 	public:
 								ESciVis			( void );
 								~ESciVis			( void );
@@ -96,9 +104,6 @@ class ESciVis : public ISciVis {
 		IDirect3D9			*d3d;
 		IDirect3DDevice9	*d3ddev;
 		EVidState_s			vid_state;
-		IPxShell			shell;
-		IPxGeometryEngine	ge;
-		IPxFileSystem		fs;
 		
 	protected:
 		IPxWaving			waving;

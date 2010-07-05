@@ -60,6 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="&quot;PhysXLoader.lib&quot; &quot;NxCooking.lib&quot; &quot;NxCharacter.lib&quot;"
 				OutputFile="..\..\system\navy.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
@@ -133,6 +134,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="&quot;PhysXLoader.lib&quot; &quot;NxCooking.lib&quot; &quot;NxCharacter.lib&quot;"
 				OutputFile="..\..\system\navy.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"

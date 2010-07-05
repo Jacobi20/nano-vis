@@ -122,17 +122,17 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 	//
 	//	create meshes :
 	//
-	EName	mesh_vis;
-	EName	mesh_flow;
-	EName	mesh_stat;
+	EString	mesh_vis;
+	EString	mesh_flow;
+	EString	mesh_stat;
 	
 	LuaGetField(L, idx, "mesh_vis", mesh_vis);
 	LuaGetField(L, idx, "mesh_flow", mesh_flow);
 	LuaGetField(L, idx, "mesh_stat", mesh_stat);
 	
-	this->mesh_vis		=	sci_vis->LoadMesh(mesh_vis.Name());
-	this->mesh_flow		=	sci_vis->LoadMesh(mesh_flow.Name());
-	this->mesh_stat		=	sci_vis->LoadMesh(mesh_stat.Name());
+	this->mesh_vis		=	sci_vis->LoadMesh(mesh_vis.CStr());
+	this->mesh_flow		=	sci_vis->LoadMesh(mesh_flow.CStr());
+	this->mesh_stat		=	sci_vis->LoadMesh(mesh_stat.CStr());
 	d3d_mesh_vis		=	sci_vis->CreateMesh( this->mesh_vis );
 	
 	//
@@ -419,7 +419,7 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 				pos += position;			
 				
 				float	wh = waving->GetPosition(EVec4(pos.x, pos.y, pos.z, 1)).z;
-
+#undef fs
 				float	fs = FEM_StaticWaveForce(pos, dx, dy, dz, wh);					//	static force
 				//fs += fem_weight.z;
 				

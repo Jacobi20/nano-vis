@@ -26,9 +26,10 @@
 #include "sci_local.h"
 
 
-DLL_EXPORT ISciVis	*CreateSciVis	( void ) {	return new ESciVis(); }
+ISciVis	*CreateSciVis	( void ) {	return new ESciVis(); }
 
 ESciVis	*sci_vis = NULL;
+ESciVis *self_ref<ESciVis>::self = NULL;
 
 /*-----------------------------------------------------------------------------
 	Nano vis :
@@ -45,14 +46,10 @@ ESciVis::ESciVis( void )
 
 	LOG_SPLIT("SciVis initialization");
 	
-	shell	=	Linker()->GetShell();
-	ge		=	Linker()->GetGeometryEngine();
-	fs		=	Linker()->GetFileSystem();
-	
 	InitDisplay();
 	InitDirect3D();
 	
-	lua_State *L = shell->Lua();
+	lua_State *L = CoreLua();
 	lua_register( L, "SCI_RenderView",		SCI_RenderView	);
 	lua_register( L, "SCI_ReloadShaders",	SCI_ReloadShaders );
 	lua_register( L, "SCI_CreateShip",		SCI_CreateShip	);
@@ -116,7 +113,7 @@ void ESciVis::RenderSnapshot( const char *command )
     HRCALL( d3ddev->BeginScene() );
     
 
-    Linker()->GetShell()->ExecuteString( command );
+    CoreExecuteString( command );
     
 
 	HRCALL( d3ddev->EndScene() );
@@ -245,7 +242,7 @@ IPxTriMesh ESciVis::LoadMesh( const char *path )
 	LOGF("Loading : %s %s", fpath.c_str(), hpath.c_str());
 
 	try {
-		IPxScene	scene	=	ge->CreateScene();
+		IPxScene	scene	=	gf->CreateScene();
 
 		IPxFile	f = fs->FileOpen(fpath.c_str(), FS_OPEN_READ);
 		vector<char>	buffer;
