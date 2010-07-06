@@ -31,6 +31,8 @@
 	http://en.wikipedia.org/wiki/Hull_%28watercraft%29#cite_note-2
 -----------------------------------------------------------------------------*/
 
+#define BUYOANCY_GRID_STEP	1.0f;
+
 #define USE_NUMERIC		numeric
 #define SHIP_LENGTH		ship_param.length			
 #define SHIP_WIDTH		ship_param.width			
@@ -59,6 +61,8 @@ class EShipNaive : public IShip {
 		virtual void		Render					( ERendEnv_s *rend_env );
 		virtual void		ApplyForceAtLocalPoint	( const EVec4 &pos, const EVec4 &force );
 		
+		void				BuildBuyoancyGrid		( float step );
+		
 	protected:
 		bool				numeric;
 	
@@ -81,6 +85,8 @@ class EShipNaive : public IShip {
 		
 		void	ComputeShipParams	( void );
 		
+		EPxVoxelGrid	voxel_buyoancy_grid;
+		
 		struct {
 			float	length;
 			float	width;
@@ -101,6 +107,7 @@ class EShipNaive : public IShip {
 		IPxTriMesh		mesh_flow;
 		IPxTriMesh		mesh_stat;
 		ID3DXMesh		*d3d_mesh_vis;
+		ID3DXMesh		*d3d_cube;
 		ID3DXEffect		*shader_fx;
 		
 		NxActor			*ship_body;
@@ -118,6 +125,8 @@ IShip * create_naive_ship( lua_State *L, int idx ) {
 EShipNaive::EShipNaive( lua_State *L, int idx )
 {
 	self_time	=	0;
+	
+	d3d_cube	=	NULL;
 
 	//
 	//	create meshes :
@@ -177,6 +186,8 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 
 	ComputeShipParams();
 	
+	BuildBuyoancyGrid(2);
+	
 	ship_body->setLinearDamping(0);
 	ship_body->setAngularDamping(0);
 	//ship_body->getI
@@ -185,6 +196,24 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 	//	load shaders :
 	//	
 	ReloadShader();
+}
+
+
+
+//
+//	EShipNaive::BuildBuyoancyGrid
+//	
+void EShipNaive::BuildBuyoancyGrid( float step )
+{
+	LOGF("Building buyoancy grid...");
+	voxel_buyoancy_grid	=	new EVoxelGrid();
+	
+	voxel_buyoancy_grid->BuildGrid( mesh_flow, EVec3(0,0,0), step, step, step );
+	
+	LOGF("Done: %d voxels", voxel_buyoancy_grid->GetVoxelNum());
+	
+	SAFE_RELEASE(d3d_cube);
+	d3d_cube = sci_vis->CreateMeshCube( step*0.8, step*0.8, step*0.8 );
 }
 
 
@@ -255,6 +284,7 @@ EShipNaive::~EShipNaive( void )
 {
 	sci_vis->GetNxScene()->releaseActor( *ship_body );
 	SAFE_RELEASE( d3d_mesh_vis );
+	SAFE_RELEASE( d3d_cube );
 	SAFE_RELEASE( shader_fx );
 }
 
@@ -339,6 +369,34 @@ void EShipNaive::Render( ERendEnv_s *rend_env )
 		HRCALL( shader_fx->BeginPass(pass) );
 	
 		d3d_mesh_vis->DrawSubset(0);
+		
+		HRCALL( shader_fx->EndPass() );
+	}
+
+	HRCALL( shader_fx->End() );
+	
+	//
+	//	draw cubes :
+	//
+	HRCALL( shader_fx->SetTechnique("solid_body") );
+	HRCALL( shader_fx->Begin(&n, 0) );
+	
+	for (uint pass=0; pass<n; pass++) {
+	
+		HRCALL( shader_fx->BeginPass(pass) );
+	
+		for (uint i=0; i<voxel_buyoancy_grid->GetVoxelNum(); i++) {
+		
+			EVoxel vx;
+			voxel_buyoancy_grid->GetVoxel(i, vx);
+		
+			EMatrix4 world	=	Matrix4Translate(vx.center.x, vx.center.y, vx.center.z) * QuatToMatrix(q) * Matrix4Translate(p);
+			HRCALL( shader_fx->SetMatrix("matrix_world",	&D3DXMATRIX( world.Ptr() ) ) );
+			
+			shader_fx->CommitChanges();
+
+			d3d_cube->DrawSubset(0);
+		}
 		
 		HRCALL( shader_fx->EndPass() );
 	}
@@ -618,5 +676,7 @@ void EShipNaive::UpdateNumeric( float dtime, IPxWaving waving )
 
 	//LOGF("Mx (num) = %g", ship_mass * GRAVITY * num_roll);
 }
+
+
 
 	

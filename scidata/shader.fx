@@ -10,6 +10,7 @@ float4x4	matrix_proj 	;
 float4		light_dir		;
 float4		view_pos		;
 float4		obj_color		;
+float4		obj_tint	=	float4(1,1,1,1);
 
 
 struct VS_INPUT {
@@ -133,7 +134,7 @@ technique solid_body
 		AlphaBlendEnable	= 	TRUE;
 		ColorWriteEnable	=	RED|GREEN|BLUE;
 		VertexShader 		= 	compile vs_2_0 VSMain();
-		PixelShader 		= 	compile ps_2_0 PSMainXRay(1);
+		PixelShader 		= 	compile ps_2_0 PSMainXRay(1 * obj_tint);
 	}
 	pass Black {
 		DestBlend 			= 	SRCCOLOR;
@@ -144,7 +145,7 @@ technique solid_body
 		AlphaBlendEnable	= 	TRUE;
 		ColorWriteEnable	=	RED|GREEN|BLUE;
 		VertexShader 		= 	compile vs_2_0 VSMain();
-		PixelShader 		= 	compile ps_2_0 PSColor(0.3);
+		PixelShader 		= 	compile ps_2_0 PSColor(0.3 * obj_tint);
 	}
 	pass XRay {
 		DestBlend 			= 	ONE;
@@ -155,6 +156,6 @@ technique solid_body
 		AlphaBlendEnable	= 	TRUE;
 		ColorWriteEnable	=	RED|GREEN|BLUE;
 		VertexShader 		= 	compile vs_2_0 VSMain();
-		PixelShader 		= 	compile ps_2_0 PSMainXRay(float4(1,1,1,1));
+		PixelShader 		= 	compile ps_2_0 PSMainXRay(float4(1,1,1,1) * obj_tint);
 	}
 }
