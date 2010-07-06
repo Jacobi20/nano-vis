@@ -22,8 +22,8 @@ input.bind ("X",  "_ShipSR()");
 input.bind ("N", "state.submersion = not state.submersion" );
 input.bind ("M", "state.sunking 	= not state.sunking" );
 
-local avc = vmath.vec4(1,2,3,1);
-local x = avc.x();
+-- local avc = vmath.vec4(1,2,3,1);
+-- local x = avc:x();
 
 state = {
 	yaw_inc		=	false;
@@ -130,28 +130,28 @@ SCI_CreateShip {
 	-- mesh_stat	=	"../scidata/uboat.esx|stat";
 -- }   
                     
-SCI_CreateShip2 {
-	--	comuting method :
-	numeric		=	false;
+-- SCI_CreateShip2 {
+	-- --	comuting method :
+	-- numeric		=	false;
 	
-	-- 	pose :
-	yaw			=	math.rad(0);
-	roll		=	math.rad(0);
-	pitch		=	math.rad(0);
-	pos_x		=	0; 
-	pos_y		=	20;
-	pos_z		=	0;
+	-- -- 	pose :
+	-- yaw			=	math.rad(0);
+	-- roll		=	math.rad(0);
+	-- pitch		=	math.rad(0);
+	-- pos_x		=	0; 
+	-- pos_y		=	20;
+	-- pos_z		=	0;
 	
-	-- 	ship params :
-	ship_mass	=	1000000;
-	cmass_offset=	-1;
-	cx			=	2;
+	-- -- 	ship params :
+	-- ship_mass	=	1000000;
+	-- cmass_offset=	-1;
+	-- cx			=	2;
 
-	-- 	ship geometry :
-	mesh_vis	=	"../scidata/boat.esx|boat1";
-	mesh_flow	=	"../scidata/boat.esx|stat";
-	mesh_stat	=	"../scidata/boat.esx|stat";
-}  
+	-- -- 	ship geometry :
+	-- mesh_vis	=	"../scidata/boat.esx|boat1";
+	-- mesh_flow	=	"../scidata/boat.esx|stat";
+	-- mesh_stat	=	"../scidata/boat.esx|stat";
+-- }  
                     
 
 -------------------------------------------------------------------------------

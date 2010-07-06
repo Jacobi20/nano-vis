@@ -179,6 +179,20 @@ ID3DXEffect *ESciVis::CompileEffect( const char *path )
 	Resource registering stuff :
 -----------------------------------------------------------------------------*/
 
+ID3DXMesh *ESciVis::CreateMeshCube( float szx, float szy, float szz )
+{
+	ID3DXMesh *temp_mesh, *mesh_cube;
+	
+	HRCALL( D3DXCreateBox( d3ddev, szx, szy, szz, &temp_mesh, NULL) );
+
+	HRCALL( temp_mesh->CloneMesh  ( 0, VERTEX_DECL_STATIC, d3ddev, &mesh_cube ) );
+
+	SAFE_RELEASE( temp_mesh );
+	
+	return mesh_cube;
+}
+
+
 ID3DXMesh *ESciVis::CreateMesh( IPxTriMesh mesh )
 {
 	uint		 num_tris	=	mesh->GetTriangleNum();

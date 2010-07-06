@@ -153,6 +153,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\grid.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\sci_main.cpp"
 				>
 			</File>
@@ -196,6 +200,10 @@
 			</File>
 			<File
 				RelativePath=".\nxaux\error_stream.h"
+				>
+			</File>
+			<File
+				RelativePath=".\grid.h"
 				>
 			</File>
 			<File

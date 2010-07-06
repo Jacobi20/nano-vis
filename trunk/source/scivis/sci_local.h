@@ -90,3 +90,4 @@ EQuat	ToEQuat	( const NxQuat &q );
 #include "sci_interfaces.h"
 #include "ship.h"
 #include "scivis.h"
+#include "grid.h"

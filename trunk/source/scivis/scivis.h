@@ -75,6 +75,7 @@ class ESciVis : public ISciVis, public self_ref<ESciVis> {
 		void					GetScreenSize		( uint &w, uint &h );
 		ID3DXEffect				*CompileEffect		( const char *path );
 		ID3DXMesh				*CreateMesh			( IPxTriMesh mesh );
+		ID3DXMesh				*CreateMeshCube		( float szx, float szy, float szz );
 		IPxTriMesh				LoadMesh			( const char *path );
 		void					DrawMesh			( ID3DXMesh *mesh );
 		void					UpdateMeshVertices	( ID3DXMesh *d3dmesh, const IPxTriMesh trimesh );
