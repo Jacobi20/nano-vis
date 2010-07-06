@@ -28,6 +28,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scivis", "scivis\scivis.vcp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "core\zlib\zlib.vcproj", "{2AEDF96D-9A16-45CD-BBF6-C4F1680DA26E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glnavy", "glnavy\glnavy.vcproj", "{6C78BD14-912E-4AA7-A348-2CA8D7F06DF7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7C238D30-3956-4B4A-968D-CD34B95BC43B} = {7C238D30-3956-4B4A-968D-CD34B95BC43B}
+		{488733F9-7B02-4B60-B908-BEB74EFA43D1} = {488733F9-7B02-4B60-B908-BEB74EFA43D1}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -53,6 +59,10 @@ Global
 		{2AEDF96D-9A16-45CD-BBF6-C4F1680DA26E}.Debug|Win32.Build.0 = Debug|Win32
 		{2AEDF96D-9A16-45CD-BBF6-C4F1680DA26E}.Release|Win32.ActiveCfg = Release|Win32
 		{2AEDF96D-9A16-45CD-BBF6-C4F1680DA26E}.Release|Win32.Build.0 = Release|Win32
+		{6C78BD14-912E-4AA7-A348-2CA8D7F06DF7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6C78BD14-912E-4AA7-A348-2CA8D7F06DF7}.Debug|Win32.Build.0 = Debug|Win32
+		{6C78BD14-912E-4AA7-A348-2CA8D7F06DF7}.Release|Win32.ActiveCfg = Release|Win32
+		{6C78BD14-912E-4AA7-A348-2CA8D7F06DF7}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
