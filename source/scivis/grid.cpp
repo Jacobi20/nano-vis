@@ -102,7 +102,12 @@ bool EVoxelGrid::Grow( const IPxTriMesh mesh, EVec3 origin, float szx, float szy
 	
 	EVertex v;
 	mesh.Get();
-	bool r = mesh->RayIntersect( origin, dir, v );
+	bool r = false;
+	
+	for (uint i=0; i<10; i++) {
+		EVec3 dd = EVec3( FRand(-0.1f,0.1f), FRand(-0.1f,0.1f), FRand(-0.1f,0.1f) );
+		r |= mesh->RayIntersect( origin + dd, dir, v );
+	}
 
 	if (r) {	//	intersection - no grow
 		return false;
