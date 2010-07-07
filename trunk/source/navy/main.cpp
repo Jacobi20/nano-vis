@@ -47,14 +47,14 @@ class ELogCB : public ILogCB {
 			msg_coloring[ LOG_MSG_ERROR		]	=	FOREGROUND_INTENSITY | FOREGROUND_RED;
 			msg_coloring[ LOG_MSG_FATAL		]	=	FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE;
 			msg_coloring[ LOG_MSG_DEBUG		]	=	FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE;
-			msg_coloring[ LOG_MSG_DIMMED	]	=	FOREGROUND_INTENSITY;
+			msg_coloring[ LOG_MSG_SCRIPT	]	=	FOREGROUND_INTENSITY;
 
 			msg_prefix[ LOG_MSG_INFO		]	=	"       ";
 			msg_prefix[ LOG_MSG_WARNING		]	=	"WARNING";
 			msg_prefix[ LOG_MSG_ERROR		]	=	"ERROR  ";
 			msg_prefix[ LOG_MSG_FATAL		]	=	"FATAL  ";
 			msg_prefix[ LOG_MSG_DEBUG		]	=	"DEBUG  ";
-			msg_prefix[ LOG_MSG_DIMMED		]	=	"LUA    ";
+			msg_prefix[ LOG_MSG_SCRIPT		]	=	"LUA    ";
 
 			HANDLE hcon	=	GetStdHandle(STD_OUTPUT_HANDLE);
 
