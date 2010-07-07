@@ -186,7 +186,7 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 
 	ComputeShipParams();
 	
-	BuildBuyoancyGrid(2);
+	BuildBuyoancyGrid(1.5);
 	
 	ship_body->setLinearDamping(0);
 	ship_body->setAngularDamping(0);
@@ -207,8 +207,12 @@ void EShipNaive::BuildBuyoancyGrid( float step )
 {
 	LOGF("Building buyoancy grid...");
 	voxel_buyoancy_grid	=	new EVoxelGrid();
-	
-	voxel_buyoancy_grid->BuildGrid( mesh_flow, EVec3(0,0,0), step, step, step );
+
+	try {	
+		voxel_buyoancy_grid->BuildGrid( mesh_flow, EVec3(0,0,0), step, step, step );
+	} catch (exception &e) {
+		LOG_WARNING("%s", e.what());
+	}
 	
 	LOGF("Done: %d voxels", voxel_buyoancy_grid->GetVoxelNum());
 	
@@ -378,10 +382,13 @@ void EShipNaive::Render( ERendEnv_s *rend_env )
 	//
 	//	draw cubes :
 	//
-	HRCALL( shader_fx->SetTechnique("solid_body") );
+	HRCALL( shader_fx->SetTechnique("cubes") );
 	HRCALL( shader_fx->Begin(&n, 0) );
 	
 	for (uint pass=0; pass<n; pass++) {
+	
+		EMatrix4 rot_trans = QuatToMatrix(q) * Matrix4Translate(p);
+		EMatrix4 inv_rot = Matrix4Inverse( QuatToMatrix(q) );
 	
 		HRCALL( shader_fx->BeginPass(pass) );
 	
@@ -390,7 +397,7 @@ void EShipNaive::Render( ERendEnv_s *rend_env )
 			EVoxel vx;
 			voxel_buyoancy_grid->GetVoxel(i, vx);
 		
-			EMatrix4 world	=	Matrix4Translate(vx.center.x, vx.center.y, vx.center.z) * QuatToMatrix(q) * Matrix4Translate(p);
+			EMatrix4 world	=	inv_rot * Matrix4Translate(vx.center.x, vx.center.y, vx.center.z) * rot_trans;
 			HRCALL( shader_fx->SetMatrix("matrix_world",	&D3DXMATRIX( world.Ptr() ) ) );
 			
 			shader_fx->CommitChanges();
@@ -443,6 +450,8 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 	EQuat	orient;
 	GetPose(position, orient);
 
+#undef fs
+
 	uint FEM_X	=	20;
 	uint FEM_Y	=	4;
 	uint FEM_Z	=	4;
@@ -458,7 +467,30 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 	
 	float total_hydro_stat_force = 0;
 	
-	for (uint i=0; i<FEM_X; i++) {
+	for (uint i=0; i<voxel_buyoancy_grid->GetVoxelNum(); i++) {
+		
+		EVoxel vx;
+		voxel_buyoancy_grid->GetVoxel(i, vx);
+	
+		EVec4  pos(vx.center.x, vx.center.y, vx.center.z, 0);
+		float dx = vx.szx;
+		float dy = vx.szy;
+		float dz = vx.szz;
+		
+		pos =  QuatRotateVector(pos, orient);
+		pos += position;			
+		
+		float	wh = waving->GetPosition(EVec4(pos.x, pos.y, pos.z, 1)).z;
+		float	fs = FEM_StaticWaveForce(pos, dx, dy, dz, wh);					//	static force
+		//fs += fem_weight.z;
+		
+		total_hydro_stat_force += fs;
+		
+		ship_body->addForceAtPos( NxVec3(0,0,fs), NxVec3(pos.x, pos.y, pos.z) );
+	}
+	
+	
+/*	for (uint i=0; i<FEM_X; i++) {
 		for (uint j=0; j<FEM_Y; j++) {
 			for (uint k=0; k<FEM_Z; k++) {
 			
@@ -497,7 +529,7 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 				//DebugLine( NxVec3(pos.x, pos.y, pos.z), NxVec3(pos.x, pos.y, pos.z) + normal * 5, EVec4(1,1,1,1));
 			}
 		}
-	}
+	}   */
 	
 	
 	float roll,p,y;

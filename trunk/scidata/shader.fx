@@ -123,6 +123,35 @@ technique debug {
 }
 
 
+technique cubes {
+	pass Wire2 {
+		FillMode			=	SOLID;
+		DestBlend 			= 	ONE;
+		SrcBlend 			= 	ONE;
+		ZEnable 			= 	TRUE;
+		ZWriteEnable		= 	TRUE;
+		CullMode 			= 	None;
+		AlphaBlendEnable	= 	FALSE;
+		ColorWriteEnable	=	RED|GREEN|BLUE;
+		VertexShader 		= 	compile vs_2_0 VSMain();
+		PixelShader 		= 	compile ps_2_0 PSColor(0.01*float4(1,1,0.5,0.5));
+		DepthBias			= 0.1 / 65536.0;
+		SlopeScaleDepthBias = 1.0;
+	}
+	pass Wire {
+		FillMode			=	WIREFRAME;
+		DestBlend 			= 	ONE;
+		SrcBlend 			= 	ONE;
+		ZEnable 			= 	TRUE;
+		ZWriteEnable		= 	TRUE;
+		CullMode 			= 	None;
+		AlphaBlendEnable	= 	FALSE;
+		ColorWriteEnable	=	RED|GREEN|BLUE;
+		VertexShader 		= 	compile vs_2_0 VSMain();
+		PixelShader 		= 	compile ps_2_0 PSColor(0.8*float4(1,1,0.5,1));
+	}
+}
+
 technique solid_body
 {
 	pass XRayBack {
@@ -157,5 +186,5 @@ technique solid_body
 		ColorWriteEnable	=	RED|GREEN|BLUE;
 		VertexShader 		= 	compile vs_2_0 VSMain();
 		PixelShader 		= 	compile ps_2_0 PSMainXRay(float4(1,1,1,1) * obj_tint);
-	}
+	}//*/
 }

@@ -89,19 +89,20 @@ SCI_CreateShip {
 	-- 	pose :
 	yaw			=	math.rad(90);
 	roll		=	math.rad(-10);
-	pitch		=	math.rad(0);
-	pos_x		=	20;
+	pitch		=	math.rad(30);
+	pos_x		=	0;
 	pos_y		=	0;
-	pos_z		=	0;
+	pos_z		=	80;
 	
 	-- 	ship params :
 	--ship_mass	=	1653750;
-	ship_mass	=	2205000;
+	ship_mass	=	1805000;
 	cmass_offset=	-1;
 	cx			=	2;
 
 	-- 	ship geometry :
 	mesh_vis	=	"../scidata/uboat.esx|boat1";
+	--mesh_vis	=	"../scidata/uboat.esx|flowsurf";
 	mesh_flow	=	"../scidata/uboat.esx|flowsurf";
 	mesh_stat	=	"../scidata/uboat.esx|stat";
 }   
