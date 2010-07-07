@@ -243,37 +243,16 @@ ID3DXMesh *ESciVis::CreateMesh( IPxTriMesh mesh )
 //
 IPxTriMesh ESciVis::LoadMesh( const char *path )
 {
-	string spath = path;
-	uint n = spath.find('|');
+	uint n = EString(path).Find('|');
 
 	if (n==string::npos) {
 		RAISE_EXCEPTION("path must be <file path|hierarchy path>");
 	}
 
-	string			fpath	=	spath.substr(0, n);
-	string			hpath	=	spath.substr(n); 
-
-	LOGF("Loading : %s %s", fpath.c_str(), hpath.c_str());
-
 	try {
-		IPxScene	scene	=	gf->CreateScene();
-
-		IPxFile	f = fs->FileOpen(fpath.c_str(), FS_OPEN_READ);
-		vector<char>	buffer;
-		buffer.resize(f->Size()+1, '\0');
+		IPxScene	scene	=	gf->LoadSceneFromFile( path );
 		
-		f->Read(&buffer[0], f->Size());
-		f = NULL;
-
-		//	parse XML :
-		xml_document<>	xdoc;
-		xdoc.parse<0>(&buffer[0]);
-
-		xml_node<> *xscene	=	xdoc.first_node("scene");
-
-		scene->ReadXML( xscene );
-		
-		IPxSceneNode snode = scene->GetNodeByPath(hpath.c_str());
+		IPxSceneNode snode = scene->GetNodeByPath( path );
 		
 		return snode->GetMesh();
 		
