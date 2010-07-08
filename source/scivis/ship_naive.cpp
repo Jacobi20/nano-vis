@@ -186,7 +186,7 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 
 	ComputeShipParams();
 	
-	BuildBuyoancyGrid(1.5);
+	BuildBuyoancyGrid(1);
 	
 	ship_body->setLinearDamping(0);
 	ship_body->setAngularDamping(0);
