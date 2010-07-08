@@ -31,6 +31,9 @@
 	http://en.wikipedia.org/wiki/Hull_%28watercraft%29#cite_note-2
 -----------------------------------------------------------------------------*/
 
+static float FEM_StaticWaveForce( EVec4 pos, float szx, float szy, float szz, float wave_height );
+
+
 #define BUYOANCY_GRID_STEP	1.0f;
 
 #define USE_NUMERIC		numeric
@@ -62,6 +65,9 @@ class EShipNaive : public IShip {
 		virtual void		ApplyForceAtLocalPoint	( const EVec4 &pos, const EVec4 &force );
 		
 		void				BuildBuyoancyGrid		( float step );
+		
+		void				ComputeStatic			( void );
+		void				ComputeStatic			( float roll, float posz, EVec3 &bc, EVec3 &force, EVec3 &momentum );
 		
 	protected:
 		bool				numeric;
@@ -186,7 +192,9 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 
 	ComputeShipParams();
 	
-	BuildBuyoancyGrid(1);
+	BuildBuyoancyGrid(1.5);
+	ComputeStatic();
+
 	
 	ship_body->setLinearDamping(0);
 	ship_body->setAngularDamping(0);
@@ -282,7 +290,89 @@ void EShipNaive::ComputeShipParams( void )
 
 
 //
+//	EShipNaive::ComputeStatic
 //
+void EShipNaive::ComputeStatic( void )
+{
+	LOGF("Computing ship static params...");
+
+	EVec3	bc, force, momentum;
+	
+	IPxFile	f = FileSystem()->FileOpen("ship_stats.txt", FS_OPEN_WRITE);
+	
+	for ( float roll = -45; roll<=45; roll+=15 ) {
+		for ( float posz = -1; posz<= 1; posz += 0.25 ) {
+
+			ComputeStatic( roll, posz, bc, force, momentum );
+			
+			f->Printf( "%f %f ( %f %f %f ) ( %f %f %f ) ( %f %f %f )\r\n", roll, posz, 
+				bc.x, bc.y, bc.z,
+				force.x, force.y, force.z,
+				momentum.x, momentum.y, momentum.z );
+			
+		} 
+	}
+
+	LOGF("Done.");
+}
+
+
+//
+//	EShipNaive::ComputeStatic
+//
+void EShipNaive::ComputeStatic( float roll, float posz, EVec3 &bc, EVec3 &force, EVec3 &momentum )
+{
+	EMatrix4	R	=	Matrix4RotateX( deg2rad(roll) );
+	EMatrix4	T	=	Matrix4Translate( 0, 0, posz );
+	
+	struct local_force_s {
+		float magnitude;
+		EVec3 offset;
+	};
+	
+	vector<local_force_s> lfs;   //	<- local forces
+	lfs.reserve( voxel_buyoancy_grid->GetVoxelNum() );
+
+	
+	for (uint i=0; i<voxel_buyoancy_grid->GetVoxelNum(); i++) {
+	
+		EVoxel vx;
+		voxel_buyoancy_grid->GetVoxel(i, vx);
+		
+		EVec4 pos	= EVec4( vx.center.x, vx.center.y, vx.center.z, 1 );
+		pos			= Matrix4Transform( pos, R * T );
+		
+		float hsf = FEM_StaticWaveForce( pos, vx.szx, vx.szy, vx.szz, 0 );
+		
+		local_force_s lf;
+		lf.magnitude	=	hsf;
+		lf.offset		=	EVec3(pos.x, pos.y, pos.z);
+		
+		lfs.push_back( lf );
+	}
+	
+	momentum	=	EVec3(0,0,0);
+	force		=	EVec3(0,0,0);
+	bc			=	EVec3(0,0,0);
+	
+	for (uint i=0; i<lfs.size(); i++) {
+		force.z += lfs[i].magnitude;
+		
+		bc += lfs[i].offset * lfs[i].magnitude;
+		
+		momentum += Vec3Cross( lfs[i].offset, EVec3( 0, 0, lfs[i].magnitude ) );
+	}	
+	
+	bc.x /= force.z;
+	bc.y /= force.z;
+	bc.z /= force.z;
+	
+	
+}
+
+
+//
+//	EShipNaive::~EShipNaive
 //
 EShipNaive::~EShipNaive( void )
 {
