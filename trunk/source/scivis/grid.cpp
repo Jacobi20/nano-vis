@@ -23,6 +23,7 @@
 */
 
 #include "sci_local.h"
+#include <queue>
 
 /*-----------------------------------------------------------------------------
 	grid for voxelization
@@ -53,7 +54,54 @@ void EVoxelGrid::BuildGrid( const IPxTriMesh mesh, EVec3 origin, float step_x, f
 {
 	bbox	=	mesh->ComputeBBox();
 
-	Fill( mesh, origin, step_x, step_y, step_z, 0,0,0);
+	float szx = step_x;
+	float szy = step_y;
+	float szz = step_z;
+	
+	//	DFS using recursion :
+	//	Fill( mesh, origin, step_x, step_y, step_z, 0,0,0);
+
+	//	BFS using queue :	
+	
+	queue<vxind_s>	Q;
+	
+	Q.push( vxind_s(0,0,0) );
+
+	EVoxel new_vx;
+	new_vx.idx		=	0;
+	new_vx.idy		=	0;
+	new_vx.idz		=	0;
+	new_vx.szx		=	szx;
+	new_vx.szy		=	szy;
+	new_vx.szz		=	szz;
+	new_vx.center	=	origin;
+	AddVoxel( new_vx );
+
+	while ( !Q.empty() ) {
+	
+		vxind_s vxind = Q.front();
+		Q.pop();
+		
+		int idx = vxind.idx;
+		int idy = vxind.idy;
+		int idz = vxind.idz;
+		float x = origin.x + (float)idx * szx;
+		float y = origin.y + (float)idy * szy;
+		float z = origin.z + (float)idz * szz;
+
+		if (!bbox.Contains( EVec4( x, y, z, 1 ) )) {
+			RAISE_EXCEPTION("mesh has holes or origin point is outside of closed mesh");
+		}
+		
+		EVec3	dir;	
+		Grow(Q, mesh, EVec3(x,y,z), szx, szy, szz,  idx, idy, idz, -1,  0,  0, dir);
+		Grow(Q, mesh, EVec3(x,y,z), szx, szy, szz,  idx, idy, idz, +1,  0,  0, dir);
+		Grow(Q, mesh, EVec3(x,y,z), szx, szy, szz,  idx, idy, idz,  0, -1,  0, dir);
+		Grow(Q, mesh, EVec3(x,y,z), szx, szy, szz,  idx, idy, idz,  0, +1,  0, dir);
+		Grow(Q, mesh, EVec3(x,y,z), szx, szy, szz,  idx, idy, idz,  0,  0, -1, dir);
+		Grow(Q, mesh, EVec3(x,y,z), szx, szy, szz,  idx, idy, idz,  0,  0, +1, dir);
+	}
+		
 }
 
 
@@ -62,56 +110,75 @@ void EVoxelGrid::BuildGrid( const IPxTriMesh mesh, EVec3 origin, float step_x, f
 //
 void EVoxelGrid::Fill( const IPxTriMesh mesh, EVec3 origin, float szx, float szy, float szz, int idx, int idy, int idz )
 {
-	EVoxel voxel;
-	voxel.center	=	origin;
-	voxel.idx		=	idx;
-	voxel.idy		=	idy;
-	voxel.idz		=	idz;
-	voxel.szx		=	szx;
-	voxel.szy		=	szy;
-	voxel.szz		=	szz;
-	
-	AddVoxel( voxel );
-	
-	if (!bbox.Contains( EVec4( origin.x, origin.y, origin.z, 1 ) )) {
-		RAISE_EXCEPTION("mesh has holes or origin point is outside of closed mesh");
-	}
+	//EVoxel voxel;
+	//voxel.center	=	origin;
+	//voxel.idx		=	idx;
+	//voxel.idy		=	idy;
+	//voxel.idz		=	idz;
+	//voxel.szx		=	szx;
+	//voxel.szy		=	szy;
+	//voxel.szz		=	szz;
+	//
+	//AddVoxel( voxel );
+	//
+	//if (!bbox.Contains( EVec4( origin.x, origin.y, origin.z, 1 ) )) {
+	//	RAISE_EXCEPTION("mesh has holes or origin point is outside of closed mesh");
+	//}
 
-	EVec3	dir;	
-	if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz, -1,  0,  0, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx-1, idy  , idz  );	}
-	if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz, +1,  0,  0, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx+1, idy  , idz  );	}
-	if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz,  0, -1,  0, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx  , idy-1, idz  );	}
-	if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz,  0, +1,  0, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx  , idy+1, idz  );	}
-	if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz,  0,  0, -1, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx  , idy  , idz-1);	}
-	if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz,  0,  0, +1, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx  , idy  , idz+1);	}
+	//EVec3	dir;	
+	//if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz, -1,  0,  0, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx-1, idy  , idz  );	}
+	//if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz, +1,  0,  0, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx+1, idy  , idz  );	}
+	//if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz,  0, -1,  0, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx  , idy-1, idz  );	}
+	//if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz,  0, +1,  0, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx  , idy+1, idz  );	}
+	//if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz,  0,  0, -1, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx  , idy  , idz-1);	}
+	//if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz,  0,  0, +1, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx  , idy  , idz+1);	}
 }
 
 
 //
 //	EVoxelGrid::Grow
 //
-bool EVoxelGrid::Grow( const IPxTriMesh mesh, EVec3 origin, float szx, float szy, float szz, int idx, int idy, int idz, int dx, int dy, int dz, EVec3 &dir )
+bool EVoxelGrid::Grow(queue<vxind_s> &Q, const IPxTriMesh mesh, EVec3 origin, float szx, float szy, float szz, int idx, int idy, int idz, int dx, int dy, int dz, EVec3 &dir )
 {
 	EVoxel vx;
 	
+	//	neighboring voxel is already exist - no grow :
 	if (GetVoxel(idx+dx, idy+dy, idz+dz, vx)) {
 		return false;
 	}
 
+	//	ray cast against bounding mesh :
 	dir	=	EVec3( szx * dx, szy * dy, szz * dz );
 	
 	EVertex v;
 	mesh.Get();
 	bool r = false;
 	
+	//	do some attemtps :	
 	for (uint i=0; i<10; i++) {
 		EVec3 dd = EVec3( FRand(-0.1f,0.1f), FRand(-0.1f,0.1f), FRand(-0.1f,0.1f) );
 		r |= mesh->RayIntersect( origin + dd, dir, v );
 	}
 
-	if (r) {	//	intersection - no grow
+	//	at least one hit - no grow
+	if (r) {	
 		return false;
 	}	
+	
+	//	now can grow and add voxels :
+	//	push indices to stack :
+	Q.push( vxind_s( idx + dx, idy + dy, idz + dz ) );	
+	
+	EVoxel new_vx;
+	new_vx.idx		=	idx + dx;
+	new_vx.idy		=	idy + dy;
+	new_vx.idz		=	idz + dz;
+	new_vx.szx		=	szx;
+	new_vx.szy		=	szy;
+	new_vx.szz		=	szz;
+	new_vx.center	=	origin + dir;
+	
+	AddVoxel( new_vx );
 	
 	return true;
 }
@@ -142,7 +209,7 @@ void EVoxelGrid::GetVoxel( uint index, EVoxel &voxel ) const
 bool EVoxelGrid::GetVoxel( int idx, int idy, int idz, EVoxel &voxel )
 {
 	uint n = GetVoxelNum();
-	for (uint i=0; i<n; i++) {
+	for (int i=n-1; i>=0; i--) {
 		GetVoxel( i, voxel );
 		
 		if (voxel.idx==idx && voxel.idy==idy && voxel.idz==idz) {

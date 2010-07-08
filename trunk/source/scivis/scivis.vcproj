@@ -199,6 +199,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\array3d.h"
+				>
+			</File>
+			<File
 				RelativePath=".\nxaux\error_stream.h"
 				>
 			</File>

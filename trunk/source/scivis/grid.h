@@ -28,6 +28,9 @@
 	grid for voxelization
 -----------------------------------------------------------------------------*/
 
+#include "array3d.h"
+#include <queue>
+
 typedef hard_ref<class EVoxelGrid>	EPxVoxelGrid;
 
 const uint VOXEL_GRID_SIZE	=	10;
@@ -54,6 +57,10 @@ struct EVoxel {
 
 class EVoxelGrid : public ICoreObject {								  
 	public:
+		struct vxind_s {
+			vxind_s (int x, int y, int z) : idx(x), idy(y), idz(z) {}
+			int idx, idy, idz;
+		};
 
 	public:
 						EVoxelGrid		( void );
@@ -71,9 +78,10 @@ class EVoxelGrid : public ICoreObject {
 		
 	protected:
 		void		Fill	( const IPxTriMesh mesh, EVec3 origin, float szx, float szy, float szz, int idx, int idy, int idz );
-		bool		Grow	( const IPxTriMesh mesh, EVec3 origin, float szx, float szy, float szz, int idx, int idy, int idz, int dx, int dy, int dz, EVec3 &dir );
+		bool		Grow	( queue<vxind_s> &Q, const IPxTriMesh mesh, EVec3 origin, float szx, float szy, float szz, int idx, int idy, int idz, int dx, int dy, int dz, EVec3 &dir );
 
 		EBBox		bbox;	
 		vector<EVoxel> grid;
+		
 	};
 #endif	
