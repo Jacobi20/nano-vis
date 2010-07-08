@@ -96,7 +96,7 @@ SCI_CreateShip {
 	
 	-- 	ship params :
 	--ship_mass	=	1653750;
-	ship_mass	=	1805000;
+	ship_mass	=	2205000;
 	cmass_offset=	-1;
 	cx			=	2;
 
@@ -179,9 +179,9 @@ function SciVisFrame(dtime)
 	local	rotation = 60;
 	game_time = game_time + dtime;
 	
-	if dtime>0.030 then
-		print ("dtime > 0.030  (", dtime, ")");
-		dtime = 0.030;
+	if dtime>0.100 then
+		--print ("dtime > 0.060  (", dtime, ")");
+		dtime = 0.100;
 	end
 	
 	dtime = 0.016;
