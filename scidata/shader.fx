@@ -188,3 +188,33 @@ technique solid_body
 		PixelShader 		= 	compile ps_2_0 PSMainXRay(float4(1,1,1,1) * obj_tint);
 	}//*/
 }
+
+technique submerged_body
+{
+	pass Black {
+		FillMode			=	SOLID;
+		DestBlend 			= 	SRCCOLOR;
+		SrcBlend 			= 	ZERO;
+		ZEnable 			= 	TRUE;
+		ZWriteEnable		= 	TRUE;
+		CullMode 			= 	NONE;
+		AlphaBlendEnable	= 	FALSE;
+		ColorWriteEnable	=	RED|GREEN|BLUE;
+		VertexShader 		= 	compile vs_2_0 VSMain();
+		PixelShader 		= 	compile ps_2_0 PSColor(float4(0,0,0,1));
+	}
+	pass Red {
+		FillMode			=	WIREFRAME;
+		DestBlend 			= 	SRCCOLOR;
+		SrcBlend 			= 	ZERO;
+		ZEnable 			= 	TRUE;
+		ZWriteEnable		= 	FALSE;
+		CullMode 			= 	NONE;
+		AlphaBlendEnable	= 	FALSE;
+		ColorWriteEnable	=	RED|GREEN|BLUE;
+		VertexShader 		= 	compile vs_2_0 VSMain();
+		PixelShader 		= 	compile ps_2_0 PSColor(float4(1,0,0,1));
+		DepthBias			= -0.5 / 65536.0;
+		SlopeScaleDepthBias = -1.0;
+	}
+}

@@ -199,6 +199,10 @@ ID3DXMesh *ESciVis::CreateMesh( IPxTriMesh mesh )
 	uint		 num_verts	=	mesh->GetVertexNum();
 	ID3DXMesh	*d3dmesh		=	NULL;
 	
+	if (num_tris==0 || num_verts==0) {
+		return NULL;
+	}
+	
 	HRCALL( D3DXCreateMesh( num_tris, num_verts, D3DXMESH_32BIT | D3DXMESH_DYNAMIC, VERTEX_DECL_STATIC, d3ddev, &d3dmesh ) );
 
 	IDirect3DVertexBuffer9	*vb	=	NULL;	

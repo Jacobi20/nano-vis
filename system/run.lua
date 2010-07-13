@@ -19,6 +19,10 @@ input.bind ("Z",  "_ShipBW()");
 input.bind ("A",	"_ShipSL()");
 input.bind ("X",  "_ShipSR()");
 
+input.bind ("F2", "ship_show_hull      = not ship_show_hull"  );
+input.bind ("F3", "ship_show_cubes     = not ship_show_cubes" );
+input.bind ("F4", "ship_show_submerge  = not ship_show_submerge" );
+
 input.bind ("N", "state.submersion = not state.submersion" );
 input.bind ("M", "state.sunking 	= not state.sunking" );
 
@@ -34,7 +38,7 @@ state = {
 	pitch_dec	=	false;
 	dist_inc	=	false;
 	dist_dec	=	false;
-	yaw		=	90;
+	yaw		=	0;
 	roll	=	0;
 	pitch	=	5;
 	dist	=	100;
@@ -88,26 +92,58 @@ SCI_CreateShip {
 	
 	-- 	pose :
 	yaw			=	math.rad(90);
-	roll		=	math.rad(-10);
-	pitch		=	math.rad(30);
+	roll		=	math.rad(40);
+	pitch		=	math.rad(0);
 	pos_x		=	0;
 	pos_y		=	0;
-	pos_z		=	80;
+	pos_z		=	-1;
+	
+	--	voxel stuff :
+	cube_size	=	1;
 	
 	-- 	ship params :
 	--ship_mass	=	1653750;
-	ship_mass	=	2205000;
+	ship_mass	=	2705000;
 	cmass_offset=	-1;
-	cx			=	2;
+	cx			=	4;
 
 	-- 	ship geometry :
 	mesh_vis	=	"../scidata/uboat.esx|boat1";
-	--mesh_vis	=	"../scidata/uboat.esx|flowsurf";
-	mesh_flow	=	"../scidata/uboat.esx|flowsurf";
+	--mesh_vis	=	"../scidata/uboat.esx|flowsurf2";
+	mesh_flow	=	"../scidata/uboat.esx|flowsurf2";
 	mesh_stat	=	"../scidata/uboat.esx|stat";
-}   
-                    
--- SCI_CreateShip2 {
+} 
+  
+
+-- SCI_CreateShip {
+	-- --	comuting method :
+	-- numeric		=	false;
+	
+	-- -- 	pose :
+	-- yaw			=	math.rad(90);
+	-- roll		=	math.rad(80);
+	-- pitch		=	math.rad(80);
+	-- pos_x		=	0;
+	-- pos_y		=	0;
+	-- pos_z		=	30;
+	
+	-- --	voxel stuff :
+	-- cube_size	=	1;
+	
+	-- -- 	ship params :
+	-- --ship_mass	=	1653750;
+	-- ship_mass	=	270500;
+	-- cmass_offset=	-1;
+	-- cx			=	4;
+
+	-- -- 	ship geometry :
+	-- mesh_vis	=	"../scidata/uboat.esx|dish";
+	-- mesh_flow	=	"../scidata/uboat.esx|dish";
+	-- mesh_stat	=	"../scidata/uboat.esx|dish";
+-- } 
+  
+  
+-- SCI_CreateShip {
 	-- --	comuting method :
 	-- numeric		=	false;
 	
@@ -175,6 +211,8 @@ function DriveShip()
 end
 
 function SciVisFrame(dtime)
+
+--	SCI_ShipForce( vmath.vec4(0, 0,-5000000,0), vmath.vec4(50,0,0,1));
 
 	local	rotation = 60;
 	game_time = game_time + dtime;
