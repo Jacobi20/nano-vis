@@ -43,7 +43,7 @@ EVoxelGrid::EVoxelGrid( void )
 //
 EVoxelGrid::~EVoxelGrid( void )
 {
-
+	
 }
 
 
@@ -53,10 +53,98 @@ EVoxelGrid::~EVoxelGrid( void )
 void EVoxelGrid::BuildGrid( const IPxTriMesh mesh, EVec3 origin, float step_x, float step_y, float step_z )
 {
 	bbox	=	mesh->ComputeBBox();
+	
+	bbox.Grow(1,1,1);
 
 	float szx = step_x;
 	float szy = step_y;
 	float szz = step_z;
+	
+#if 1
+
+	int min_idx = bbox.Min().x / szx;
+	int max_idx = bbox.Max().x / szx;
+	int min_idy = bbox.Min().y / szy;
+	int max_idy = bbox.Max().y / szy;
+	int min_idz = bbox.Min().z / szz;
+	int max_idz = bbox.Max().z / szz;
+	
+	class MeshHitCB : public ITriMeshHitCB {
+		public:
+		float y, z;
+		float szx, szy, szz;
+		int min_idx, max_idx;
+		EVoxelGrid *grid;
+		
+		EVertex old_point;
+		bool	old_into;
+		bool	handled;
+		uint	odd;
+		
+		MeshHitCB ( EVoxelGrid *grid, float y, float z, float szx, float szy, float szz, int min_idx, int max_idx ) {
+			handled			=	0;
+			old_point.position	=	EVec3(0,0,0);
+			old_into		=	false;
+			this->grid		=	grid;
+			this->y			=	y;
+			this->z			=	z;
+			this->szx		=	szx;
+			this->szy		=	szy;
+			this->szz		=	szz;
+			this->min_idx	=	min_idx;
+			this->max_idx	=	max_idx;
+			odd				=	0;
+		}
+		
+		virtual void Callback( EVertex &point, float fraction, bool into_front_side ) {
+			odd++;
+			if ( into_front_side ) {
+				old_point = point;
+			} else {
+				
+				for (int idx = min_idx; idx<= max_idx; idx++) {
+					
+					float x = idx * szx;
+					
+					if ( x > old_point.position.x && x < point.position.x ) {
+						
+						EVoxel	vx;
+						float dx	=	0;//FRand(-0.2, 0.2);
+						float dy	=	0;//FRand(-0.2, 0.2);
+						float dz	=	0;//FRand(-0.2, 0.2);
+						vx.center	=	EVec3(x+dx, y+dy, z+dz);
+						vx.szx		=	szx;
+						vx.szy		=	szy;
+						vx.szz		=	szz;
+					
+						grid->AddVoxel( vx );
+					}
+					
+				}
+				
+			}
+		}
+	};
+	
+	for (int idy=min_idy; idy<=max_idy; idy++) {
+		for (int idz=min_idz; idz<=max_idz; idz++) {
+	
+			//int idy = 0;
+			//int idz = 0;
+		
+			float y = (float)idy * szy;
+			float z = (float)idz * szz;
+			EVec3	begin ( bbox.Min().x, y, z );
+			EVec3	dir	  ( bbox.Size().x, 0, 0);
+			
+			MeshHitCB	hit_cb( this, y, z, szx, szy, szz, min_idx, max_idx );
+			
+			mesh->RayIntersect( begin, dir, &hit_cb );
+			
+		}
+	}
+
+#else
 	
 	//	DFS using recursion :
 	//	Fill( mesh, origin, step_x, step_y, step_z, 0,0,0);
@@ -101,7 +189,7 @@ void EVoxelGrid::BuildGrid( const IPxTriMesh mesh, EVec3 origin, float step_x, f
 		Grow(Q, mesh, EVec3(x,y,z), szx, szy, szz,  idx, idy, idz,  0,  0, -1, dir);
 		Grow(Q, mesh, EVec3(x,y,z), szx, szy, szz,  idx, idy, idz,  0,  0, +1, dir);
 	}
-		
+#endif		
 }
 
 

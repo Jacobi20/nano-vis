@@ -23,6 +23,7 @@
 */
 
 #include "sci_local.h"
+#include "ship_naive.h"
 
 /*-----------------------------------------------------------------------------
 	Naive ship simulator :
@@ -53,73 +54,6 @@ const float WATER_DENSITY		=	1000;		//	kg/m^3
 const float SHIP_CX				=	0.2f;
 
 
-class EShipNaive : public IShip {
-	public:
-							EShipNaive				( lua_State *L, int idx );
-							~EShipNaive				( void );
-					
-		virtual void		Simulate				( float dtime, IPxWaving waving );
-		virtual void		ReloadShader			( void );
-		virtual void		GetPose					( EVec4 &position, EQuat &orient );
-		virtual void		Render					( ERendEnv_s *rend_env );
-		virtual void		ApplyForceAtLocalPoint	( const EVec4 &pos, const EVec4 &force );
-		
-		void				BuildBuyoancyGrid		( float step );
-		
-		void				ComputeStatic			( void );
-		void				ComputeStatic			( float roll, float posz, EVec3 &bc, EVec3 &force, EVec3 &momentum );
-		
-	protected:
-		bool				numeric;
-	
-		void				UpdateForces	( float dtime, IPxWaving waving );
-		void				UpdateHSF		( float dtime, IPxWaving waving );
-		void				UpdateHDF		( float dtime, IPxWaving waving );
-
-		//	stuff for numerical rolling simulation :
-		void				UpdateNumeric	( float dtime, IPxWaving waving );
-		void				EulerStep		( float dt, IPxWaving waving );
-		float	num_roll;
-		float	num_roll_d;
-		float	num_zeta;
-		float	num_zeta_d;
-		
-		float	ship_length	;
-		float	ship_width	;
-		float	ship_height	;
-		float	ship_mass	;
-		
-		void	ComputeShipParams	( void );
-		
-		EPxVoxelGrid	voxel_buyoancy_grid;
-		
-		struct {
-			float	length;
-			float	width;
-			float	height;
-			float	cm_offset;
-			
-			float	cx;
-			
-			float	gmt;	//	rolling metacentric height
-			float	gml;	//	pitching metacentric height
-			
-			float	Ix;		//	X-moment of inertia
-		} ship_param;
-		
-		float			self_time;
-	
-		IPxTriMesh		mesh_vis;
-		IPxTriMesh		mesh_flow;
-		IPxTriMesh		mesh_stat;
-		ID3DXMesh		*d3d_mesh_vis;
-		ID3DXMesh		*d3d_cube;
-		ID3DXEffect		*shader_fx;
-		
-		NxActor			*ship_body;
-	};
-	
-
 IShip * create_naive_ship( lua_State *L, int idx ) {
 	return new EShipNaive(L, idx);
 }	
@@ -133,6 +67,9 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 	self_time	=	0;
 	
 	d3d_cube	=	NULL;
+	
+	CONFIG_REGISTER_VAR(ship_show_hull,  true);
+	CONFIG_REGISTER_VAR(ship_show_cubes, false);
 
 	//
 	//	create meshes :
@@ -177,6 +114,8 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 	num_zeta		=	pos_z;
 	num_zeta_d		=	0;
 
+	float cube_size = 1;
+	LuaGetField ( L, idx, "cube_size", cube_size );
 	//
 	//	create phys ship :
 	//
@@ -192,7 +131,7 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 
 	ComputeShipParams();
 	
-	BuildBuyoancyGrid(1.5);
+	BuildBuyoancyGrid(cube_size);
 	ComputeStatic();
 
 	
@@ -225,7 +164,7 @@ void EShipNaive::BuildBuyoancyGrid( float step )
 	LOGF("Done: %d voxels", voxel_buyoancy_grid->GetVoxelNum());
 	
 	SAFE_RELEASE(d3d_cube);
-	d3d_cube = sci_vis->CreateMeshCube( step*0.8, step*0.8, step*0.8 );
+	d3d_cube = sci_vis->CreateMeshCube( step*0.3, step*0.3, step*0.3 );
 }
 
 
@@ -300,17 +239,20 @@ void EShipNaive::ComputeStatic( void )
 	
 	IPxFile	f = FileSystem()->FileOpen("ship_stats.txt", FS_OPEN_WRITE);
 	
-	for ( float roll = -45; roll<=45; roll+=15 ) {
-		for ( float posz = -1; posz<= 1; posz += 0.25 ) {
+	f->Printf("roll zeta bcx bcy bcz fx fy fz mx my mz\r\n");
+	
+	for ( float roll = -45; roll<=45; roll+=1 ) {
+		//for ( float posz = -1; posz<= 1; posz += 0.25 ) {
+		float posz = -1;
 
 			ComputeStatic( roll, posz, bc, force, momentum );
 			
-			f->Printf( "%f %f ( %f %f %f ) ( %f %f %f ) ( %f %f %f )\r\n", roll, posz, 
+			f->Printf( "%f %f \t %f %f %f \t %f %f %f \t %f %f %f \r\n", roll, posz, 
 				bc.x, bc.y, bc.z,
 				force.x, force.y, force.z,
 				momentum.x, momentum.y, momentum.z );
 			
-		} 
+		//} 
 	}
 
 	LOGF("Done.");
@@ -454,51 +396,56 @@ void EShipNaive::Render( ERendEnv_s *rend_env )
 	//
 	//	draw ship :
 	//
-	uint n;
-	HRCALL( shader_fx->SetTechnique("solid_body") );
-	HRCALL( shader_fx->Begin(&n, 0) );
-	
-	for (uint pass=0; pass<n; pass++) {
-	
-		HRCALL( shader_fx->BeginPass(pass) );
-	
-		d3d_mesh_vis->DrawSubset(0);
+	if (ship_show_hull->Bool()) {	
+		uint n;
+		HRCALL( shader_fx->SetTechnique("solid_body") );
+		HRCALL( shader_fx->Begin(&n, 0) );
 		
-		HRCALL( shader_fx->EndPass() );
-	}
+		for (uint pass=0; pass<n; pass++) {
+		
+			HRCALL( shader_fx->BeginPass(pass) );
+		
+			d3d_mesh_vis->DrawSubset(0);
+			
+			HRCALL( shader_fx->EndPass() );
+		}
 
-	HRCALL( shader_fx->End() );
-	
+		HRCALL( shader_fx->End() );
+	}
+		
 	//
 	//	draw cubes :
 	//
-	HRCALL( shader_fx->SetTechnique("cubes") );
-	HRCALL( shader_fx->Begin(&n, 0) );
-	
-	for (uint pass=0; pass<n; pass++) {
-	
-		EMatrix4 rot_trans = QuatToMatrix(q) * Matrix4Translate(p);
-		EMatrix4 inv_rot = Matrix4Inverse( QuatToMatrix(q) );
-	
-		HRCALL( shader_fx->BeginPass(pass) );
-	
-		for (uint i=0; i<voxel_buyoancy_grid->GetVoxelNum(); i++) {
+	if (ship_show_cubes->Bool()) {
+		uint n;
+		HRCALL( shader_fx->SetTechnique("cubes") );
+		HRCALL( shader_fx->Begin(&n, 0) );
 		
-			EVoxel vx;
-			voxel_buyoancy_grid->GetVoxel(i, vx);
+		for (uint pass=0; pass<n; pass++) {
 		
-			EMatrix4 world	=	inv_rot * Matrix4Translate(vx.center.x, vx.center.y, vx.center.z) * rot_trans;
-			HRCALL( shader_fx->SetMatrix("matrix_world",	&D3DXMATRIX( world.Ptr() ) ) );
+			EMatrix4 rot_trans = QuatToMatrix(q) * Matrix4Translate(p);
+			EMatrix4 inv_rot = Matrix4Inverse( QuatToMatrix(q) );
+		
+			HRCALL( shader_fx->BeginPass(pass) );
+		
+			for (uint i=0; i<voxel_buyoancy_grid->GetVoxelNum(); i++) {
 			
-			shader_fx->CommitChanges();
+				EVoxel vx;
+				voxel_buyoancy_grid->GetVoxel(i, vx);
+			
+				EMatrix4 world	=	inv_rot * Matrix4Translate(vx.center.x, vx.center.y, vx.center.z) * rot_trans;
+				HRCALL( shader_fx->SetMatrix("matrix_world",	&D3DXMATRIX( world.Ptr() ) ) );
+				
+				shader_fx->CommitChanges();
 
-			d3d_cube->DrawSubset(0);
+				d3d_cube->DrawSubset(0);
+			}
+			
+			HRCALL( shader_fx->EndPass() );
 		}
-		
-		HRCALL( shader_fx->EndPass() );
-	}
 
-	HRCALL( shader_fx->End() );
+		HRCALL( shader_fx->End() );
+	}
 }
 
 
@@ -557,6 +504,7 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 	
 	float total_hydro_stat_force = 0;
 	
+#if 0
 	for (uint i=0; i<voxel_buyoancy_grid->GetVoxelNum(); i++) {
 		
 		EVoxel vx;
@@ -578,9 +526,10 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 		
 		ship_body->addForceAtPos( NxVec3(0,0,fs), NxVec3(pos.x, pos.y, pos.z) );
 	}
+
+#else	
 	
-	
-/*	for (uint i=0; i<FEM_X; i++) {
+	for (uint i=0; i<FEM_X; i++) {
 		for (uint j=0; j<FEM_Y; j++) {
 			for (uint k=0; k<FEM_Z; k++) {
 			
@@ -619,23 +568,9 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 				//DebugLine( NxVec3(pos.x, pos.y, pos.z), NxVec3(pos.x, pos.y, pos.z) + normal * 5, EVec4(1,1,1,1));
 			}
 		}
-	}   */
-	
-	
-	float roll,p,y;
-	QuatToAngles( orient, y, p, roll);
-	EVec3 r  = EVec3(0,0, sinf(deg2rad(roll)) * ship_param.cm_offset);
-	EVec3 f  = EVec3(0,0, ship_mass * GRAVITY );
-	EVec3 Mg = Vec3Cross(r, f);
-	//M += Vec3Cross(r, f);
-	
-	//ship_body->addLocalTorque(NxVec3(M.x, M.y, M.z));
+	}
 
-	//LOGF("Mx (nx)  = %g, %g", Vec3Length(M), Vec3Length(Mg));
-	//ship_body->addForceAtLocalPos( NxVec3(0,0,total_hydro_stat_force), NxVec3(0, 0, 0) );
-
-	//LOGF("Fnx  = %g (KN)", (total_hydro_stat_force - SHIP_MASS * GRAVITY) / 1000.0);
-	
+#endif	
 }
 
 void EShipNaive::UpdateHDF( float dtime, IPxWaving waving )
