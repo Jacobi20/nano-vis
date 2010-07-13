@@ -68,8 +68,9 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 	
 	d3d_cube	=	NULL;
 	
-	CONFIG_REGISTER_VAR(ship_show_hull,  true);
-	CONFIG_REGISTER_VAR(ship_show_cubes, false);
+	CONFIG_REGISTER_VAR(ship_show_hull,		true);
+	CONFIG_REGISTER_VAR(ship_show_cubes,	false);
+	CONFIG_REGISTER_VAR(ship_show_submerge, false);
 
 	//
 	//	create meshes :
@@ -112,7 +113,7 @@ EShipNaive::EShipNaive( lua_State *L, int idx )
 	num_roll		=	roll;
 	num_roll_d		=	0;
 	num_zeta		=	pos_z;
-	num_zeta_d		=	0;
+	num_zeta_d		=	0;														 
 
 	float cube_size = 1;
 	LuaGetField ( L, idx, "cube_size", cube_size );
@@ -393,6 +394,7 @@ void EShipNaive::Render( ERendEnv_s *rend_env )
 	HRCALL( shader_fx->SetMatrix("matrix_proj",		&D3DXMATRIX( rend_env->matrix_proj.Ptr() ) ) );
 	HRCALL( shader_fx->SetVector("view_pos",		&D3DXVECTOR4( rend_env->view_pos.Ptr() ) ) );
 
+
 	//
 	//	draw ship :
 	//
@@ -412,6 +414,40 @@ void EShipNaive::Render( ERendEnv_s *rend_env )
 
 		HRCALL( shader_fx->End() );
 	}
+	
+	
+	if (ship_show_submerge->Bool()) {
+	
+		HRCALL( shader_fx->SetMatrix("matrix_world",	&D3DXMATRIX( Matrix4Identity().Ptr() ) ) );
+		HRCALL( shader_fx->SetMatrix("matrix_view",		&D3DXMATRIX( rend_env->matrix_view.Ptr() ) ) );
+		HRCALL( shader_fx->SetMatrix("matrix_proj",		&D3DXMATRIX( rend_env->matrix_proj.Ptr() ) ) );
+		HRCALL( shader_fx->SetVector("view_pos",		&D3DXVECTOR4( rend_env->view_pos.Ptr() ) ) );
+	
+		ID3DXMesh *d3d_ship_bottom = NULL;
+		d3d_ship_bottom = sci_vis->CreateMesh( mesh_submerged );
+		
+		
+		uint n;
+		HRCALL( shader_fx->SetTechnique("submerged_body") );
+		HRCALL( shader_fx->Begin(&n, 0) );
+		
+		for (uint pass=0; pass<n; pass++) {
+		
+			HRCALL( shader_fx->BeginPass(pass) );
+
+			if (d3d_ship_bottom) {		
+				d3d_ship_bottom->DrawSubset(0);
+			}
+			
+			HRCALL( shader_fx->EndPass() );
+		}
+
+		HRCALL( shader_fx->End() );
+
+		SAFE_RELEASE( d3d_ship_bottom );
+	}
+	
+	
 		
 	//
 	//	draw cubes :
@@ -461,6 +497,9 @@ void EShipNaive::UpdateForces( float dtime, IPxWaving waving )
 	EVec4	p;
 	GetPose(p, q);
 	
+	EMatrix4 world	=	QuatToMatrix(q) * Matrix4Translate(p);
+	mesh_submerged	=	GetSubmergedMesh( world, EPlane(0,0,1,0) );	
+	
 	NxVec3 cm = ship_body->getCMassLocalPosition();
 	ship_body->addForceAtLocalPos( gravity, cm );
 	
@@ -503,7 +542,54 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 	EVec3	M = EVec3(0,0,0);
 	
 	float total_hydro_stat_force = 0;
+
+#if 1
 	
+	for (uint i=0; i<mesh_submerged->GetTriangleNum(); i++) {
+		uint i0, i1, i2;
+		mesh_submerged->GetTriangle( i, i0, i1, i2 );
+
+		//	vertices :		
+		EVec3	v0	=	mesh_submerged->GetVertex( i0 ).position;
+		EVec3	v1	=	mesh_submerged->GetVertex( i1 ).position;
+		EVec3	v2	=	mesh_submerged->GetVertex( i2 ).position;
+
+		//	pressure :		
+		float	p0	=	GRAVITY * WATER_DENSITY * (-v0.z);
+		float	p1	=	GRAVITY * WATER_DENSITY * (-v1.z);
+		float	p2	=	GRAVITY * WATER_DENSITY * (-v2.z);
+		
+		//	average pressure :
+		float	pa	=	( p0 + p1 + p2 ) / 3;	
+		//LOGF("%f", pa);
+		
+		if (pa<0.001) { 
+			continue;
+		}
+		
+		//	point of force application :
+		float	cu	=	(p0 + 2*p1 + p2) / 4 / (p0 + p1 + p2);
+		float	cv	=	(p0 + p1 + 2*p2) / 4 / (p0 + p1 + p2);
+		
+		EVec3	c	=	(v1 - v0) * cu + (v2 - v0) * cv + v0;
+		float	s	=	mesh_submerged->TriangleArea(i);
+		EVec3	n	=	mesh_submerged->TriangleNormal(i);
+		
+		//	absolute HSF 
+		float	f	=	s * pa;
+		//LOGF("%f", f);
+
+		//	force vector :		
+		NxVec3	fv	=	NxVec3( -f*n.x, -f*n.y, -f*n.z );
+		
+		total_hydro_stat_force	+=	fv.z;
+		
+		ship_body->addForceAtPos( fv, NxVec3(c.x, c.y, c.z) );
+	}
+	
+	LOGF("Total HSF : %f", total_hydro_stat_force);
+	
+#else
 #if 0
 	for (uint i=0; i<voxel_buyoancy_grid->GetVoxelNum(); i++) {
 		
@@ -569,7 +655,7 @@ void EShipNaive::UpdateHSF( float dtime, IPxWaving waving )
 			}
 		}
 	}
-
+#endif
 #endif	
 }
 
