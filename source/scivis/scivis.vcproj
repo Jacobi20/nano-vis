@@ -177,6 +177,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ship_split.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\nxaux\stream.cpp"
 				>
 			</File>
@@ -228,6 +232,10 @@
 			</File>
 			<File
 				RelativePath=".\ship.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ship_naive.h"
 				>
 			</File>
 			<File
