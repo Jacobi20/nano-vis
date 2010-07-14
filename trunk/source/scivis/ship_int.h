@@ -71,5 +71,5 @@ class IShip : public ICoreObject {
 		virtual void		SetHDFMesh		( const EString path ) = 0;
 		virtual void		SetResistance	( float cx ) = 0;
 		virtual void		MakeRigidBody	( const EString path, float mass ) = 0;
-		virtual void		AddForce		( EVec3 point, EVec3 force, bool local_point ) = 0;
+		virtual void		AddForce		( EVec3 force, EVec3 point, bool local_point ) = 0;
 	};

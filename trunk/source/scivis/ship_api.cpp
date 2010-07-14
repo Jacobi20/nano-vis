@@ -114,12 +114,23 @@ int ELuaShip::build_voxels( lua_State *L )
 
 int ELuaShip::add_force( lua_State *L )
 {
+	LUA_INTERFACE(L);
+	
+	int n = lua_gettop(L);
+
+	EVec4	f		=	LuaRequireVec4( L, 1, "force vector" );
+	EVec4	p		=	LuaRequireVec4( L, 2, "point of force addition" );
+	bool	local	=	LuaRequireBoolean( L, 3, "is point local");
+	
+	ship->AddForce( EVec3(f.x, f.y, f.z), EVec3(p.x, p.y, p.z), local);
+	
 	return 0;
 }
 
 
 int ELuaShip::get_angles( lua_State *L )
 {
+	LUA_INTERFACE(L);
 	EQuat q;
 	EVec4 p;
 	ship->GetPose( p, q );
@@ -130,12 +141,14 @@ int ELuaShip::get_angles( lua_State *L )
 	lua_pushnumber( L, yaw );
 	lua_pushnumber( L, pitch );
 	lua_pushnumber( L, roll );
+	lua.SetNResults(3);
 	return 3;
 }
 
 
 int ELuaShip::get_position( lua_State *L )
 {
+	LUA_INTERFACE(L);
 	EQuat q;
 	EVec4 p;
 	ship->GetPose( p, q );
@@ -143,17 +156,44 @@ int ELuaShip::get_position( lua_State *L )
 	lua_pushnumber( L, p.x );
 	lua_pushnumber( L, p.y );
 	lua_pushnumber( L, p.z );
+	lua.SetNResults(3);
 	return 3;
 }
 
 
 int ELuaShip::set_angles( lua_State *L )
 {
+	LUA_INTERFACE(L);
+	EQuat q;
+	EVec4 p;
+	ship->GetPose( p, q );
+
+	float yaw	=	lua.RequireNumber( 1, "yaw"		);
+	float pitch	=	lua.RequireNumber( 2, "pitch"	);
+	float roll	=	lua.RequireNumber( 3, "roll"	);
+	q			=	QuatRotationAxis( deg2rad( yaw   ),	EVec3(0,0,1))
+				*	QuatRotationAxis( deg2rad( pitch ),	EVec3(0,1,0))
+				*	QuatRotationAxis( deg2rad( roll  ),	EVec3(1,0,0));
+
+	
+	ship->SetPose( p, q );	
 	return 0;
 }
 
 
 int ELuaShip::set_position( lua_State *L )
 {
+	LUA_INTERFACE(L);
+	EQuat q;
+	EVec4 p;
+	ship->GetPose( p, q );
+
+	float x		=	lua.RequireNumber( 1, "x position"		);
+	float y		=	lua.RequireNumber( 2, "y position"	);
+	float z		=	lua.RequireNumber( 3, "z position"	);
+
+	p	=	EVec4(x,y,z,1);
+	
+	ship->SetPose( p, q );	
 	return 0;
 }
