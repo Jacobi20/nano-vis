@@ -24,23 +24,36 @@
 
 #include "sci_local.h"
 #include "ship.h"
- 
+#include "../core/luna.h"
+
 /*-----------------------------------------------------------------------------
-	Naive ship simulator :
+	Ship Lua API :
 -----------------------------------------------------------------------------*/
 
-IPxTriMesh EShip::GetSubmergedMesh( const EMatrix4 &world, const EPlane &plane )
-{
-	IPxTriMesh bottom, top, full;
-	bottom	= Geometry()->CreateTriMesh(GE_MESH_POSITION);
-	top		= Geometry()->CreateTriMesh(GE_MESH_POSITION);
-	
-	full	= this->mesh_hsf->Clone();
-	
-	full->Transform( world );
-	
-	full->Split( plane, bottom, top );
-	
-	return bottom;
-}
+class ELuaShip : public Luna<ELuaShip> {
+	public:
+					ELuaShip	( lua_State *L );
+					~ELuaShip	( void );
+					
+		LUNA_DECLARE_CLASS(ELuaShip);
 
+		int set_vis_mesh	( lua_State *L );		//	sets visible mesh
+		int	set_hsf_mesh	( lua_State *L );		//	sets mesh for HSF applying
+		int	set_hdf_mesh	( lua_State *L );		//	sets mesh for HDF applying
+		
+		int	set_resistance	( lua_State *L );		//	sets water resistance
+		
+		int make_rigidbody	( lua_State *L );		//	makes RB form list of shapes
+		int build_voxels	( lua_State *L );		//	makes RB form list of shapes
+
+		int	add_force		( lua_State *L );		//	adds force
+			
+		int	get_angles		( lua_State *L );		//	gets yaw, pitch, roll
+		int get_position	( lua_State *L );		//	gets x,y,z
+
+		int	set_angles		( lua_State *L );		//	sets yaw, pitch, roll
+		int set_position	( lua_State *L );		//	sets x,y,z
+		
+	protected:
+		IPxShip	ship;
+	};

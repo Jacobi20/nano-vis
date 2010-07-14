@@ -31,6 +31,6 @@ template <typename T> class self_ref {
 			self	=	NULL;
 		}
 	
-	protected:
+	public:
 		static T*	self;
 	};

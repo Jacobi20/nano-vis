@@ -190,6 +190,14 @@ NxActor *ESciVis::CreatePhysMesh( IPxTriMesh mesh, const EVec4 &pos, const EQuat
 	return actor;	
 }	
 	
+	
+//
+//	ESciVis::CreatePhysMesh
+//
+NxActor	* ESciVis::CreatePhysMesh( vector<IPxTriMesh> meshes, vector<float> masses )
+{
+	return NULL;
+}	
 
 //
 //	EPhysXPhysEngine::BuildConvexMesh

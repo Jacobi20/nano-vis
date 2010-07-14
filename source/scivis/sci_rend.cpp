@@ -34,16 +34,8 @@
 
 #define SHADER_FX			"../scidata/shader.fx"
 
-const float	SHIP_LENGTH		=	105;		//	m
-const float	SHIP_WIDTH		=	6;			//	m
-const float	SHIP_HEIGHT		=	7;			//	m
-const float	SHIP_MASS		=	2000000;	//	kg
-const float SHIP_CM_OFFSET	=  -0.7f;
-const float WATER_DENSITY	=	1000;		//	kg/m^3
-const float SHIP_CX			=	0.2f;
-
 IWaving *create_boukh_waving(lua_State *L, int idx);
-IShip	*create_naive_ship	(lua_State *L, int idx);
+IShip	*create_ship	(lua_State *L, int idx);
 
 //
 //	ESciVis::InitRender
@@ -64,9 +56,30 @@ void ESciVis::InitRender( void )
 	
 	change_papams_to_base_reson();
 	
-	ship_model	=	NULL;
-	ship_model2	=	NULL;
 	waving		=	create_boukh_waving( NULL, 0 );
+}
+
+
+//
+//	ESciVis::AddShip
+//
+void ESciVis::AddShip( IPxShip ship )
+{
+	ships.push_back( ship );
+}
+
+
+//
+//	ESciVis::RemoveShip
+//
+void ESciVis::RemoveShip( IPxShip ship )
+{
+	vector<IPxShip>::iterator	vi;
+	vi = find(ships.begin(), ships.end(), ship);
+	
+	if (vi!=ships.end()) {
+		ships.erase( vi );
+	}
 }
 
 
@@ -78,60 +91,6 @@ void ESciVis::ShutdownRender( void )
 	LOG_SHUTDOWN("Scientific renderer");
 
 	SAFE_RELEASE(shader_fx);
-}
-
-
-//
-//	ESciVis::SCI_RenderView
-//
-int ESciVis::SCI_RenderView( lua_State * L )
-{
-	self->RenderView( L );
-	
-	return 0;
-}
-
-
-//
-//	ESciVis::SCI_CreateShip
-//
-int ESciVis::SCI_CreateShip( lua_State * L )
-{
-	self->ship_model	=	create_naive_ship( L, 1 );
-	return 0;
-}
-
-int ESciVis::SCI_CreateShip2( lua_State * L )
-{
-	self->ship_model2	=	create_naive_ship( L, 1 );
-	return 0;
-}
-
-
-int ESciVis::SCI_ShipForce( lua_State * L )
-{
-	EVec4 force =	LuaRequireVec4( L, 1, "force"	);
-	EVec4 pos	=	LuaRequireVec4( L, 2, "pos"		);
-	
-	EVec4 p;
-	EQuat q;
-	self->ship_model->GetPose(p, q);
-	force = QuatRotateVector( force, q );
-	
-	self->ship_model->ApplyForceAtLocalPoint( pos, force );
-
-	return 0;
-}
-
-//
-//
-//
-int ESciVis::SCI_ReloadShaders( lua_State * L )
-{
-	self->shader_fx	=	self->CompileEffect(SHADER_FX);
-	self->ship_model->ReloadShader();
-	
-	return 0;
 }
 
 
@@ -159,27 +118,23 @@ void ESciVis::RenderView( lua_State * L )
 	float	roll			=	0;
 	float	pitch			=	0;
 	float	distance		=	10;
-	float	ship_course		=	0;
 	LuaGetField( L, 1, "dtime",				dtime			);
 	LuaGetField( L, 1, "yaw",				yaw				);
 	LuaGetField( L, 1, "roll",				roll			);
 	LuaGetField( L, 1, "pitch",				pitch			);
 	LuaGetField( L, 1, "distance",			distance		);
 	
-	LuaGetField( L, 1, "ship_course",		ship_course		);
-	Xi	=	ship_course;
 	//
 	//	simulate :
 	//
-	//UpdateBoat(dtime);
+//--------------------------------------------------------
+		//UpdateBoat(dtime);
 	waving->Update( dtime );
 	
-	if (ship_model) {
-		ship_model->Simulate( dtime, waving );
+	for (uint  i=0; i<ships.size(); i++) {
+		ships[i]->Simulate( dtime, waving );
 	}
-	if (ship_model2) {
-		ship_model2->Simulate( dtime, waving );
-	}
+	
 	FramePhysX(dtime);
 	
 	Simulate(dtime);
@@ -187,16 +142,8 @@ void ESciVis::RenderView( lua_State * L )
 	//
 	//	setup view :
 	//
-	D3DXMATRIX	world, ship_yaw, ship_roll, ship_pitch, ship_heaving;
 	D3DXMATRIX	view, view_i, rz, ry, rx, z_view_offset;
 	D3DXMATRIX	proj;
-
-	//	setup world matrix :
-	D3DXMatrixIdentity		( &world );	
-	D3DXMatrixRotationZ		( &ship_yaw		,	deg2rad(Xi+180) );
-	D3DXMatrixRotationX		( &ship_roll	,	Q			);
-	D3DXMatrixRotationY		( &ship_pitch	,	-F			);
-	D3DXMatrixTranslation	( &ship_heaving	,	0, 0,	E	); 
 
 	//	setup view matrix :
 	D3DXMATRIX	z_up(	 0, 0, 1, 0,
@@ -209,7 +156,6 @@ void ESciVis::RenderView( lua_State * L )
 	D3DXMatrixRotationZ		( &rz,	deg2rad(yaw) );
 	D3DXMatrixTranslation	( &z_view_offset,	0,0, -distance );
 	view	=	 rz * ry * rx * z_up * z_view_offset;
-	
 	
 	D3DXMatrixInverse( &view_i, NULL, &view );
 
@@ -225,29 +171,18 @@ void ESciVis::RenderView( lua_State * L )
 	D3DXVec4Transform( &view_dir, &view_dir, &view_i );
 
 	//
-	//	commit shader consts :
-	//
-	HRCALL( shader_fx->SetVector("light_dir",		&light_dir) );
-	HRCALL( shader_fx->SetVector("view_pos",		&view_pos) );
-	HRCALL( shader_fx->SetMatrix("matrix_world",	&world) );
-	HRCALL( shader_fx->SetMatrix("matrix_view",	&view) );
-	HRCALL( shader_fx->SetMatrix("matrix_proj",	&proj) );
-
-	//
-	//	draw ship :
+	//	draw ships :
 	//
 	ERendEnv_s	renv;
 	renv.matrix_proj	=	EMatrix4((FLOAT*)proj);
 	renv.matrix_view	=	EMatrix4((FLOAT*)view);
 	renv.view_pos		=	EVec4((FLOAT*)view_pos);
 	
-	if (ship_model) {
-		ship_model->Render( &renv );
-	}
-	if (ship_model2) {
-		ship_model2->Render( &renv );
+	for (uint i=0; i<ships.size(); i++) {
+		ships[i]->Render( &renv );
 	}
 
+	//--------------------------------------------------------
 	//
 	//	draw sea :
 	//
@@ -261,9 +196,13 @@ void ESciVis::RenderView( lua_State * L )
 	mesh_sea->ComputeNormals();
 	
 	UpdateMeshVertices( sea, mesh_sea );
-	
+
+	D3DXMATRIX world;	
 	D3DXMatrixIdentity		( &world );	
-	HRCALL( shader_fx->SetMatrix("matrix_world",	&world) );
+	HRCALL( shader_fx->SetMatrix("matrix_world",	&D3DXMATRIX( world ) ) );
+	HRCALL( shader_fx->SetMatrix("matrix_view",		&D3DXMATRIX( renv.matrix_view.Ptr() ) ) );
+	HRCALL( shader_fx->SetMatrix("matrix_proj",		&D3DXMATRIX( renv.matrix_proj.Ptr() ) ) );
+	HRCALL( shader_fx->SetVector("view_pos",		&D3DXVECTOR4( renv.view_pos.Ptr() ) ) );
 	
 	uint n;	
 	HRCALL( shader_fx->SetTechnique("solid_body") );
@@ -282,7 +221,8 @@ void ESciVis::RenderView( lua_State * L )
 	
 	DebugPhysX(world, view, proj);
 		
-	
+
+#if 0	
 	//	-------------------------------------------------
 	//	show rolling graph :
 	//	-------------------------------------------------
@@ -374,5 +314,6 @@ void ESciVis::RenderView( lua_State * L )
 
 
 	SAFE_RELEASE( line_decl );
+#endif	
 }
 

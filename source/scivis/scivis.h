@@ -68,36 +68,43 @@ class ESciVis : public ISciVis, public self_ref<ESciVis> {
 								ESciVis			( void );
 								~ESciVis			( void );
 
+		//	view rendering stuff :
 		virtual void	*		GetWindowDescriptor	( void ) { return vid_state.h_wnd; }
 		virtual void			RenderFrame			( uint dtime );
 		virtual void			RenderSnapshot		( const char *command );
-		
 		void					GetScreenSize		( uint &w, uint &h );
+		
+		//	utility rendering functions :
 		ID3DXEffect				*CompileEffect		( const char *path );
 		ID3DXMesh				*CreateMesh			( IPxTriMesh mesh );
 		ID3DXMesh				*CreateMeshCube		( float szx, float szy, float szz );
 		IPxTriMesh				LoadMesh			( const char *path );
 		void					DrawMesh			( ID3DXMesh *mesh );
 		void					UpdateMeshVertices	( ID3DXMesh *d3dmesh, const IPxTriMesh trimesh );
+		
+		//	utility physical functions :
 		NxActor				*	CreatePhysBox		( float sx, float sy, float sz, const EVec4 &pos, const EQuat &orient, float mass );
 		NxActor				*	CreatePhysMesh		( IPxTriMesh mesh, const EVec4 &pos, const EQuat &orient, float mass );
+		NxActor				*	CreatePhysMesh		( vector<IPxTriMesh> meshes, vector<float> masses );
 		NxScene				*	GetNxScene			( void ) { return nx_scene; }
 		NxConvexMesh		*	BuildConvexMesh		( const IPxTriMesh input_mesh );
-		
+
+		//	naval dynamic  :
 		void					InitRender			( void );
 		void					ShutdownRender		( void );
-		void					RenderView			( lua_State * L );
-		static int				SCI_RenderView		( lua_State * L );
-		static int				SCI_ReloadShaders	( lua_State * L );
-		static int				SCI_CreateShip		( lua_State * L );
-		static int				SCI_CreateShip2		( lua_State * L );
-		static int				SCI_ShipForce		( lua_State * L );
+		void					RegisterAPI			( void );
+		void					RenderView			( lua_State *L );
 		
 		void					Simulate			( float dtime );
+		void					AddShip				( IPxShip ship );
+		void					RemoveShip			( IPxShip ship );
+
+		vector<IPxShip>	ships;
 		
-		void					UpdateBoat			( float dtime );
-		void					UpdateBoatHDF		( float dtime, const EVec4 &position, const EQuat &orient );
-		void					UpdateBoatHSF		( float dtime, const EVec4 &position, const EQuat &orient );
+	public:
+		static int	remove_all_ships	( lua_State *L );
+		static int	render_view			( lua_State * L );
+		static int	reload_shaders		( lua_State * L );
 		
 	public:
 		float				global_simulation_time;
@@ -108,13 +115,7 @@ class ESciVis : public ISciVis, public self_ref<ESciVis> {
 		
 	protected:
 		IPxWaving			waving;
-		IPxShip				ship_model;
-		IPxShip				ship_model2;
-	
-		IPxTriMesh			mesh_ship;
 		IPxTriMesh			mesh_sea;
-		IPxTriMesh			mesh_flow;
-		ID3DXMesh			*ship;
 		ID3DXMesh			*sea;
 		ID3DXEffect			*shader_fx;
 

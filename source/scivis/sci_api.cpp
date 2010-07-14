@@ -23,74 +23,70 @@
 */
 
 
-#pragma once
+#include "sci_local.h"
 
 /*-----------------------------------------------------------------------------
 	Nano vis :
 -----------------------------------------------------------------------------*/
 
-//	PhysX stuff :
-#define NOMINMAX
-#include "NxPhysics.h"
+static const luaL_Reg navallib[] = {
+		{ "render_view",		ESciVis::render_view		},
+		{ "reload_shaders",		ESciVis::reload_shaders		},
+		{ "remove_all_ships",	ESciVis::remove_all_ships	},
+		{ NULL, NULL	},
+	};
 
-//	global.h :
-#undef _malloca
+//
+//	ESciVis::RegisterAPI
+//
+void ESciVis::RegisterAPI( void )
+{
+	lua_State *L = CoreLua();
+	LUA_INTERFACE(L);
+	
+	luaL_register(L, "naval", navallib);
+	lua_pop(L, 1);
 
-#include "../core/core.h"
-
-#ifdef _DEBUG
-#	define D3D_DEBUG_INFO
-#endif
-
-#define D3D_DEBUG_INFO
-
-
-#include "sci_int.h"
-
-
-#include <d3d9.h>
-#include <d3dx9.h>
-
-#define	WIN32_LEAN_AND_MEAN
-#define	VC_EXTRALEAN
-#include <windows.h>
-
-using namespace rapidxml;
-
-#pragma comment (lib, "d3dxof.lib")
-#pragma comment (lib, "dxguid.lib")
-#pragma comment (lib, "d3dx9.lib")
-#pragma comment (lib, "d3d9.lib")
-#pragma comment (lib, "winmm.lib")
+	//	add 'naval.create_ship' :
+	CoreExecuteString("naval.create_ship = ELuaShip;");
+}
 
 
-#define CHECK_CRITICAL(expr) if (FAILED(expr)) { SYS_Error(ERR_FATAL, va("%s() : %s failed", __FUNCTION__, #expr)); }
-
-#define SAFE_RELEASE(obj)	if (obj) { obj->Release(); obj = NULL; }
-#define HRCALL(expr)		if (FAILED(expr))	SIGNAL(#expr)
-#define HRCALL_THROW(expr)	if (FAILED(expr))	RAISE_EXCEPTION(#expr)
-
-
-const float GRAVITY			=	9.8f;
-const float WATER_DENSITY	=	1000;		//	kg/m^3
-
-
-class ESciVis;
-extern ESciVis	*sci_vis;
-
-NxVec3	ToNxVec3( const EVec3 &v );
-NxQuat	ToNxQuat( const EQuat &q );
-EVec3	ToEVec3	( const NxVec3 &v );
-EQuat	ToEQuat	( const NxQuat &q );
+//
+//	ESciVis::render_view
+//
+int ESciVis::render_view( lua_State * L )
+{
+	self->RenderView( L );
+	
+	return 0;
+}
 
 
-#include "nxaux/error_stream.h"
-#include "nxaux/stream.h"
-#include "nxaux/allocator.h"
+//
+//
+//
+int ESciVis::reload_shaders( lua_State * L )
+{
+	self->shader_fx	=	self->CompileEffect("../scidata/shader.fx");
+
+	for (uint i=0; i<self->ships.size(); i++) {
+		self->ships[i]->ReloadShader();
+	}
+
+	return 0;
+}
 
 
-#include "sci_interfaces.h"
-#include "grid.h"
-#include "ship_int.h"
-#include "ship_api.h"
-#include "scivis.h"
+//
+//	ESciVis::remove_all_ships
+//
+int ESciVis::remove_all_ships( lua_State *L )
+{
+	ELuaShip::Unregister(L);
+	ELuaShip::Register(L);
+	self->ships.clear();
+	return 0;
+}
+
+
