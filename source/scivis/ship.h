@@ -50,7 +50,7 @@ class EShip : public IShip {
 		virtual void		SetHDFMesh		( const EString path );
 		virtual void		SetResistance	( float cx ) { water_resistance_cx = cx; }
 		virtual void		MakeRigidBody	( const EString path, float mass );
-		virtual void		AddForce		( EVec3 point, EVec3 force, bool local_point );
+		virtual void		AddForce		( EVec3 force, EVec3 point, bool local_point );
 
 	protected:
 		EString				name;

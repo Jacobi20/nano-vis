@@ -19,7 +19,7 @@ input.bind ("Z",  "_ShipBW()");
 input.bind ("A",	"_ShipSL()");
 input.bind ("X",  "_ShipSR()");
 
-input.bind ("F1", "print('Help!!! :)'"  	);
+input.bind ("F1", "show_info()"  	);
 input.bind ("F2", "ship_show_hull      = not ship_show_hull"  	);
 input.bind ("F3", "ship_show_voxels    = not ship_show_voxels" 	);
 input.bind ("F4", "ship_show_submerge  = not ship_show_submerge");
@@ -90,23 +90,39 @@ game_time = 0;
 
 naval.remove_all_ships();
 
+function show_info()
+	local x,y,z;
+	local yaw, pitch, roll;
+	x,y,z 			=	uboat:get_position();
+	yaw,pitch,roll	=	uboat:get_angles()
+	
+	print("---- ship info ----");
+	print("position : ", x, y, z);
+	print("yaw      : ", yaw 	);
+	print("pitch    : ", pitch 	);
+	print("roll     : ", roll 	);
+	print("");
+end
+
 function create_uboat()
+	print("");
 	print("---- creating U-boat ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 200 );
+	ship:set_resistance	( 2 );
 	
 	ship:set_vis_mesh	( "../scidata/uboat.esx|boat1"			);
 	ship:set_hdf_mesh	( "../scidata/uboat.esx|flowsurf2" 		);
 	ship:set_hsf_mesh	( "../scidata/uboat.esx|flowsurf2" 		);
 	ship:make_rigidbody	( "../scidata/uboat.esx|stat", 2705000	);
 	
-	ship:set_position	( 0, 0, -1 );	
-	ship:set_angles		( 90, 0, 100 );
+	ship:set_position	( 0, 0, -1.5 );	
+	ship:set_angles		( 90, 0, 0 );
 	
 	ship:build_voxels	( "../scidata/uboat.esx|flowsurf2", 1	);
 	
 	print("---- done ----");
+	print("");
 	return ship;
 end
 
@@ -125,12 +141,51 @@ function DriveShip()
 	if state.ship_sr then SCI_ShipForce( vmath.vec4(0, -10000000,0,0), vmath.vec4(-50,0,-0.4,1)); end;
 	
 	if state.submersion then
-		SCI_ShipForce( vmath.vec4(0,0,-16537500,0), vmath.vec4(0,0,0,1));
+		uboat:add_force( vmath.vec4(0,0,-16537500,0), vmath.vec4(0,0,0,1), true);
 	end
 	if state.sunking then
-		SCI_ShipForce( vmath.vec4(0,0,-2000000,0), vmath.vec4(0,0,0,1));
+		uboat:add_force( vmath.vec4(0,0,-2000000,0), vmath.vec4(0,0,0,1), true);
 	end
 end
+
+
+--------------------------------------------------
+
+roll_file = nil;
+ship_roll = 0;
+momentum  = 0;
+roll_time = 0;
+
+function InitRolling(path)
+	roll_file = io.open(path, "w");
+end
+
+InitRolling("rolling.txt");
+
+function Rolling(dtime)
+	roll_time = roll_time + dtime;
+	local yaw, pitch, roll = uboat:get_angles();
+	
+	momentum = roll_time * 20000;
+	fz = 0.25*momentum*math.cos(math.rad(roll));
+	fy = 0.25*momentum*math.sin(math.rad(roll));
+	fx = 0;
+	uboat:add_force( vmath.vec4( fx, fy, fz, 0), vmath.vec4( 40, 10, 0, 1), true);
+	uboat:add_force( vmath.vec4(-fx,-fy,-fz, 0), vmath.vec4( 40,-10, 0, 1), true);
+	uboat:add_force( vmath.vec4( fx, fy, fz, 0), vmath.vec4(-40, 10, 0, 1), true);
+	uboat:add_force( vmath.vec4(-fx,-fy,-fz, 0), vmath.vec4(-40,-10, 0, 1), true);
+	
+	if roll > ship_roll+0.1 then
+		m = momentum+0.5;
+		r = roll+0.5;
+		ship_roll = ship_roll + 0.1;
+		print("rolling : ", 10*m, r);
+		roll_file:write( 10*m, " ", r, "\n" ); 
+		roll_file:flush();
+	end
+end
+
+--------------------------------------------------
 
 function SciVisFrame(dtime)
 
@@ -141,10 +196,14 @@ function SciVisFrame(dtime)
 	
 	if dtime>0.100 then
 		--print ("dtime > 0.060  (", dtime, ")");
-		dtime = 0.100;
+		--dtime = 0.100;
 	end
 	
 	dtime = 0.016;
+	
+	--uboat:add_force( vmath.vec4(0,0,-100000,0), vmath.vec4(0,10,0,1), true);
+	
+	Rolling( dtime );
 	
 	DriveShip();
 

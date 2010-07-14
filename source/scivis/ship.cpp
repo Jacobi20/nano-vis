@@ -100,7 +100,7 @@ void EShip::GetPose( EVec4 &position, EQuat &orient )
 void EShip::SetPose( EVec4 &position, EQuat &orient )
 {
 	ship_body->setGlobalOrientationQuat( ToNxQuat( orient ) );
-	ship_body->setCMassGlobalPosition( ToNxVec3( EVec3(position.x, position.y, position.z) ) );
+	ship_body->setGlobalPosition( ToNxVec3( EVec3(position.x, position.y, position.z) ) );
 }
 
 
@@ -138,7 +138,7 @@ void EShip::UpdateForces( float dtime, IPxWaving waving )
 //
 //	EShip::AddForce
 //
-void EShip::AddForce( EVec3 point, EVec3 force, bool local_point )
+void EShip::AddForce( EVec3 force, EVec3 point, bool local_point )
 {
 	NxVec3 p = ToNxVec3( point );
 	NxVec3 f = ToNxVec3( force );
