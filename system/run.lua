@@ -5,13 +5,13 @@
 
 input.unbindall()
 input.bind ("F5", 	"dofile('run.lua')");
-input.bind ("F6", 	"SCI_ReloadShaders()");
+input.bind ("F6", 	"naval.reload_shaders()");
 input.bind ("F10", 	"core.quit()");
 input.bind ("PGUP", 	"_DistInc()");
 input.bind ("PGDN", 	"_DistDec()");
 input.bind ("LEFT", 	"_YawDec()");
 input.bind ("RIGHT", 	"_YawInc()");
-input.bind ("UP", 	"_PitchInc()");
+input.bind ("UP", 		"_PitchInc()");
 input.bind ("DOWN", 	"_PitchDec()");
 
 input.bind ("S",	"_ShipFW()");
@@ -19,12 +19,13 @@ input.bind ("Z",  "_ShipBW()");
 input.bind ("A",	"_ShipSL()");
 input.bind ("X",  "_ShipSR()");
 
-input.bind ("F2", "ship_show_hull      = not ship_show_hull"  );
-input.bind ("F3", "ship_show_cubes     = not ship_show_cubes" );
-input.bind ("F4", "ship_show_submerge  = not ship_show_submerge" );
+input.bind ("F1", "print('Help!!! :)'"  	);
+input.bind ("F2", "ship_show_hull      = not ship_show_hull"  	);
+input.bind ("F3", "ship_show_voxels    = not ship_show_voxels" 	);
+input.bind ("F4", "ship_show_submerge  = not ship_show_submerge");
 
-input.bind ("N", "state.submersion = not state.submersion" );
-input.bind ("M", "state.sunking 	= not state.sunking" );
+input.bind ("N", "state.submersion 		= not state.submersion" );
+input.bind ("M", "state.sunking 		= not state.sunking" );
 
 -- local avc = vmath.vec4(1,2,3,1);
 -- local x = avc:x();
@@ -86,110 +87,31 @@ game_time = 0;
 -------------------------------------------------------------------------------
 --	create ship :
 -------------------------------------------------------------------------------
-SCI_CreateShip {
-	--	comuting method :
-	numeric		=	false;
-	
-	-- 	pose :
-	yaw			=	math.rad(90);
-	roll		=	math.rad(40);
-	pitch		=	math.rad(0);
-	pos_x		=	0;
-	pos_y		=	0;
-	pos_z		=	-1;
-	
-	--	voxel stuff :
-	cube_size	=	1;
-	
-	-- 	ship params :
-	--ship_mass	=	1653750;
-	ship_mass	=	2705000;
-	cmass_offset=	-1;
-	cx			=	4;
 
-	-- 	ship geometry :
-	mesh_vis	=	"../scidata/uboat.esx|boat1";
-	--mesh_vis	=	"../scidata/uboat.esx|flowsurf2";
-	mesh_flow	=	"../scidata/uboat.esx|flowsurf2";
-	mesh_stat	=	"../scidata/uboat.esx|stat";
-} 
-  
+naval.remove_all_ships();
 
--- SCI_CreateShip {
-	-- --	comuting method :
-	-- numeric		=	false;
-	
-	-- -- 	pose :
-	-- yaw			=	math.rad(90);
-	-- roll		=	math.rad(80);
-	-- pitch		=	math.rad(80);
-	-- pos_x		=	0;
-	-- pos_y		=	0;
-	-- pos_z		=	30;
-	
-	-- --	voxel stuff :
-	-- cube_size	=	1;
-	
-	-- -- 	ship params :
-	-- --ship_mass	=	1653750;
-	-- ship_mass	=	270500;
-	-- cmass_offset=	-1;
-	-- cx			=	4;
+function create_uboat()
+	print("---- creating U-boat ----");
+	local ship = naval.create_ship();
 
-	-- -- 	ship geometry :
-	-- mesh_vis	=	"../scidata/uboat.esx|dish";
-	-- mesh_flow	=	"../scidata/uboat.esx|dish";
-	-- mesh_stat	=	"../scidata/uboat.esx|dish";
--- } 
-  
-  
--- SCI_CreateShip {
-	-- --	comuting method :
-	-- numeric		=	false;
+	ship:set_resistance	( 200 );
 	
-	-- -- 	pose :
-	-- yaw			=	math.rad(90);
-	-- roll		=	math.rad(-10);
-	-- pitch		=	math.rad(0);
-	-- pos_x		=	0;
-	-- pos_y		=	0;
-	-- pos_z		=	0;
+	ship:set_vis_mesh	( "../scidata/uboat.esx|boat1"			);
+	ship:set_hdf_mesh	( "../scidata/uboat.esx|flowsurf2" 		);
+	ship:set_hsf_mesh	( "../scidata/uboat.esx|flowsurf2" 		);
+	ship:make_rigidbody	( "../scidata/uboat.esx|stat", 2705000	);
 	
-	-- -- 	ship params :
-	-- --ship_mass	=	1653750;
-	-- ship_mass	=	2205000;
-	-- cmass_offset=	-1;
-	-- cx			=	2;
+	ship:set_position	( 0, 0, -1 );	
+	ship:set_angles		( 90, 0, 100 );
+	
+	ship:build_voxels	( "../scidata/uboat.esx|flowsurf2", 1	);
+	
+	print("---- done ----");
+	return ship;
+end
 
-	-- -- 	ship geometry :
-	-- mesh_vis	=	"../scidata/uboat.esx|boat1";
-	-- mesh_flow	=	"../scidata/uboat.esx|flowsurf";
-	-- mesh_stat	=	"../scidata/uboat.esx|stat";
--- }   
-                    
--- SCI_CreateShip2 {
-	-- --	comuting method :
-	-- numeric		=	false;
-	
-	-- -- 	pose :
-	-- yaw			=	math.rad(0);
-	-- roll		=	math.rad(0);
-	-- pitch		=	math.rad(0);
-	-- pos_x		=	0; 
-	-- pos_y		=	20;
-	-- pos_z		=	0;
-	
-	-- -- 	ship params :
-	-- ship_mass	=	1000000;
-	-- cmass_offset=	-1;
-	-- cx			=	2;
+uboat	=	create_uboat();
 
-	-- -- 	ship geometry :
-	-- mesh_vis	=	"../scidata/boat.esx|boat1";
-	-- mesh_flow	=	"../scidata/boat.esx|stat";
-	-- mesh_stat	=	"../scidata/boat.esx|stat";
--- }  
-                    
 
 -------------------------------------------------------------------------------
 --	frame :
@@ -237,7 +159,7 @@ function SciVisFrame(dtime)
 	
 	--SCI_ShipForce( vmath.vec4(10000000,0,0,0), vmath.vec4(-20,-1,0,1));
                                                     
-	SCI_RenderView {
+	naval.render_view {
 		ship_course		=	45*( math.sin(game_time*0.02) + 0.7*math.sin(game_time*0.03));
 		dtime			=	dtime;
 		yaw				=	state.yaw;
