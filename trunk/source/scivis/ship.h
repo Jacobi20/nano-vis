@@ -25,39 +25,73 @@
 #pragma once
 
 /*-----------------------------------------------------------------------------
-	Nano vis :
+	Naive ship simulator :
 -----------------------------------------------------------------------------*/
 
-class	IWaving;
-class	IShip;
-typedef hard_ref<IWaving>	IPxWaving;
-typedef hard_ref<IShip>		IPxShip;
-
-typedef IWaving	*	(*CreateWaving_f)	( lua_State *L, int idx );
-typedef IShip	*	(*CreateShip_f)		( lua_State *L, int idx );
-
-struct ERendEnv_s {
-		EMatrix4	matrix_view;
-		EMatrix4	matrix_proj;
-		EVec4		view_pos;
-	};
-
-
-class IWaving : public ICoreObject {
+class EShip : public IShip {
 	public:
-		virtual void		Update			( float dtime ) = 0;
-		virtual void		ReloadShader	( void ) = 0;
-		virtual EVec4		GetVelocity		( const EVec4 &init_pos ) const = 0;
-		virtual EVec4		GetPosition		( const EVec4 &init_pos ) const = 0;
-		virtual float		GetWaveSlopeX	( const EVec4 &init_pos ) const = 0;
+							EShip					( lua_State *L, int idx );
+							~EShip					( void );
+			
+		//	general :		
+		virtual EString		Name					( void ) const { return name; }
+		virtual void		Simulate				( float dtime, IPxWaving waving );
+		virtual void		ReloadShader			( void );
+		virtual void		Render					( ERendEnv_s *rend_env );
+
+		//	ship properties :
+		virtual void		GetPose			( EVec4 &position, EQuat &orient );
+		virtual void		SetPose			( EVec4 &position, EQuat &orient );
+		
+		virtual void		BuildVoxels		( const EString path, float cube_size );
+		
+		virtual void		SetVisMesh		( const EString path );
+		virtual void		SetHSFMesh		( const EString path );
+		virtual void		SetHDFMesh		( const EString path );
+		virtual void		SetResistance	( float cx ) { water_resistance_cx = cx; }
+		virtual void		MakeRigidBody	( const EString path, float mass );
+		virtual void		AddForce		( EVec3 point, EVec3 force, bool local_point );
+
+	protected:
+		EString				name;
+		
+		float				water_resistance_cx;
+	
+		IPxTriMesh			GetSubmergedMesh		( const EMatrix4 &world, const EPlane &plane );
+	
+		void				UpdateForces	( float dtime, IPxWaving waving );
+		void				UpdateHSF		( float dtime, IPxWaving waving );
+		void				UpdateHDF		( float dtime, IPxWaving waving );
+		
+		void				UpdateHSFBox	( float dtime, IPxWaving waving );
+		void				UpdateHSFVoxel	( float dtime, IPxWaving waving );
+		void				UpdateHSFSurface( float dtime, IPxWaving waving );
+
+		EPxVoxelGrid	voxel_grid;
+		
+		
+		float			ship_length;
+		float			ship_width;
+		float			ship_height;
+		float			ship_mass;
+		float			self_time;
+	
+		IPxTriMesh		mesh_vis;
+		IPxTriMesh		mesh_hsf;
+		IPxTriMesh		mesh_hdf;
+		IPxTriMesh		mesh_submerged_hsf;
+		IPxTriMesh		mesh_submerged_hdf;
+
+		ID3DXMesh		*d3d_mesh_vis;
+		ID3DXMesh		*d3d_cube;
+		
+		ID3DXEffect		*shader_fx;
+																				 
+		NxActor			*ship_body;
+		
+		IPxVar			ship_show_voxels;
+		IPxVar			ship_show_hull;
+		IPxVar			ship_show_submerge;
+		IPxVar			ship_hsf_method;
 	};
 	
-	
-class IShip : public ICoreObject {
-	public:
-		virtual void		Simulate				( float dtime, IPxWaving waving ) = 0;
-		virtual void		ReloadShader			( void ) = 0;
-		virtual void		GetPose					( EVec4 &position, EQuat &orient ) = 0;
-		virtual void		Render					( ERendEnv_s *rend_env ) = 0;
-		virtual void		ApplyForceAtLocalPoint	( const EVec4 &pos, const EVec4 &force ) = 0;
-	};

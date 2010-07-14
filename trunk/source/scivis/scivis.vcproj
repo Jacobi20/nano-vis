@@ -157,6 +157,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\sci_api.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\sci_main.cpp"
 				>
 			</File>
@@ -170,14 +174,6 @@
 			</File>
 			<File
 				RelativePath=".\sci_vid_init.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ship_naive.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ship_split.cpp"
 				>
 			</File>
 			<File
@@ -215,6 +211,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\navy.h"
+				>
+			</File>
+			<File
 				RelativePath=".\sci_int.h"
 				>
 			</File>
@@ -228,14 +228,6 @@
 			</File>
 			<File
 				RelativePath=".\scivis.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ship.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ship_naive.h"
 				>
 			</File>
 			<File
@@ -268,6 +260,54 @@
 			</File>
 			<File
 				RelativePath=".\waves\waves.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Ship"
+			>
+			<File
+				RelativePath=".\ship.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ship.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ship_api.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ship_api.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ship_dynamic.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ship_int.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ship_mesh.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ship_numeric.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ship_rend.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ship_split.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ship_static.cpp"
 				>
 			</File>
 		</Filter>

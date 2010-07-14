@@ -50,14 +50,15 @@ ESciVis::ESciVis( void )
 	InitDirect3D();
 	
 	lua_State *L = CoreLua();
-	lua_register( L, "SCI_RenderView",		SCI_RenderView	);
-	lua_register( L, "SCI_ReloadShaders",	SCI_ReloadShaders );
-	lua_register( L, "SCI_CreateShip",		SCI_CreateShip	);
-	lua_register( L, "SCI_CreateShip2",		SCI_CreateShip2 );
-	lua_register( L, "SCI_ShipForce",		SCI_ShipForce	);
+	lua_register( L, "render_view",		render_view	);
+	lua_register( L, "reload_shaders",	reload_shaders );
 	
 	InitPhysX();
 	InitRender();
+	
+	//	register ship API :
+	ELuaShip::Register(L);
+	RegisterAPI();
 	
 	LOG_SPLIT("");
 }
@@ -70,9 +71,10 @@ ESciVis::~ESciVis( void )
 {
 	LOG_SPLIT("SciVis shutting down");
 
-	ship_model	=	NULL;
-	ship_model2	=	NULL;
-	
+	//	unregister ship API :
+	lua_State *L = CoreLua();
+	ELuaShip::Unregister(L);
+
 	
 	ShutdownRender();
 	ShutdownPhysX();
@@ -253,17 +255,21 @@ IPxTriMesh ESciVis::LoadMesh( const char *path )
 		RAISE_EXCEPTION("path must be <file path|hierarchy path>");
 	}
 
-	try {
-		IPxScene	scene	=	gf->LoadSceneFromFile( path );
-		
-		IPxSceneNode snode = scene->GetNodeByPath( path );
-		
-		return snode->GetMesh();
-		
-	} catch (exception &e) {
-		LOG_WARNING("failed to load: %s", e.what());
-		return NULL;
+	IPxScene	scene	=	gf->LoadSceneFromFile( path );
+	
+	IPxSceneNode snode = scene->GetNodeByPath( path );
+	
+	if (!snode) {
+		RAISE_EXCEPTION(va("scene node '%s' not found", path));
 	}
+	
+	IPxTriMesh	mesh	=	snode->GetMesh();
+	
+	if (!mesh) {
+		RAISE_EXCEPTION(va("scene node '%s' does not have mesh", path));
+	}
+
+	return mesh;
 }
 
 
