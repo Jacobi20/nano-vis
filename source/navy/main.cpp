@@ -91,6 +91,8 @@ class EApp : public ICoreApp {
 
 void EApp::Init( const EArgs &args )
 {
+	FileSystem()->ChDir("../scidata"); 
+	
 	Config()->LoadConfig();
 
 	sci_vis	=	CreateSciVis();	
@@ -115,8 +117,9 @@ void EApp::Shutdown( void )
 	sci_vis	=	NULL;
 	
 	Config()->SaveConfig();
-}
 
+	FileSystem()->ChDir(NULL); 
+}
 
 
 BOOL WINAPI ConsoleHandleRoutine(DWORD dwCtrlType)

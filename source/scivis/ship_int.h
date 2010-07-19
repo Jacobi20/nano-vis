@@ -55,21 +55,28 @@ class IWaving : public ICoreObject {
 	
 class IShip : public ICoreObject {
 	public:
-		virtual EString		Name			( void ) const = 0;
+		virtual EString		Name				( void ) const = 0;
 		
-		virtual void		Simulate		( float dtime, IPxWaving waving ) = 0;
-		virtual void		ReloadShader	( void ) = 0;
-		virtual void		Render			( ERendEnv_s *rend_env ) = 0;
+		virtual void		Simulate			( float dtime, IPxWaving waving ) = 0;
+		virtual void		ReloadShader		( void ) = 0;
+		virtual void		Render				( ERendEnv_s *rend_env ) = 0;
 		
-		virtual void		GetPose			( EVec4 &position, EQuat &orient ) = 0;
-		virtual void		SetPose			( EVec4 &position, EQuat &orient ) = 0;
+		virtual void		GetPose				( EVec4 &position, EQuat &orient ) = 0;
+		virtual void		SetPose				( EVec4 &position, EQuat &orient ) = 0;
 		
-		virtual void		BuildVoxels		( const EString path, float cube_size ) = 0;
+		virtual void		BuildVoxels			( const EString path, float cube_size ) = 0;
 		
-		virtual void		SetVisMesh		( const EString path ) = 0;
-		virtual void		SetHSFMesh		( const EString path ) = 0;
-		virtual void		SetHDFMesh		( const EString path ) = 0;
-		virtual void		SetResistance	( float cx ) = 0;
-		virtual void		MakeRigidBody	( const EString path, float mass ) = 0;
-		virtual void		AddForce		( EVec3 force, EVec3 point, bool local_point ) = 0;
+		virtual void		SetVisMesh			( const EString path ) = 0;
+		virtual void		SetHSFMesh			( const EString path ) = 0;
+		virtual void		SetHDFMesh			( const EString path ) = 0;
+		virtual void		SetResistance		( float cx ) = 0;
+		virtual void		MakeRigidBody		( const EString path, float mass ) = 0;
+		virtual void		AddForce			( EVec3 force, EVec3 point, bool local_point ) = 0;
+		virtual void		AddMomentum			( EVec3 momentum, bool local_momentum ) = 0;
+
+		virtual EVec3		GetHSFMomentum		( void ) = 0;
+		virtual float		GetHSFForce			( void ) = 0;
+		
+		virtual EVec3		GetCenterMass		( void ) = 0;
+		virtual EVec3		GetInertiaMomentum	( EVec3 axis ) = 0;
 	};

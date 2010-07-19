@@ -118,7 +118,8 @@ void EShip::UpdateForces( float dtime, IPxWaving waving )
 	if (!mesh_hsf)	{	RAISE_EXCEPTION("HSF mesh not created");		}
 	if (!ship_body)	{	RAISE_EXCEPTION("ship rigid body not created");	}
 
-	NxVec3 gravity	=	NxVec3(0, 0, -GRAVITY) * ship_mass;
+	float  weight	=	GRAVITY * ship_mass;
+	NxVec3 gravity	=	NxVec3(0, 0, -weight);
 	
 	EQuat	q;
 	EVec4	p;
@@ -129,6 +130,12 @@ void EShip::UpdateForces( float dtime, IPxWaving waving )
 	
 	NxVec3 cm = ship_body->getCMassLocalPosition();
 	ship_body->addForceAtLocalPos( gravity, cm );
+	
+	
+
+	total_hsf_force		=	-weight;
+	total_hsf_momentum	=	Vec3Cross(EVec3(cm.x, cm.y, cm.z), EVec3(0,0,-weight));
+	
 	
 	UpdateHSF( dtime, waving );
 	UpdateHDF( dtime, waving );
@@ -148,4 +155,30 @@ void EShip::AddForce( EVec3 force, EVec3 point, bool local_point )
 	} else {
 		ship_body->addForceAtPos( f, p );
 	}
+}
+
+
+//
+//	EShip::AddMomentum
+//
+void EShip::AddMomentum( EVec3 momentum, bool local_momentum )
+{
+	if (local_momentum) {
+		ship_body->addLocalTorque( ToNxVec3( momentum ) );
+	} else {
+		ship_body->addTorque( ToNxVec3( momentum ) );
+	}
+}
+
+
+EVec3 EShip::GetCenterMass( void )
+{
+	NxVec3 cm = ship_body->getCMassLocalPosition();
+	return EVec3( cm.x, cm.y, cm.z );
+}
+
+
+EVec3 EShip::GetInertiaMomentum( EVec3 axis )
+{
+	return EVec3( 0, 0, 0 );
 }

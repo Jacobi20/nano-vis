@@ -63,7 +63,7 @@ struct  EVidState_s	{
 
 #include "static_self.h"
 
-class ESciVis : public ISciVis, public self_ref<ESciVis> {
+class ESciVis : public ISciVis, public self_ref<ESciVis>, public IUIDrawCB {
 	public:
 								ESciVis			( void );
 								~ESciVis			( void );
@@ -100,6 +100,25 @@ class ESciVis : public ISciVis, public self_ref<ESciVis> {
 		void					RemoveShip			( IPxShip ship );
 
 		vector<IPxShip>	ships;
+
+		virtual void		RenderQuads		( uint quad_num, const EUIQuad *quads, EString image );	
+		virtual void		GetImageSize	( EString image, uint &width, uint &height ) ;
+
+	
+		void				SetTexture			( const EString name );
+		void				GetTextureSize		( const EString texname, uint &width, uint &height );
+		uint				RegisterTexture		( const EString path );
+		void				ReleaseTextures		( void );
+		LPDIRECT3DTEXTURE9	CreateNullTexture	( void );
+		LPDIRECT3DTEXTURE9	CreateSolidTexture	( byte r, byte g, byte b, byte a );
+		LPDIRECT3DTEXTURE9	LoadTextureFromFile	( const EString name );
+
+		struct texture_s {
+			LPDIRECT3DTEXTURE9	texture;
+			EString				name;
+		};
+		
+		vector<texture_s> textures;
 		
 	public:
 		static int	remove_all_ships	( lua_State *L );
@@ -153,6 +172,7 @@ class ESciVis : public ISciVis, public self_ref<ESciVis> {
 		IPxVar		d3d_xpos;
 		IPxVar		d3d_ypos;
 		
-	static void		ListDisplayModes_f	( ESciVis *self, int argc, char **argv );
-	static LRESULT	WndProc				( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
-	};
+	static void			ListDisplayModes_f	( ESciVis *self, int argc, char **argv );
+	static LRESULT		WndProc				( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
+};
+

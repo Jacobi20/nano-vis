@@ -34,7 +34,7 @@
 //
 void EShip::ReloadShader( void )
 {
-	shader_fx	=	sci_vis->CompileEffect( "../scidata/shader.fx" );
+	shader_fx	=	sci_vis->CompileEffect( "shader.fx" );
 }
 
 
