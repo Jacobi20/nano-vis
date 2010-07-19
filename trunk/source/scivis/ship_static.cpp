@@ -112,13 +112,13 @@ void EShip::UpdateHSFVoxel( float dtime, IPxWaving waving )
 	EQuat	orient;
 	GetPose(position, orient);
 
-
 	for (uint i=0; i<voxel_grid->GetVoxelNum(); i++) {
 		
 		EVoxel vx;
 		voxel_grid->GetVoxel(i, vx);
 	
 		EVec4  pos(vx.center.x, vx.center.y, vx.center.z, 0);
+		EVec3  pos3(vx.center.x, vx.center.y, vx.center.z);
 		float dx = vx.szx;
 		float dy = vx.szy;
 		float dz = vx.szz;
@@ -130,6 +130,11 @@ void EShip::UpdateHSFVoxel( float dtime, IPxWaving waving )
 		float	fs = StaticWaveForce(pos, dx, dy, dz, wh);					//	static force
 		
 		ship_body->addForceAtPos( NxVec3(0,0,fs), NxVec3(pos.x, pos.y, pos.z) );
+
+		//	compute total forces :
+		EVec3	momentum	=	Vec3Cross( pos3, EVec3(0,0,fs) );
+		total_hsf_momentum	+=	momentum;
+		total_hsf_force		+=	fs;
 	}
 }
 
@@ -140,6 +145,11 @@ void EShip::UpdateHSFVoxel( float dtime, IPxWaving waving )
 //
 void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
 {
+	EVec4	position;
+	EQuat	orient;
+	GetPose(position, orient);
+	EVec3	pos3		=	EVec3( position.x, position.y, position.z );
+
 	for (uint i=0; i<mesh_submerged_hsf->GetTriangleNum(); i++) {
 		uint i0, i1, i2;
 		mesh_submerged_hsf->GetTriangle( i, i0, i1, i2 );
@@ -173,10 +183,15 @@ void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
 		float	f	=	s * pa;
 
 		//	force vector :		
-		NxVec3	fv	=	NxVec3( -f*n.x, -f*n.y, -f*n.z );
+		EVec3	fv	=	EVec3( -f*n.x, -f*n.y, -f*n.z );
 		
-		ship_body->addForceAtPos( fv, NxVec3(c.x, c.y, c.z) );
+		ship_body->addForceAtPos( ToNxVec3(fv), NxVec3(c.x, c.y, c.z) );
+		
+		//	compute total forces :
+		EVec3	local_r		=	QuatRotateVector( pos3 - c, QuatInverse(orient) );
+		EVec3	momentum	=	Vec3Cross( local_r, fv );
+		total_hsf_momentum	+=	momentum;
+		total_hsf_force		+=	fv.z;
 	}
-	
 }
 

@@ -30,30 +30,40 @@
 
 class EShip : public IShip {
 	public:
-							EShip					( lua_State *L, int idx );
-							~EShip					( void );
+							EShip				( lua_State *L, int idx );
+							~EShip				( void );
 			
 		//	general :		
-		virtual EString		Name					( void ) const { return name; }
-		virtual void		Simulate				( float dtime, IPxWaving waving );
-		virtual void		ReloadShader			( void );
-		virtual void		Render					( ERendEnv_s *rend_env );
+		virtual EString		Name				( void ) const { return name; }
+		virtual void		Simulate			( float dtime, IPxWaving waving );
+		virtual void		ReloadShader		( void );
+		virtual void		Render				( ERendEnv_s *rend_env );
 
 		//	ship properties :
-		virtual void		GetPose			( EVec4 &position, EQuat &orient );
-		virtual void		SetPose			( EVec4 &position, EQuat &orient );
+		virtual void		GetPose				( EVec4 &position, EQuat &orient );
+		virtual void		SetPose				( EVec4 &position, EQuat &orient );
 		
-		virtual void		BuildVoxels		( const EString path, float cube_size );
+		virtual void		BuildVoxels			( const EString path, float cube_size );
 		
-		virtual void		SetVisMesh		( const EString path );
-		virtual void		SetHSFMesh		( const EString path );
-		virtual void		SetHDFMesh		( const EString path );
-		virtual void		SetResistance	( float cx ) { water_resistance_cx = cx; }
-		virtual void		MakeRigidBody	( const EString path, float mass );
-		virtual void		AddForce		( EVec3 force, EVec3 point, bool local_point );
+		virtual void		SetVisMesh			( const EString path );
+		virtual void		SetHSFMesh			( const EString path );
+		virtual void		SetHDFMesh			( const EString path );
+		virtual void		SetResistance		( float cx ) { water_resistance_cx = cx; }
+		virtual void		MakeRigidBody		( const EString path, float mass );
+		virtual void		AddForce			( EVec3 force, EVec3 point, bool local_point );
+		virtual void		AddMomentum			( EVec3 momentum, bool local_momentum );
+		
+		virtual EVec3		GetHSFMomentum		( void ) { return total_hsf_momentum; }
+		virtual float		GetHSFForce			( void ) { return total_hsf_force; }
+
+		virtual EVec3		GetCenterMass		( void );
+		virtual EVec3		GetInertiaMomentum	( EVec3 axis );
 
 	protected:
 		EString				name;
+		
+		float				total_hsf_force;
+		EVec3				total_hsf_momentum;
 		
 		float				water_resistance_cx;
 	

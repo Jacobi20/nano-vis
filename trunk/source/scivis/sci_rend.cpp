@@ -32,7 +32,7 @@
 	Nano vis :
 -----------------------------------------------------------------------------*/
 
-#define SHADER_FX			"../scidata/shader.fx"
+#define SHADER_FX			"shader.fx"
 
 IWaving *create_boukh_waving(lua_State *L, int idx);
 IShip	*create_ship	(lua_State *L, int idx);
@@ -50,7 +50,7 @@ void ESciVis::InitRender( void )
 	
 
 	//	read file :	
-	mesh_sea	=	LoadMesh("../scidata/uboat.esx|sea2d");
+	mesh_sea	=	LoadMesh("uboat.esx|sea2d");
 	sea			=	CreateMesh( mesh_sea );
 	shader_fx	=	CompileEffect(SHADER_FX);
 	
@@ -220,100 +220,19 @@ void ESciVis::RenderView( lua_State * L )
 	HRCALL( shader_fx->End() );
 	
 	DebugPhysX(world, view, proj);
-		
+	
+	//ID3DXFont	*font;
+	//D3DXCreateFont(d3ddev, 	
 
-#if 0	
-	//	-------------------------------------------------
-	//	show rolling graph :
-	//	-------------------------------------------------
-	if (true) {
-		float yaw, pitch, roll;
-		float yaw2, pitch2, roll2;
-		EVec4 p, p2;
-		EQuat q, q2;	
+	if (1) {	
+		IPxUIFont	font	=	UserInterface()->RegisterFont("fonts/console_font.fnt");
 		
-		if (ship_model) {
-			ship_model->GetPose( p, q );
-		}
-		if (ship_model2) {
-			ship_model2->GetPose( p2, q2 );
-		}
-		QuatToAngles(q, yaw, pitch, roll);
-		QuatToAngles(q2, yaw2, pitch2, roll2);
+		uint n = Log()->GetDebugStringNum();
 		
-		//EVec4 roll_record(yaw, p.z*10, roll, 1);
-		//EVec4 roll_record(yaw, 20*p.z, 20*p2.z, 1);
-		EVec4 roll_record(yaw, roll, roll2, 1);
-		
-		rolling_history[ (rolling_history_ptr) % ROLL_HISTORY_SIZE ] = roll_record;
-		rolling_history_ptr ++;
-		
-		for (uint i=0; i<ROLL_HISTORY_SIZE; i++) {
-			rolling_history[i].w *= 0.9999f;
+		for (uint i=0; i<n; i++) {
+			font->DrawString(this, 12, 24+i*12, Log()->GetDebugString(i), EVec4(1,1,1,1));
 		}
 	}
-
-	IDirect3DVertexDeclaration9 *line_decl	=	NULL;
-	HRCALL( d3ddev->CreateVertexDeclaration( VERTEX_DECL_STATIC, &line_decl ) );
-	HRCALL( d3ddev->SetVertexDeclaration( line_decl ) );
-
-	D3DXMatrixIdentity( &world );
-	D3DXMatrixIdentity( &view );
-	uint w, h;
-	GetScreenSize(w, h);
-	D3DXMatrixOrthoOffCenterRH( &proj, 0, w, h, 0, -9999,9999 );
-	HRCALL( shader_fx->SetMatrix("matrix_world",	&world) );
-	HRCALL( shader_fx->SetMatrix("matrix_view",	&view) );
-	HRCALL( shader_fx->SetMatrix("matrix_proj",	&proj) );
-
-	vertex_s verts[ROLL_HISTORY_SIZE];	
-
-	//	rolling :	
-	for (uint i=0; i<ROLL_HISTORY_SIZE; i++) {
-		verts[i].color	=	EVec4(1,1,0.5, rolling_history[i].w);
-		verts[i].normal	=	EVec3(0,0,0);
-		verts[i].pos	=	EVec3(0.125 * i, -rolling_history[i].z + 40, 0);
-		verts[i].uv		=	EVec2(0,0);
-	}
-
-	HRCALL( shader_fx->SetTechnique("debug") );
-	HRCALL( shader_fx->Begin(&n, 0) );
-
-	for (uint pass=0; pass<n; pass++) {
-	
-		HRCALL( shader_fx->BeginPass(pass) );
-	
-		HRCALL( d3ddev->DrawPrimitiveUP(D3DPT_LINESTRIP, ROLL_HISTORY_SIZE-1, verts, sizeof(vertex_s)) );
-		
-		HRCALL( shader_fx->EndPass() );
-	}
-
-	HRCALL( shader_fx->End() );
-
-	//	pitching :	
-	for (uint i=0; i<ROLL_HISTORY_SIZE; i++) {
-		verts[i].color	=	EVec4(1,1,0.5, rolling_history[i].w);
-		verts[i].normal	=	EVec3(0,0,0);
-		verts[i].pos	=	EVec3(0.125 * i, -rolling_history[i].y + 80, 0);
-		verts[i].uv		=	EVec2(0,0);
-	}
-
-	HRCALL( shader_fx->SetTechnique("debug") );
-	HRCALL( shader_fx->Begin(&n, 0) );
-
-	for (uint pass=0; pass<n; pass++) {
-	
-		HRCALL( shader_fx->BeginPass(pass) );
-	
-		HRCALL( d3ddev->DrawPrimitiveUP(D3DPT_LINESTRIP, ROLL_HISTORY_SIZE-1, verts, sizeof(vertex_s)) );
-		
-		HRCALL( shader_fx->EndPass() );
-	}
-
-	HRCALL( shader_fx->End() );
-
-
-	SAFE_RELEASE( line_decl );
-#endif	
+	Log()->ClearDebugStrings();
 }
 

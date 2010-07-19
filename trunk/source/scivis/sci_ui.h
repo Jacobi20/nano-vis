@@ -22,44 +22,13 @@
     THE SOFTWARE.
 */
 
-#include "sci_local.h"
-#include "ship.h"
-#include "../core/luna.h"
+#pragma once
 
 /*-----------------------------------------------------------------------------
-	Ship Lua API :
+	Nano vis :
 -----------------------------------------------------------------------------*/
 
-class ELuaShip : public Luna<ELuaShip> {
+class EUIDraw : public IUIDrawCB {
 	public:
-					ELuaShip	( lua_State *L );
-					~ELuaShip	( void );
-					
-		LUNA_DECLARE_CLASS(ELuaShip);
-
-		int set_vis_mesh	( lua_State *L );		//	sets visible mesh
-		int	set_hsf_mesh	( lua_State *L );		//	sets mesh for HSF applying
-		int	set_hdf_mesh	( lua_State *L );		//	sets mesh for HDF applying
-		
-		int	set_resistance	( lua_State *L );		//	sets water resistance
-		
-		int make_rigidbody	( lua_State *L );		//	makes RB form list of shapes
-		int build_voxels	( lua_State *L );		//	makes RB form list of shapes
-
-		int	add_force		( lua_State *L );		//	adds force
-		int add_momentum	( lua_State *L );		//	adds momentum
-			
-		int	get_angles		( lua_State *L );		//	gets yaw, pitch, roll
-		int get_position	( lua_State *L );		//	gets x,y,z
-
-		int	set_angles		( lua_State *L );		//	sets yaw, pitch, roll
-		int set_position	( lua_State *L );		//	sets x,y,z
-		
-		int	get_hsf_momentum( lua_State *L );		//	
-		int	get_hsf_force	( lua_State *L );		//
-		
-		int	get_center_mass	( lua_State *L );		//
-		
-	protected:
-		IPxShip	ship;
-	};
+		EUIDraw	( D3D
+	}

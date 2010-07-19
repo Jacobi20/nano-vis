@@ -68,7 +68,7 @@ int ESciVis::render_view( lua_State * L )
 //
 int ESciVis::reload_shaders( lua_State * L )
 {
-	self->shader_fx	=	self->CompileEffect("../scidata/shader.fx");
+	self->shader_fx	=	self->CompileEffect("shader.fx");
 
 	for (uint i=0; i<self->ships.size(); i++) {
 		self->ships[i]->ReloadShader();

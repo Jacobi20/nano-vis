@@ -54,10 +54,14 @@ LUNA_IMP_METHOD	(ELuaShip,	set_resistance	)
 LUNA_IMP_METHOD	(ELuaShip,	make_rigidbody	)
 LUNA_IMP_METHOD	(ELuaShip,	build_voxels	)
 LUNA_IMP_METHOD	(ELuaShip,	add_force		)
+LUNA_IMP_METHOD	(ELuaShip,	add_momentum	)
 LUNA_IMP_METHOD	(ELuaShip,	get_angles		)
 LUNA_IMP_METHOD	(ELuaShip,	get_position	)
 LUNA_IMP_METHOD	(ELuaShip,	set_angles		)
 LUNA_IMP_METHOD	(ELuaShip,	set_position	)
+LUNA_IMP_METHOD	(ELuaShip,	get_hsf_momentum)
+LUNA_IMP_METHOD	(ELuaShip,	get_hsf_force	)
+LUNA_IMP_METHOD	(ELuaShip,	get_center_mass	)
 LUNA_IMP_END	(ELuaShip					)
 
 /*-----------------------------------------------------------------------------
@@ -123,6 +127,21 @@ int ELuaShip::add_force( lua_State *L )
 	bool	local	=	LuaRequireBoolean( L, 3, "is point local");
 	
 	ship->AddForce( EVec3(f.x, f.y, f.z), EVec3(p.x, p.y, p.z), local);
+	
+	return 0;
+}
+
+
+int ELuaShip::add_momentum( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	
+	int n = lua_gettop(L);
+
+	EVec4	m		=	LuaRequireVec4( L, 1, "momentum vector" );
+	bool	local	=	LuaRequireBoolean( L, 2, "is local space momentum");
+	
+	ship->AddMomentum( EVec3(m.x, m.y, m.z), local);
 	
 	return 0;
 }
@@ -196,4 +215,40 @@ int ELuaShip::set_position( lua_State *L )
 	
 	ship->SetPose( p, q );	
 	return 0;
+}
+
+
+int ELuaShip::get_hsf_momentum( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	EVec3 m = ship->GetHSFMomentum();
+
+	LuaPushVec4( L, EVec4(m.x, m.y, m.z, 0) );
+	
+	lua.SetNResults(1);
+	return 1;
+}
+
+
+int ELuaShip::get_hsf_force( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	float f = ship->GetHSFForce();
+
+	lua_pushnumber(L, f);
+
+	lua.SetNResults(1);
+	return 1;
+}
+
+
+int ELuaShip::get_center_mass( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	EVec3 cm = ship->GetCenterMass();
+
+	LuaPushVec4( L, EVec4(cm.x, cm.y, cm.z, 0) );
+
+	lua.SetNResults(1);
+	return 1;
 }

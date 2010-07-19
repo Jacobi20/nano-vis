@@ -161,6 +161,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\sci_draw.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\sci_main.cpp"
 				>
 			</File>
@@ -170,6 +174,14 @@
 			</File>
 			<File
 				RelativePath=".\sci_rend.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\sci_textures.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\sci_ui.cpp"
 				>
 			</File>
 			<File
@@ -224,6 +236,10 @@
 			</File>
 			<File
 				RelativePath=".\sci_local.h"
+				>
+			</File>
+			<File
+				RelativePath=".\sci_ui.h"
 				>
 			</File>
 			<File
