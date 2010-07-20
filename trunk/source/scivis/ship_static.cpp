@@ -158,9 +158,11 @@ void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
 	
 	GetPose(position, orient);
 	QuatToAnglesRad( orient, yaw, pitch, roll );
+	
+	NxVec3	cm	=	ship_body->getCMassGlobalPosition();
 
 	//	computing ship plane :	
-	EPlane	ship_plane	=	PlaneFromPointNormal( position, Vec3Cross( EVec3(cos(yaw), sin(yaw), 0), EVec3(0,0,1) ) );
+	EPlane	ship_plane	=	PlaneFromPointNormal( EVec4(cm.x, cm.y, cm.z, 1), Vec3Cross( EVec3(cos(yaw), sin(yaw), 0), EVec3(0,0,1) ) );
 	
 
 	for (uint i=0; i<mesh_submerged_hsf->GetTriangleNum(); i++) {
@@ -213,16 +215,8 @@ void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
 	}
 	
 	center_of_buyoancy	/=	total_hsf_force;
+
 	EVec3 b		=	center_of_buyoancy;
 	right_arm	=	PlaneDistance(ship_plane, EVec4(b.x, b.y, b.z, 1));
-	DEBUG_STRING("1 : %g %g %g", b.x, b.y, b.z);
-	
-	b			=	GetCenterOfBuyoancy( mesh_submerged_hsf );
-	float ra	=	PlaneDistance(ship_plane, EVec4(b.x, b.y, b.z, 1));
-	DEBUG_STRING("2 : %g %g %g", b.x, b.y, b.z);
-	
-	DEBUG_STRING("RA (plane distance) : %g", right_arm );
-	DEBUG_STRING("RA (center of HSF)  : %g", ra );
-	
 }
 
