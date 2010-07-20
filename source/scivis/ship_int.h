@@ -76,6 +76,7 @@ class IShip : public ICoreObject {
 
 		virtual EVec3		GetHSFMomentum		( void ) = 0;
 		virtual float		GetHSFForce			( void ) = 0;
+		virtual float		GetRightArm			( void ) = 0;
 		
 		virtual EVec3		GetCenterMass		( void ) = 0;
 		virtual EVec3		GetInertiaMomentum	( EVec3 axis ) = 0;

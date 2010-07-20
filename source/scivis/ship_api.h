@@ -57,6 +57,7 @@ class ELuaShip : public Luna<ELuaShip> {
 		
 		int	get_hsf_momentum( lua_State *L );		//	
 		int	get_hsf_force	( lua_State *L );		//
+		int get_right_arm	( lua_State *L );		//
 		
 		int	get_center_mass	( lua_State *L );		//
 		

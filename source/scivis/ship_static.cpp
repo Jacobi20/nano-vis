@@ -145,10 +145,19 @@ void EShip::UpdateHSFVoxel( float dtime, IPxWaving waving )
 //
 void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
 {
+	EVec3	center_of_buyoancy	 =	EVec3(0,0,0);
+	
+
+	float	yaw, pitch, roll;
 	EVec4	position;
 	EQuat	orient;
+	
 	GetPose(position, orient);
-	EVec3	pos3		=	EVec3( position.x, position.y, position.z );
+	QuatToAnglesRad( orient, yaw, pitch, roll );
+
+	//	computing ship plane :	
+	EPlane	ship_plane	=	PlaneFromPointNormal( position, Vec3Cross( EVec3(cos(yaw), sin(yaw), 0), EVec3(0,0,1) ) );
+	
 
 	for (uint i=0; i<mesh_submerged_hsf->GetTriangleNum(); i++) {
 		uint i0, i1, i2;
@@ -188,10 +197,20 @@ void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
 		ship_body->addForceAtPos( ToNxVec3(fv), NxVec3(c.x, c.y, c.z) );
 		
 		//	compute total forces :
-		EVec3	local_r		=	QuatRotateVector( pos3 - c, QuatInverse(orient) );
-		EVec3	momentum	=	Vec3Cross( local_r, fv );
-		total_hsf_momentum	+=	momentum;
+		//	TODO : wrong momentum computation!
+		//EVec3	local_r		=	QuatRotateVector( c - pos3, orient );
+		//EVec3	momentum	=	Vec3Cross( local_r, fv );
+		//total_hsf_momentum	+=	momentum;
 		total_hsf_force		+=	fv.z;
+		
+		//	computing right arm :
+		center_of_buyoancy	+=	(fv.z * c);
+		total_hsf_force		+=	fv.z;
+		
 	}
+	
+	center_of_buyoancy	/=	total_hsf_force;
+	EVec3 b		=	center_of_buyoancy;
+	right_arm	=	PlaneDistance(ship_plane, EVec4(b.x, b.y, b.z, 1));
 }
 
