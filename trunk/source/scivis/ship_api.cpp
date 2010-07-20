@@ -62,6 +62,7 @@ LUNA_IMP_METHOD	(ELuaShip,	set_position	)
 LUNA_IMP_METHOD	(ELuaShip,	get_hsf_momentum)
 LUNA_IMP_METHOD	(ELuaShip,	get_hsf_force	)
 LUNA_IMP_METHOD	(ELuaShip,	get_center_mass	)
+LUNA_IMP_METHOD	(ELuaShip,	get_right_arm	)
 LUNA_IMP_END	(ELuaShip					)
 
 /*-----------------------------------------------------------------------------
@@ -248,6 +249,18 @@ int ELuaShip::get_center_mass( lua_State *L )
 	EVec3 cm = ship->GetCenterMass();
 
 	LuaPushVec4( L, EVec4(cm.x, cm.y, cm.z, 0) );
+
+	lua.SetNResults(1);
+	return 1;
+}
+
+
+int ELuaShip::get_right_arm( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	float ra = ship->GetRightArm();
+
+	lua_pushnumber(L, ra);
 
 	lua.SetNResults(1);
 	return 1;
