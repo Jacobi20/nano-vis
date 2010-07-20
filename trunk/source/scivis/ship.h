@@ -66,6 +66,7 @@ class EShip : public IShip {
 		float				total_hsf_force;
 		float				right_arm;
 		EVec3				total_hsf_momentum;
+		EVec3				center_of_hsf_force;
 		
 		float				water_resistance_cx;
 	

@@ -132,11 +132,6 @@ void EShip::UpdateForces( float dtime, IPxWaving waving )
 	ship_body->addForceAtLocalPos( gravity, cm );
 	
 	
-
-	total_hsf_force		=	-weight;
-	total_hsf_momentum	=	Vec3Cross(EVec3(cm.x, cm.y, cm.z), EVec3(0,0,-weight));
-	
-	
 	UpdateHSF( dtime, waving );
 	UpdateHDF( dtime, waving );
 }
