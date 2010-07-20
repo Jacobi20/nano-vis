@@ -139,6 +139,9 @@ void EShip::UpdateHSFVoxel( float dtime, IPxWaving waving )
 }
 
 
+EVec3 GetCenterOfBuyoancy( const IPxTriMesh mesh ) ;
+
+
 //
 //	EShip::UpdateHSFSurface
 //		- computes HSFs using hull surface pressure integration
@@ -146,6 +149,7 @@ void EShip::UpdateHSFVoxel( float dtime, IPxWaving waving )
 void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
 {
 	EVec3	center_of_buyoancy	 =	EVec3(0,0,0);
+	total_hsf_force	=	0;
 	
 
 	float	yaw, pitch, roll;
@@ -176,9 +180,9 @@ void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
 		//	average pressure :
 		float	pa	=	( p0 + p1 + p2 ) / 3;	
 		
-		if (pa<0.001) { 
-			continue;
-		}
+		//if (pa<0.001) { 
+		//	continue;
+		//}
 		
 		//	point of force application :
 		float	cu	=	(p0 + 2*p1 + p2) / 4 / (p0 + p1 + p2);
@@ -201,7 +205,6 @@ void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
 		//EVec3	local_r		=	QuatRotateVector( c - pos3, orient );
 		//EVec3	momentum	=	Vec3Cross( local_r, fv );
 		//total_hsf_momentum	+=	momentum;
-		total_hsf_force		+=	fv.z;
 		
 		//	computing right arm :
 		center_of_buyoancy	+=	(fv.z * c);
@@ -212,5 +215,14 @@ void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
 	center_of_buyoancy	/=	total_hsf_force;
 	EVec3 b		=	center_of_buyoancy;
 	right_arm	=	PlaneDistance(ship_plane, EVec4(b.x, b.y, b.z, 1));
+	DEBUG_STRING("1 : %g %g %g", b.x, b.y, b.z);
+	
+	b			=	GetCenterOfBuyoancy( mesh_submerged_hsf );
+	float ra	=	PlaneDistance(ship_plane, EVec4(b.x, b.y, b.z, 1));
+	DEBUG_STRING("2 : %g %g %g", b.x, b.y, b.z);
+	
+	DEBUG_STRING("RA (plane distance) : %g", right_arm );
+	DEBUG_STRING("RA (center of HSF)  : %g", ra );
+	
 }
 

@@ -29,6 +29,51 @@
 	Naive ship simulator :
 -----------------------------------------------------------------------------*/
 
+EVec3 GetCenterOfBuyoancy( const IPxTriMesh mesh ) 
+{
+	EVec3	center			=	EVec3(0,0,0);
+	float	total_weight	=	0;
+	
+	for (uint i=0; i<mesh->GetTriangleNum(); i++) {
+		uint i0, i1, i2;
+		mesh->GetTriangle( i, i0, i1, i2 );
+		
+		//	vertices :		
+		EVec3	v0	=	mesh->GetVertex( i0 ).position;
+		EVec3	v1	=	mesh->GetVertex( i1 ).position;
+		EVec3	v2	=	mesh->GetVertex( i2 ).position;
+
+		//	area unit weights :
+		float	w0	=	GRAVITY * WATER_DENSITY * (-v0.z);
+		float	w1	=	GRAVITY * WATER_DENSITY * (-v1.z);
+		float	w2	=	GRAVITY * WATER_DENSITY * (-v2.z);
+		float	w	=	(w0 + w1 + w2) / 3.0f;
+		
+		float	cu	=	(w0 + 2*w1 + w2) / 4 / (w0 + w1 + w2);
+		float	cv	=	(w0 + w1 + 2*w2) / 4 / (w0 + w1 + w2);
+		EVec3	cm	=	(v1 - v0) * cu + (v2 - v0) * cv + v0;
+				cm.z/=	2;
+
+		//	section area :
+		float	s		=	mesh->TriangleArea( i );
+		EVec3	n		=	mesh->TriangleNormal( i );
+		float	sa		=	mesh->TriangleArea( i ) * abs(n.z);
+		float	weight	=	w * sa;
+		
+		if (n.z>0) {
+			weight *= (-1);
+		}
+		
+		center			+=	(cm * weight);
+		total_weight	+=	weight;
+	}	
+	
+	center /= total_weight;
+
+	return center;	
+}
+
+
 IPxTriMesh EShip::GetSubmergedMesh( const EMatrix4 &world, const EPlane &plane )
 {
 	IPxTriMesh bottom, top, full;
