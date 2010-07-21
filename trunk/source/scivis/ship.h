@@ -61,6 +61,8 @@ class EShip : public IShip {
 		virtual EVec3		GetInertiaMomentum	( EVec3 axis );
 
 	protected:
+		EPlane				GetShipXOZPlane		( void );
+	
 		EString				name;
 		
 		float				total_hsf_force;
