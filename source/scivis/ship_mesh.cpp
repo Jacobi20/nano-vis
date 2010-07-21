@@ -38,11 +38,6 @@ void EShip::SetVisMesh( const EString path )
 	SAFE_RELEASE( d3d_mesh_vis );
 	mesh_vis		=	sci_vis->LoadMesh( path.CStr() );
 	d3d_mesh_vis	=	sci_vis->CreateMesh( mesh_vis );
-	
-	EBBox	bbox	=	mesh_vis->ComputeBBox();
-	ship_length		=	bbox.Size().x;
-	ship_width		=	bbox.Size().y;
-	ship_height		=	bbox.Size().z;
 }
 
 
@@ -53,6 +48,11 @@ void EShip::SetHSFMesh( const EString path )
 {
 	LOGF("HSF mesh  : %s", path.CStr());
 	mesh_hsf	=	sci_vis->LoadMesh( path.CStr() );
+	
+	EBBox	bbox	=	mesh_hsf->ComputeBBox();
+	ship_length		=	bbox.Size().x;
+	ship_width		=	bbox.Size().y;
+	ship_height		=	bbox.Size().z;
 }
 
 

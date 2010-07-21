@@ -31,6 +31,23 @@
 	Ship static stuff :
 -----------------------------------------------------------------------------*/
 
+//
+//	EShip::GetShipXOZPlane
+//
+EPlane EShip::GetShipXOZPlane( void )
+{
+	float	yaw, pitch, roll;
+	EQuat	orient;
+	EVec4	position;
+	
+	GetPose(position, orient);
+	QuatToAnglesRad( orient, yaw, pitch, roll );
+	
+	NxVec3	cm	=	ship_body->getCMassGlobalPosition();
+	return 	PlaneFromPointNormal( EVec4(cm.x, cm.y, cm.z, 1), Vec3Cross( EVec3(cos(yaw), sin(yaw), 0), EVec3(0,0,1) ) );
+}
+
+
 static float StaticWaveForce( EVec4 pos, float szx, float szy, float szz, float wave_height ) {
 	float wh = wave_height;		//	wave height
 
@@ -108,9 +125,15 @@ void EShip::UpdateHSFBox(float dtime, IPxWaving waving)
 //
 void EShip::UpdateHSFVoxel( float dtime, IPxWaving waving )
 {
+	EVec3	center_of_buyoancy	 =	EVec3(0,0,0);
+	total_hsf_force	=	0;
+
 	EVec4	position;
 	EQuat	orient;
 	GetPose(position, orient);
+	
+	EPlane	ship_plane	=	GetShipXOZPlane();
+	
 
 	for (uint i=0; i<voxel_grid->GetVoxelNum(); i++) {
 		
@@ -132,10 +155,14 @@ void EShip::UpdateHSFVoxel( float dtime, IPxWaving waving )
 		ship_body->addForceAtPos( NxVec3(0,0,fs), NxVec3(pos.x, pos.y, pos.z) );
 
 		//	compute total forces :
-		EVec3	momentum	=	Vec3Cross( pos3, EVec3(0,0,fs) );
-		total_hsf_momentum	+=	momentum;
 		total_hsf_force		+=	fs;
+		center_of_buyoancy	+=	(fs * EVec3(pos.x, pos.y, pos.z));
 	}
+
+	center_of_buyoancy	/=	total_hsf_force;
+
+	EVec3 b		=	center_of_buyoancy;
+	right_arm	=	PlaneDistance(ship_plane, EVec4(b.x, b.y, b.z, 1));
 }
 
 
@@ -152,17 +179,13 @@ void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
 	total_hsf_force	=	0;
 	
 
-	float	yaw, pitch, roll;
 	EVec4	position;
 	EQuat	orient;
 	
 	GetPose(position, orient);
-	QuatToAnglesRad( orient, yaw, pitch, roll );
-	
-	NxVec3	cm	=	ship_body->getCMassGlobalPosition();
 
 	//	computing ship plane :	
-	EPlane	ship_plane	=	PlaneFromPointNormal( EVec4(cm.x, cm.y, cm.z, 1), Vec3Cross( EVec3(cos(yaw), sin(yaw), 0), EVec3(0,0,1) ) );
+	EPlane	ship_plane	=	GetShipXOZPlane();
 	
 
 	for (uint i=0; i<mesh_submerged_hsf->GetTriangleNum(); i++) {

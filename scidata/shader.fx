@@ -119,7 +119,7 @@ technique debug {
 		ColorWriteEnable	=	RED|GREEN|BLUE;
 		VertexShader 		= 	compile vs_2_0 VSMain();
 		PixelShader 		= 	compile ps_2_0 PSMain();
-	}
+	}//*/
 }
 
 
@@ -203,17 +203,45 @@ technique submerged_body
 		VertexShader 		= 	compile vs_2_0 VSMain();
 		PixelShader 		= 	compile ps_2_0 PSColor(float4(0,0,0,1));
 	}
+	// pass Red3 {
+		// FillMode			=	WIREFRAME;
+		// DestBlend 			= 	SRCCOLOR;
+		// SrcBlend 			= 	ZERO;
+		// ZEnable 			= 	FALSE;
+		// ZWriteEnable		= 	FALSE;
+		// CullMode 			= 	CCW;
+		// AlphaBlendEnable	= 	FALSE;
+		// ColorWriteEnable	=	RED|GREEN|BLUE;
+		// VertexShader 		= 	compile vs_2_0 VSMain();
+		// PixelShader 		= 	compile ps_2_0 PSColor(float4(0.2,0,0,1));
+		// DepthBias			= -0.5 / 65536.0;
+		// SlopeScaleDepthBias = -1.0;
+	// }
 	pass Red {
 		FillMode			=	WIREFRAME;
 		DestBlend 			= 	SRCCOLOR;
 		SrcBlend 			= 	ZERO;
 		ZEnable 			= 	TRUE;
 		ZWriteEnable		= 	FALSE;
-		CullMode 			= 	NONE;
+		CullMode 			= 	CW;
 		AlphaBlendEnable	= 	FALSE;
 		ColorWriteEnable	=	RED|GREEN|BLUE;
 		VertexShader 		= 	compile vs_2_0 VSMain();
 		PixelShader 		= 	compile ps_2_0 PSColor(float4(1,0,0,1));
+		DepthBias			= -0.5 / 65536.0;
+		SlopeScaleDepthBias = -1.0;
+	}
+	pass Red2 {
+		FillMode			=	WIREFRAME;
+		DestBlend 			= 	SRCCOLOR;
+		SrcBlend 			= 	ZERO;
+		ZEnable 			= 	TRUE;
+		ZWriteEnable		= 	FALSE;
+		CullMode 			= 	CCW;
+		AlphaBlendEnable	= 	FALSE;
+		ColorWriteEnable	=	RED|GREEN|BLUE;
+		VertexShader 		= 	compile vs_2_0 VSMain();
+		PixelShader 		= 	compile ps_2_0 PSColor(float4(0.5,0,0,1));
 		DepthBias			= -0.5 / 65536.0;
 		SlopeScaleDepthBias = -1.0;
 	}
