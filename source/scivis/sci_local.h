@@ -88,6 +88,7 @@ EQuat	ToEQuat	( const NxQuat &q );
 #include "nxaux/stream.h"
 #include "nxaux/allocator.h"
 
+#include "../bullet/src/btBulletDynamicsCommon.h"
 
 #include "sci_interfaces.h"
 #include "grid.h"
