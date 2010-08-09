@@ -174,5 +174,17 @@ class ESciVis : public ISciVis, public self_ref<ESciVis>, public IUIDrawCB {
 		
 	static void			ListDisplayModes_f	( ESciVis *self, int argc, char **argv );
 	static LRESULT		WndProc				( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
-};
+	
+	public:
+		//	bullet stuff :
+		void	InitBtPhysics		( void );
+		void	ShutdownBtPhysics	( void );
+		
+		btDefaultCollisionConfiguration			* collisionConfiguration;
+		btCollisionDispatcher					* dispatcher;
+		btBroadphaseInterface					* overlappingPairCache;
+		btSequentialImpulseConstraintSolver		* solver;
+		btDiscreteDynamicsWorld					* dynamicsWorld;
 
+		
+};
