@@ -1,0 +1,1277 @@
+
+-------------------------------------------------------------------------------
+[12:56:14.917] :           
+[12:56:14.918] :           ---- File system initialization ------------------------------------
+[12:56:14.918] :           working directory : d:/NAVY_VIS/engine/
+[12:56:14.918] :           --------------------------------------------------------------------
+[12:56:14.919] :           
+[12:56:14.919] :           INIT : Input system
+[12:56:14.919] :           
+[12:56:14.920] :           ---- System initialization -----------------------------------------
+[12:56:14.920] :           power : AC
+[12:56:14.920] :           memory : 2250 Mb of 4094 Mb
+[12:56:14.920] :           checking cpu clock...
+[12:56:15.921] :           cpu clock : 2402 MHz
+[12:56:15.921] :           --------------------------------------------------------------------
+[12:56:15.922] :           
+[12:56:15.922] :           INIT : Configuration system
+[12:56:16.014] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[12:56:16.015] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[12:56:16.015] :           Loading configuration...
+[12:56:16.016] :           compiling : default.lua
+[12:56:16.041] : [ ERROR ] cannot open default.lua: No such file or directory
+[12:56:16.041] :           compiling : config.lua
+[12:56:16.042] : [ ERROR ] cannot open config.lua: No such file or directory
+[12:56:16.043] :           compiling : startup.lua
+[12:56:16.044] : [ ERROR ] cannot open startup.lua: No such file or directory
+[12:56:16.044] :           Loading DLL : rend_d3d9.dll
+[12:56:16.093] :           
+[12:56:16.094] :           ---- Direct3D rendering system initialization ----------------------
+[12:56:16.101] :           Selected mode : 800x600 W
+[12:56:16.115] :           D3D_SDK_VERSION : 0x80000020
+[12:56:16.116] :           Creating Direct3D
+[12:56:16.158] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[12:56:16.160] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[12:56:16.160] :           Creating Direct3D Device
+[12:56:16.276] :           Checking device :
+[12:56:16.277] :             INTZ depth stencil is supported
+[12:56:16.278] :             NULL render target is supported
+[12:56:16.278] :           INIT : Draw 2D
+[12:56:16.279] :           compiling : shaders/ui.fx
+[12:56:16.297] :           INIT : Texture manager
+[12:56:16.298] :           INIT : Render target manager
+[12:56:16.299] :           INIT : Model manager
+[12:56:16.300] :           --------------------------------------------------------------------
+[12:56:16.300] :           
+[12:56:16.301] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[12:56:16.599] : [ ERROR ] App init : Function 'CreateGame' has not been found in '..\ship_sim\ship_sim.dll'
+[12:56:16.602] :           SHUTDOWN : Configuration system
+[12:56:16.603] :           SHUTDOWN : System
+[12:56:16.603] :           SHUTDOWN : Input system
+[12:56:16.604] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:49:34.958] :           
+[15:49:34.958] :           ---- File system initialization ------------------------------------
+[15:49:34.959] :           working directory : d:/NAVY_VIS/engine/
+[15:49:34.959] :           --------------------------------------------------------------------
+[15:49:34.959] :           
+[15:49:34.959] :           INIT : Input system
+[15:49:34.960] :           
+[15:49:34.960] :           ---- System initialization -----------------------------------------
+[15:49:34.961] :           power : AC
+[15:49:34.961] :           memory : 2050 Mb of 4094 Mb
+[15:49:34.961] :           checking cpu clock...
+[15:49:35.962] :           cpu clock : 2402 MHz
+[15:49:35.962] :           --------------------------------------------------------------------
+[15:49:35.962] :           
+[15:49:35.962] :           INIT : Configuration system
+[15:49:36.055] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[15:49:36.056] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:49:36.057] :           Loading configuration...
+[15:49:36.057] :           compiling : default.lua
+[15:49:36.058] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:49:36.058] :           compiling : config.lua
+[15:49:36.059] : [ ERROR ] cannot open config.lua: No such file or directory
+[15:49:36.060] :           compiling : startup.lua
+[15:49:36.061] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:49:36.062] :           Loading DLL : rend_d3d9.dll
+[15:49:36.105] :           
+[15:49:36.106] :           ---- Direct3D rendering system initialization ----------------------
+[15:49:36.112] :           Selected mode : 800x600 W
+[15:49:36.133] :           D3D_SDK_VERSION : 0x80000020
+[15:49:36.134] :           Creating Direct3D
+[15:49:36.176] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:49:36.177] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:49:36.178] :           Creating Direct3D Device
+[15:49:36.281] :           Checking device :
+[15:49:36.282] :             INTZ depth stencil is supported
+[15:49:36.282] :             NULL render target is supported
+[15:49:36.283] :           INIT : Draw 2D
+[15:49:36.283] :           compiling : shaders/ui.fx
+[15:49:36.300] :           INIT : Texture manager
+[15:49:36.300] :           INIT : Render target manager
+[15:49:36.301] :           INIT : Model manager
+[15:49:36.301] :           --------------------------------------------------------------------
+[15:49:36.302] :           
+[15:49:36.302] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:49:36.356] : [ ERROR ] App init : Function 'CreateGame' has not been found in '..\ship_sim\ship_sim.dll'
+[15:49:36.359] :           SHUTDOWN : Configuration system
+[15:49:36.359] :           SHUTDOWN : System
+[15:49:36.360] :           SHUTDOWN : Input system
+[15:49:36.360] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:53:11.602] :           
+[15:53:11.602] :           ---- File system initialization ------------------------------------
+[15:53:11.603] :           working directory : d:/NAVY_VIS/engine/
+[15:53:11.603] :           --------------------------------------------------------------------
+[15:53:11.603] :           
+[15:53:11.603] :           INIT : Input system
+[15:53:11.603] :           
+[15:53:11.604] :           ---- System initialization -----------------------------------------
+[15:53:11.604] :           power : AC
+[15:53:11.604] :           memory : 2004 Mb of 4094 Mb
+[15:53:11.605] :           checking cpu clock...
+[15:53:12.605] :           cpu clock : 2402 MHz
+[15:53:12.605] :           --------------------------------------------------------------------
+[15:53:12.605] :           
+[15:53:12.605] :           INIT : Configuration system
+[15:53:12.698] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[15:53:12.699] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:53:12.699] :           Loading configuration...
+[15:53:12.700] :           compiling : default.lua
+[15:53:12.700] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:53:12.701] :           compiling : config.lua
+[15:53:12.702] : [ ERROR ] cannot open config.lua: No such file or directory
+[15:53:12.703] :           compiling : startup.lua
+[15:53:12.705] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:53:12.706] :           Loading DLL : rend_d3d9.dll
+[15:53:12.749] :           
+[15:53:12.750] :           ---- Direct3D rendering system initialization ----------------------
+[15:53:12.755] :           Selected mode : 800x600 W
+[15:53:12.768] :           D3D_SDK_VERSION : 0x80000020
+[15:53:12.770] :           Creating Direct3D
+[15:53:12.808] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:53:12.809] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:53:12.810] :           Creating Direct3D Device
+[15:53:12.924] :           Checking device :
+[15:53:12.924] :             INTZ depth stencil is supported
+[15:53:12.925] :             NULL render target is supported
+[15:53:12.926] :           INIT : Draw 2D
+[15:53:12.926] :           compiling : shaders/ui.fx
+[15:53:12.943] :           INIT : Texture manager
+[15:53:12.944] :           INIT : Render target manager
+[15:53:12.944] :           INIT : Model manager
+[15:53:12.945] :           --------------------------------------------------------------------
+[15:53:12.946] :           
+[15:53:12.946] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:53:12.995] : [ ERROR ] App init : Function 'CreateGame' has not been found in '..\ship_sim\ship_sim.dll'
+[15:53:12.998] :           SHUTDOWN : Configuration system
+[15:53:12.999] :           SHUTDOWN : System
+[15:53:13.000] :           SHUTDOWN : Input system
+[15:53:13.000] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:53:25.965] :           
+[15:53:25.966] :           ---- File system initialization ------------------------------------
+[15:53:25.966] :           working directory : d:/NAVY_VIS/engine/
+[15:53:25.966] :           --------------------------------------------------------------------
+[15:53:25.966] :           
+[15:53:25.967] :           INIT : Input system
+[15:53:25.967] :           
+[15:53:25.968] :           ---- System initialization -----------------------------------------
+[15:53:25.968] :           power : AC
+[15:53:25.968] :           memory : 2008 Mb of 4094 Mb
+[15:53:25.968] :           checking cpu clock...
+[15:53:26.969] :           cpu clock : 2402 MHz
+[15:53:26.969] :           --------------------------------------------------------------------
+[15:53:26.969] :           
+[15:53:26.970] :           INIT : Configuration system
+[15:53:27.063] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[15:53:27.063] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:53:27.064] :           Loading configuration...
+[15:53:27.064] :           compiling : default.lua
+[15:53:27.065] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:53:27.066] :           compiling : config.lua
+[15:53:27.067] : [ ERROR ] cannot open config.lua: No such file or directory
+[15:53:27.068] :           compiling : startup.lua
+[15:53:27.070] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:53:27.071] :           Loading DLL : rend_d3d9.dll
+[15:53:27.110] :           
+[15:53:27.111] :           ---- Direct3D rendering system initialization ----------------------
+[15:53:27.116] :           Selected mode : 800x600 W
+[15:53:27.127] :           D3D_SDK_VERSION : 0x80000020
+[15:53:27.128] :           Creating Direct3D
+[15:53:27.166] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:53:27.167] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:53:27.168] :           Creating Direct3D Device
+[15:53:27.274] :           Checking device :
+[15:53:27.275] :             INTZ depth stencil is supported
+[15:53:27.275] :             NULL render target is supported
+[15:53:27.276] :           INIT : Draw 2D
+[15:53:27.276] :           compiling : shaders/ui.fx
+[15:53:27.293] :           INIT : Texture manager
+[15:53:27.293] :           INIT : Render target manager
+[15:53:27.294] :           INIT : Model manager
+[15:53:27.294] :           --------------------------------------------------------------------
+[15:53:27.295] :           
+[15:53:27.295] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:53:27.340] : [ ERROR ] App init : Function 'CreateGame' has not been found in '..\ship_sim\ship_sim.dll'
+[15:53:27.343] :           SHUTDOWN : Configuration system
+[15:53:27.343] :           SHUTDOWN : System
+[15:53:27.344] :           SHUTDOWN : Input system
+[15:53:27.344] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:55:37.872] :           
+[15:55:37.873] :           ---- File system initialization ------------------------------------
+[15:55:37.873] :           working directory : d:/NAVY_VIS/engine/
+[15:55:37.873] :           --------------------------------------------------------------------
+[15:55:37.874] :           
+[15:55:37.874] :           INIT : Input system
+[15:55:37.874] :           
+[15:55:37.874] :           ---- System initialization -----------------------------------------
+[15:55:37.875] :           power : AC
+[15:55:37.875] :           memory : 2016 Mb of 4094 Mb
+[15:55:37.875] :           checking cpu clock...
+[15:55:38.875] :           cpu clock : 2401 MHz
+[15:55:38.875] :           --------------------------------------------------------------------
+[15:55:38.875] :           
+[15:55:38.875] :           INIT : Configuration system
+[15:55:38.967] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[15:55:38.968] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:55:38.968] :           Loading configuration...
+[15:55:38.968] :           compiling : default.lua
+[15:55:38.969] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:55:38.970] :           compiling : config.lua
+[15:55:38.970] : [ ERROR ] cannot open config.lua: No such file or directory
+[15:55:38.971] :           compiling : startup.lua
+[15:55:38.973] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:55:38.973] :           Loading DLL : rend_d3d9.dll
+[15:55:39.013] :           
+[15:55:39.014] :           ---- Direct3D rendering system initialization ----------------------
+[15:55:39.020] :           Selected mode : 800x600 W
+[15:55:39.038] :           D3D_SDK_VERSION : 0x80000020
+[15:55:39.039] :           Creating Direct3D
+[15:55:39.077] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:55:39.079] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:55:39.079] :           Creating Direct3D Device
+[15:55:39.181] :           Checking device :
+[15:55:39.182] :             INTZ depth stencil is supported
+[15:55:39.182] :             NULL render target is supported
+[15:55:39.183] :           INIT : Draw 2D
+[15:55:39.183] :           compiling : shaders/ui.fx
+[15:55:39.199] :           INIT : Texture manager
+[15:55:39.200] :           INIT : Render target manager
+[15:55:39.200] :           INIT : Model manager
+[15:55:39.201] :           --------------------------------------------------------------------
+[15:55:39.201] :           
+[15:55:39.202] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:55:39.250] : [ ERROR ] App init : Function 'CreateGame' has not been found in '..\ship_sim\ship_sim.dll'
+[15:55:39.251] :           -
+[15:55:39.254] :           SHUTDOWN : Configuration system
+[15:55:39.254] :           SHUTDOWN : System
+[15:55:39.255] :           SHUTDOWN : Input system
+[15:55:39.255] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:56:24.796] :           
+[15:56:24.797] :           ---- File system initialization ------------------------------------
+[15:56:24.797] :           working directory : d:/NAVY_VIS/engine/
+[15:56:24.797] :           --------------------------------------------------------------------
+[15:56:24.797] :           
+[15:56:24.798] :           INIT : Input system
+[15:56:24.798] :           
+[15:56:24.798] :           ---- System initialization -----------------------------------------
+[15:56:24.799] :           power : AC
+[15:56:24.799] :           memory : 2012 Mb of 4094 Mb
+[15:56:24.799] :           checking cpu clock...
+[15:56:25.799] :           cpu clock : 2400 MHz
+[15:56:25.799] :           --------------------------------------------------------------------
+[15:56:25.799] :           
+[15:56:25.799] :           INIT : Configuration system
+[15:56:25.896] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[15:56:25.897] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:56:25.898] :           Loading configuration...
+[15:56:25.899] :           compiling : default.lua
+[15:56:25.899] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:56:25.900] :           compiling : config.lua
+[15:56:25.901] : [ ERROR ] cannot open config.lua: No such file or directory
+[15:56:25.901] :           compiling : startup.lua
+[15:56:25.902] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:56:25.903] :           Loading DLL : rend_d3d9.dll
+[15:56:25.942] :           
+[15:56:25.942] :           ---- Direct3D rendering system initialization ----------------------
+[15:56:25.948] :           Selected mode : 800x600 W
+[15:56:25.957] :           D3D_SDK_VERSION : 0x80000020
+[15:56:25.959] :           Creating Direct3D
+[15:56:25.997] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:56:25.999] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:56:25.999] :           Creating Direct3D Device
+[15:56:26.115] :           Checking device :
+[15:56:26.116] :             INTZ depth stencil is supported
+[15:56:26.116] :             NULL render target is supported
+[15:56:26.117] :           INIT : Draw 2D
+[15:56:26.117] :           compiling : shaders/ui.fx
+[15:56:26.136] :           INIT : Texture manager
+[15:56:26.136] :           INIT : Render target manager
+[15:56:26.137] :           INIT : Model manager
+[15:56:26.138] :           --------------------------------------------------------------------
+[15:56:26.138] :           
+[15:56:26.139] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:56:26.189] :           INIT : PhysX allocator
+[15:56:26.190] :           
+[15:56:26.190] :           ---- SciVis initialization -----------------------------------------
+[15:56:26.191] :           INIT : PhysX
+[15:56:26.575] :           --------------------------------------------------------------------
+[15:56:26.576] :           
+[15:56:30.600] :           
+[15:56:30.601] :           ---- SciVis shutting down ------------------------------------------
+[15:56:30.602] :           SHUTDOWN : PhysX
+[15:56:30.635] :           --------------------------------------------------------------------
+[15:56:30.636] :           
+[15:56:30.636] :           SHUTDOWN : PhysX allocator
+[15:56:30.637] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[15:56:30.640] :           
+[15:56:30.641] :           ---- Direct3D rendering system shutting down -----------------------
+[15:56:30.641] :           SHUTDOWN : Model manager
+[15:56:30.642] :           SHUTDOWN : Render target manager
+[15:56:30.643] :           SHUTDOWN : Texture manager
+[15:56:30.643] :           SHUTDOWN : Draw 2D
+[15:56:30.644] :           Releasing Direct3D Device
+[15:56:30.662] :           Releasing Direct3D
+[15:56:30.668] :           --------------------------------------------------------------------
+[15:56:30.671] :           
+[15:56:30.673] :           Unloading DLL : rend_d3d9.dll
+[15:56:30.677] :           Saving configuration...
+[15:56:30.736] :           -
+[15:56:30.742] :           SHUTDOWN : Configuration system
+[15:56:30.743] :           SHUTDOWN : System
+[15:56:30.743] :           SHUTDOWN : Input system
+[15:56:30.744] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:57:25.933] :           
+[15:57:25.934] :           ---- File system initialization ------------------------------------
+[15:57:25.934] :           working directory : d:/NAVY_VIS/engine/
+[15:57:25.935] :           --------------------------------------------------------------------
+[15:57:25.935] :           
+[15:57:25.935] :           INIT : Input system
+[15:57:25.935] :           
+[15:57:25.936] :           ---- System initialization -----------------------------------------
+[15:57:25.936] :           power : AC
+[15:57:25.936] :           memory : 2011 Mb of 4094 Mb
+[15:57:25.936] :           checking cpu clock...
+[15:57:26.937] :           cpu clock : 2402 MHz
+[15:57:26.937] :           --------------------------------------------------------------------
+[15:57:26.937] :           
+[15:57:26.937] :           INIT : Configuration system
+[15:57:27.030] : [ ERROR ] App init : fuck
+[15:57:27.030] :           -
+[15:57:27.032] :           SHUTDOWN : Configuration system
+[15:57:27.032] :           SHUTDOWN : System
+[15:57:27.032] :           SHUTDOWN : Input system
+[15:57:27.033] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:57:37.411] :           
+[15:57:37.411] :           ---- File system initialization ------------------------------------
+[15:57:37.411] :           working directory : d:/NAVY_VIS/engine/
+[15:57:37.411] :           --------------------------------------------------------------------
+[15:57:37.412] :           
+[15:57:37.412] :           INIT : Input system
+[15:57:37.412] :           
+[15:57:37.412] :           ---- System initialization -----------------------------------------
+[15:57:37.413] :           power : AC
+[15:57:37.413] :           memory : 2006 Mb of 4094 Mb
+[15:57:37.413] :           checking cpu clock...
+[15:57:38.413] :           cpu clock : 2400 MHz
+[15:57:38.413] :           --------------------------------------------------------------------
+[15:57:38.413] :           
+[15:57:38.414] :           INIT : Configuration system
+[15:57:38.509] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[15:57:38.509] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:57:38.510] :           Loading configuration...
+[15:57:38.510] :           compiling : default.lua
+[15:57:38.511] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:57:38.511] :           compiling : config.lua
+[15:57:38.512] :           compiling : startup.lua
+[15:57:38.513] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:57:38.514] : [ ERROR ] App init : fuck
+[15:57:38.515] :           -
+[15:57:38.516] :           SHUTDOWN : Configuration system
+[15:57:38.517] :           SHUTDOWN : System
+[15:57:38.517] :           SHUTDOWN : Input system
+[15:57:38.518] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:57:47.190] :           
+[15:57:47.190] :           ---- File system initialization ------------------------------------
+[15:57:47.191] :           working directory : d:/NAVY_VIS/engine/
+[15:57:47.191] :           --------------------------------------------------------------------
+[15:57:47.191] :           
+[15:57:47.191] :           INIT : Input system
+[15:57:47.192] :           
+[15:57:47.192] :           ---- System initialization -----------------------------------------
+[15:57:47.192] :           power : AC
+[15:57:47.192] :           memory : 2014 Mb of 4094 Mb
+[15:57:47.192] :           checking cpu clock...
+[15:57:48.193] :           cpu clock : 2402 MHz
+[15:57:48.193] :           --------------------------------------------------------------------
+[15:57:48.193] :           
+[15:57:48.193] :           INIT : Configuration system
+[15:57:48.286] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[15:57:48.286] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:57:48.287] :           Loading configuration...
+[15:57:48.287] :           compiling : default.lua
+[15:57:48.288] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:57:48.288] :           compiling : config.lua
+[15:57:48.289] :           compiling : startup.lua
+[15:57:48.291] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:57:48.291] :           Loading DLL : rend_d3d9.dll
+[15:57:48.331] :           
+[15:57:48.331] :           ---- Direct3D rendering system initialization ----------------------
+[15:57:48.336] :           Selected mode : 800x600 W
+[15:57:48.347] :           D3D_SDK_VERSION : 0x80000020
+[15:57:48.348] :           Creating Direct3D
+[15:57:48.386] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:57:48.388] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:57:48.388] :           Creating Direct3D Device
+[15:57:48.498] :           Checking device :
+[15:57:48.498] :             INTZ depth stencil is supported
+[15:57:48.499] :             NULL render target is supported
+[15:57:48.499] :           INIT : Draw 2D
+[15:57:48.499] :           compiling : shaders/ui.fx
+[15:57:48.516] :           INIT : Texture manager
+[15:57:48.517] :           INIT : Render target manager
+[15:57:48.517] :           INIT : Model manager
+[15:57:48.518] :           --------------------------------------------------------------------
+[15:57:48.518] :           
+[15:57:48.519] : [ ERROR ] App init : fuck
+[15:57:48.519] :           -
+[15:57:48.522] :           SHUTDOWN : Configuration system
+[15:57:48.522] :           SHUTDOWN : System
+[15:57:48.523] :           SHUTDOWN : Input system
+[15:57:48.523] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:59:00.514] :           
+[15:59:00.514] :           ---- File system initialization ------------------------------------
+[15:59:00.514] :           working directory : d:/NAVY_VIS/engine/
+[15:59:00.515] :           --------------------------------------------------------------------
+[15:59:00.515] :           
+[15:59:00.515] :           INIT : Input system
+[15:59:00.516] :           
+[15:59:00.516] :           ---- System initialization -----------------------------------------
+[15:59:00.516] :           power : AC
+[15:59:00.516] :           memory : 2007 Mb of 4094 Mb
+[15:59:00.516] :           checking cpu clock...
+[15:59:01.517] :           cpu clock : 2402 MHz
+[15:59:01.517] :           --------------------------------------------------------------------
+[15:59:01.517] :           
+[15:59:01.518] :           INIT : Configuration system
+[15:59:01.609] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[15:59:01.610] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:59:01.611] :           Loading configuration...
+[15:59:01.611] :           compiling : default.lua
+[15:59:01.616] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:59:01.617] :           compiling : config.lua
+[15:59:01.621] :           compiling : startup.lua
+[15:59:01.622] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:59:01.624] : [ ERROR ] App init : fuck2
+[15:59:01.624] :           -
+[15:59:01.626] :           SHUTDOWN : Configuration system
+[15:59:01.626] :           SHUTDOWN : System
+[15:59:01.627] :           SHUTDOWN : Input system
+[15:59:01.628] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:59:07.853] :           
+[15:59:07.853] :           ---- File system initialization ------------------------------------
+[15:59:07.854] :           working directory : d:/NAVY_VIS/engine/
+[15:59:07.854] :           --------------------------------------------------------------------
+[15:59:07.854] :           
+[15:59:07.855] :           INIT : Input system
+[15:59:07.855] :           
+[15:59:07.855] :           ---- System initialization -----------------------------------------
+[15:59:07.855] :           power : AC
+[15:59:07.856] :           memory : 2013 Mb of 4094 Mb
+[15:59:07.856] :           checking cpu clock...
+[15:59:08.856] :           cpu clock : 2401 MHz
+[15:59:08.856] :           --------------------------------------------------------------------
+[15:59:08.856] :           
+[15:59:08.857] :           INIT : Configuration system
+[15:59:08.950] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[15:59:08.951] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:59:08.951] :           Loading configuration...
+[15:59:08.951] :           compiling : default.lua
+[15:59:08.952] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:59:08.953] :           compiling : config.lua
+[15:59:08.954] :           compiling : startup.lua
+[15:59:08.955] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:59:08.956] :           Loading DLL : rend_d3d9.dll
+[15:59:08.995] : [ ERROR ] App init : fuck2
+[15:59:08.996] :           -
+[15:59:08.997] :           SHUTDOWN : Configuration system
+[15:59:08.998] :           SHUTDOWN : System
+[15:59:08.998] :           SHUTDOWN : Input system
+[15:59:08.999] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:59:58.591] :           
+[15:59:58.591] :           ---- File system initialization ------------------------------------
+[15:59:58.592] :           working directory : d:/NAVY_VIS/engine/
+[15:59:58.592] :           --------------------------------------------------------------------
+[15:59:58.592] :           
+[15:59:58.592] :           INIT : Input system
+[15:59:58.593] :           
+[15:59:58.593] :           ---- System initialization -----------------------------------------
+[15:59:58.593] :           power : AC
+[15:59:58.594] :           memory : 2002 Mb of 4094 Mb
+[15:59:58.594] :           checking cpu clock...
+[15:59:59.594] :           cpu clock : 2401 MHz
+[15:59:59.594] :           --------------------------------------------------------------------
+[15:59:59.594] :           
+[15:59:59.595] :           INIT : Configuration system
+[15:59:59.688] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[15:59:59.688] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:59:59.689] :           Loading configuration...
+[15:59:59.689] :           compiling : default.lua
+[15:59:59.690] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:59:59.690] :           compiling : config.lua
+[15:59:59.691] :           compiling : startup.lua
+[15:59:59.693] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:59:59.693] :           Loading DLL : rend_d3d9.dll
+[15:59:59.733] : [ ERROR ] App init : fuck
+[15:59:59.734] :           -
+[15:59:59.740] :           SHUTDOWN : Configuration system
+[15:59:59.741] :           SHUTDOWN : System
+[15:59:59.742] :           SHUTDOWN : Input system
+[15:59:59.743] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[16:06:47.138] :           
+[16:06:47.138] :           ---- File system initialization ------------------------------------
+[16:06:47.138] :           working directory : d:/NAVY_VIS/engine/
+[16:06:47.138] :           --------------------------------------------------------------------
+[16:06:47.139] :           
+[16:06:47.139] :           INIT : Input system
+[16:06:47.139] :           
+[16:06:47.140] :           ---- System initialization -----------------------------------------
+[16:06:47.140] :           power : AC
+[16:06:47.140] :           memory : 2013 Mb of 4094 Mb
+[16:06:47.140] :           checking cpu clock...
+[16:06:48.140] :           cpu clock : 2400 MHz
+[16:06:48.140] :           --------------------------------------------------------------------
+[16:06:48.140] :           
+[16:06:48.141] :           INIT : Configuration system
+[16:06:48.241] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[16:06:48.241] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:06:48.242] :           Loading configuration...
+[16:06:48.242] :           compiling : default.lua
+[16:06:48.243] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:06:48.243] :           compiling : config.lua
+[16:06:48.244] :           compiling : startup.lua
+[16:06:48.246] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:06:48.246] :           Loading DLL : rend_d3d9.dll
+[16:06:48.286] :           Loading DLL : ..\ship_sim\ship_sim.dll
+
+-------------------------------------------------------------------------------
+[16:06:58.167] :           
+[16:06:58.168] :           ---- File system initialization ------------------------------------
+[16:06:58.168] :           working directory : d:/NAVY_VIS/engine/
+[16:06:58.168] :           --------------------------------------------------------------------
+[16:06:58.168] :           
+[16:06:58.169] :           INIT : Input system
+[16:06:58.169] :           
+[16:06:58.169] :           ---- System initialization -----------------------------------------
+[16:06:58.169] :           power : AC
+[16:06:58.169] :           memory : 2013 Mb of 4094 Mb
+[16:06:58.170] :           checking cpu clock...
+[16:06:59.170] :           cpu clock : 2402 MHz
+[16:06:59.170] :           --------------------------------------------------------------------
+[16:06:59.170] :           
+[16:06:59.170] :           INIT : Configuration system
+[16:06:59.261] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[16:06:59.262] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:06:59.262] :           Loading configuration...
+[16:06:59.262] :           compiling : default.lua
+[16:06:59.263] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:06:59.264] :           compiling : config.lua
+[16:06:59.264] :           compiling : startup.lua
+[16:06:59.266] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:06:59.267] :           Loading DLL : rend_d3d9.dll
+[16:06:59.305] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[16:06:59.351] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[16:06:59.356] :           Unloading DLL : rend_d3d9.dll
+[16:06:59.361] :           Saving configuration...
+[16:06:59.392] :           -
+[16:06:59.394] :           SHUTDOWN : Configuration system
+[16:06:59.395] :           SHUTDOWN : System
+[16:06:59.396] :           SHUTDOWN : Input system
+[16:06:59.397] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[16:07:01.394] :           
+[16:07:01.394] :           ---- File system initialization ------------------------------------
+[16:07:01.394] :           working directory : d:/NAVY_VIS/engine/
+[16:07:01.395] :           --------------------------------------------------------------------
+[16:07:01.395] :           
+[16:07:01.395] :           INIT : Input system
+[16:07:01.396] :           
+[16:07:01.396] :           ---- System initialization -----------------------------------------
+[16:07:01.396] :           power : AC
+[16:07:01.396] :           memory : 2008 Mb of 4094 Mb
+[16:07:01.396] :           checking cpu clock...
+[16:07:02.397] :           cpu clock : 2402 MHz
+[16:07:02.397] :           --------------------------------------------------------------------
+[16:07:02.397] :           
+[16:07:02.397] :           INIT : Configuration system
+[16:07:02.488] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[16:07:02.488] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:07:02.489] :           Loading configuration...
+[16:07:02.489] :           compiling : default.lua
+[16:07:02.490] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:07:02.490] :           compiling : config.lua
+[16:07:02.491] :           compiling : startup.lua
+[16:07:02.493] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:07:02.494] :           Loading DLL : rend_d3d9.dll
+[16:07:02.533] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[16:07:02.579] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[16:07:02.584] :           Unloading DLL : rend_d3d9.dll
+[16:07:02.589] :           Saving configuration...
+[16:07:02.612] :           -
+[16:07:02.614] :           SHUTDOWN : Configuration system
+[16:07:02.615] :           SHUTDOWN : System
+[16:07:02.615] :           SHUTDOWN : Input system
+[16:07:02.616] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[16:08:42.126] :           
+[16:08:42.126] :           ---- File system initialization ------------------------------------
+[16:08:42.127] :           working directory : d:/NAVY_VIS/engine/
+[16:08:42.127] :           --------------------------------------------------------------------
+[16:08:42.127] :           
+[16:08:42.128] :           INIT : Input system
+[16:08:42.128] :           
+[16:08:42.128] :           ---- System initialization -----------------------------------------
+[16:08:42.128] :           power : AC
+[16:08:42.129] :           memory : 2013 Mb of 4094 Mb
+[16:08:42.129] :           checking cpu clock...
+[16:08:43.129] :           cpu clock : 2401 MHz
+[16:08:43.129] :           --------------------------------------------------------------------
+[16:08:43.129] :           
+[16:08:43.130] :           INIT : Configuration system
+[16:08:43.227] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[16:08:43.228] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:08:43.228] :           Loading configuration...
+[16:08:43.229] :           compiling : default.lua
+[16:08:43.229] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:08:43.230] :           compiling : config.lua
+[16:08:43.231] :           compiling : startup.lua
+[16:08:43.233] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:08:43.234] :           Loading DLL : rend_d3d9.dll
+[16:08:43.275] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[16:08:43.321] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[16:08:43.326] :           Unloading DLL : rend_d3d9.dll
+[16:08:43.331] :           Saving configuration...
+[16:08:43.362] :           -
+[16:08:43.364] :           SHUTDOWN : Configuration system
+[16:08:43.365] :           SHUTDOWN : System
+[16:08:43.365] :           SHUTDOWN : Input system
+[16:08:43.366] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[16:08:54.245] :           
+[16:08:54.245] :           ---- File system initialization ------------------------------------
+[16:08:54.246] :           working directory : d:/NAVY_VIS/engine/
+[16:08:54.246] :           --------------------------------------------------------------------
+[16:08:54.246] :           
+[16:08:54.247] :           INIT : Input system
+[16:08:54.247] :           
+[16:08:54.247] :           ---- System initialization -----------------------------------------
+[16:08:54.247] :           power : AC
+[16:08:54.248] :           memory : 2006 Mb of 4094 Mb
+[16:08:54.248] :           checking cpu clock...
+[16:08:55.248] :           cpu clock : 2401 MHz
+[16:08:55.248] :           --------------------------------------------------------------------
+[16:08:55.248] :           
+[16:08:55.248] :           INIT : Configuration system
+[16:08:55.340] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[16:08:55.341] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:08:55.341] :           Loading configuration...
+[16:08:55.342] :           compiling : default.lua
+[16:08:55.343] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:08:55.343] :           compiling : config.lua
+[16:08:55.344] :           compiling : startup.lua
+[16:08:55.345] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:08:55.346] :           Loading DLL : rend_d3d9.dll
+[16:08:55.387] : [ ERROR ] App init : fuck
+[16:08:55.387] :           -
+[16:08:55.389] :           SHUTDOWN : Configuration system
+[16:08:55.390] :           SHUTDOWN : System
+[16:08:55.391] :           SHUTDOWN : Input system
+[16:08:55.392] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[16:53:30.485] :           
+[16:53:30.485] :           ---- File system initialization ------------------------------------
+[16:53:30.485] :           working directory : d:/NAVY_VIS/engine/
+[16:53:30.486] :           --------------------------------------------------------------------
+[16:53:30.486] :           
+[16:53:30.487] :           INIT : Input system
+[16:53:30.487] :           
+[16:53:30.487] :           ---- System initialization -----------------------------------------
+[16:53:30.487] :           power : AC
+[16:53:30.488] :           memory : 1942 Mb of 4094 Mb
+[16:53:30.488] :           checking cpu clock...
+[16:53:31.488] :           cpu clock : 2401 MHz
+[16:53:31.488] :           --------------------------------------------------------------------
+[16:53:31.488] :           
+[16:53:31.489] :           INIT : Configuration system
+[16:53:31.581] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[16:53:31.581] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:53:31.582] :           Loading configuration...
+[16:53:31.582] :           compiling : default.lua
+[16:53:31.583] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:53:31.583] :           compiling : config.lua
+[16:53:31.584] :           compiling : startup.lua
+[16:53:31.586] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:53:31.586] :           Loading DLL : rend_d3d9.dll
+[16:53:31.630] : [ ERROR ] App init : fuck
+[16:53:31.630] :           -
+[16:53:31.632] :           SHUTDOWN : Configuration system
+[16:53:31.632] :           SHUTDOWN : System
+[16:53:31.633] :           SHUTDOWN : Input system
+[16:53:31.634] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[16:55:21.238] :           
+[16:55:21.238] :           ---- File system initialization ------------------------------------
+[16:55:21.239] :           working directory : d:/NAVY_VIS/engine/
+[16:55:21.239] :           --------------------------------------------------------------------
+[16:55:21.239] :           
+[16:55:21.240] :           INIT : Input system
+[16:55:21.240] :           
+[16:55:21.240] :           ---- System initialization -----------------------------------------
+[16:55:21.240] :           power : AC
+[16:55:21.241] :           memory : 1953 Mb of 4094 Mb
+[16:55:21.241] :           checking cpu clock...
+[16:55:22.241] :           cpu clock : 2401 MHz
+[16:55:22.241] :           --------------------------------------------------------------------
+[16:55:22.241] :           
+[16:55:22.242] :           INIT : Configuration system
+[16:55:22.335] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[16:55:22.335] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:55:22.336] :           Loading configuration...
+[16:55:22.336] :           compiling : default.lua
+[16:55:22.337] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:55:22.337] :           compiling : config.lua
+[16:55:22.338] :           compiling : startup.lua
+[16:55:22.340] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:55:22.341] :           Loading DLL : rend_d3d9.dll
+[16:55:22.380] : [ ERROR ] App init : fuck
+[16:55:22.381] :           -
+[16:55:22.382] :           SHUTDOWN : Configuration system
+[16:55:22.383] :           SHUTDOWN : System
+[16:55:22.383] :           SHUTDOWN : Input system
+[16:55:22.384] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[16:56:30.346] :           
+[16:56:30.346] :           ---- File system initialization ------------------------------------
+[16:56:30.347] :           working directory : d:/NAVY_VIS/engine/
+[16:56:30.347] :           --------------------------------------------------------------------
+[16:56:30.347] :           
+[16:56:30.348] :           INIT : Input system
+[16:56:30.348] :           
+[16:56:30.348] :           ---- System initialization -----------------------------------------
+[16:56:30.348] :           power : AC
+[16:56:30.349] :           memory : 1954 Mb of 4094 Mb
+[16:56:30.349] :           checking cpu clock...
+[16:56:31.349] :           cpu clock : 2401 MHz
+[16:56:31.349] :           --------------------------------------------------------------------
+[16:56:31.349] :           
+[16:56:31.349] :           INIT : Configuration system
+[16:56:31.441] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[16:56:31.441] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:56:31.442] :           Loading configuration...
+[16:56:31.442] :           compiling : default.lua
+[16:56:31.443] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:56:31.443] :           compiling : config.lua
+[16:56:31.444] :           compiling : startup.lua
+[16:56:31.446] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:56:31.446] :           Loading DLL : rend_d3d9.dll
+[16:56:31.488] : [ ERROR ] App init : fuck
+[16:56:31.489] :           -
+[16:56:31.490] :           SHUTDOWN : Configuration system
+[16:56:31.491] :           SHUTDOWN : System
+[16:56:31.491] :           SHUTDOWN : Input system
+[16:56:31.492] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[17:16:32.501] :           
+[17:16:32.502] :           ---- File system initialization ------------------------------------
+[17:16:32.502] :           working directory : d:/NAVY_VIS/engine/
+[17:16:32.502] :           --------------------------------------------------------------------
+[17:16:32.502] :           
+[17:16:32.503] :           INIT : Input system
+[17:16:32.503] :           
+[17:16:32.503] :           ---- System initialization -----------------------------------------
+[17:16:32.503] :           power : AC
+[17:16:32.504] :           memory : 1934 Mb of 4094 Mb
+[17:16:32.504] :           checking cpu clock...
+[17:16:33.504] :           cpu clock : 2401 MHz
+[17:16:33.504] :           --------------------------------------------------------------------
+[17:16:33.504] :           
+[17:16:33.505] :           INIT : Configuration system
+[17:16:33.600] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[17:16:33.600] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[17:16:33.601] :           Loading configuration...
+[17:16:33.601] :           compiling : default.lua
+[17:16:33.602] : [ ERROR ] cannot open default.lua: No such file or directory
+[17:16:33.603] :           compiling : config.lua
+[17:16:33.604] :           compiling : startup.lua
+[17:16:33.606] : [ ERROR ] cannot open startup.lua: No such file or directory
+[17:16:33.606] :           Loading DLL : rend_d3d9.dll
+[17:16:33.656] : [ ERROR ] App init : fuck
+[17:16:33.656] :           -
+[17:16:33.658] :           SHUTDOWN : Configuration system
+[17:16:33.658] :           SHUTDOWN : System
+[17:16:33.659] :           SHUTDOWN : Input system
+[17:16:33.660] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[17:16:43.150] :           
+[17:16:43.151] :           ---- File system initialization ------------------------------------
+[17:16:43.151] :           working directory : d:/NAVY_VIS/engine/
+[17:16:43.151] :           --------------------------------------------------------------------
+[17:16:43.152] :           
+[17:16:43.152] :           INIT : Input system
+[17:16:43.153] :           
+[17:16:43.153] :           ---- System initialization -----------------------------------------
+[17:16:43.153] :           power : AC
+[17:16:43.153] :           memory : 1935 Mb of 4094 Mb
+[17:16:43.154] :           checking cpu clock...
+[17:16:44.154] :           cpu clock : 2402 MHz
+[17:16:44.154] :           --------------------------------------------------------------------
+[17:16:44.154] :           
+[17:16:44.155] :           INIT : Configuration system
+[17:16:44.249] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[17:16:44.249] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[17:16:44.250] :           Loading configuration...
+[17:16:44.250] :           compiling : default.lua
+[17:16:44.251] : [ ERROR ] cannot open default.lua: No such file or directory
+[17:16:44.251] :           compiling : config.lua
+[17:16:44.252] :           compiling : startup.lua
+[17:16:44.254] : [ ERROR ] cannot open startup.lua: No such file or directory
+[17:16:44.255] :           Loading DLL : rend_d3d9.dll
+[17:17:22.748] : [ ERROR ] App init : fuck
+[17:17:22.748] :           -
+[17:17:22.758] :           SHUTDOWN : Configuration system
+[17:17:22.758] :           SHUTDOWN : System
+[17:17:22.759] :           SHUTDOWN : Input system
+[17:17:22.762] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[17:22:31.512] :           
+[17:22:31.513] :           ---- File system initialization ------------------------------------
+[17:22:31.513] :           working directory : d:/NAVY_VIS/engine/
+[17:22:31.514] :           --------------------------------------------------------------------
+[17:22:31.514] :           
+[17:22:31.514] :           INIT : Input system
+[17:22:31.515] :           
+[17:22:31.515] :           ---- System initialization -----------------------------------------
+[17:22:31.515] :           power : AC
+[17:22:31.515] :           memory : 1929 Mb of 4094 Mb
+[17:22:31.516] :           checking cpu clock...
+[17:22:32.516] :           cpu clock : 2402 MHz
+[17:22:32.516] :           --------------------------------------------------------------------
+[17:22:32.516] :           
+[17:22:32.516] :           INIT : Configuration system
+[17:22:32.613] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[17:22:32.613] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[17:22:32.614] :           Loading configuration...
+[17:22:32.614] :           compiling : default.lua
+[17:22:32.615] : [ ERROR ] cannot open default.lua: No such file or directory
+[17:22:32.615] :           compiling : config.lua
+[17:22:32.616] :           compiling : startup.lua
+[17:22:32.618] : [ ERROR ] cannot open startup.lua: No such file or directory
+[17:22:32.619] :           Loading DLL : rend_d3d9.dll
+[17:22:35.883] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[17:22:35.955] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[17:22:35.959] :           Unloading DLL : rend_d3d9.dll
+[17:22:35.964] :           Saving configuration...
+[17:22:35.988] :           -
+[17:22:35.989] :           SHUTDOWN : Configuration system
+[17:22:35.990] :           SHUTDOWN : System
+[17:22:35.990] :           SHUTDOWN : Input system
+[17:22:35.991] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[17:23:28.534] :           
+[17:23:28.534] :           ---- File system initialization ------------------------------------
+[17:23:28.535] :           working directory : d:/NAVY_VIS/engine/
+[17:23:28.535] :           --------------------------------------------------------------------
+[17:23:28.535] :           
+[17:23:28.536] :           INIT : Input system
+[17:23:28.536] :           
+[17:23:28.536] :           ---- System initialization -----------------------------------------
+[17:23:28.536] :           power : AC
+[17:23:28.537] :           memory : 1930 Mb of 4094 Mb
+[17:23:28.537] :           checking cpu clock...
+[17:23:29.537] :           cpu clock : 2401 MHz
+[17:23:29.537] :           --------------------------------------------------------------------
+[17:23:29.537] :           
+[17:23:29.538] :           INIT : Configuration system
+[17:23:29.631] : [ ERROR ] App init : q
+[17:23:29.631] :           -
+[17:23:29.632] :           SHUTDOWN : Configuration system
+[17:23:29.632] :           SHUTDOWN : System
+[17:23:29.633] :           SHUTDOWN : Input system
+[17:23:29.634] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[17:23:52.243] :           
+[17:23:52.243] :           ---- File system initialization ------------------------------------
+[17:23:52.244] :           working directory : d:/NAVY_VIS/engine/
+[17:23:52.244] :           --------------------------------------------------------------------
+[17:23:52.244] :           
+[17:23:52.244] :           INIT : Input system
+[17:23:52.245] :           
+[17:23:52.245] :           ---- System initialization -----------------------------------------
+[17:23:52.245] :           power : AC
+[17:23:52.245] :           memory : 1936 Mb of 4094 Mb
+[17:23:52.246] :           checking cpu clock...
+[17:23:53.246] :           cpu clock : 2401 MHz
+[17:23:53.246] :           --------------------------------------------------------------------
+[17:23:53.246] :           
+[17:23:53.246] :           INIT : Configuration system
+[17:23:53.342] : [ ERROR ] App init : q
+[17:23:53.342] :           -
+[17:23:53.343] :           SHUTDOWN : Configuration system
+[17:23:53.344] :           SHUTDOWN : System
+[17:23:53.344] :           SHUTDOWN : Input system
+[17:23:53.345] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[17:24:06.125] :           
+[17:24:06.125] :           ---- File system initialization ------------------------------------
+[17:24:06.126] :           working directory : d:/NAVY_VIS/engine/
+[17:24:06.126] :           --------------------------------------------------------------------
+[17:24:06.126] :           
+[17:24:06.127] :           INIT : Input system
+[17:24:06.127] :           
+[17:24:06.127] :           ---- System initialization -----------------------------------------
+[17:24:06.127] :           power : AC
+[17:24:06.128] :           memory : 1932 Mb of 4094 Mb
+[17:24:06.128] :           checking cpu clock...
+[17:24:07.128] :           cpu clock : 2401 MHz
+[17:24:07.128] :           --------------------------------------------------------------------
+[17:24:07.128] :           
+[17:24:07.129] :           INIT : Configuration system
+[17:24:07.222] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[17:24:07.223] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[17:24:07.223] :           Loading configuration...
+[17:24:07.223] :           compiling : default.lua
+[17:24:07.224] : [ ERROR ] cannot open default.lua: No such file or directory
+[17:24:07.225] :           compiling : config.lua
+[17:24:07.226] :           compiling : startup.lua
+[17:24:07.227] : [ ERROR ] cannot open startup.lua: No such file or directory
+[17:24:07.228] :           Loading DLL : rend_d3d9.dll
+[17:24:07.277] : [ ERROR ] App init : fuck
+[17:24:07.278] :           -
+[17:24:07.279] :           SHUTDOWN : Configuration system
+[17:24:07.280] :           SHUTDOWN : System
+[17:24:07.281] :           SHUTDOWN : Input system
+[17:24:07.282] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[18:00:15.992] :           
+[18:00:15.993] :           ---- File system initialization ------------------------------------
+[18:00:15.993] :           working directory : d:/NAVY_VIS/engine/
+[18:00:15.993] :           --------------------------------------------------------------------
+[18:00:15.994] :           
+[18:00:15.994] :           INIT : Input system
+[18:00:15.994] :           
+[18:00:15.994] :           ---- System initialization -----------------------------------------
+[18:00:15.995] :           power : AC
+[18:00:15.995] :           memory : 1945 Mb of 4094 Mb
+[18:00:15.995] :           checking cpu clock...
+[18:00:16.995] :           cpu clock : 2400 MHz
+[18:00:16.995] :           --------------------------------------------------------------------
+[18:00:16.995] :           
+[18:00:16.996] :           INIT : Configuration system
+[18:00:17.089] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[18:00:17.089] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[18:00:17.090] :           Loading configuration...
+[18:00:17.090] :           compiling : default.lua
+[18:00:17.091] : [ ERROR ] cannot open default.lua: No such file or directory
+[18:00:17.092] :           compiling : config.lua
+[18:00:17.092] :           compiling : startup.lua
+[18:00:17.094] : [ ERROR ] cannot open startup.lua: No such file or directory
+[18:00:17.095] :           Loading DLL : rend_d3d9.dll
+[18:00:17.145] : [ ERROR ] App init : fuck
+[18:00:17.145] :           -
+[18:00:17.147] :           SHUTDOWN : Configuration system
+[18:00:17.147] :           SHUTDOWN : System
+[18:00:17.148] :           SHUTDOWN : Input system
+[18:00:17.149] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[18:00:36.561] :           
+[18:00:36.561] :           ---- File system initialization ------------------------------------
+[18:00:36.562] :           working directory : d:/NAVY_VIS/engine/
+[18:00:36.562] :           --------------------------------------------------------------------
+[18:00:36.562] :           
+[18:00:36.563] :           INIT : Input system
+[18:00:36.563] :           
+[18:00:36.563] :           ---- System initialization -----------------------------------------
+[18:00:36.563] :           power : AC
+[18:00:36.564] :           memory : 1959 Mb of 4094 Mb
+[18:00:36.564] :           checking cpu clock...
+[18:00:37.564] :           cpu clock : 2401 MHz
+[18:00:37.564] :           --------------------------------------------------------------------
+[18:00:37.564] :           
+[18:00:37.565] :           INIT : Configuration system
+[18:00:37.657] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[18:00:37.658] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[18:00:37.659] :           Loading configuration...
+[18:00:37.659] :           compiling : default.lua
+[18:00:37.660] : [ ERROR ] cannot open default.lua: No such file or directory
+[18:00:37.660] :           compiling : config.lua
+[18:00:37.661] :           compiling : startup.lua
+[18:00:37.663] : [ ERROR ] cannot open startup.lua: No such file or directory
+[18:00:37.663] :           Loading DLL : rend_d3d9.dll
+[18:00:37.711] : [ ERROR ] App init : fuck
+[18:00:37.712] :           Unloading DLL : rend_d3d9.dll
+[18:00:37.716] :           -
+[18:00:37.717] :           SHUTDOWN : Configuration system
+[18:00:37.718] :           SHUTDOWN : System
+[18:00:37.719] :           SHUTDOWN : Input system
+[18:00:37.720] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[18:02:06.511] :           
+[18:02:06.511] :           ---- File system initialization ------------------------------------
+[18:02:06.512] :           working directory : d:/NAVY_VIS/engine/
+[18:02:06.512] :           --------------------------------------------------------------------
+[18:02:06.512] :           
+[18:02:06.512] :           INIT : Input system
+[18:02:06.513] :           
+[18:02:06.513] :           ---- System initialization -----------------------------------------
+[18:02:06.513] :           power : AC
+[18:02:06.514] :           memory : 1953 Mb of 4094 Mb
+[18:02:06.514] :           checking cpu clock...
+[18:02:07.514] :           cpu clock : 2401 MHz
+[18:02:07.514] :           --------------------------------------------------------------------
+[18:02:07.514] :           
+[18:02:07.515] :           INIT : Configuration system
+[18:02:07.607] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[18:02:07.607] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[18:02:07.608] :           Loading configuration...
+[18:02:07.608] :           compiling : default.lua
+[18:02:07.609] : [ ERROR ] cannot open default.lua: No such file or directory
+[18:02:07.610] :           compiling : config.lua
+[18:02:07.610] :           compiling : startup.lua
+[18:02:07.612] : [ ERROR ] cannot open startup.lua: No such file or directory
+[18:02:07.613] :           Loading DLL : rend_d3d9.dll
+[18:02:07.683] : [ ERROR ] App init : fuck
+[18:02:07.684] :           -
+[18:02:07.685] :           SHUTDOWN : Configuration system
+[18:02:07.686] :           SHUTDOWN : System
+[18:02:07.687] :           SHUTDOWN : Input system
+[18:02:07.687] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[18:02:25.360] :           
+[18:02:25.360] :           ---- File system initialization ------------------------------------
+[18:02:25.361] :           working directory : d:/NAVY_VIS/engine/
+[18:02:25.361] :           --------------------------------------------------------------------
+[18:02:25.361] :           
+[18:02:25.362] :           INIT : Input system
+[18:02:25.362] :           
+[18:02:25.362] :           ---- System initialization -----------------------------------------
+[18:02:25.362] :           power : AC
+[18:02:25.362] :           memory : 1959 Mb of 4094 Mb
+[18:02:25.363] :           checking cpu clock...
+[18:02:26.363] :           cpu clock : 2402 MHz
+[18:02:26.363] :           --------------------------------------------------------------------
+[18:02:26.363] :           
+[18:02:26.364] :           INIT : Configuration system
+[18:02:26.460] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[18:02:26.460] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[18:02:26.461] :           Loading configuration...
+[18:02:26.461] :           compiling : default.lua
+[18:02:26.462] : [ ERROR ] cannot open default.lua: No such file or directory
+[18:02:26.462] :           compiling : config.lua
+[18:02:26.463] :           compiling : startup.lua
+[18:02:26.465] : [ ERROR ] cannot open startup.lua: No such file or directory
+[18:02:26.465] :           Loading DLL : rend_d3d9.dll
+[18:02:26.512] : [ ERROR ] App init : fuck
+[18:02:26.513] :           -
+[18:02:26.514] :           SHUTDOWN : Configuration system
+[18:02:26.515] :           SHUTDOWN : System
+[18:02:26.515] :           SHUTDOWN : Input system
+[18:02:26.516] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[18:03:23.318] :           
+[18:03:23.319] :           ---- File system initialization ------------------------------------
+[18:03:23.319] :           working directory : d:/NAVY_VIS/engine/
+[18:03:23.319] :           --------------------------------------------------------------------
+[18:03:23.320] :           
+[18:03:23.320] :           INIT : Input system
+[18:03:23.320] :           
+[18:03:23.320] :           ---- System initialization -----------------------------------------
+[18:03:23.321] :           power : AC
+[18:03:23.321] :           memory : 1954 Mb of 4094 Mb
+[18:03:23.321] :           checking cpu clock...
+[18:03:24.321] :           cpu clock : 2401 MHz
+[18:03:24.321] :           --------------------------------------------------------------------
+[18:03:24.321] :           
+[18:03:24.322] :           INIT : Configuration system
+[18:03:24.414] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[18:03:24.414] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[18:03:24.415] :           Loading configuration...
+[18:03:24.415] :           compiling : default.lua
+[18:03:24.416] : [ ERROR ] cannot open default.lua: No such file or directory
+[18:03:24.416] :           compiling : config.lua
+[18:03:24.417] :           compiling : startup.lua
+[18:03:24.418] : [ ERROR ] cannot open startup.lua: No such file or directory
+[18:03:24.419] :           Loading DLL : rend_d3d9.dll
+[18:03:24.465] : [ ERROR ] App init : fuck
+[18:03:24.466] :           -
+[18:03:24.467] :           SHUTDOWN : Configuration system
+[18:03:24.467] :           SHUTDOWN : System
+[18:03:24.468] :           SHUTDOWN : Input system
+[18:03:24.469] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[18:05:10.217] :           
+[18:05:10.217] :           ---- File system initialization ------------------------------------
+[18:05:10.217] :           working directory : d:/NAVY_VIS/engine/
+[18:05:10.218] :           --------------------------------------------------------------------
+[18:05:10.218] :           
+[18:05:10.218] :           INIT : Input system
+[18:05:10.218] :           
+[18:05:10.219] :           ---- System initialization -----------------------------------------
+[18:05:10.219] :           power : AC
+[18:05:10.219] :           memory : 1944 Mb of 4094 Mb
+[18:05:10.219] :           checking cpu clock...
+[18:05:11.220] :           cpu clock : 2402 MHz
+[18:05:11.220] :           --------------------------------------------------------------------
+[18:05:11.220] :           
+[18:05:11.220] :           INIT : Configuration system
+[18:05:11.311] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[18:05:11.312] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[18:05:11.313] :           Loading configuration...
+[18:05:11.313] :           compiling : default.lua
+[18:05:11.314] : [ ERROR ] cannot open default.lua: No such file or directory
+[18:05:11.315] :           compiling : config.lua
+[18:05:11.315] :           compiling : startup.lua
+[18:05:11.317] : [ ERROR ] cannot open startup.lua: No such file or directory
+[18:05:11.318] :           Loading DLL : rend_d3d9.dll
+[18:05:11.356] :           
+[18:05:11.357] :           ---- Direct3D rendering system initialization ----------------------
+[18:05:11.373] :           Selected mode : 800x600 W
+[18:05:11.384] :           D3D_SDK_VERSION : 0x80000020
+[18:05:11.385] :           Creating Direct3D
+[18:05:11.422] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[18:05:11.423] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[18:05:11.424] :           Creating Direct3D Device
+[18:05:11.534] :           Checking device :
+[18:05:11.534] :             INTZ depth stencil is supported
+[18:05:11.534] :             NULL render target is supported
+[18:05:11.535] :           INIT : Draw 2D
+[18:05:11.535] :           compiling : shaders/ui.fx
+[18:05:11.552] :           INIT : Texture manager
+[18:05:11.553] :           INIT : Render target manager
+[18:05:11.553] :           INIT : Model manager
+[18:05:11.554] :           --------------------------------------------------------------------
+[18:05:11.554] :           
+[18:05:11.555] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[18:05:11.610] :           INIT : PhysX allocator
+[18:05:11.611] :           
+[18:05:11.611] :           ---- SciVis initialization -----------------------------------------
+[18:05:11.611] :           INIT : PhysX
+[18:05:12.004] :           --------------------------------------------------------------------
+[18:05:12.005] :           
+[18:05:15.974] :           
+[18:05:15.976] :           ---- SciVis shutting down ------------------------------------------
+[18:05:15.977] :           SHUTDOWN : PhysX
+[18:05:16.007] :           --------------------------------------------------------------------
+[18:05:16.009] :           
+[18:05:16.010] :           SHUTDOWN : PhysX allocator
+[18:05:16.011] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[18:05:16.016] :           
+[18:05:16.017] :           ---- Direct3D rendering system shutting down -----------------------
+[18:05:16.019] :           SHUTDOWN : Model manager
+[18:05:16.021] :           SHUTDOWN : Render target manager
+[18:05:16.022] :           SHUTDOWN : Texture manager
+[18:05:16.025] :           SHUTDOWN : Draw 2D
+[18:05:16.027] :           Releasing Direct3D Device
+[18:05:16.050] :           Releasing Direct3D
+[18:05:16.057] :           --------------------------------------------------------------------
+[18:05:16.060] :           
+[18:05:16.062] :           Unloading DLL : rend_d3d9.dll
+[18:05:16.068] :           Saving configuration...
+[18:05:16.100] :           SHUTDOWN : Configuration system
+[18:05:16.102] :           SHUTDOWN : System
+[18:05:16.103] :           SHUTDOWN : Input system
+[18:05:16.104] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[18:06:47.228] :           
+[18:06:47.228] :           ---- File system initialization ------------------------------------
+[18:06:47.228] :           working directory : d:/NAVY_VIS/engine/
+[18:06:47.228] :           --------------------------------------------------------------------
+[18:06:47.228] :           
+[18:06:47.228] :           INIT : Input system
+[18:06:47.228] :           
+[18:06:47.228] :           ---- System initialization -----------------------------------------
+[18:06:47.228] :           power : AC
+[18:06:47.229] :           memory : 1962 Mb of 4094 Mb
+[18:06:47.229] :           checking cpu clock...
+[18:06:48.229] :           cpu clock : 2402 MHz
+[18:06:48.229] :           --------------------------------------------------------------------
+[18:06:48.229] :           
+[18:06:48.229] :           INIT : Configuration system
+[18:06:48.265] :           Engine version : Engine 2.10.6 win-x86 debug Aug 11 2010
+[18:06:48.266] :           Command line   : "d:\NAVY_VIS\engine\launch.exe"  -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll" 
+[18:06:48.266] :           Loading configuration...
+[18:06:48.266] :           compiling : default.lua
+[18:06:48.266] : [ ERROR ] cannot open default.lua: No such file or directory
+[18:06:48.266] :           compiling : config.lua
+[18:06:48.267] :           compiling : startup.lua
+[18:06:48.267] : [ ERROR ] cannot open startup.lua: No such file or directory
+[18:06:48.267] :           Loading DLL : rend_d3d9.dll
+[18:06:48.273] :           
+[18:06:48.273] :           ---- Direct3D rendering system initialization ----------------------
+[18:06:48.277] :           Selected mode : 800x600 W
+[18:06:48.286] :           D3D_SDK_VERSION : 0x80000020
+[18:06:48.286] :           Creating Direct3D
+[18:06:48.321] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[18:06:48.321] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[18:06:48.321] :           Creating Direct3D Device
+[18:06:48.395] :           Checking device :
+[18:06:48.395] :             INTZ depth stencil is supported
+[18:06:48.396] :             NULL render target is supported
+[18:06:48.396] :           INIT : Draw 2D
+[18:06:48.396] :           compiling : shaders/ui.fx
+[18:06:48.407] :           INIT : Texture manager
+[18:06:48.407] :           INIT : Render target manager
+[18:06:48.407] :           INIT : Model manager
+[18:06:48.408] :           --------------------------------------------------------------------
+[18:06:48.408] :           
+[18:06:48.408] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[18:06:48.412] :           INIT : PhysX allocator
+[18:06:48.413] :           
+[18:06:48.413] :           ---- SciVis initialization -----------------------------------------
+[18:06:48.413] :           INIT : PhysX
+[18:06:48.739] :           --------------------------------------------------------------------
+[18:06:48.741] :           
+[18:06:53.092] :           
+[18:06:53.093] :           ---- SciVis shutting down ------------------------------------------
+[18:06:53.095] :           SHUTDOWN : PhysX
+[18:06:53.125] :           --------------------------------------------------------------------
+[18:06:53.126] :           
+[18:06:53.128] :           SHUTDOWN : PhysX allocator
+[18:06:53.140] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[18:06:53.142] :           
+[18:06:53.143] :           ---- Direct3D rendering system shutting down -----------------------
+[18:06:53.145] :           SHUTDOWN : Model manager
+[18:06:53.146] :           SHUTDOWN : Render target manager
+[18:06:53.148] :           SHUTDOWN : Texture manager
+[18:06:53.149] :           SHUTDOWN : Draw 2D
+[18:06:53.151] :           Releasing Direct3D Device
+[18:06:53.167] :           Releasing Direct3D
+[18:06:53.179] :           --------------------------------------------------------------------
+[18:06:53.185] :           
+[18:06:53.187] :           Unloading DLL : rend_d3d9.dll
+[18:06:53.188] :           Saving configuration...
+[18:06:53.212] :           SHUTDOWN : Configuration system
+[18:06:53.213] :           SHUTDOWN : System
+[18:06:53.213] :           SHUTDOWN : Input system
+[18:06:53.214] :           SHUTDOWN : File system
