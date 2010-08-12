@@ -1275,3 +1275,225 @@
 [18:06:53.213] :           SHUTDOWN : System
 [18:06:53.213] :           SHUTDOWN : Input system
 [18:06:53.214] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[11:40:11.958] :           
+[11:40:11.967] :           ---- File system initialization ------------------------------------
+[11:40:11.968] :           working directory : d:/NAVY_VIS/engine/
+[11:40:11.968] :           --------------------------------------------------------------------
+[11:40:11.968] :           
+[11:40:11.968] :           INIT : Input system
+[11:40:11.969] :           
+[11:40:11.969] :           ---- System initialization -----------------------------------------
+[11:40:11.969] :           power : AC
+[11:40:11.969] :           memory : 1649 Mb of 4094 Mb
+[11:40:11.970] :           checking cpu clock...
+[11:40:12.970] :           cpu clock : 2402 MHz
+[11:40:12.970] :           --------------------------------------------------------------------
+[11:40:12.970] :           
+[11:40:12.971] :           INIT : Configuration system
+[11:40:13.062] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[11:40:13.063] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[11:40:13.063] :           Loading configuration...
+[11:40:13.063] :           compiling : default.lua
+[11:40:13.064] : [ ERROR ] cannot open default.lua: No such file or directory
+[11:40:13.065] :           compiling : config.lua
+[11:40:13.066] :           compiling : startup.lua
+[11:40:13.067] : [ ERROR ] cannot open startup.lua: No such file or directory
+[11:40:13.068] :           Loading DLL : rend_d3d9.dll
+[11:40:13.109] :           
+[11:40:13.110] :           ---- Direct3D rendering system initialization ----------------------
+[11:40:13.115] :           Selected mode : 800x600 W
+[11:40:13.126] :           D3D_SDK_VERSION : 0x80000020
+[11:40:13.128] :           Creating Direct3D
+[11:40:13.170] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[11:40:13.172] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[11:40:13.173] :           Creating Direct3D Device
+[11:40:13.279] :           Checking device :
+[11:40:13.281] :             INTZ depth stencil is supported
+[11:40:13.282] :             NULL render target is supported
+[11:40:13.288] :           INIT : Draw 2D
+[11:40:13.290] :           compiling : shaders/ui.fx
+[11:40:13.309] :           INIT : Texture manager
+[11:40:13.312] :           INIT : Render target manager
+[11:40:13.313] :           INIT : Model manager
+[11:40:13.315] :           --------------------------------------------------------------------
+[11:40:13.317] :           
+[11:40:13.320] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[11:40:13.378] :           INIT : PhysX allocator
+[11:40:13.380] :           
+[11:40:13.381] :           ---- SciVis initialization -----------------------------------------
+[11:40:13.382] :           INIT : PhysX
+[11:40:13.774] :           --------------------------------------------------------------------
+[11:40:13.775] :           
+[11:40:37.257] :           
+[11:40:37.259] :           ---- SciVis shutting down ------------------------------------------
+[11:40:37.260] :           SHUTDOWN : PhysX
+[11:40:37.294] :           --------------------------------------------------------------------
+[11:40:37.296] :           
+[11:40:37.297] :           SHUTDOWN : PhysX allocator
+[11:40:37.299] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[11:40:37.303] :           
+[11:40:37.305] :           ---- Direct3D rendering system shutting down -----------------------
+[11:40:37.306] :           SHUTDOWN : Model manager
+[11:40:37.307] :           SHUTDOWN : Render target manager
+[11:40:37.308] :           SHUTDOWN : Texture manager
+[11:40:37.310] :           SHUTDOWN : Draw 2D
+[11:40:37.311] :           Releasing Direct3D Device
+[11:40:37.331] :           Releasing Direct3D
+[11:40:37.337] :           --------------------------------------------------------------------
+[11:40:37.340] :           
+[11:40:37.345] :           Unloading DLL : rend_d3d9.dll
+[11:40:37.349] :           Saving configuration...
+[11:40:37.370] :           SHUTDOWN : Configuration system
+[11:40:37.371] :           SHUTDOWN : System
+[11:40:37.372] :           SHUTDOWN : Input system
+[11:40:37.373] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[12:15:44.324] :           
+[12:15:44.324] :           ---- File system initialization ------------------------------------
+[12:15:44.324] :           working directory : d:/NAVY_VIS/engine/
+[12:15:44.325] :           --------------------------------------------------------------------
+[12:15:44.325] :           
+[12:15:44.325] :           INIT : Input system
+[12:15:44.326] :           
+[12:15:44.326] :           ---- System initialization -----------------------------------------
+[12:15:44.326] :           power : AC
+[12:15:44.326] :           memory : 1826 Mb of 4094 Mb
+[12:15:44.327] :           checking cpu clock...
+[12:15:45.327] :           cpu clock : 2402 MHz
+[12:15:45.327] :           --------------------------------------------------------------------
+[12:15:45.327] :           
+[12:15:45.328] :           INIT : Configuration system
+[12:15:45.426] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[12:15:45.426] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[12:15:45.427] :           Loading configuration...
+[12:15:45.428] :           compiling : default.lua
+[12:15:45.432] : [ ERROR ] cannot open default.lua: No such file or directory
+[12:15:45.432] :           compiling : config.lua
+[12:15:45.433] :           compiling : startup.lua
+[12:15:45.434] : [ ERROR ] cannot open startup.lua: No such file or directory
+[12:15:45.435] :           Loading DLL : rend_d3d9.dll
+[12:15:45.475] :           
+[12:15:45.476] :           ---- Direct3D rendering system initialization ----------------------
+[12:15:45.481] :           Selected mode : 800x600 W
+[12:15:45.496] :           D3D_SDK_VERSION : 0x80000020
+[12:15:45.497] :           Creating Direct3D
+[12:15:45.539] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[12:15:45.540] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[12:15:45.541] :           Creating Direct3D Device
+[12:15:45.665] :           Checking device :
+[12:15:45.666] :             INTZ depth stencil is supported
+[12:15:45.667] :             NULL render target is supported
+[12:15:45.667] :           INIT : Draw 2D
+[12:15:45.668] :           compiling : shaders/ui.fx
+[12:15:45.686] :           INIT : Texture manager
+[12:15:45.687] :           INIT : Render target manager
+[12:15:45.687] :           INIT : Model manager
+[12:15:45.688] :           --------------------------------------------------------------------
+[12:15:45.688] :           
+[12:15:45.689] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[12:15:45.736] :           INIT : PhysX allocator
+[12:15:45.736] :           
+[12:15:45.737] :           ---- SciVis initialization -----------------------------------------
+[12:15:45.737] :           INIT : PhysX
+[12:15:46.102] :           --------------------------------------------------------------------
+[12:15:46.103] :           
+[12:15:47.161] :           
+[12:15:47.162] :           ---- SciVis shutting down ------------------------------------------
+[12:15:47.162] :           SHUTDOWN : PhysX
+[12:15:47.193] :           --------------------------------------------------------------------
+[12:15:47.193] :           
+[12:15:47.194] :           SHUTDOWN : PhysX allocator
+[12:15:47.194] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[12:15:47.198] :           
+[12:15:47.199] :           ---- Direct3D rendering system shutting down -----------------------
+[12:15:47.199] :           SHUTDOWN : Model manager
+[12:15:47.200] :           SHUTDOWN : Render target manager
+[12:15:47.200] :           SHUTDOWN : Texture manager
+[12:15:47.201] :           SHUTDOWN : Draw 2D
+[12:15:47.201] :           Releasing Direct3D Device
+[12:15:47.218] :           Releasing Direct3D
+[12:15:47.232] :           --------------------------------------------------------------------
+[12:15:47.235] :           
+[12:15:47.241] :           Unloading DLL : rend_d3d9.dll
+[12:15:47.247] :           Saving configuration...
+[12:15:47.274] :           SHUTDOWN : Configuration system
+[12:15:47.275] :           SHUTDOWN : System
+[12:15:47.275] :           SHUTDOWN : Input system
+[12:15:47.276] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[12:18:14.463] :           
+[12:18:14.463] :           ---- File system initialization ------------------------------------
+[12:18:14.463] :           working directory : d:/NAVY_VIS/engine/
+[12:18:14.464] :           --------------------------------------------------------------------
+[12:18:14.464] :           
+[12:18:14.464] :           INIT : Input system
+[12:18:14.464] :           
+[12:18:14.465] :           ---- System initialization -----------------------------------------
+[12:18:14.465] :           power : AC
+[12:18:14.465] :           memory : 1816 Mb of 4094 Mb
+[12:18:14.465] :           checking cpu clock...
+[12:18:15.465] :           cpu clock : 2400 MHz
+[12:18:15.465] :           --------------------------------------------------------------------
+[12:18:15.465] :           
+[12:18:15.466] :           INIT : Configuration system
+[12:18:15.558] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[12:18:15.558] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[12:18:15.559] :           Loading configuration...
+[12:18:15.559] :           compiling : default.lua
+[12:18:15.560] : [ ERROR ] cannot open default.lua: No such file or directory
+[12:18:15.561] :           compiling : config.lua
+[12:18:15.562] :           compiling : startup.lua
+[12:18:15.563] : [ ERROR ] cannot open startup.lua: No such file or directory
+[12:18:15.563] :           Loading DLL : rend_d3d9.dll
+[12:18:15.606] :           
+[12:18:15.607] :           ---- Direct3D rendering system initialization ----------------------
+[12:18:15.612] :           Selected mode : 800x600 W
+[12:18:15.623] :           D3D_SDK_VERSION : 0x80000020
+[12:18:15.624] :           Creating Direct3D
+[12:18:15.667] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[12:18:15.669] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[12:18:15.670] :           Creating Direct3D Device
+[12:18:15.791] :           Checking device :
+[12:18:15.792] :             INTZ depth stencil is supported
+[12:18:15.793] :             NULL render target is supported
+[12:18:15.794] :           INIT : Draw 2D
+[12:18:15.795] :           compiling : shaders/ui.fx
+[12:18:15.814] :           INIT : Texture manager
+[12:18:15.815] :           INIT : Render target manager
+[12:18:15.817] :           INIT : Model manager
+[12:18:15.818] :           --------------------------------------------------------------------
+[12:18:15.819] :           
+[12:18:15.820] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[12:18:15.872] :           INIT : PhysX allocator
+[12:18:15.873] :           
+[12:18:15.881] :           ---- SciVis initialization -----------------------------------------
+[12:18:15.882] :           INIT : PhysX
+[12:18:16.248] :           --------------------------------------------------------------------
+[12:18:16.249] :           
+[12:18:20.260] :           
+[12:18:20.262] :           ---- SciVis shutting down ------------------------------------------
+[12:18:20.262] :           SHUTDOWN : PhysX
+[12:18:20.294] :           --------------------------------------------------------------------
+[12:18:20.296] :           
+[12:18:20.297] :           SHUTDOWN : PhysX allocator
+[12:18:20.298] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[12:18:20.301] :           
+[12:18:20.303] :           ---- Direct3D rendering system shutting down -----------------------
+[12:18:20.304] :           SHUTDOWN : Model manager
+[12:18:20.305] :           SHUTDOWN : Render target manager
+[12:18:20.306] :           SHUTDOWN : Texture manager
+[12:18:20.307] :           SHUTDOWN : Draw 2D
+[12:18:20.308] :           Releasing Direct3D Device
+[12:18:20.326] :           Releasing Direct3D
+[12:18:20.332] :           --------------------------------------------------------------------
+[12:18:20.334] :           
+[12:18:20.335] :           Unloading DLL : rend_d3d9.dll
+[12:18:20.340] :           Saving configuration...
+[12:18:20.372] :           SHUTDOWN : Configuration system
+[12:18:20.373] :           SHUTDOWN : System
+[12:18:20.374] :           SHUTDOWN : Input system
+[12:18:20.374] :           SHUTDOWN : File system

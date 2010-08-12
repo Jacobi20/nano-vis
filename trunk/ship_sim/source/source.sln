@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Core", "_Core", "{CBD35502-72B1-4252-B4E8-2C75AF278C36}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{CBD35502-72B1-4252-B4E8-2C75AF278C36}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{347FD4E8-EFF0-4BB8-8CC3-08F8F91114F5}"
 EndProject
