@@ -35,6 +35,8 @@ ESciVis *self_ref<ESciVis>::self = NULL;
 	Nano vis :
 -----------------------------------------------------------------------------*/
 
+IWaving	*create_boukh_waving(lua_State *L, int idx);
+
 //
 //	ESciVis::ESciVis
 //
@@ -49,6 +51,10 @@ ESciVis::ESciVis( void )
 	lua_State *L = CoreLua();
 	
 	InitPhysX();
+	
+	scene	=	rs()->CreateFRScene();
+	
+	waving	=	create_boukh_waving(NULL, 0);
 	
 	//	register ship API :
 	ELuaShip::Register(L);
@@ -68,6 +74,8 @@ ESciVis::~ESciVis( void )
 	//	unregister ship API :
 	lua_State *L = CoreLua();
 	ELuaShip::Unregister(L);
+	
+	scene	=	NULL;
 
 	ShutdownPhysX();
 	
@@ -80,7 +88,35 @@ ESciVis::~ESciVis( void )
 //
 void ESciVis::Frame(uint dtime)
 {
-	//	TODO :
+	uint w, h;
+	rs()->GetScreenSize(w, h);
+	float aspect = (float)w / (float)h;
+
+	InputSystem()->SetInputMode( IN_KB_SCAN );
+	InputSystem()->ProcessInput();
+	
+	FramePhysX( dtime / 1000.0f );
+
+	if (rs()->BeginFrame()) {
+
+		if (scene) {
+		
+			CoreExecuteString( va("if sci_frame then sci_frame(%f); end;", dtime/1000.0f) );
+
+			float zn = 0.1;
+			float zf = 1000.0f;		
+			float tf = tanf(deg2rad(view.fov/2));
+			
+			scene->SetProjection( zn, zf, zf * tf * aspect, zf * tf );
+			scene->SetView( view.position, view.orient );
+			
+			scene->SetDirectLight( EVec4(1,1,1,1), EVec4(0,0,0,1), 1, 1);
+		
+			rs()->RenderFrame( scene );
+		}
+		
+		rs()->EndFrame();
+	}
 }
 
 

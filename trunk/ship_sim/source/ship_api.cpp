@@ -63,6 +63,7 @@ LUNA_IMP_METHOD	(ELuaShip,	get_hsf_momentum)
 LUNA_IMP_METHOD	(ELuaShip,	get_hsf_force	)
 LUNA_IMP_METHOD	(ELuaShip,	get_center_mass	)
 LUNA_IMP_METHOD	(ELuaShip,	get_right_arm	)
+LUNA_IMP_METHOD	(ELuaShip,	simulate		)
 LUNA_IMP_END	(ELuaShip					)
 
 /*-----------------------------------------------------------------------------
@@ -264,4 +265,15 @@ int ELuaShip::get_right_arm( lua_State *L )
 
 	lua.SetNResults(1);
 	return 1;
+}
+
+
+int ELuaShip::simulate( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	float dt = lua.RequireNumber(1, "dtime");
+	
+	ship->Simulate( dt, NULL );
+	
+	return 0;
 }

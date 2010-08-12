@@ -29,10 +29,3 @@
 	Ship rendering stuff :
 -----------------------------------------------------------------------------*/
 
-//
-//	EShip::Render
-//
-void EShip::Render( ERendEnv_s *rend_env )
-{
-}
-
