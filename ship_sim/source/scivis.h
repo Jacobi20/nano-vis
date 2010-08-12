@@ -59,20 +59,31 @@ class ESciVis : public IGame, public self_ref<ESciVis>, public IUIDrawCB {
 
 		virtual void		RenderQuads		( uint quad_num, const EUIQuad *quads, EString image );	
 		virtual void		GetImageSize	( EString image, uint &width, uint &height ) ;
+		
+		IPxFRScene			GetFRScene		( void ) { return scene; }
 
 	public:
 		void		RegisterAPI			( void );
 		static int	remove_all_ships	( lua_State *L );
-		static int	render_view			( lua_State * L );
-		static int	reload_shaders		( lua_State * L );
+		static int	set_view			( lua_State *L );
 		
 	public:
 		float				global_simulation_time;
+		
+		struct {
+			float	fov;
+			EVec4	position;
+			EQuat	orient;
+		} view;
 	
 	protected:
+		IPxFRScene			scene;
+
+	public:	
 		IPxWaving			waving;
 		IPxTriMesh			mesh_sea;
 
+	protected:
 		//	PhysX stuff :		
 		void				InitPhysX		( void );
 		void				ShutdownPhysX	( void );

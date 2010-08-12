@@ -45,7 +45,7 @@ EShip::EShip( lua_State *L, int idx )
 	CONFIG_REGISTER_VAR(ship_show_voxels,	false		);
 	CONFIG_REGISTER_VAR(ship_show_submerge, false		);
 	CONFIG_REGISTER_VAR(ship_hsf_method,	"surface"	);
-
+	
 	SetResistance( 0 );
 }
 
@@ -58,6 +58,8 @@ EShip::~EShip( void )
 	if (ship_body) {
 		sci_vis->GetNxScene()->releaseActor( *ship_body );
 	}
+	
+	sci_vis->GetFRScene()->RemoveEntity( r_ent );
 }
 
 
@@ -68,6 +70,11 @@ void EShip::Simulate( float dtime, IPxWaving waving )
 {
 	self_time += dtime;
 	UpdateForces( dtime, waving );
+
+	EVec4 p;
+	EQuat q;	
+	GetPose(p, q);
+	r_ent->SetPose(p, q);
 }
 
 
@@ -122,7 +129,10 @@ void EShip::UpdateForces( float dtime, IPxWaving waving )
 	
 	NxVec3 cm = ship_body->getCMassLocalPosition();
 	ship_body->addForceAtLocalPos( gravity, cm );
-	
+
+	if (!waving) {
+		waving	=	sci_vis->waving;
+	}	
 	
 	UpdateHSF( dtime, waving );
 	UpdateHDF( dtime, waving );

@@ -61,6 +61,8 @@ class ELuaShip : public Luna<ELuaShip> {
 		
 		int	get_center_mass	( lua_State *L );		//
 		
+		int	simulate		( lua_State *L );		//
+		
 	protected:
 		IPxShip	ship;
 	};

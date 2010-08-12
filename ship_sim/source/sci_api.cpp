@@ -31,6 +31,7 @@
 
 static const luaL_Reg navallib[] = {
 		{ "remove_all_ships",	ESciVis::remove_all_ships	},
+		{ "set_view",			ESciVis::set_view			},
 		{ NULL, NULL	},
 	};
 
@@ -55,10 +56,49 @@ void ESciVis::RegisterAPI( void )
 //
 int ESciVis::remove_all_ships( lua_State *L )
 {
+	LUA_INTERFACE(L);
 	ELuaShip::Unregister(L);
 	ELuaShip::Register(L);
 	self->ships.clear();
 	return 0;
 }
+
+
+//
+//	ESciVis::set_view
+//
+int ESciVis::set_view( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	
+	float	f		=	LuaRequireNumber(L, 1, "FOV");
+	EVec4	p		=	LuaRequireVec4	(L, 2, "view position");
+	float	yaw		=	LuaRequireNumber(L, 3, "yaw");
+	float	pitch	=	LuaRequireNumber(L, 4, "pitch");
+	float	roll	=	LuaRequireNumber(L, 5, "roll");
+	
+	if (f>=180) {
+		LOG_WARNING("set_view() : FOV >= 180");
+		f = 179;
+	}
+
+	EQuat	z_up		=	QuatRotationAxis( -PI/2.0f, EVec3(0,0,1)) * QuatRotationAxis(PI/2.0, EVec3(1,0,0));
+	EQuat	qrx			=	QuatRotationAxis( deg2rad(roll),	EVec3(1,0,0) );
+	EQuat	qry			=	QuatRotationAxis( deg2rad(pitch),	EVec3(0,1,0) );
+	EQuat	qrz			=	QuatRotationAxis( deg2rad(yaw),		EVec3(0,0,1) );
+
+	self->view.fov		=	f;
+	self->view.position	=	p;
+	self->view.orient	=	qrz * qry * qrx * z_up;
+	
+	return 0;
+}
+
+
+
+
+
+
+
 
 

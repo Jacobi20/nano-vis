@@ -36,7 +36,9 @@ void EShip::SetVisMesh( const EString path )
 {
 	LOGF("view mesh : %s", path.CStr());
 	mesh_vis		=	ge()->LoadMeshFromFile( path.CStr() );
-	//d3d_mesh_vis	=	sci_vis->CreateMesh( mesh_vis );
+	r_ent			=	sci_vis->GetFRScene()->AddEntity();
+	
+	r_ent->SetMesh( mesh_vis );
 }
 
 

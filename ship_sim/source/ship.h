@@ -36,7 +36,6 @@ class EShip : public IShip {
 		//	general :		
 		virtual EString		Name				( void ) const { return name; }
 		virtual void		Simulate			( float dtime, IPxWaving waving );
-		virtual void		Render				( ERendEnv_s *rend_env );
 
 		//	ship properties :
 		virtual void		GetPose				( EVec4 &position, EQuat &orient );
@@ -60,6 +59,8 @@ class EShip : public IShip {
 		virtual EVec3		GetInertiaMomentum	( EVec3 axis );
 
 	protected:
+		IPxFREntity			r_ent;
+	
 		EPlane				GetShipXOZPlane		( void );
 	
 		EString				name;

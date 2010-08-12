@@ -57,7 +57,6 @@ class IShip : public ICoreObject {
 		virtual EString		Name				( void ) const = 0;
 		
 		virtual void		Simulate			( float dtime, IPxWaving waving ) = 0;
-		virtual void		Render				( ERendEnv_s *rend_env ) = 0;
 		
 		virtual void		GetPose				( EVec4 &position, EQuat &orient ) = 0;
 		virtual void		SetPose				( EVec4 &position, EQuat &orient ) = 0;

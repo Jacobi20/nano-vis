@@ -1497,3 +1497,2416 @@
 [12:18:20.373] :           SHUTDOWN : System
 [12:18:20.374] :           SHUTDOWN : Input system
 [12:18:20.374] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:31:37.232] :           
+[15:31:37.232] :           ---- File system initialization ------------------------------------
+[15:31:37.233] :           working directory : d:/NAVY_VIS/engine/
+[15:31:37.233] :           --------------------------------------------------------------------
+[15:31:37.233] :           
+[15:31:37.234] :           INIT : Input system
+[15:31:37.234] :           
+[15:31:37.234] :           ---- System initialization -----------------------------------------
+[15:31:37.234] :           power : AC
+[15:31:37.235] :           memory : 1578 Mb of 4094 Mb
+[15:31:37.235] :           checking cpu clock...
+[15:31:38.235] :           cpu clock : 2402 MHz
+[15:31:38.235] :           --------------------------------------------------------------------
+[15:31:38.235] :           
+[15:31:38.236] :           INIT : Configuration system
+[15:31:38.332] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[15:31:38.333] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:31:38.334] :           Loading configuration...
+[15:31:38.334] :           compiling : default.lua
+[15:31:38.335] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:31:38.335] :           compiling : config.lua
+[15:31:38.336] :           compiling : startup.lua
+[15:31:38.338] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:31:38.338] :           Loading DLL : rend_d3d9.dll
+[15:31:38.380] :           
+[15:31:38.381] :           ---- Direct3D rendering system initialization ----------------------
+[15:31:38.388] :           Selected mode : 800x600 W
+[15:31:38.401] :           D3D_SDK_VERSION : 0x80000020
+[15:31:38.403] :           Creating Direct3D
+[15:31:38.441] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:31:38.443] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:31:38.444] :           Creating Direct3D Device
+[15:31:38.551] :           Checking device :
+[15:31:38.553] :             INTZ depth stencil is supported
+[15:31:38.554] :             NULL render target is supported
+[15:31:38.556] :           INIT : Draw 2D
+[15:31:38.557] :           compiling : shaders/ui.fx
+[15:31:38.575] :           INIT : Texture manager
+[15:31:38.576] :           INIT : Render target manager
+[15:31:38.577] :           INIT : Model manager
+[15:31:38.578] :           --------------------------------------------------------------------
+[15:31:38.579] :           
+[15:31:38.580] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:31:38.631] :           INIT : PhysX allocator
+[15:31:38.633] :           
+[15:31:38.634] :           ---- SciVis initialization -----------------------------------------
+[15:31:38.635] :           INIT : PhysX
+[15:31:39.025] :           INIT : FR Scene
+[15:31:39.027] :           INIT : Shading system
+[15:31:39.028] :           compiling : shaders/shaders.lua
+[15:31:39.029] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[15:31:39.031] :           --------------------------------------------------------------------
+[15:31:39.032] :           
+[15:31:48.924] :           
+[15:31:48.925] :           ---- SciVis shutting down ------------------------------------------
+[15:31:48.927] :           SHUTDOWN : PhysX
+[15:31:48.959] :           --------------------------------------------------------------------
+[15:31:48.960] :           
+[15:31:48.961] :           SHUTDOWN : PhysX allocator
+[15:31:48.962] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[15:31:48.966] :           
+[15:31:48.967] :           ---- Direct3D rendering system shutting down -----------------------
+[15:31:48.968] :           SHUTDOWN : Model manager
+[15:31:48.969] :           SHUTDOWN : Render target manager
+[15:31:48.970] :           SHUTDOWN : Texture manager
+[15:31:48.971] :           SHUTDOWN : Draw 2D
+[15:31:48.972] :           Releasing Direct3D Device
+[15:31:48.986] :           Releasing Direct3D
+[15:31:48.991] :           --------------------------------------------------------------------
+[15:31:48.994] :           
+[15:31:48.995] :           SHUTDOWN : FR Scene
+[15:31:48.996] :           SHUTDOWN : Shading system
+[15:31:48.997] :           Unloading DLL : rend_d3d9.dll
+[15:31:49.002] :           Saving configuration...
+[15:31:49.036] :           SHUTDOWN : Configuration system
+[15:31:49.037] :           SHUTDOWN : System
+[15:31:49.038] :           SHUTDOWN : Input system
+[15:31:49.039] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:33:11.223] :           
+[15:33:11.223] :           ---- File system initialization ------------------------------------
+[15:33:11.223] :           working directory : d:/NAVY_VIS/engine/
+[15:33:11.223] :           --------------------------------------------------------------------
+[15:33:11.224] :           
+[15:33:11.224] :           INIT : Input system
+[15:33:11.224] :           
+[15:33:11.225] :           ---- System initialization -----------------------------------------
+[15:33:11.225] :           power : AC
+[15:33:11.225] :           memory : 1565 Mb of 4094 Mb
+[15:33:11.225] :           checking cpu clock...
+[15:33:12.225] :           cpu clock : 2400 MHz
+[15:33:12.225] :           --------------------------------------------------------------------
+[15:33:12.225] :           
+[15:33:12.226] :           INIT : Configuration system
+[15:33:12.316] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[15:33:12.317] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:33:12.318] :           Loading configuration...
+[15:33:12.318] :           compiling : default.lua
+[15:33:12.319] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:33:12.319] :           compiling : config.lua
+[15:33:12.320] :           compiling : startup.lua
+[15:33:12.321] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:33:12.322] :           Loading DLL : rend_d3d9.dll
+[15:33:12.363] :           
+[15:33:12.364] :           ---- Direct3D rendering system initialization ----------------------
+[15:33:12.369] :           Selected mode : 800x600 W
+[15:33:12.380] :           D3D_SDK_VERSION : 0x80000020
+[15:33:12.387] :           Creating Direct3D
+[15:33:12.435] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:33:12.437] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:33:12.438] :           Creating Direct3D Device
+[15:33:12.553] :           Checking device :
+[15:33:12.554] :             INTZ depth stencil is supported
+[15:33:12.555] :             NULL render target is supported
+[15:33:12.556] :           INIT : Draw 2D
+[15:33:12.557] :           compiling : shaders/ui.fx
+[15:33:12.575] :           INIT : Texture manager
+[15:33:12.576] :           INIT : Render target manager
+[15:33:12.577] :           INIT : Model manager
+[15:33:12.578] :           --------------------------------------------------------------------
+[15:33:12.579] :           
+[15:33:12.580] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:33:12.634] :           INIT : PhysX allocator
+[15:33:12.635] :           
+[15:33:12.636] :           ---- SciVis initialization -----------------------------------------
+[15:33:12.637] :           INIT : PhysX
+[15:33:13.009] :           INIT : FR Scene
+[15:33:13.010] :           INIT : Shading system
+[15:33:13.012] :           compiling : shaders/shaders.lua
+[15:33:13.014] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[15:33:13.015] :           --------------------------------------------------------------------
+[15:33:13.016] :           
+[15:33:15.789] :           
+[15:33:15.791] :           ---- SciVis shutting down ------------------------------------------
+[15:33:15.792] :           SHUTDOWN : PhysX
+[15:33:15.825] :           --------------------------------------------------------------------
+[15:33:15.826] :           
+[15:33:15.827] :           SHUTDOWN : PhysX allocator
+[15:33:15.828] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[15:33:15.832] :           
+[15:33:15.833] :           ---- Direct3D rendering system shutting down -----------------------
+[15:33:15.834] :           SHUTDOWN : Model manager
+[15:33:15.835] :           SHUTDOWN : Render target manager
+[15:33:15.836] :           SHUTDOWN : Texture manager
+[15:33:15.837] :           SHUTDOWN : Draw 2D
+[15:33:15.838] :           Releasing Direct3D Device
+[15:33:15.852] :           Releasing Direct3D
+[15:33:15.857] :           --------------------------------------------------------------------
+[15:33:15.859] :           
+[15:33:15.861] :           SHUTDOWN : FR Scene
+[15:33:15.862] :           SHUTDOWN : Shading system
+[15:33:15.863] :           Unloading DLL : rend_d3d9.dll
+[15:33:15.867] :           Saving configuration...
+[15:33:15.888] :           SHUTDOWN : Configuration system
+[15:33:15.889] :           SHUTDOWN : System
+[15:33:15.890] :           SHUTDOWN : Input system
+[15:33:15.890] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:33:29.653] :           
+[15:33:29.654] :           ---- File system initialization ------------------------------------
+[15:33:29.654] :           working directory : d:/NAVY_VIS/engine/
+[15:33:29.654] :           --------------------------------------------------------------------
+[15:33:29.655] :           
+[15:33:29.655] :           INIT : Input system
+[15:33:29.655] :           
+[15:33:29.655] :           ---- System initialization -----------------------------------------
+[15:33:29.656] :           power : AC
+[15:33:29.656] :           memory : 1571 Mb of 4094 Mb
+[15:33:29.656] :           checking cpu clock...
+[15:33:30.656] :           cpu clock : 2400 MHz
+[15:33:30.656] :           --------------------------------------------------------------------
+[15:33:30.656] :           
+[15:33:30.656] :           INIT : Configuration system
+[15:33:30.748] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[15:33:30.749] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:33:30.749] :           Loading configuration...
+[15:33:30.750] :           compiling : default.lua
+[15:33:30.751] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:33:30.751] :           compiling : config.lua
+[15:33:30.752] :           compiling : startup.lua
+[15:33:30.754] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:33:30.754] :           Loading DLL : rend_d3d9.dll
+[15:33:30.793] :           
+[15:33:30.794] :           ---- Direct3D rendering system initialization ----------------------
+[15:33:30.799] :           Selected mode : 800x600 W
+[15:33:30.812] :           D3D_SDK_VERSION : 0x80000020
+[15:33:30.813] :           Creating Direct3D
+[15:33:30.858] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:33:30.860] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:33:30.862] :           Creating Direct3D Device
+[15:33:30.973] :           Checking device :
+[15:33:30.975] :             INTZ depth stencil is supported
+[15:33:30.976] :             NULL render target is supported
+[15:33:30.977] :           INIT : Draw 2D
+[15:33:30.978] :           compiling : shaders/ui.fx
+[15:33:30.995] :           INIT : Texture manager
+[15:33:30.997] :           INIT : Render target manager
+[15:33:30.998] :           INIT : Model manager
+[15:33:30.999] :           --------------------------------------------------------------------
+[15:33:31.000] :           
+[15:33:31.001] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:33:31.051] :           INIT : PhysX allocator
+[15:33:31.057] :           
+[15:33:31.058] :           ---- SciVis initialization -----------------------------------------
+[15:33:31.059] :           INIT : PhysX
+[15:33:31.387] :           INIT : FR Scene
+[15:33:31.388] :           INIT : Shading system
+[15:33:31.389] :           compiling : shaders/shaders.lua
+[15:33:31.391] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[15:33:31.392] :           --------------------------------------------------------------------
+[15:33:31.393] :           
+[15:33:41.029] :           >  
+[15:33:41.030] :           > ---- creating U-boat ---- 
+[15:33:41.031] :           view mesh : ../scidata/uboat.esx|boat1
+[15:33:41.031] :           Loading : ../scidata/uboat.esx
+[15:33:41.060] : [ ERROR ] Lua: run.lua:114: exception : file '../scidata/uboat.esx' does not exist
+[15:35:29.483] :           
+[15:35:29.483] :           ---- SciVis shutting down ------------------------------------------
+[15:35:29.484] :           SHUTDOWN : PhysX
+[15:35:29.520] :           --------------------------------------------------------------------
+[15:35:29.522] :           
+[15:35:29.523] :           SHUTDOWN : PhysX allocator
+[15:35:29.524] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[15:35:29.528] :           
+[15:35:29.529] :           ---- Direct3D rendering system shutting down -----------------------
+[15:35:29.530] :           SHUTDOWN : Model manager
+[15:35:29.531] :           SHUTDOWN : Render target manager
+[15:35:29.532] :           SHUTDOWN : Texture manager
+[15:35:29.533] :           SHUTDOWN : Draw 2D
+[15:35:29.535] :           Releasing Direct3D Device
+[15:35:29.549] :           Releasing Direct3D
+[15:35:29.554] :           --------------------------------------------------------------------
+[15:35:29.556] :           
+[15:35:29.557] :           SHUTDOWN : FR Scene
+[15:35:29.562] :           SHUTDOWN : Shading system
+[15:35:29.562] :           Unloading DLL : rend_d3d9.dll
+[15:35:29.568] :           Saving configuration...
+[15:35:29.609] :           SHUTDOWN : Configuration system
+[15:35:29.610] :           SHUTDOWN : System
+[15:35:29.611] :           SHUTDOWN : Input system
+[15:35:29.611] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:36:08.651] :           
+[15:36:08.652] :           ---- File system initialization ------------------------------------
+[15:36:08.652] :           working directory : d:/NAVY_VIS/engine/
+[15:36:08.652] :           --------------------------------------------------------------------
+[15:36:08.653] :           
+[15:36:08.653] :           INIT : Input system
+[15:36:08.653] :           
+[15:36:08.654] :           ---- System initialization -----------------------------------------
+[15:36:08.654] :           power : AC
+[15:36:08.654] :           memory : 1567 Mb of 4094 Mb
+[15:36:08.654] :           checking cpu clock...
+[15:36:09.654] :           cpu clock : 2400 MHz
+[15:36:09.654] :           --------------------------------------------------------------------
+[15:36:09.654] :           
+[15:36:09.654] :           INIT : Configuration system
+[15:36:09.752] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[15:36:09.753] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:36:09.753] :           Loading configuration...
+[15:36:09.754] :           compiling : default.lua
+[15:36:09.754] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:36:09.755] :           compiling : config.lua
+[15:36:09.756] :           compiling : startup.lua
+[15:36:09.757] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:36:09.758] :           Loading DLL : rend_d3d9.dll
+[15:36:09.798] :           
+[15:36:09.799] :           ---- Direct3D rendering system initialization ----------------------
+[15:36:09.804] :           Selected mode : 800x600 W
+[15:36:09.815] :           D3D_SDK_VERSION : 0x80000020
+[15:36:09.816] :           Creating Direct3D
+[15:36:09.859] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:36:09.861] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:36:09.862] :           Creating Direct3D Device
+[15:36:09.975] :           Checking device :
+[15:36:09.977] :             INTZ depth stencil is supported
+[15:36:09.978] :             NULL render target is supported
+[15:36:09.979] :           INIT : Draw 2D
+[15:36:09.980] :           compiling : shaders/ui.fx
+[15:36:09.998] :           INIT : Texture manager
+[15:36:10.000] :           INIT : Render target manager
+[15:36:10.001] :           INIT : Model manager
+[15:36:10.003] :           --------------------------------------------------------------------
+[15:36:10.004] :           
+[15:36:10.005] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:36:10.057] :           INIT : PhysX allocator
+[15:36:10.059] :           
+[15:36:10.060] :           ---- SciVis initialization -----------------------------------------
+[15:36:10.061] :           INIT : PhysX
+[15:36:10.432] :           INIT : FR Scene
+[15:36:10.433] :           INIT : Shading system
+[15:36:10.434] :           compiling : shaders/shaders.lua
+[15:36:10.436] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[15:36:10.438] :           --------------------------------------------------------------------
+[15:36:10.439] :           
+[15:36:10.481] :           >  
+[15:36:10.482] :           > ---- creating U-boat ---- 
+[15:36:10.483] :           view mesh : uboat.esx|boat1
+[15:36:10.485] :           Loading : uboat.esx
+[15:36:14.842] :           compiling : shaders/surface.fx
+[15:36:14.876] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[15:36:14.878] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[15:36:14.879] :           HDF mesh  : uboat.esx|flowsurf2
+[15:36:14.880] :           HSF mesh  : uboat.esx|flowsurf2
+[15:36:14.882] :           RB mesh   : uboat.esx|stat
+[15:36:14.900] :           building voxels for : uboat.esx|flowsurf2
+[15:36:14.901] :           voxel size : 1
+[15:36:15.188] :           done : 3281 voxels
+[15:36:15.189] :           > ---- done ---- 
+[15:36:15.190] :           >  
+[15:36:15.192] :           Loading : *black
+
+-------------------------------------------------------------------------------
+[15:38:20.192] :           
+[15:38:20.192] :           ---- File system initialization ------------------------------------
+[15:38:20.192] :           working directory : d:/NAVY_VIS/engine/
+[15:38:20.192] :           --------------------------------------------------------------------
+[15:38:20.193] :           
+[15:38:20.193] :           INIT : Input system
+[15:38:20.193] :           
+[15:38:20.193] :           ---- System initialization -----------------------------------------
+[15:38:20.194] :           power : AC
+[15:38:20.194] :           memory : 1563 Mb of 4094 Mb
+[15:38:20.194] :           checking cpu clock...
+[15:38:21.194] :           cpu clock : 2400 MHz
+[15:38:21.194] :           --------------------------------------------------------------------
+[15:38:21.194] :           
+[15:38:21.194] :           INIT : Configuration system
+[15:38:21.286] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[15:38:21.287] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:38:21.288] :           Loading configuration...
+[15:38:21.288] :           compiling : default.lua
+[15:38:21.289] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:38:21.290] :           compiling : config.lua
+[15:38:21.291] :           compiling : startup.lua
+[15:38:21.292] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:38:21.293] :           Loading DLL : rend_d3d9.dll
+[15:38:21.334] :           
+[15:38:21.334] :           ---- Direct3D rendering system initialization ----------------------
+[15:38:21.340] :           Selected mode : 800x600 W
+[15:38:21.352] :           D3D_SDK_VERSION : 0x80000020
+[15:38:21.353] :           Creating Direct3D
+[15:38:21.396] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:38:21.398] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:38:21.399] :           Creating Direct3D Device
+[15:38:21.513] :           Checking device :
+[15:38:21.515] :             INTZ depth stencil is supported
+[15:38:21.516] :             NULL render target is supported
+[15:38:21.517] :           INIT : Draw 2D
+[15:38:21.518] :           compiling : shaders/ui.fx
+[15:38:21.537] :           INIT : Texture manager
+[15:38:21.538] :           INIT : Render target manager
+[15:38:21.539] :           INIT : Model manager
+[15:38:21.540] :           --------------------------------------------------------------------
+[15:38:21.541] :           
+[15:38:21.543] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:38:21.593] :           INIT : PhysX allocator
+[15:38:21.594] :           
+[15:38:21.595] :           ---- SciVis initialization -----------------------------------------
+[15:38:21.597] :           INIT : PhysX
+[15:38:21.958] :           INIT : FR Scene
+[15:38:21.960] :           INIT : Shading system
+[15:38:21.961] :           compiling : shaders/shaders.lua
+[15:38:21.963] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[15:38:21.964] :           --------------------------------------------------------------------
+[15:38:21.965] :           
+[15:38:22.078] :           >  
+[15:38:22.079] :           > ---- creating U-boat ---- 
+[15:38:22.080] :           view mesh : uboat.esx|boat1
+[15:38:22.082] :           Loading : uboat.esx
+[15:38:26.372] :           compiling : shaders/surface.fx
+[15:38:26.405] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[15:38:26.407] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[15:38:26.409] :           HDF mesh  : uboat.esx|flowsurf2
+[15:38:26.409] :           HSF mesh  : uboat.esx|flowsurf2
+[15:38:26.410] :           RB mesh   : uboat.esx|stat
+[15:38:26.412] :           building voxels for : uboat.esx|flowsurf2
+[15:38:26.413] :           voxel size : 1
+[15:38:26.697] :           done : 3281 voxels
+[15:38:26.698] :           > ---- done ---- 
+[15:38:26.699] :           >  
+[15:38:26.701] :           Loading : *black
+[15:38:42.133] :           
+[15:38:42.135] :           ---- SciVis shutting down ------------------------------------------
+[15:38:42.137] :           SHUTDOWN : PhysX
+[15:38:42.171] :           --------------------------------------------------------------------
+[15:38:42.173] :           
+[15:38:42.174] :           SHUTDOWN : PhysX allocator
+[15:38:42.175] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[15:38:42.179] :           
+[15:38:42.181] :           ---- Direct3D rendering system shutting down -----------------------
+[15:38:42.182] :           SHUTDOWN : Model manager
+[15:38:42.183] :           SHUTDOWN : Render target manager
+[15:38:42.184] :           SHUTDOWN : Texture manager
+[15:38:42.185] :           SHUTDOWN : Draw 2D
+[15:38:42.186] :           Releasing Direct3D Device
+[15:38:42.187] :           Releasing Direct3D
+[15:38:42.191] :           --------------------------------------------------------------------
+[15:38:42.193] :           
+[15:38:42.194] :           SHUTDOWN : FR Scene
+[15:38:42.195] :           SHUTDOWN : Shading system
+[15:38:42.196] :           Unloading DLL : rend_d3d9.dll
+[15:38:42.201] :           Saving configuration...
+[15:38:42.232] :           SHUTDOWN : Configuration system
+[15:38:42.248] :           SHUTDOWN : System
+[15:38:42.249] :           SHUTDOWN : Input system
+[15:38:42.250] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:40:01.425] :           
+[15:40:01.425] :           ---- File system initialization ------------------------------------
+[15:40:01.425] :           working directory : d:/NAVY_VIS/engine/
+[15:40:01.426] :           --------------------------------------------------------------------
+[15:40:01.426] :           
+[15:40:01.427] :           INIT : Input system
+[15:40:01.427] :           
+[15:40:01.427] :           ---- System initialization -----------------------------------------
+[15:40:01.427] :           power : AC
+[15:40:01.427] :           memory : 1561 Mb of 4094 Mb
+[15:40:01.428] :           checking cpu clock...
+[15:40:02.428] :           cpu clock : 2401 MHz
+[15:40:02.428] :           --------------------------------------------------------------------
+[15:40:02.428] :           
+[15:40:02.428] :           INIT : Configuration system
+[15:40:02.521] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[15:40:02.522] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:40:02.522] :           Loading configuration...
+[15:40:02.523] :           compiling : default.lua
+[15:40:02.523] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:40:02.524] :           compiling : config.lua
+[15:40:02.525] :           compiling : startup.lua
+[15:40:02.526] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:40:02.527] :           Loading DLL : rend_d3d9.dll
+[15:40:02.567] :           
+[15:40:02.567] :           ---- Direct3D rendering system initialization ----------------------
+[15:40:02.573] :           Selected mode : 800x600 W
+[15:40:02.586] :           D3D_SDK_VERSION : 0x80000020
+[15:40:02.588] :           Creating Direct3D
+[15:40:02.633] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:40:02.635] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:40:02.637] :           Creating Direct3D Device
+[15:40:02.749] :           Checking device :
+[15:40:02.750] :             INTZ depth stencil is supported
+[15:40:02.751] :             NULL render target is supported
+[15:40:02.753] :           INIT : Draw 2D
+[15:40:02.754] :           compiling : shaders/ui.fx
+[15:40:02.772] :           INIT : Texture manager
+[15:40:02.773] :           INIT : Render target manager
+[15:40:02.774] :           INIT : Model manager
+[15:40:02.776] :           --------------------------------------------------------------------
+[15:40:02.777] :           
+[15:40:02.778] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:40:02.825] :           INIT : PhysX allocator
+[15:40:02.826] :           
+[15:40:02.828] :           ---- SciVis initialization -----------------------------------------
+[15:40:02.833] :           INIT : PhysX
+[15:40:03.196] :           INIT : FR Scene
+[15:40:03.198] :           INIT : Shading system
+[15:40:03.199] :           compiling : shaders/shaders.lua
+[15:40:03.202] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[15:40:03.203] :           --------------------------------------------------------------------
+[15:40:03.205] :           
+[15:40:03.837] :           >  
+[15:40:03.839] :           > ---- creating U-boat ---- 
+[15:40:03.840] :           view mesh : uboat.esx|boat1
+[15:40:03.841] :           Loading : uboat.esx
+[15:40:08.158] :           compiling : shaders/surface.fx
+[15:40:08.192] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[15:40:08.193] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[15:40:08.194] :           HDF mesh  : uboat.esx|flowsurf2
+[15:40:08.195] :           HSF mesh  : uboat.esx|flowsurf2
+[15:40:08.197] :           RB mesh   : uboat.esx|stat
+[15:40:08.199] :           building voxels for : uboat.esx|flowsurf2
+[15:40:08.200] :           voxel size : 1
+[15:40:08.486] :           done : 3281 voxels
+[15:40:08.487] :           > ---- done ---- 
+[15:40:08.488] :           >  
+[15:40:08.490] :           Loading : *black
+[15:40:10.951] :           >  
+[15:40:10.952] :           > ---- creating U-boat ---- 
+[15:40:10.954] :           view mesh : uboat.esx|boat1
+[15:40:11.729] :           HDF mesh  : uboat.esx|flowsurf2
+[15:40:11.731] :           HSF mesh  : uboat.esx|flowsurf2
+[15:40:11.733] :           RB mesh   : uboat.esx|stat
+[15:40:11.735] :           building voxels for : uboat.esx|flowsurf2
+[15:40:11.736] :           voxel size : 1
+[15:40:12.040] :           done : 3281 voxels
+[15:40:12.041] :           > ---- done ---- 
+[15:40:12.044] :           >  
+[15:40:17.362] :           
+[15:40:17.364] :           ---- SciVis shutting down ------------------------------------------
+[15:40:17.365] :           SHUTDOWN : PhysX
+[15:40:17.400] :           --------------------------------------------------------------------
+[15:40:17.401] :           
+[15:40:17.402] :           SHUTDOWN : PhysX allocator
+[15:40:17.403] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[15:40:17.407] :           
+[15:40:17.409] :           ---- Direct3D rendering system shutting down -----------------------
+[15:40:17.410] :           SHUTDOWN : Model manager
+[15:40:17.411] :           SHUTDOWN : Render target manager
+[15:40:17.412] :           SHUTDOWN : Texture manager
+[15:40:17.413] :           SHUTDOWN : Draw 2D
+[15:40:17.414] :           Releasing Direct3D Device
+[15:40:17.415] :           Releasing Direct3D
+[15:40:17.419] :           --------------------------------------------------------------------
+[15:40:17.422] :           
+[15:40:17.423] :           SHUTDOWN : FR Scene
+[15:40:17.424] :           SHUTDOWN : Shading system
+[15:40:17.425] :           Unloading DLL : rend_d3d9.dll
+[15:40:17.430] :           Saving configuration...
+[15:40:17.459] :           SHUTDOWN : Configuration system
+[15:40:17.476] :           SHUTDOWN : System
+[15:40:17.477] :           SHUTDOWN : Input system
+[15:40:17.478] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:40:32.031] :           
+[15:40:32.032] :           ---- File system initialization ------------------------------------
+[15:40:32.032] :           working directory : d:/NAVY_VIS/engine/
+[15:40:32.032] :           --------------------------------------------------------------------
+[15:40:32.032] :           
+[15:40:32.033] :           INIT : Input system
+[15:40:32.033] :           
+[15:40:32.033] :           ---- System initialization -----------------------------------------
+[15:40:32.033] :           power : AC
+[15:40:32.034] :           memory : 1556 Mb of 4094 Mb
+[15:40:32.034] :           checking cpu clock...
+[15:40:33.034] :           cpu clock : 2401 MHz
+[15:40:33.034] :           --------------------------------------------------------------------
+[15:40:33.034] :           
+[15:40:33.035] :           INIT : Configuration system
+[15:40:33.132] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[15:40:33.133] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:40:33.133] :           Loading configuration...
+[15:40:33.134] :           compiling : default.lua
+[15:40:33.134] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:40:33.135] :           compiling : config.lua
+[15:40:33.136] :           compiling : startup.lua
+[15:40:33.138] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:40:33.138] :           Loading DLL : rend_d3d9.dll
+[15:40:33.177] :           
+[15:40:33.178] :           ---- Direct3D rendering system initialization ----------------------
+[15:40:33.183] :           Selected mode : 800x600 W
+[15:40:33.206] :           D3D_SDK_VERSION : 0x80000020
+[15:40:33.208] :           Creating Direct3D
+[15:40:33.251] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:40:33.253] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:40:33.254] :           Creating Direct3D Device
+[15:40:33.354] :           Checking device :
+[15:40:33.355] :             INTZ depth stencil is supported
+[15:40:33.356] :             NULL render target is supported
+[15:40:33.357] :           INIT : Draw 2D
+[15:40:33.358] :           compiling : shaders/ui.fx
+[15:40:33.375] :           INIT : Texture manager
+[15:40:33.376] :           INIT : Render target manager
+[15:40:33.377] :           INIT : Model manager
+[15:40:33.378] :           --------------------------------------------------------------------
+[15:40:33.379] :           
+[15:40:33.380] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:40:33.427] :           INIT : PhysX allocator
+[15:40:33.428] :           
+[15:40:33.429] :           ---- SciVis initialization -----------------------------------------
+[15:40:33.430] :           INIT : PhysX
+[15:40:33.766] :           INIT : FR Scene
+[15:40:33.767] :           INIT : Shading system
+[15:40:33.768] :           compiling : shaders/shaders.lua
+[15:40:33.770] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[15:40:33.771] :           --------------------------------------------------------------------
+[15:40:33.772] :           
+[15:40:34.942] :           >  
+[15:40:34.944] :           > ---- creating U-boat ---- 
+[15:40:34.946] :           view mesh : uboat.esx|boat1
+[15:40:34.947] :           Loading : uboat.esx
+[15:40:39.267] :           compiling : shaders/surface.fx
+[15:40:39.301] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[15:40:39.302] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[15:40:39.304] :           HDF mesh  : uboat.esx|flowsurf2
+[15:40:39.305] :           HSF mesh  : uboat.esx|flowsurf2
+[15:40:39.306] :           RB mesh   : uboat.esx|stat
+[15:40:39.308] :           building voxels for : uboat.esx|flowsurf2
+[15:40:39.309] :           voxel size : 1
+[15:40:39.595] :           done : 3281 voxels
+[15:40:39.596] :           > ---- done ---- 
+[15:40:39.597] :           >  
+[15:40:39.599] :           Loading : *black
+[15:40:48.700] :           
+[15:40:48.702] :           ---- SciVis shutting down ------------------------------------------
+[15:40:48.703] :           SHUTDOWN : PhysX
+[15:40:48.737] :           --------------------------------------------------------------------
+[15:40:48.739] :           
+[15:40:48.740] :           SHUTDOWN : PhysX allocator
+[15:40:48.741] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[15:40:48.744] :           
+[15:40:48.746] :           ---- Direct3D rendering system shutting down -----------------------
+[15:40:48.747] :           SHUTDOWN : Model manager
+[15:40:48.748] :           SHUTDOWN : Render target manager
+[15:40:48.749] :           SHUTDOWN : Texture manager
+[15:40:48.750] :           SHUTDOWN : Draw 2D
+[15:40:48.751] :           Releasing Direct3D Device
+[15:40:48.752] :           Releasing Direct3D
+[15:40:48.756] :           --------------------------------------------------------------------
+[15:40:48.759] :           
+[15:40:48.761] :           SHUTDOWN : FR Scene
+[15:40:48.761] :           SHUTDOWN : Shading system
+[15:40:48.762] :           Unloading DLL : rend_d3d9.dll
+[15:40:48.767] :           Saving configuration...
+[15:40:48.793] :           SHUTDOWN : Configuration system
+[15:40:48.810] :           SHUTDOWN : System
+[15:40:48.811] :           SHUTDOWN : Input system
+[15:40:48.812] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:41:22.109] :           
+[15:41:22.109] :           ---- File system initialization ------------------------------------
+[15:41:22.110] :           working directory : d:/NAVY_VIS/engine/
+[15:41:22.110] :           --------------------------------------------------------------------
+[15:41:22.110] :           
+[15:41:22.110] :           INIT : Input system
+[15:41:22.111] :           
+[15:41:22.111] :           ---- System initialization -----------------------------------------
+[15:41:22.111] :           power : AC
+[15:41:22.111] :           memory : 1553 Mb of 4094 Mb
+[15:41:22.112] :           checking cpu clock...
+[15:41:23.112] :           cpu clock : 2402 MHz
+[15:41:23.112] :           --------------------------------------------------------------------
+[15:41:23.112] :           
+[15:41:23.113] :           INIT : Configuration system
+[15:41:23.205] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[15:41:23.206] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:41:23.206] :           Loading configuration...
+[15:41:23.207] :           compiling : default.lua
+[15:41:23.208] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:41:23.208] :           compiling : config.lua
+[15:41:23.209] :           compiling : startup.lua
+[15:41:23.211] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:41:23.211] :           Loading DLL : rend_d3d9.dll
+[15:41:23.251] :           
+[15:41:23.252] :           ---- Direct3D rendering system initialization ----------------------
+[15:41:23.258] :           Selected mode : 800x600 W
+[15:41:23.269] :           D3D_SDK_VERSION : 0x80000020
+[15:41:23.270] :           Creating Direct3D
+[15:41:23.313] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:41:23.315] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:41:23.316] :           Creating Direct3D Device
+[15:41:23.429] :           Checking device :
+[15:41:23.430] :             INTZ depth stencil is supported
+[15:41:23.431] :             NULL render target is supported
+[15:41:23.432] :           INIT : Draw 2D
+[15:41:23.433] :           compiling : shaders/ui.fx
+[15:41:23.450] :           INIT : Texture manager
+[15:41:23.451] :           INIT : Render target manager
+[15:41:23.452] :           INIT : Model manager
+[15:41:23.453] :           --------------------------------------------------------------------
+[15:41:23.454] :           
+[15:41:23.455] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:41:23.506] :           INIT : PhysX allocator
+[15:41:23.507] :           
+[15:41:23.508] :           ---- SciVis initialization -----------------------------------------
+[15:41:23.509] :           INIT : PhysX
+[15:41:23.872] :           INIT : FR Scene
+[15:41:23.873] :           INIT : Shading system
+[15:41:23.874] :           compiling : shaders/shaders.lua
+[15:41:23.876] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[15:41:23.877] :           --------------------------------------------------------------------
+[15:41:23.878] :           
+[15:41:24.289] :           >  
+[15:41:24.290] :           > ---- creating U-boat ---- 
+[15:41:24.292] :           view mesh : uboat.esx|boat1
+[15:41:24.293] :           Loading : uboat.esx
+[15:41:28.575] :           compiling : shaders/surface.fx
+[15:41:28.610] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[15:41:28.612] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[15:41:28.614] :           HDF mesh  : uboat.esx|flowsurf2
+[15:41:28.615] :           HSF mesh  : uboat.esx|flowsurf2
+[15:41:28.617] :           RB mesh   : uboat.esx|stat
+[15:41:28.619] :           building voxels for : uboat.esx|flowsurf2
+[15:41:28.621] :           voxel size : 1
+[15:41:28.906] :           done : 3281 voxels
+[15:41:28.907] :           > ---- done ---- 
+[15:41:28.908] :           >  
+[15:41:28.910] :           Loading : *black
+[15:41:58.106] :           
+[15:41:58.107] :           ---- SciVis shutting down ------------------------------------------
+[15:41:58.109] :           SHUTDOWN : PhysX
+[15:41:58.143] :           --------------------------------------------------------------------
+[15:41:58.144] :           
+[15:41:58.145] :           SHUTDOWN : PhysX allocator
+[15:41:58.147] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[15:41:58.151] :           
+[15:41:58.152] :           ---- Direct3D rendering system shutting down -----------------------
+[15:41:58.153] :           SHUTDOWN : Model manager
+[15:41:58.154] :           SHUTDOWN : Render target manager
+[15:41:58.155] :           SHUTDOWN : Texture manager
+[15:41:58.156] :           SHUTDOWN : Draw 2D
+[15:41:58.157] :           Releasing Direct3D Device
+[15:41:58.158] :           Releasing Direct3D
+[15:41:58.162] :           --------------------------------------------------------------------
+[15:41:58.164] :           
+[15:41:58.165] :           SHUTDOWN : FR Scene
+[15:41:58.166] :           SHUTDOWN : Shading system
+[15:41:58.167] :           Unloading DLL : rend_d3d9.dll
+[15:41:58.171] :           Saving configuration...
+[15:41:58.198] :           SHUTDOWN : Configuration system
+[15:41:58.215] :           SHUTDOWN : System
+[15:41:58.215] :           SHUTDOWN : Input system
+[15:41:58.216] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:47:31.828] :           
+[15:47:31.829] :           ---- File system initialization ------------------------------------
+[15:47:31.830] :           working directory : d:/NAVY_VIS/engine/
+[15:47:31.830] :           --------------------------------------------------------------------
+[15:47:31.831] :           
+[15:47:31.831] :           INIT : Input system
+[15:47:31.831] :           
+[15:47:31.831] :           ---- System initialization -----------------------------------------
+[15:47:31.832] :           power : AC
+[15:47:31.832] :           memory : 1559 Mb of 4094 Mb
+[15:47:31.832] :           checking cpu clock...
+[15:47:32.832] :           cpu clock : 2401 MHz
+[15:47:32.832] :           --------------------------------------------------------------------
+[15:47:32.832] :           
+[15:47:32.832] :           INIT : Configuration system
+[15:47:32.924] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[15:47:32.925] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:47:32.925] :           Loading configuration...
+[15:47:32.926] :           compiling : default.lua
+[15:47:32.927] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:47:32.927] :           compiling : config.lua
+[15:47:32.928] :           compiling : startup.lua
+[15:47:32.930] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:47:32.930] :           Loading DLL : rend_d3d9.dll
+[15:47:32.972] :           
+[15:47:32.973] :           ---- Direct3D rendering system initialization ----------------------
+[15:47:32.978] :           Selected mode : 800x600 W
+[15:47:32.990] :           D3D_SDK_VERSION : 0x80000020
+[15:47:32.991] :           Creating Direct3D
+[15:47:33.034] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:47:33.036] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:47:33.036] :           Creating Direct3D Device
+[15:47:33.145] :           Checking device :
+[15:47:33.146] :             INTZ depth stencil is supported
+[15:47:33.147] :             NULL render target is supported
+[15:47:33.147] :           INIT : Draw 2D
+[15:47:33.148] :           compiling : shaders/ui.fx
+[15:47:33.164] :           INIT : Texture manager
+[15:47:33.165] :           INIT : Render target manager
+[15:47:33.165] :           INIT : Model manager
+[15:47:33.166] :           --------------------------------------------------------------------
+[15:47:33.166] :           
+[15:47:33.167] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:47:33.217] :           INIT : PhysX allocator
+[15:47:33.217] :           
+[15:47:33.218] :           ---- SciVis initialization -----------------------------------------
+[15:47:33.218] :           INIT : PhysX
+[15:47:33.621] :           INIT : FR Scene
+[15:47:33.622] :           INIT : Shading system
+[15:47:33.623] :           compiling : shaders/shaders.lua
+[15:47:33.624] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[15:47:33.625] :           --------------------------------------------------------------------
+[15:47:33.631] :           
+[15:47:34.192] :           >  
+[15:47:34.193] :           > ---- creating U-boat ---- 
+[15:47:34.194] :           view mesh : uboat.esx|boat1
+[15:47:34.194] :           Loading : uboat.esx
+[15:47:38.454] :           compiling : shaders/surface.fx
+[15:47:38.488] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[15:47:38.489] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[15:47:38.490] :           HDF mesh  : uboat.esx|flowsurf2
+[15:47:38.490] :           HSF mesh  : uboat.esx|flowsurf2
+[15:47:38.491] :           RB mesh   : uboat.esx|stat
+[15:47:38.493] :           building voxels for : uboat.esx|flowsurf2
+[15:47:38.493] :           voxel size : 1
+[15:47:38.777] :           done : 3281 voxels
+[15:47:38.778] :           > ---- done ---- 
+[15:47:38.778] :           >  
+[15:47:38.779] :           Loading : *black
+[15:48:29.720] :           >  
+[15:48:29.721] :           > ---- creating U-boat ---- 
+[15:48:29.721] :           view mesh : uboat.esx|boat1
+[15:48:30.485] :           HDF mesh  : uboat.esx|flowsurf2
+[15:48:30.486] :           HSF mesh  : uboat.esx|flowsurf2
+[15:48:30.487] :           RB mesh   : uboat.esx|stat
+[15:48:30.488] :           building voxels for : uboat.esx|flowsurf2
+[15:48:30.488] :           voxel size : 1
+[15:48:30.775] :           done : 3281 voxels
+[15:48:30.776] :           > ---- done ---- 
+[15:48:30.777] :           >  
+[15:48:35.165] :           
+[15:48:35.166] :           ---- SciVis shutting down ------------------------------------------
+[15:48:35.167] :           SHUTDOWN : PhysX
+[15:48:35.202] :           --------------------------------------------------------------------
+[15:48:35.203] :           
+[15:48:35.204] :           SHUTDOWN : PhysX allocator
+[15:48:35.204] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[15:48:35.207] :           
+[15:48:35.208] :           ---- Direct3D rendering system shutting down -----------------------
+[15:48:35.208] :           SHUTDOWN : Model manager
+[15:48:35.209] :           SHUTDOWN : Render target manager
+[15:48:35.210] :           SHUTDOWN : Texture manager
+[15:48:35.210] :           SHUTDOWN : Draw 2D
+[15:48:35.211] :           Releasing Direct3D Device
+[15:48:35.211] :           Releasing Direct3D
+[15:48:35.215] :           --------------------------------------------------------------------
+[15:48:35.220] :           
+[15:48:35.223] :           SHUTDOWN : FR Scene
+[15:48:35.224] :           SHUTDOWN : Shading system
+[15:48:35.225] :           Unloading DLL : rend_d3d9.dll
+[15:48:35.228] :           Saving configuration...
+[15:48:35.252] :           SHUTDOWN : Configuration system
+[15:48:35.268] :           SHUTDOWN : System
+[15:48:35.269] :           SHUTDOWN : Input system
+[15:48:35.270] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:50:44.423] :           
+[15:50:44.423] :           ---- File system initialization ------------------------------------
+[15:50:44.423] :           working directory : d:/NAVY_VIS/engine/
+[15:50:44.424] :           --------------------------------------------------------------------
+[15:50:44.424] :           
+[15:50:44.424] :           INIT : Input system
+[15:50:44.425] :           
+[15:50:44.425] :           ---- System initialization -----------------------------------------
+[15:50:44.425] :           power : AC
+[15:50:44.425] :           memory : 1557 Mb of 4094 Mb
+[15:50:44.426] :           checking cpu clock...
+[15:50:45.426] :           cpu clock : 2402 MHz
+[15:50:45.426] :           --------------------------------------------------------------------
+[15:50:45.426] :           
+[15:50:45.427] :           INIT : Configuration system
+[15:50:45.523] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[15:50:45.524] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:50:45.524] :           Loading configuration...
+[15:50:45.525] :           compiling : default.lua
+[15:50:45.526] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:50:45.526] :           compiling : config.lua
+[15:50:45.527] :           compiling : startup.lua
+[15:50:45.529] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:50:45.529] :           Loading DLL : rend_d3d9.dll
+[15:50:45.570] :           
+[15:50:45.570] :           ---- Direct3D rendering system initialization ----------------------
+[15:50:45.575] :           Selected mode : 800x600 W
+[15:50:45.592] :           D3D_SDK_VERSION : 0x80000020
+[15:50:45.593] :           Creating Direct3D
+[15:50:45.635] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:50:45.638] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:50:45.639] :           Creating Direct3D Device
+[15:50:45.748] :           Checking device :
+[15:50:45.749] :             INTZ depth stencil is supported
+[15:50:45.750] :             NULL render target is supported
+[15:50:45.751] :           INIT : Draw 2D
+[15:50:45.752] :           compiling : shaders/ui.fx
+[15:50:45.769] :           INIT : Texture manager
+[15:50:45.771] :           INIT : Render target manager
+[15:50:45.772] :           INIT : Model manager
+[15:50:45.773] :           --------------------------------------------------------------------
+[15:50:45.774] :           
+[15:50:45.775] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:50:45.821] :           INIT : PhysX allocator
+[15:50:45.822] :           
+[15:50:45.823] :           ---- SciVis initialization -----------------------------------------
+[15:50:45.824] :           INIT : PhysX
+[15:50:46.315] :           INIT : FR Scene
+[15:50:46.316] :           INIT : Shading system
+[15:50:46.317] :           compiling : shaders/shaders.lua
+[15:50:46.319] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[15:50:46.320] :           --------------------------------------------------------------------
+[15:50:46.321] :           
+[15:50:46.917] :           >  
+[15:50:46.918] :           > ---- creating U-boat ---- 
+[15:50:46.919] :           view mesh : uboat.esx|boat1
+[15:50:46.920] :           Loading : uboat.esx
+[15:50:51.228] :           compiling : shaders/surface.fx
+[15:50:51.262] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[15:50:51.263] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[15:50:51.265] :           HDF mesh  : uboat.esx|flowsurf2
+[15:50:51.266] :           HSF mesh  : uboat.esx|flowsurf2
+[15:50:51.268] :           RB mesh   : uboat.esx|stat
+[15:50:51.270] :           building voxels for : uboat.esx|flowsurf2
+[15:50:51.271] :           voxel size : 1
+[15:50:51.557] :           done : 3281 voxels
+[15:50:51.558] :           > ---- done ---- 
+[15:50:51.560] :           >  
+[15:50:51.565] :           Loading : *black
+[15:50:58.062] :           >  
+[15:50:58.063] :           > ---- creating U-boat ---- 
+[15:50:58.063] :           view mesh : uboat.esx|boat1
+[15:50:58.837] :           HDF mesh  : uboat.esx|flowsurf2
+[15:50:58.838] :           HSF mesh  : uboat.esx|flowsurf2
+[15:50:58.839] :           RB mesh   : uboat.esx|stat
+[15:50:58.840] :           building voxels for : uboat.esx|flowsurf2
+[15:50:58.840] :           voxel size : 1
+[15:50:59.125] :           done : 3281 voxels
+[15:50:59.126] :           > ---- done ---- 
+[15:50:59.126] :           >  
+[15:51:02.843] :           >  
+[15:51:02.844] :           > ---- creating U-boat ---- 
+[15:51:02.844] :           view mesh : uboat.esx|boat1
+[15:51:03.619] :           HDF mesh  : uboat.esx|flowsurf2
+[15:51:03.620] :           HSF mesh  : uboat.esx|flowsurf2
+[15:51:03.620] :           RB mesh   : uboat.esx|stat
+[15:51:03.622] :           building voxels for : uboat.esx|flowsurf2
+[15:51:03.622] :           voxel size : 1
+[15:51:03.908] :           done : 3281 voxels
+[15:51:03.909] :           > ---- done ---- 
+[15:51:03.909] :           >  
+[15:51:06.908] :           >  
+[15:51:06.909] :           > ---- creating U-boat ---- 
+[15:51:06.909] :           view mesh : uboat.esx|boat1
+[15:51:07.688] :           HDF mesh  : uboat.esx|flowsurf2
+[15:51:07.688] :           HSF mesh  : uboat.esx|flowsurf2
+[15:51:07.689] :           RB mesh   : uboat.esx|stat
+[15:51:07.690] :           building voxels for : uboat.esx|flowsurf2
+[15:51:07.690] :           voxel size : 1
+[15:51:07.976] :           done : 3281 voxels
+[15:51:07.976] :           > ---- done ---- 
+[15:51:07.977] :           >  
+[15:51:12.555] :           >  
+[15:51:12.556] :           > ---- creating U-boat ---- 
+[15:51:12.556] :           view mesh : uboat.esx|boat1
+[15:51:13.335] :           HDF mesh  : uboat.esx|flowsurf2
+[15:51:13.336] :           HSF mesh  : uboat.esx|flowsurf2
+[15:51:13.337] :           RB mesh   : uboat.esx|stat
+[15:51:13.338] :           building voxels for : uboat.esx|flowsurf2
+[15:51:13.338] :           voxel size : 1
+[15:51:13.623] :           done : 3281 voxels
+[15:51:13.624] :           > ---- done ---- 
+[15:51:13.624] :           >  
+[15:51:20.985] :           >  
+[15:51:20.985] :           > ---- creating U-boat ---- 
+[15:51:20.986] :           view mesh : uboat.esx|boat1
+[15:51:21.765] :           HDF mesh  : uboat.esx|flowsurf2
+[15:51:21.766] :           HSF mesh  : uboat.esx|flowsurf2
+[15:51:21.767] :           RB mesh   : uboat.esx|stat
+[15:51:21.768] :           building voxels for : uboat.esx|flowsurf2
+[15:51:21.768] :           voxel size : 1
+[15:51:22.053] :           done : 3281 voxels
+[15:51:22.054] :           > ---- done ---- 
+[15:51:22.054] :           >  
+[15:51:28.049] :           >  
+[15:51:28.050] :           > ---- creating U-boat ---- 
+[15:51:28.050] :           view mesh : uboat.esx|boat1
+[15:51:28.830] :           HDF mesh  : uboat.esx|flowsurf2
+[15:51:28.830] :           HSF mesh  : uboat.esx|flowsurf2
+[15:51:28.831] :           RB mesh   : uboat.esx|stat
+[15:51:28.832] :           building voxels for : uboat.esx|flowsurf2
+[15:51:28.832] :           voxel size : 1
+[15:51:29.117] :           done : 3281 voxels
+[15:51:29.118] :           > ---- done ---- 
+[15:51:29.118] :           >  
+[15:51:40.378] :           >  
+[15:51:40.378] :           > ---- creating U-boat ---- 
+[15:51:40.379] :           view mesh : uboat.esx|boat1
+[15:51:41.158] :           HDF mesh  : uboat.esx|flowsurf2
+[15:51:41.158] :           HSF mesh  : uboat.esx|flowsurf2
+[15:51:41.159] :           RB mesh   : uboat.esx|stat
+[15:51:41.160] :           building voxels for : uboat.esx|flowsurf2
+[15:51:41.160] :           voxel size : 1
+[15:51:41.446] :           done : 3281 voxels
+[15:51:41.446] :           > ---- done ---- 
+[15:51:41.447] :           >  
+[15:51:43.660] :           >  
+[15:51:43.660] :           > ---- creating U-boat ---- 
+[15:51:43.661] :           view mesh : uboat.esx|boat1
+[15:51:44.440] :           HDF mesh  : uboat.esx|flowsurf2
+[15:51:44.441] :           HSF mesh  : uboat.esx|flowsurf2
+[15:51:44.442] :           RB mesh   : uboat.esx|stat
+[15:51:44.443] :           building voxels for : uboat.esx|flowsurf2
+[15:51:44.443] :           voxel size : 1
+[15:51:44.728] :           done : 3281 voxels
+[15:51:44.729] :           > ---- done ---- 
+[15:51:44.729] :           >  
+[15:51:47.257] :           >  
+[15:51:47.258] :           > ---- creating U-boat ---- 
+[15:51:47.258] :           view mesh : uboat.esx|boat1
+[15:51:48.037] :           HDF mesh  : uboat.esx|flowsurf2
+[15:51:48.037] :           HSF mesh  : uboat.esx|flowsurf2
+[15:51:48.038] :           RB mesh   : uboat.esx|stat
+[15:51:48.039] :           building voxels for : uboat.esx|flowsurf2
+[15:51:48.040] :           voxel size : 1
+[15:51:48.325] :           done : 3281 voxels
+[15:51:48.325] :           > ---- done ---- 
+[15:51:48.326] :           >  
+[15:51:50.823] :           >  
+[15:51:50.823] :           > ---- creating U-boat ---- 
+[15:51:50.824] :           view mesh : uboat.esx|boat1
+[15:51:51.601] :           HDF mesh  : uboat.esx|flowsurf2
+[15:51:51.602] :           HSF mesh  : uboat.esx|flowsurf2
+[15:51:51.602] :           RB mesh   : uboat.esx|stat
+[15:51:51.603] :           building voxels for : uboat.esx|flowsurf2
+[15:51:51.604] :           voxel size : 1
+[15:51:51.889] :           done : 3281 voxels
+[15:51:51.889] :           > ---- done ---- 
+[15:51:51.890] :           >  
+[15:51:54.571] :           >  
+[15:51:54.571] :           > ---- creating U-boat ---- 
+[15:51:54.572] :           view mesh : uboat.esx|boat1
+[15:51:55.349] :           HDF mesh  : uboat.esx|flowsurf2
+[15:51:55.350] :           HSF mesh  : uboat.esx|flowsurf2
+[15:51:55.351] :           RB mesh   : uboat.esx|stat
+[15:51:55.352] :           building voxels for : uboat.esx|flowsurf2
+[15:51:55.352] :           voxel size : 1
+[15:51:55.637] :           done : 3281 voxels
+[15:51:55.638] :           > ---- done ---- 
+[15:51:55.638] :           >  
+[15:51:59.103] :           >  
+[15:51:59.103] :           > ---- creating U-boat ---- 
+[15:51:59.104] :           view mesh : uboat.esx|boat1
+[15:51:59.901] :           HDF mesh  : uboat.esx|flowsurf2
+[15:51:59.902] :           HSF mesh  : uboat.esx|flowsurf2
+[15:51:59.902] :           RB mesh   : uboat.esx|stat
+[15:51:59.904] :           building voxels for : uboat.esx|flowsurf2
+[15:51:59.904] :           voxel size : 1
+[15:52:00.191] :           done : 3281 voxels
+[15:52:00.192] :           > ---- done ---- 
+[15:52:00.193] :           >  
+[15:52:06.283] :           >  
+[15:52:06.283] :           > ---- creating U-boat ---- 
+[15:52:06.284] :           view mesh : uboat.esx|boat1
+[15:52:07.063] :           HDF mesh  : uboat.esx|flowsurf2
+[15:52:07.064] :           HSF mesh  : uboat.esx|flowsurf2
+[15:52:07.065] :           RB mesh   : uboat.esx|stat
+[15:52:07.066] :           building voxels for : uboat.esx|flowsurf2
+[15:52:07.066] :           voxel size : 1
+[15:52:07.352] :           done : 3281 voxels
+[15:52:07.352] :           > ---- done ---- 
+[15:52:07.353] :           >  
+[15:52:10.832] :           >  
+[15:52:10.832] :           > ---- creating U-boat ---- 
+[15:52:10.833] :           view mesh : uboat.esx|boat1
+[15:52:11.611] :           HDF mesh  : uboat.esx|flowsurf2
+[15:52:11.611] :           HSF mesh  : uboat.esx|flowsurf2
+[15:52:11.612] :           RB mesh   : uboat.esx|stat
+[15:52:11.613] :           building voxels for : uboat.esx|flowsurf2
+[15:52:11.614] :           voxel size : 1
+[15:52:11.899] :           done : 3281 voxels
+[15:52:11.900] :           > ---- done ---- 
+[15:52:11.900] :           >  
+[15:52:14.167] :           >  
+[15:52:14.168] :           > ---- creating U-boat ---- 
+[15:52:14.168] :           view mesh : uboat.esx|boat1
+[15:52:14.946] :           HDF mesh  : uboat.esx|flowsurf2
+[15:52:14.947] :           HSF mesh  : uboat.esx|flowsurf2
+[15:52:14.948] :           RB mesh   : uboat.esx|stat
+[15:52:14.949] :           building voxels for : uboat.esx|flowsurf2
+[15:52:14.949] :           voxel size : 1
+[15:52:15.234] :           done : 3281 voxels
+[15:52:15.235] :           > ---- done ---- 
+[15:52:15.235] :           >  
+[15:52:24.563] :           >  
+[15:52:24.564] :           > ---- creating U-boat ---- 
+[15:52:24.564] :           view mesh : uboat.esx|boat1
+[15:52:25.341] :           HDF mesh  : uboat.esx|flowsurf2
+[15:52:25.342] :           HSF mesh  : uboat.esx|flowsurf2
+[15:52:25.342] :           RB mesh   : uboat.esx|stat
+[15:52:25.344] :           building voxels for : uboat.esx|flowsurf2
+[15:52:25.344] :           voxel size : 1
+[15:52:25.629] :           done : 3281 voxels
+[15:52:25.630] :           > ---- done ---- 
+[15:52:25.630] :           >  
+[15:52:30.057] :           >  
+[15:52:30.058] :           > ---- creating U-boat ---- 
+[15:52:30.059] :           view mesh : uboat.esx|boat1
+[15:52:30.837] :           HDF mesh  : uboat.esx|flowsurf2
+[15:52:30.838] :           HSF mesh  : uboat.esx|flowsurf2
+[15:52:30.839] :           RB mesh   : uboat.esx|stat
+[15:52:30.840] :           building voxels for : uboat.esx|flowsurf2
+[15:52:30.840] :           voxel size : 1
+[15:52:31.125] :           done : 3281 voxels
+[15:52:31.126] :           > ---- done ---- 
+[15:52:31.126] :           >  
+[15:52:35.970] :           
+[15:52:35.971] :           ---- SciVis shutting down ------------------------------------------
+[15:52:35.972] :           SHUTDOWN : PhysX
+[15:52:36.007] :           --------------------------------------------------------------------
+[15:52:36.007] :           
+[15:52:36.007] :           SHUTDOWN : PhysX allocator
+[15:52:36.008] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[15:52:36.011] :           
+[15:52:36.011] :           ---- Direct3D rendering system shutting down -----------------------
+[15:52:36.012] :           SHUTDOWN : Model manager
+[15:52:36.012] :           SHUTDOWN : Render target manager
+[15:52:36.013] :           SHUTDOWN : Texture manager
+[15:52:36.013] :           SHUTDOWN : Draw 2D
+[15:52:36.014] :           Releasing Direct3D Device
+[15:52:36.014] :           Releasing Direct3D
+[15:52:36.017] :           --------------------------------------------------------------------
+[15:52:36.018] :           
+[15:52:36.019] :           SHUTDOWN : FR Scene
+[15:52:36.053] :           SHUTDOWN : Shading system
+[15:52:36.054] :           Unloading DLL : rend_d3d9.dll
+[15:52:36.058] :           Saving configuration...
+[15:52:36.093] :           SHUTDOWN : Configuration system
+[15:52:36.109] :           SHUTDOWN : System
+[15:52:36.110] :           SHUTDOWN : Input system
+[15:52:36.111] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:53:05.936] :           
+[15:53:05.937] :           ---- File system initialization ------------------------------------
+[15:53:05.937] :           working directory : d:/NAVY_VIS/engine/
+[15:53:05.937] :           --------------------------------------------------------------------
+[15:53:05.937] :           
+[15:53:05.938] :           INIT : Input system
+[15:53:05.938] :           
+[15:53:05.938] :           ---- System initialization -----------------------------------------
+[15:53:05.938] :           power : AC
+[15:53:05.939] :           memory : 1590 Mb of 4094 Mb
+[15:53:05.939] :           checking cpu clock...
+[15:53:06.939] :           cpu clock : 2401 MHz
+[15:53:06.939] :           --------------------------------------------------------------------
+[15:53:06.939] :           
+[15:53:06.939] :           INIT : Configuration system
+[15:53:07.034] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[15:53:07.035] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:53:07.035] :           Loading configuration...
+[15:53:07.036] :           compiling : default.lua
+[15:53:07.037] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:53:07.037] :           compiling : config.lua
+[15:53:07.038] :           compiling : startup.lua
+[15:53:07.040] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:53:07.041] :           Loading DLL : rend_d3d9.dll
+[15:53:07.082] :           
+[15:53:07.083] :           ---- Direct3D rendering system initialization ----------------------
+[15:53:07.088] :           Selected mode : 800x600 W
+[15:53:07.098] :           D3D_SDK_VERSION : 0x80000020
+[15:53:07.100] :           Creating Direct3D
+[15:53:07.138] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:53:07.140] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:53:07.141] :           Creating Direct3D Device
+[15:53:07.251] :           Checking device :
+[15:53:07.253] :             INTZ depth stencil is supported
+[15:53:07.254] :             NULL render target is supported
+[15:53:07.255] :           INIT : Draw 2D
+[15:53:07.258] :           compiling : shaders/ui.fx
+[15:53:07.277] :           INIT : Texture manager
+[15:53:07.279] :           INIT : Render target manager
+[15:53:07.280] :           INIT : Model manager
+[15:53:07.281] :           --------------------------------------------------------------------
+[15:53:07.282] :           
+[15:53:07.283] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:53:07.334] :           INIT : PhysX allocator
+[15:53:07.335] :           
+[15:53:07.337] :           ---- SciVis initialization -----------------------------------------
+[15:53:07.338] :           INIT : PhysX
+[15:53:07.642] :           INIT : FR Scene
+[15:53:07.644] :           INIT : Shading system
+[15:53:07.645] :           compiling : shaders/shaders.lua
+[15:53:07.647] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[15:53:07.650] :           --------------------------------------------------------------------
+[15:53:07.651] :           
+[15:53:08.558] :           >  
+[15:53:08.559] :           > ---- creating U-boat ---- 
+[15:53:08.560] :           view mesh : uboat.esx|boat1
+[15:53:08.561] :           Loading : uboat.esx
+[15:53:12.820] :           compiling : shaders/surface.fx
+[15:53:12.854] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[15:53:12.856] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[15:53:12.857] :           HDF mesh  : uboat.esx|flowsurf2
+[15:53:12.858] :           HSF mesh  : uboat.esx|flowsurf2
+[15:53:12.859] :           RB mesh   : uboat.esx|stat
+[15:53:12.862] :           building voxels for : uboat.esx|flowsurf2
+[15:53:12.863] :           voxel size : 1
+[15:53:13.149] :           done : 3281 voxels
+[15:53:13.150] :           > ---- done ---- 
+[15:53:13.151] :           >  
+[15:53:13.152] :           Loading : *black
+
+-------------------------------------------------------------------------------
+[15:55:19.897] :           
+[15:55:19.897] :           ---- File system initialization ------------------------------------
+[15:55:19.897] :           working directory : d:/NAVY_VIS/engine/
+[15:55:19.897] :           --------------------------------------------------------------------
+[15:55:19.898] :           
+[15:55:19.898] :           INIT : Input system
+[15:55:19.898] :           
+[15:55:19.898] :           ---- System initialization -----------------------------------------
+[15:55:19.899] :           power : AC
+[15:55:19.899] :           memory : 1594 Mb of 4094 Mb
+[15:55:19.899] :           checking cpu clock...
+[15:55:20.899] :           cpu clock : 2401 MHz
+[15:55:20.899] :           --------------------------------------------------------------------
+[15:55:20.899] :           
+[15:55:20.899] :           INIT : Configuration system
+[15:55:20.991] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[15:55:20.992] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:55:20.993] :           Loading configuration...
+[15:55:20.993] :           compiling : default.lua
+[15:55:20.994] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:55:20.994] :           compiling : config.lua
+[15:55:20.995] :           compiling : startup.lua
+[15:55:20.997] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:55:20.998] :           Loading DLL : rend_d3d9.dll
+[15:55:21.042] :           
+[15:55:21.043] :           ---- Direct3D rendering system initialization ----------------------
+[15:55:21.048] :           Selected mode : 800x600 W
+[15:55:21.059] :           D3D_SDK_VERSION : 0x80000020
+[15:55:21.060] :           Creating Direct3D
+[15:55:21.104] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:55:21.106] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:55:21.107] :           Creating Direct3D Device
+[15:55:21.214] :           Checking device :
+[15:55:21.215] :             INTZ depth stencil is supported
+[15:55:21.217] :             NULL render target is supported
+[15:55:21.218] :           INIT : Draw 2D
+[15:55:21.219] :           compiling : shaders/ui.fx
+[15:55:21.237] :           INIT : Texture manager
+[15:55:21.238] :           INIT : Render target manager
+[15:55:21.239] :           INIT : Model manager
+[15:55:21.241] :           --------------------------------------------------------------------
+[15:55:21.242] :           
+[15:55:21.243] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:55:21.301] :           INIT : PhysX allocator
+[15:55:21.302] :           
+[15:55:21.304] :           ---- SciVis initialization -----------------------------------------
+[15:55:21.305] :           INIT : PhysX
+[15:55:21.670] :           INIT : FR Scene
+[15:55:21.672] :           INIT : Shading system
+[15:55:21.674] :           compiling : shaders/shaders.lua
+[15:55:21.676] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[15:55:21.677] :           --------------------------------------------------------------------
+[15:55:21.679] :           
+[15:55:21.905] :           >  
+[15:55:21.906] :           > ---- creating U-boat ---- 
+[15:55:21.908] :           view mesh : uboat.esx|boat1
+[15:55:21.909] :           Loading : uboat.esx
+[15:55:26.222] :           compiling : shaders/surface.fx
+[15:55:26.256] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[15:55:26.258] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[15:55:26.259] :           HDF mesh  : uboat.esx|flowsurf2
+[15:55:26.260] :           HSF mesh  : uboat.esx|flowsurf2
+[15:55:26.262] :           RB mesh   : uboat.esx|stat
+[15:55:26.264] :           building voxels for : uboat.esx|flowsurf2
+[15:55:26.265] :           voxel size : 1
+[15:55:26.552] :           done : 3281 voxels
+[15:55:26.553] :           > ---- done ---- 
+[15:55:26.555] :           >  
+[15:55:26.556] :           Loading : *black
+[15:55:41.430] :           >  
+[15:55:41.431] :           > ---- creating U-boat ---- 
+[15:55:41.431] :           view mesh : uboat.esx|boat1
+[15:55:42.204] :           HDF mesh  : uboat.esx|flowsurf2
+[15:55:42.204] :           HSF mesh  : uboat.esx|flowsurf2
+[15:55:42.205] :           RB mesh   : uboat.esx|stat
+[15:55:42.206] :           building voxels for : uboat.esx|flowsurf2
+[15:55:42.206] :           voxel size : 1
+[15:55:42.491] :           done : 3281 voxels
+[15:55:42.492] :           > ---- done ---- 
+[15:55:42.492] :           >  
+[15:55:45.495] :           >  
+[15:55:45.496] :           > ---- creating U-boat ---- 
+[15:55:45.496] :           view mesh : uboat.esx|boat1
+[15:55:46.271] :           HDF mesh  : uboat.esx|flowsurf2
+[15:55:46.271] :           HSF mesh  : uboat.esx|flowsurf2
+[15:55:46.272] :           RB mesh   : uboat.esx|stat
+[15:55:46.273] :           building voxels for : uboat.esx|flowsurf2
+[15:55:46.273] :           voxel size : 1
+[15:55:46.558] :           done : 3281 voxels
+[15:55:46.559] :           > ---- done ---- 
+[15:55:46.559] :           >  
+[15:55:49.477] :           >  
+[15:55:49.478] :           > ---- creating U-boat ---- 
+[15:55:49.478] :           view mesh : uboat.esx|boat1
+[15:55:50.255] :           HDF mesh  : uboat.esx|flowsurf2
+[15:55:50.255] :           HSF mesh  : uboat.esx|flowsurf2
+[15:55:50.256] :           RB mesh   : uboat.esx|stat
+[15:55:50.261] :           building voxels for : uboat.esx|flowsurf2
+[15:55:50.262] :           voxel size : 1
+[15:55:50.546] :           done : 3281 voxels
+[15:55:50.547] :           > ---- done ---- 
+[15:55:50.547] :           >  
+[15:55:52.859] :           >  
+[15:55:52.860] :           > ---- creating U-boat ---- 
+[15:55:52.860] :           view mesh : uboat.esx|boat1
+[15:55:53.637] :           HDF mesh  : uboat.esx|flowsurf2
+[15:55:53.637] :           HSF mesh  : uboat.esx|flowsurf2
+[15:55:53.638] :           RB mesh   : uboat.esx|stat
+[15:55:53.639] :           building voxels for : uboat.esx|flowsurf2
+[15:55:53.639] :           voxel size : 1
+[15:55:53.924] :           done : 3281 voxels
+[15:55:53.925] :           > ---- done ---- 
+[15:55:53.925] :           >  
+[15:55:56.674] :           >  
+[15:55:56.675] :           > ---- creating U-boat ---- 
+[15:55:56.675] :           view mesh : uboat.esx|boat1
+[15:55:57.450] :           HDF mesh  : uboat.esx|flowsurf2
+[15:55:57.451] :           HSF mesh  : uboat.esx|flowsurf2
+[15:55:57.452] :           RB mesh   : uboat.esx|stat
+[15:55:57.453] :           building voxels for : uboat.esx|flowsurf2
+[15:55:57.453] :           voxel size : 1
+[15:55:57.738] :           done : 3281 voxels
+[15:55:57.738] :           > ---- done ---- 
+[15:55:57.739] :           >  
+[15:56:02.838] :           >  
+[15:56:02.839] :           > ---- creating U-boat ---- 
+[15:56:02.839] :           view mesh : uboat.esx|boat1
+[15:56:03.618] :           HDF mesh  : uboat.esx|flowsurf2
+[15:56:03.619] :           HSF mesh  : uboat.esx|flowsurf2
+[15:56:03.619] :           RB mesh   : uboat.esx|stat
+[15:56:03.620] :           building voxels for : uboat.esx|flowsurf2
+[15:56:03.621] :           voxel size : 1
+[15:56:03.905] :           done : 3281 voxels
+[15:56:03.906] :           > ---- done ---- 
+[15:56:03.906] :           >  
+[15:56:14.834] :           >  
+[15:56:14.834] :           > ---- creating U-boat ---- 
+[15:56:14.835] :           view mesh : uboat.esx|boat1
+[15:56:15.612] :           HDF mesh  : uboat.esx|flowsurf2
+[15:56:15.613] :           HSF mesh  : uboat.esx|flowsurf2
+[15:56:15.613] :           RB mesh   : uboat.esx|stat
+[15:56:15.614] :           building voxels for : uboat.esx|flowsurf2
+[15:56:15.615] :           voxel size : 1
+[15:56:15.900] :           done : 3281 voxels
+[15:56:15.901] :           > ---- done ---- 
+[15:56:15.901] :           >  
+[15:56:26.196] :           >  
+[15:56:26.196] :           > ---- creating U-boat ---- 
+[15:56:26.197] :           view mesh : uboat.esx|boat1
+[15:56:26.978] :           HDF mesh  : uboat.esx|flowsurf2
+[15:56:26.979] :           HSF mesh  : uboat.esx|flowsurf2
+[15:56:26.980] :           RB mesh   : uboat.esx|stat
+[15:56:26.981] :           building voxels for : uboat.esx|flowsurf2
+[15:56:26.981] :           voxel size : 1
+[15:56:27.266] :           done : 3281 voxels
+[15:56:27.267] :           > ---- done ---- 
+[15:56:27.267] :           >  
+[15:56:36.525] :           >  
+[15:56:36.526] :           > ---- creating U-boat ---- 
+[15:56:36.526] :           view mesh : uboat.esx|boat1
+[15:56:37.303] :           HDF mesh  : uboat.esx|flowsurf2
+[15:56:37.304] :           HSF mesh  : uboat.esx|flowsurf2
+[15:56:37.305] :           RB mesh   : uboat.esx|stat
+[15:56:37.306] :           building voxels for : uboat.esx|flowsurf2
+[15:56:37.306] :           voxel size : 1
+[15:56:37.591] :           done : 3281 voxels
+[15:56:37.592] :           > ---- done ---- 
+[15:56:37.592] :           >  
+[15:56:43.186] :           
+[15:56:43.187] :           ---- SciVis shutting down ------------------------------------------
+[15:56:43.188] :           SHUTDOWN : PhysX
+[15:56:43.223] :           --------------------------------------------------------------------
+[15:56:43.223] :           
+[15:56:43.224] :           SHUTDOWN : PhysX allocator
+[15:56:43.224] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[15:56:43.227] :           
+[15:56:43.227] :           ---- Direct3D rendering system shutting down -----------------------
+[15:56:43.228] :           SHUTDOWN : Model manager
+[15:56:43.228] :           SHUTDOWN : Render target manager
+[15:56:43.229] :           SHUTDOWN : Texture manager
+[15:56:43.229] :           SHUTDOWN : Draw 2D
+[15:56:43.229] :           Releasing Direct3D Device
+[15:56:43.230] :           Releasing Direct3D
+[15:56:43.232] :           --------------------------------------------------------------------
+[15:56:43.233] :           
+[15:56:43.233] :           SHUTDOWN : FR Scene
+[15:56:43.245] :           SHUTDOWN : Shading system
+[15:56:43.245] :           Unloading DLL : rend_d3d9.dll
+[15:56:43.249] :           Saving configuration...
+[15:56:43.272] :           SHUTDOWN : Configuration system
+[15:56:43.287] :           SHUTDOWN : System
+[15:56:43.288] :           SHUTDOWN : Input system
+[15:56:43.289] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:58:30.780] :           
+[15:58:30.781] :           ---- File system initialization ------------------------------------
+[15:58:30.781] :           working directory : d:/NAVY_VIS/engine/
+[15:58:30.781] :           --------------------------------------------------------------------
+[15:58:30.782] :           
+[15:58:30.782] :           INIT : Input system
+[15:58:30.782] :           
+[15:58:30.782] :           ---- System initialization -----------------------------------------
+[15:58:30.783] :           power : AC
+[15:58:30.783] :           memory : 1592 Mb of 4094 Mb
+[15:58:30.783] :           checking cpu clock...
+[15:58:31.783] :           cpu clock : 2400 MHz
+[15:58:31.783] :           --------------------------------------------------------------------
+[15:58:31.783] :           
+[15:58:31.783] :           INIT : Configuration system
+[15:58:31.876] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[15:58:31.877] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:58:31.877] :           Loading configuration...
+[15:58:31.878] :           compiling : default.lua
+[15:58:31.878] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:58:31.879] :           compiling : config.lua
+[15:58:31.880] :           compiling : startup.lua
+[15:58:31.882] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:58:31.883] :           Loading DLL : rend_d3d9.dll
+[15:58:31.923] :           
+[15:58:31.924] :           ---- Direct3D rendering system initialization ----------------------
+[15:58:31.929] :           Selected mode : 800x600 W
+[15:58:31.940] :           D3D_SDK_VERSION : 0x80000020
+[15:58:31.942] :           Creating Direct3D
+[15:58:31.985] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:58:31.987] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:58:31.988] :           Creating Direct3D Device
+[15:58:32.107] :           Checking device :
+[15:58:32.108] :             INTZ depth stencil is supported
+[15:58:32.109] :             NULL render target is supported
+[15:58:32.116] :           INIT : Draw 2D
+[15:58:32.118] :           compiling : shaders/ui.fx
+[15:58:32.138] :           INIT : Texture manager
+[15:58:32.139] :           INIT : Render target manager
+[15:58:32.141] :           INIT : Model manager
+[15:58:32.142] :           --------------------------------------------------------------------
+[15:58:32.144] :           
+[15:58:32.146] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:58:32.198] :           INIT : PhysX allocator
+[15:58:32.199] :           
+[15:58:32.200] :           ---- SciVis initialization -----------------------------------------
+[15:58:32.201] :           INIT : PhysX
+[15:58:32.569] :           INIT : FR Scene
+[15:58:32.570] :           INIT : Shading system
+[15:58:32.571] :           compiling : shaders/shaders.lua
+[15:58:32.572] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[15:58:32.573] :           --------------------------------------------------------------------
+[15:58:32.574] :           
+[15:58:33.163] :           >  
+[15:58:33.164] :           > ---- creating U-boat ---- 
+[15:58:33.165] :           view mesh : uboat.esx|boat1
+[15:58:33.166] :           Loading : uboat.esx
+[15:58:37.461] :           compiling : shaders/surface.fx
+[15:58:37.495] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[15:58:37.497] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[15:58:37.498] :           HDF mesh  : uboat.esx|flowsurf2
+[15:58:37.499] :           HSF mesh  : uboat.esx|flowsurf2
+[15:58:37.501] :           RB mesh   : uboat.esx|stat
+[15:58:37.503] :           building voxels for : uboat.esx|flowsurf2
+[15:58:37.504] :           voxel size : 1
+[15:58:37.789] :           done : 3281 voxels
+[15:58:37.791] :           > ---- done ---- 
+[15:58:37.792] :           >  
+[15:58:37.794] :           Loading : *black
+[15:58:52.172] :           >  
+[15:58:52.173] :           > ---- creating U-boat ---- 
+[15:58:52.173] :           view mesh : uboat.esx|boat1
+[15:58:52.936] :           HDF mesh  : uboat.esx|flowsurf2
+[15:58:52.937] :           HSF mesh  : uboat.esx|flowsurf2
+[15:58:52.937] :           RB mesh   : uboat.esx|stat
+[15:58:52.938] :           building voxels for : uboat.esx|flowsurf2
+[15:58:52.939] :           voxel size : 1
+[15:58:53.223] :           done : 3281 voxels
+[15:58:53.224] :           > ---- done ---- 
+[15:58:53.224] :           >  
+[15:58:59.285] :           >  
+[15:58:59.286] :           > ---- creating U-boat ---- 
+[15:58:59.286] :           view mesh : uboat.esx|boat1
+[15:59:00.052] :           HDF mesh  : uboat.esx|flowsurf2
+[15:59:00.053] :           HSF mesh  : uboat.esx|flowsurf2
+[15:59:00.053] :           RB mesh   : uboat.esx|stat
+[15:59:00.054] :           building voxels for : uboat.esx|flowsurf2
+[15:59:00.055] :           voxel size : 1
+[15:59:00.339] :           done : 3281 voxels
+[15:59:00.339] :           > ---- done ---- 
+[15:59:00.340] :           >  
+[15:59:04.700] :           >  
+[15:59:04.701] :           > ---- creating U-boat ---- 
+[15:59:04.701] :           view mesh : uboat.esx|boat1
+[15:59:05.467] :           HDF mesh  : uboat.esx|flowsurf2
+[15:59:05.468] :           HSF mesh  : uboat.esx|flowsurf2
+[15:59:05.469] :           RB mesh   : uboat.esx|stat
+[15:59:05.470] :           building voxels for : uboat.esx|flowsurf2
+[15:59:05.470] :           voxel size : 1
+[15:59:05.754] :           done : 3281 voxels
+[15:59:05.755] :           > ---- done ---- 
+[15:59:05.755] :           >  
+[15:59:16.528] :           >  
+[15:59:16.529] :           > ---- creating U-boat ---- 
+[15:59:16.529] :           view mesh : uboat.esx|boat1
+[15:59:17.295] :           HDF mesh  : uboat.esx|flowsurf2
+[15:59:17.296] :           HSF mesh  : uboat.esx|flowsurf2
+[15:59:17.297] :           RB mesh   : uboat.esx|stat
+[15:59:17.298] :           building voxels for : uboat.esx|flowsurf2
+[15:59:17.298] :           voxel size : 1
+[15:59:17.583] :           done : 3281 voxels
+[15:59:17.583] :           > ---- done ---- 
+[15:59:17.584] :           >  
+[15:59:30.837] :           
+[15:59:30.837] :           ---- SciVis shutting down ------------------------------------------
+[15:59:30.838] :           SHUTDOWN : PhysX
+[15:59:30.873] :           --------------------------------------------------------------------
+[15:59:30.873] :           
+[15:59:30.874] :           SHUTDOWN : PhysX allocator
+[15:59:30.874] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[15:59:30.877] :           
+[15:59:30.878] :           ---- Direct3D rendering system shutting down -----------------------
+[15:59:30.878] :           SHUTDOWN : Model manager
+[15:59:30.878] :           SHUTDOWN : Render target manager
+[15:59:30.879] :           SHUTDOWN : Texture manager
+[15:59:30.879] :           SHUTDOWN : Draw 2D
+[15:59:30.880] :           Releasing Direct3D Device
+[15:59:30.880] :           Releasing Direct3D
+[15:59:30.882] :           --------------------------------------------------------------------
+[15:59:30.883] :           
+[15:59:30.883] :           SHUTDOWN : FR Scene
+[15:59:30.890] :           SHUTDOWN : Shading system
+[15:59:30.890] :           Unloading DLL : rend_d3d9.dll
+[15:59:30.894] :           Saving configuration...
+[15:59:30.917] :           SHUTDOWN : Configuration system
+[15:59:30.933] :           SHUTDOWN : System
+[15:59:30.933] :           SHUTDOWN : Input system
+[15:59:30.934] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[15:59:33.786] :           
+[15:59:33.787] :           ---- File system initialization ------------------------------------
+[15:59:33.787] :           working directory : d:/NAVY_VIS/engine/
+[15:59:33.788] :           --------------------------------------------------------------------
+[15:59:33.788] :           
+[15:59:33.788] :           INIT : Input system
+[15:59:33.788] :           
+[15:59:33.789] :           ---- System initialization -----------------------------------------
+[15:59:33.789] :           power : AC
+[15:59:33.789] :           memory : 1582 Mb of 4094 Mb
+[15:59:33.789] :           checking cpu clock...
+[15:59:34.790] :           cpu clock : 2402 MHz
+[15:59:34.790] :           --------------------------------------------------------------------
+[15:59:34.790] :           
+[15:59:34.791] :           INIT : Configuration system
+[15:59:34.886] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[15:59:34.887] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[15:59:34.887] :           Loading configuration...
+[15:59:34.888] :           compiling : default.lua
+[15:59:34.889] : [ ERROR ] cannot open default.lua: No such file or directory
+[15:59:34.889] :           compiling : config.lua
+[15:59:34.890] :           compiling : startup.lua
+[15:59:34.891] : [ ERROR ] cannot open startup.lua: No such file or directory
+[15:59:34.892] :           Loading DLL : rend_d3d9.dll
+[15:59:34.933] :           
+[15:59:34.933] :           ---- Direct3D rendering system initialization ----------------------
+[15:59:34.939] :           Selected mode : 800x600 W
+[15:59:34.959] :           D3D_SDK_VERSION : 0x80000020
+[15:59:34.959] :           Creating Direct3D
+[15:59:35.005] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[15:59:35.006] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[15:59:35.007] :           Creating Direct3D Device
+[15:59:35.111] :           Checking device :
+[15:59:35.111] :             INTZ depth stencil is supported
+[15:59:35.112] :             NULL render target is supported
+[15:59:35.112] :           INIT : Draw 2D
+[15:59:35.113] :           compiling : shaders/ui.fx
+[15:59:35.129] :           INIT : Texture manager
+[15:59:35.130] :           INIT : Render target manager
+[15:59:35.130] :           INIT : Model manager
+[15:59:35.131] :           --------------------------------------------------------------------
+[15:59:35.131] :           
+[15:59:35.131] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[15:59:35.179] :           INIT : PhysX allocator
+[15:59:35.180] :           
+[15:59:35.180] :           ---- SciVis initialization -----------------------------------------
+[15:59:35.181] :           INIT : PhysX
+[15:59:35.497] :           INIT : FR Scene
+[15:59:35.497] :           INIT : Shading system
+[15:59:35.498] :           compiling : shaders/shaders.lua
+[15:59:35.499] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[15:59:35.500] :           --------------------------------------------------------------------
+[15:59:35.500] :           
+[16:01:41.238] :           >  
+[16:01:41.239] :           > ---- creating U-boat ---- 
+[16:01:41.239] :           view mesh : uboat.esx|boat1
+[16:01:41.240] :           Loading : uboat.esx
+[16:01:45.567] :           compiling : shaders/surface.fx
+[16:01:45.601] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[16:01:45.602] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[16:01:45.603] :           HDF mesh  : uboat.esx|flowsurf2
+[16:01:45.604] :           HSF mesh  : uboat.esx|flowsurf2
+[16:01:45.605] :           RB mesh   : uboat.esx|stat
+[16:01:45.606] :           building voxels for : uboat.esx|flowsurf2
+[16:01:45.607] :           voxel size : 1
+[16:01:45.892] :           done : 3281 voxels
+[16:01:45.893] :           > ---- done ---- 
+[16:01:45.894] :           >  
+[16:01:45.895] :           Loading : *black
+[16:01:57.049] :           >  
+[16:01:57.051] :           > ---- creating U-boat ---- 
+[16:01:57.052] :           view mesh : uboat.esx|boat1
+[16:01:57.829] :           HDF mesh  : uboat.esx|flowsurf2
+[16:01:57.830] :           HSF mesh  : uboat.esx|flowsurf2
+[16:01:57.832] :           RB mesh   : uboat.esx|stat
+[16:01:57.834] :           building voxels for : uboat.esx|flowsurf2
+[16:01:57.835] :           voxel size : 1
+[16:01:58.120] :           done : 3281 voxels
+[16:01:58.121] :           > ---- done ---- 
+[16:01:58.122] :           >  
+[16:05:50.637] :           
+[16:05:50.638] :           ---- SciVis shutting down ------------------------------------------
+[16:05:50.638] :           SHUTDOWN : PhysX
+[16:05:50.673] :           --------------------------------------------------------------------
+[16:05:50.674] :           
+[16:05:50.674] :           SHUTDOWN : PhysX allocator
+[16:05:50.674] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[16:05:50.677] :           
+[16:05:50.678] :           ---- Direct3D rendering system shutting down -----------------------
+[16:05:50.678] :           SHUTDOWN : Model manager
+[16:05:50.679] :           SHUTDOWN : Render target manager
+[16:05:50.679] :           SHUTDOWN : Texture manager
+[16:05:50.679] :           SHUTDOWN : Draw 2D
+[16:05:50.680] :           Releasing Direct3D Device
+[16:05:50.680] :           Releasing Direct3D
+[16:05:50.682] :           --------------------------------------------------------------------
+[16:05:50.684] :           
+[16:05:50.685] :           SHUTDOWN : FR Scene
+[16:05:50.686] :           SHUTDOWN : Shading system
+[16:05:50.687] :           Unloading DLL : rend_d3d9.dll
+[16:05:50.690] :           Saving configuration...
+[16:05:50.717] :           SHUTDOWN : Configuration system
+[16:05:50.733] :           SHUTDOWN : System
+[16:05:50.734] :           SHUTDOWN : Input system
+[16:05:50.735] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[16:16:32.493] :           
+[16:16:32.494] :           ---- File system initialization ------------------------------------
+[16:16:32.494] :           working directory : d:/NAVY_VIS/engine/
+[16:16:32.494] :           --------------------------------------------------------------------
+[16:16:32.494] :           
+[16:16:32.495] :           INIT : Input system
+[16:16:32.495] :           
+[16:16:32.495] :           ---- System initialization -----------------------------------------
+[16:16:32.496] :           power : AC
+[16:16:32.496] :           memory : 1611 Mb of 4094 Mb
+[16:16:32.496] :           checking cpu clock...
+[16:16:33.496] :           cpu clock : 2400 MHz
+[16:16:33.496] :           --------------------------------------------------------------------
+[16:16:33.496] :           
+[16:16:33.496] :           INIT : Configuration system
+[16:16:33.593] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[16:16:33.594] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:16:33.594] :           Loading configuration...
+[16:16:33.594] :           compiling : default.lua
+[16:16:33.595] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:16:33.596] :           compiling : config.lua
+[16:16:33.597] :           compiling : startup.lua
+[16:16:33.598] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:16:33.599] :           Loading DLL : rend_d3d9.dll
+[16:16:33.639] :           
+[16:16:33.639] :           ---- Direct3D rendering system initialization ----------------------
+[16:16:33.644] :           Selected mode : 800x600 W
+[16:16:33.660] :           D3D_SDK_VERSION : 0x80000020
+[16:16:33.662] :           Creating Direct3D
+[16:16:33.704] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[16:16:33.706] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[16:16:33.707] :           Creating Direct3D Device
+[16:16:33.817] :           Checking device :
+[16:16:33.819] :             INTZ depth stencil is supported
+[16:16:33.820] :             NULL render target is supported
+[16:16:33.827] :           INIT : Draw 2D
+[16:16:33.829] :           compiling : shaders/ui.fx
+[16:16:33.848] :           INIT : Texture manager
+[16:16:33.850] :           INIT : Render target manager
+[16:16:33.851] :           INIT : Model manager
+[16:16:33.853] :           --------------------------------------------------------------------
+[16:16:33.855] :           
+[16:16:33.856] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[16:16:33.904] :           INIT : PhysX allocator
+[16:16:33.905] :           
+[16:16:33.906] :           ---- SciVis initialization -----------------------------------------
+[16:16:33.907] :           INIT : PhysX
+[16:16:34.275] :           INIT : FR Scene
+[16:16:34.276] :           INIT : Shading system
+[16:16:34.277] :           compiling : shaders/shaders.lua
+[16:16:34.280] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[16:16:34.281] :           --------------------------------------------------------------------
+[16:16:34.282] :           
+[16:16:34.292] :           >  
+[16:16:34.293] :           > ---- creating U-boat ---- 
+[16:16:34.294] :           view mesh : uboat.esx|boat1
+[16:16:34.295] :           Loading : uboat.esx
+[16:16:38.599] :           compiling : shaders/surface.fx
+[16:16:38.633] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[16:16:38.635] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[16:16:38.636] :           HDF mesh  : uboat.esx|flowsurf2
+[16:16:38.637] :           HSF mesh  : uboat.esx|flowsurf2
+[16:16:38.638] :           RB mesh   : uboat.esx|stat
+[16:16:38.640] :           building voxels for : uboat.esx|flowsurf2
+[16:16:38.641] :           voxel size : 1
+[16:16:38.927] :           done : 3281 voxels
+[16:16:38.928] :           > ---- done ---- 
+[16:16:38.929] :           >  
+[16:16:38.931] :           Loading : *black
+[16:16:56.327] :           >  
+[16:16:56.327] :           > ---- creating U-boat ---- 
+[16:16:56.328] :           view mesh : uboat.esx|boat1
+[16:16:57.105] :           HDF mesh  : uboat.esx|flowsurf2
+[16:16:57.106] :           HSF mesh  : uboat.esx|flowsurf2
+[16:16:57.107] :           RB mesh   : uboat.esx|stat
+[16:16:57.108] :           building voxels for : uboat.esx|flowsurf2
+[16:16:57.108] :           voxel size : 1
+[16:16:57.415] :           done : 3281 voxels
+[16:16:57.416] :           > ---- done ---- 
+[16:16:57.416] :           >  
+[16:17:06.606] :           >  
+[16:17:06.607] :           > ---- creating U-boat ---- 
+[16:17:06.607] :           view mesh : uboat.esx|boat1
+[16:17:07.384] :           HDF mesh  : uboat.esx|flowsurf2
+[16:17:07.385] :           HSF mesh  : uboat.esx|flowsurf2
+[16:17:07.385] :           RB mesh   : uboat.esx|stat
+[16:17:07.386] :           building voxels for : uboat.esx|flowsurf2
+[16:17:07.387] :           voxel size : 1
+[16:17:07.671] :           done : 3281 voxels
+[16:17:07.671] :           > ---- done ---- 
+[16:17:07.672] :           >  
+[16:17:22.650] :           >  
+[16:17:22.650] :           > ---- creating U-boat ---- 
+[16:17:22.651] :           view mesh : uboat.esx|boat1
+[16:17:23.429] :           HDF mesh  : uboat.esx|flowsurf2
+[16:17:23.430] :           HSF mesh  : uboat.esx|flowsurf2
+[16:17:23.430] :           RB mesh   : uboat.esx|stat
+[16:17:23.431] :           building voxels for : uboat.esx|flowsurf2
+[16:17:23.432] :           voxel size : 1
+[16:17:23.716] :           done : 3281 voxels
+[16:17:23.717] :           > ---- done ---- 
+[16:17:23.717] :           >  
+[16:17:31.047] :           >  
+[16:17:31.047] :           > ---- creating U-boat ---- 
+[16:17:31.048] :           view mesh : uboat.esx|boat1
+[16:17:31.827] :           HDF mesh  : uboat.esx|flowsurf2
+[16:17:31.828] :           HSF mesh  : uboat.esx|flowsurf2
+[16:17:31.829] :           RB mesh   : uboat.esx|stat
+[16:17:31.830] :           building voxels for : uboat.esx|flowsurf2
+[16:17:31.830] :           voxel size : 1
+[16:17:32.115] :           done : 3281 voxels
+[16:17:32.116] :           > ---- done ---- 
+[16:17:32.116] :           >  
+[16:17:43.009] :           >  
+[16:17:43.010] :           > ---- creating U-boat ---- 
+[16:17:43.011] :           view mesh : uboat.esx|boat1
+[16:17:43.787] :           HDF mesh  : uboat.esx|flowsurf2
+[16:17:43.788] :           HSF mesh  : uboat.esx|flowsurf2
+[16:17:43.789] :           RB mesh   : uboat.esx|stat
+[16:17:43.790] :           building voxels for : uboat.esx|flowsurf2
+[16:17:43.790] :           voxel size : 1
+[16:17:44.076] :           done : 3281 voxels
+[16:17:44.076] :           > ---- done ---- 
+[16:17:44.077] :           >  
+[16:17:44.591] :           >  
+[16:17:44.592] :           > ---- creating U-boat ---- 
+[16:17:44.592] :           view mesh : uboat.esx|boat1
+[16:17:45.368] :           HDF mesh  : uboat.esx|flowsurf2
+[16:17:45.369] :           HSF mesh  : uboat.esx|flowsurf2
+[16:17:45.370] :           RB mesh   : uboat.esx|stat
+[16:17:45.371] :           building voxels for : uboat.esx|flowsurf2
+[16:17:45.371] :           voxel size : 1
+[16:17:45.656] :           done : 3281 voxels
+[16:17:45.656] :           > ---- done ---- 
+[16:17:45.657] :           >  
+[16:17:52.788] :           >  
+[16:17:52.788] :           > ---- creating U-boat ---- 
+[16:17:52.789] :           view mesh : uboat.esx|boat1
+[16:17:53.567] :           HDF mesh  : uboat.esx|flowsurf2
+[16:17:53.567] :           HSF mesh  : uboat.esx|flowsurf2
+[16:17:53.568] :           RB mesh   : uboat.esx|stat
+[16:17:53.569] :           building voxels for : uboat.esx|flowsurf2
+[16:17:53.570] :           voxel size : 1
+[16:17:53.854] :           done : 3281 voxels
+[16:17:53.854] :           > ---- done ---- 
+[16:17:53.855] :           >  
+[16:18:02.568] :           >  
+[16:18:02.568] :           > ---- creating U-boat ---- 
+[16:18:02.569] :           view mesh : uboat.esx|boat1
+[16:18:03.348] :           HDF mesh  : uboat.esx|flowsurf2
+[16:18:03.349] :           HSF mesh  : uboat.esx|flowsurf2
+[16:18:03.349] :           RB mesh   : uboat.esx|stat
+[16:18:03.351] :           building voxels for : uboat.esx|flowsurf2
+[16:18:03.351] :           voxel size : 1
+[16:18:03.636] :           done : 3281 voxels
+[16:18:03.636] :           > ---- done ---- 
+[16:18:03.637] :           >  
+[16:18:24.225] :           >  
+[16:18:24.226] :           > ---- creating U-boat ---- 
+[16:18:24.227] :           view mesh : uboat.esx|boat1
+[16:18:25.006] :           HDF mesh  : uboat.esx|flowsurf2
+[16:18:25.007] :           HSF mesh  : uboat.esx|flowsurf2
+[16:18:25.008] :           RB mesh   : uboat.esx|stat
+[16:18:25.009] :           building voxels for : uboat.esx|flowsurf2
+[16:18:25.009] :           voxel size : 1
+[16:18:25.294] :           done : 3281 voxels
+[16:18:25.294] :           > ---- done ---- 
+[16:18:25.295] :           >  
+[16:18:51.145] :           
+[16:18:51.146] :           ---- SciVis shutting down ------------------------------------------
+[16:18:51.147] :           SHUTDOWN : PhysX
+[16:18:51.181] :           --------------------------------------------------------------------
+[16:18:51.182] :           
+[16:18:51.182] :           SHUTDOWN : PhysX allocator
+[16:18:51.183] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[16:18:51.186] :           
+[16:18:51.186] :           ---- Direct3D rendering system shutting down -----------------------
+[16:18:51.187] :           SHUTDOWN : Model manager
+[16:18:51.187] :           SHUTDOWN : Render target manager
+[16:18:51.187] :           SHUTDOWN : Texture manager
+[16:18:51.188] :           SHUTDOWN : Draw 2D
+[16:18:51.188] :           Releasing Direct3D Device
+[16:18:51.188] :           Releasing Direct3D
+[16:18:51.190] :           --------------------------------------------------------------------
+[16:18:51.191] :           
+[16:18:51.192] :           SHUTDOWN : FR Scene
+[16:18:51.205] :           SHUTDOWN : Shading system
+[16:18:51.205] :           Unloading DLL : rend_d3d9.dll
+[16:18:51.209] :           Saving configuration...
+[16:18:51.229] :           SHUTDOWN : Configuration system
+[16:18:51.245] :           SHUTDOWN : System
+[16:18:51.246] :           SHUTDOWN : Input system
+[16:18:51.247] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[16:22:12.998] :           
+[16:22:12.998] :           ---- File system initialization ------------------------------------
+[16:22:12.999] :           working directory : d:/NAVY_VIS/engine/
+[16:22:12.999] :           --------------------------------------------------------------------
+[16:22:12.999] :           
+[16:22:13.000] :           INIT : Input system
+[16:22:13.000] :           
+[16:22:13.000] :           ---- System initialization -----------------------------------------
+[16:22:13.001] :           power : AC
+[16:22:13.001] :           memory : 1620 Mb of 4094 Mb
+[16:22:13.001] :           checking cpu clock...
+[16:22:14.001] :           cpu clock : 2400 MHz
+[16:22:14.001] :           --------------------------------------------------------------------
+[16:22:14.001] :           
+[16:22:14.002] :           INIT : Configuration system
+[16:22:14.094] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[16:22:14.095] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:22:14.095] :           Loading configuration...
+[16:22:14.096] :           compiling : default.lua
+[16:22:14.097] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:22:14.097] :           compiling : config.lua
+[16:22:14.098] :           compiling : startup.lua
+[16:22:14.100] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:22:14.101] :           Loading DLL : rend_d3d9.dll
+[16:22:14.140] :           
+[16:22:14.141] :           ---- Direct3D rendering system initialization ----------------------
+[16:22:14.147] :           Selected mode : 800x600 W
+[16:22:14.160] :           D3D_SDK_VERSION : 0x80000020
+[16:22:14.162] :           Creating Direct3D
+[16:22:14.205] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[16:22:14.207] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[16:22:14.208] :           Creating Direct3D Device
+[16:22:14.322] :           Checking device :
+[16:22:14.324] :             INTZ depth stencil is supported
+[16:22:14.325] :             NULL render target is supported
+[16:22:14.327] :           INIT : Draw 2D
+[16:22:14.329] :           compiling : shaders/ui.fx
+[16:22:14.347] :           INIT : Texture manager
+[16:22:14.349] :           INIT : Render target manager
+[16:22:14.351] :           INIT : Model manager
+[16:22:14.353] :           --------------------------------------------------------------------
+[16:22:14.354] :           
+[16:22:14.355] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[16:22:14.405] :           INIT : PhysX allocator
+[16:22:14.407] :           
+[16:22:14.408] :           ---- SciVis initialization -----------------------------------------
+[16:22:14.409] :           INIT : PhysX
+[16:22:14.772] :           INIT : FR Scene
+[16:22:14.773] :           INIT : Shading system
+[16:22:14.774] :           compiling : shaders/shaders.lua
+[16:22:14.776] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[16:22:14.777] :           --------------------------------------------------------------------
+[16:22:14.779] :           
+[16:22:15.518] :           >  
+[16:22:15.520] :           > ---- creating U-boat ---- 
+[16:22:15.521] :           view mesh : uboat.esx|boat1
+[16:22:15.522] :           Loading : uboat.esx
+[16:22:19.827] :           compiling : shaders/surface.fx
+[16:22:19.862] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[16:22:19.863] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[16:22:19.865] :           HDF mesh  : uboat.esx|flowsurf2
+[16:22:19.866] :           HSF mesh  : uboat.esx|flowsurf2
+[16:22:19.867] :           RB mesh   : uboat.esx|stat
+[16:22:19.870] :           building voxels for : uboat.esx|flowsurf2
+[16:22:19.871] :           voxel size : 1
+[16:22:20.157] :           done : 3281 voxels
+[16:22:20.158] :           > ---- done ---- 
+[16:22:20.160] :           >  
+[16:22:20.162] :           Loading : *black
+[16:22:37.842] :           >  
+[16:22:37.843] :           > ---- creating U-boat ---- 
+[16:22:37.843] :           view mesh : uboat.esx|boat1
+[16:22:38.618] :           HDF mesh  : uboat.esx|flowsurf2
+[16:22:38.618] :           HSF mesh  : uboat.esx|flowsurf2
+[16:22:38.619] :           RB mesh   : uboat.esx|stat
+[16:22:38.620] :           building voxels for : uboat.esx|flowsurf2
+[16:22:38.620] :           voxel size : 1
+[16:22:38.905] :           done : 3281 voxels
+[16:22:38.906] :           > ---- done ---- 
+[16:22:38.906] :           >  
+
+-------------------------------------------------------------------------------
+[16:24:01.939] :           
+[16:24:01.940] :           ---- File system initialization ------------------------------------
+[16:24:01.940] :           working directory : d:/NAVY_VIS/engine/
+[16:24:01.940] :           --------------------------------------------------------------------
+[16:24:01.940] :           
+[16:24:01.941] :           INIT : Input system
+[16:24:01.941] :           
+[16:24:01.941] :           ---- System initialization -----------------------------------------
+[16:24:01.941] :           power : AC
+[16:24:01.942] :           memory : 1600 Mb of 4094 Mb
+[16:24:01.942] :           checking cpu clock...
+[16:24:02.942] :           cpu clock : 2401 MHz
+[16:24:02.942] :           --------------------------------------------------------------------
+[16:24:02.942] :           
+[16:24:02.943] :           INIT : Configuration system
+[16:24:03.037] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[16:24:03.037] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:24:03.038] :           Loading configuration...
+[16:24:03.038] :           compiling : default.lua
+[16:24:03.039] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:24:03.039] :           compiling : config.lua
+[16:24:03.040] :           compiling : startup.lua
+[16:24:03.042] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:24:03.043] :           Loading DLL : rend_d3d9.dll
+[16:24:03.082] :           
+[16:24:03.083] :           ---- Direct3D rendering system initialization ----------------------
+[16:24:03.088] :           Selected mode : 800x600 W
+[16:24:03.098] :           D3D_SDK_VERSION : 0x80000020
+[16:24:03.100] :           Creating Direct3D
+[16:24:03.142] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[16:24:03.143] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[16:24:03.144] :           Creating Direct3D Device
+[16:24:03.257] :           Checking device :
+[16:24:03.258] :             INTZ depth stencil is supported
+[16:24:03.258] :             NULL render target is supported
+[16:24:03.259] :           INIT : Draw 2D
+[16:24:03.259] :           compiling : shaders/ui.fx
+[16:24:03.276] :           INIT : Texture manager
+[16:24:03.277] :           INIT : Render target manager
+[16:24:03.277] :           INIT : Model manager
+[16:24:03.278] :           --------------------------------------------------------------------
+[16:24:03.278] :           
+[16:24:03.279] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[16:24:03.331] :           INIT : PhysX allocator
+[16:24:03.332] :           
+[16:24:03.332] :           ---- SciVis initialization -----------------------------------------
+[16:24:03.333] :           INIT : PhysX
+[16:24:03.740] :           INIT : FR Scene
+[16:24:03.741] :           INIT : Shading system
+[16:24:03.741] :           compiling : shaders/shaders.lua
+[16:24:03.742] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[16:24:03.743] :           --------------------------------------------------------------------
+[16:24:03.743] :           
+[16:24:04.275] :           >  
+[16:24:04.276] :           > ---- creating U-boat ---- 
+[16:24:04.276] :           view mesh : uboat.esx|boat1
+[16:24:04.277] :           Loading : uboat.esx
+[16:24:08.615] :           compiling : shaders/surface.fx
+[16:24:08.649] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[16:24:08.649] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[16:24:08.650] :           HDF mesh  : uboat.esx|flowsurf2
+[16:24:08.651] :           HSF mesh  : uboat.esx|flowsurf2
+[16:24:08.652] :           RB mesh   : uboat.esx|stat
+[16:24:08.653] :           building voxels for : uboat.esx|flowsurf2
+[16:24:08.654] :           voxel size : 1
+[16:24:08.939] :           done : 3281 voxels
+[16:24:08.940] :           > ---- done ---- 
+[16:24:08.941] :           >  
+[16:24:08.984] :           Loading : *black
+[16:24:28.129] :           
+[16:24:28.130] :           ---- SciVis shutting down ------------------------------------------
+[16:24:28.131] :           SHUTDOWN : PhysX
+[16:24:28.166] :           --------------------------------------------------------------------
+[16:24:28.166] :           
+[16:24:28.167] :           SHUTDOWN : PhysX allocator
+[16:24:28.168] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[16:24:28.170] :           
+[16:24:28.171] :           ---- Direct3D rendering system shutting down -----------------------
+[16:24:28.172] :           SHUTDOWN : Model manager
+[16:24:28.172] :           SHUTDOWN : Render target manager
+[16:24:28.173] :           SHUTDOWN : Texture manager
+[16:24:28.173] :           SHUTDOWN : Draw 2D
+[16:24:28.174] :           Releasing Direct3D Device
+[16:24:28.175] :           Releasing Direct3D
+[16:24:28.179] :           --------------------------------------------------------------------
+[16:24:28.182] :           
+[16:24:28.184] :           SHUTDOWN : FR Scene
+[16:24:28.185] :           SHUTDOWN : Shading system
+[16:24:28.187] :           Unloading DLL : rend_d3d9.dll
+[16:24:28.191] :           Saving configuration...
+[16:24:28.223] :           SHUTDOWN : Configuration system
+[16:24:28.239] :           SHUTDOWN : System
+[16:24:28.239] :           SHUTDOWN : Input system
+[16:24:28.240] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[16:25:39.832] :           
+[16:25:39.832] :           ---- File system initialization ------------------------------------
+[16:25:39.832] :           working directory : d:/NAVY_VIS/engine/
+[16:25:39.833] :           --------------------------------------------------------------------
+[16:25:39.833] :           
+[16:25:39.833] :           INIT : Input system
+[16:25:39.833] :           
+[16:25:39.834] :           ---- System initialization -----------------------------------------
+[16:25:39.834] :           power : AC
+[16:25:39.834] :           memory : 1615 Mb of 4094 Mb
+[16:25:39.835] :           checking cpu clock...
+[16:25:40.835] :           cpu clock : 2402 MHz
+[16:25:40.835] :           --------------------------------------------------------------------
+[16:25:40.835] :           
+[16:25:40.835] :           INIT : Configuration system
+[16:25:40.932] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[16:25:40.932] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:25:40.933] :           Loading configuration...
+[16:25:40.933] :           compiling : default.lua
+[16:25:40.934] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:25:40.935] :           compiling : config.lua
+[16:25:40.936] :           compiling : startup.lua
+[16:25:40.941] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:25:40.947] :           Loading DLL : rend_d3d9.dll
+[16:25:40.988] :           
+[16:25:40.989] :           ---- Direct3D rendering system initialization ----------------------
+[16:25:40.994] :           Selected mode : 800x600 W
+[16:25:41.005] :           D3D_SDK_VERSION : 0x80000020
+[16:25:41.007] :           Creating Direct3D
+[16:25:41.051] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[16:25:41.053] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[16:25:41.054] :           Creating Direct3D Device
+[16:25:41.159] :           Checking device :
+[16:25:41.160] :             INTZ depth stencil is supported
+[16:25:41.162] :             NULL render target is supported
+[16:25:41.163] :           INIT : Draw 2D
+[16:25:41.164] :           compiling : shaders/ui.fx
+[16:25:41.183] :           INIT : Texture manager
+[16:25:41.185] :           INIT : Render target manager
+[16:25:41.187] :           INIT : Model manager
+[16:25:41.189] :           --------------------------------------------------------------------
+[16:25:41.190] :           
+[16:25:41.191] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[16:25:41.238] :           INIT : PhysX allocator
+[16:25:41.239] :           
+[16:25:41.240] :           ---- SciVis initialization -----------------------------------------
+[16:25:41.241] :           INIT : PhysX
+[16:25:41.632] :           INIT : FR Scene
+[16:25:41.634] :           INIT : Shading system
+[16:25:41.635] :           compiling : shaders/shaders.lua
+[16:25:41.637] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[16:25:41.638] :           --------------------------------------------------------------------
+[16:25:41.639] :           
+[16:25:42.403] :           >  
+[16:25:42.405] :           > ---- creating U-boat ---- 
+[16:25:42.416] :           view mesh : uboat.esx|boat1
+[16:25:42.417] :           Loading : uboat.esx
+[16:25:46.701] :           compiling : shaders/surface.fx
+[16:25:46.735] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[16:25:46.736] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[16:25:46.737] :           HDF mesh  : uboat.esx|flowsurf2
+[16:25:46.739] :           HSF mesh  : uboat.esx|flowsurf2
+[16:25:46.740] :           RB mesh   : uboat.esx|stat
+[16:25:46.742] :           building voxels for : uboat.esx|flowsurf2
+[16:25:46.743] :           voxel size : 1
+[16:25:47.030] :           done : 3281 voxels
+[16:25:47.031] :           > ---- done ---- 
+[16:25:47.033] :           >  
+[16:25:47.075] :           Loading : *black
+[16:27:03.171] :           >  
+[16:27:03.172] :           > ---- creating U-boat ---- 
+[16:27:03.173] :           view mesh : uboat.esx|boat1
+[16:27:03.937] :           HDF mesh  : uboat.esx|flowsurf2
+[16:27:03.938] :           HSF mesh  : uboat.esx|flowsurf2
+[16:27:03.938] :           RB mesh   : uboat.esx|stat
+[16:27:03.939] :           building voxels for : uboat.esx|flowsurf2
+[16:27:03.940] :           voxel size : 1
+[16:27:04.224] :           done : 3281 voxels
+[16:27:04.225] :           > ---- done ---- 
+[16:27:04.225] :           >  
+[16:27:52.585] :           >  
+[16:27:52.586] :           > ---- creating U-boat ---- 
+[16:27:52.586] :           view mesh : uboat.esx|boat1
+[16:27:53.353] :           HDF mesh  : uboat.esx|flowsurf2
+[16:27:53.353] :           HSF mesh  : uboat.esx|flowsurf2
+[16:27:53.354] :           RB mesh   : uboat.esx|stat
+[16:27:53.355] :           building voxels for : uboat.esx|flowsurf2
+[16:27:53.356] :           voxel size : 1
+[16:27:53.639] :           done : 3281 voxels
+[16:27:53.640] :           > ---- done ---- 
+[16:27:53.641] :           >  
+[16:28:06.226] :           
+[16:28:06.227] :           ---- SciVis shutting down ------------------------------------------
+[16:28:06.228] :           SHUTDOWN : PhysX
+[16:28:06.263] :           --------------------------------------------------------------------
+[16:28:06.264] :           
+[16:28:06.264] :           SHUTDOWN : PhysX allocator
+[16:28:06.265] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[16:28:06.268] :           
+[16:28:06.268] :           ---- Direct3D rendering system shutting down -----------------------
+[16:28:06.268] :           SHUTDOWN : Model manager
+[16:28:06.269] :           SHUTDOWN : Render target manager
+[16:28:06.269] :           SHUTDOWN : Texture manager
+[16:28:06.269] :           SHUTDOWN : Draw 2D
+[16:28:06.270] :           Releasing Direct3D Device
+[16:28:06.270] :           Releasing Direct3D
+[16:28:06.272] :           --------------------------------------------------------------------
+[16:28:06.273] :           
+[16:28:06.274] :           SHUTDOWN : FR Scene
+[16:28:06.274] :           SHUTDOWN : Shading system
+[16:28:06.275] :           Unloading DLL : rend_d3d9.dll
+[16:28:06.279] :           Saving configuration...
+[16:28:06.309] :           SHUTDOWN : Configuration system
+[16:28:06.326] :           SHUTDOWN : System
+[16:28:06.326] :           SHUTDOWN : Input system
+[16:28:06.327] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[16:28:40.917] :           
+[16:28:40.917] :           ---- File system initialization ------------------------------------
+[16:28:40.917] :           working directory : d:/NAVY_VIS/engine/
+[16:28:40.918] :           --------------------------------------------------------------------
+[16:28:40.918] :           
+[16:28:40.918] :           INIT : Input system
+[16:28:40.919] :           
+[16:28:40.919] :           ---- System initialization -----------------------------------------
+[16:28:40.919] :           power : AC
+[16:28:40.919] :           memory : 1611 Mb of 4094 Mb
+[16:28:40.920] :           checking cpu clock...
+[16:28:41.920] :           cpu clock : 2402 MHz
+[16:28:41.920] :           --------------------------------------------------------------------
+[16:28:41.920] :           
+[16:28:41.920] :           INIT : Configuration system
+[16:28:42.024] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[16:28:42.025] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:28:42.025] :           Loading configuration...
+[16:28:42.026] :           compiling : default.lua
+[16:28:42.027] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:28:42.027] :           compiling : config.lua
+[16:28:42.028] :           compiling : startup.lua
+[16:28:42.030] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:28:42.031] :           Loading DLL : rend_d3d9.dll
+[16:28:42.076] :           
+[16:28:42.077] :           ---- Direct3D rendering system initialization ----------------------
+[16:28:42.082] :           Selected mode : 800x600 W
+[16:28:42.093] :           D3D_SDK_VERSION : 0x80000020
+[16:28:42.095] :           Creating Direct3D
+[16:28:42.139] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[16:28:42.141] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[16:28:42.142] :           Creating Direct3D Device
+[16:28:42.251] :           Checking device :
+[16:28:42.253] :             INTZ depth stencil is supported
+[16:28:42.254] :             NULL render target is supported
+[16:28:42.256] :           INIT : Draw 2D
+[16:28:42.258] :           compiling : shaders/ui.fx
+[16:28:42.277] :           INIT : Texture manager
+[16:28:42.279] :           INIT : Render target manager
+[16:28:42.281] :           INIT : Model manager
+[16:28:42.283] :           --------------------------------------------------------------------
+[16:28:42.284] :           
+[16:28:42.285] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[16:28:42.336] :           INIT : PhysX allocator
+[16:28:42.337] :           
+[16:28:42.338] :           ---- SciVis initialization -----------------------------------------
+[16:28:42.339] :           INIT : PhysX
+[16:28:42.687] :           INIT : FR Scene
+[16:28:42.688] :           INIT : Shading system
+[16:28:42.690] :           compiling : shaders/shaders.lua
+[16:28:42.692] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[16:28:42.694] :           --------------------------------------------------------------------
+[16:28:42.695] :           
+[16:28:43.049] :           >  
+[16:28:43.051] :           > ---- creating U-boat ---- 
+[16:28:43.052] :           view mesh : uboat.esx|boat1
+[16:28:43.054] :           Loading : uboat.esx
+[16:28:47.355] :           compiling : shaders/surface.fx
+[16:28:47.389] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[16:28:47.391] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[16:28:47.392] :           HDF mesh  : uboat.esx|flowsurf2
+[16:28:47.394] :           HSF mesh  : uboat.esx|flowsurf2
+[16:28:47.395] :           RB mesh   : uboat.esx|stat
+[16:28:47.397] :           building voxels for : uboat.esx|flowsurf2
+[16:28:47.398] :           voxel size : 1
+[16:28:47.683] :           done : 3281 voxels
+[16:28:47.684] :           > ---- done ---- 
+[16:28:47.685] :           >  
+[16:28:47.722] :           Loading : *black
+[16:29:00.489] :           
+[16:29:00.490] :           ---- SciVis shutting down ------------------------------------------
+[16:29:00.492] :           SHUTDOWN : PhysX
+[16:29:00.527] :           --------------------------------------------------------------------
+[16:29:00.528] :           
+[16:29:00.529] :           SHUTDOWN : PhysX allocator
+[16:29:00.531] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[16:29:00.535] :           
+[16:29:00.536] :           ---- Direct3D rendering system shutting down -----------------------
+[16:29:00.537] :           SHUTDOWN : Model manager
+[16:29:00.539] :           SHUTDOWN : Render target manager
+[16:29:00.539] :           SHUTDOWN : Texture manager
+[16:29:00.540] :           SHUTDOWN : Draw 2D
+[16:29:00.541] :           Releasing Direct3D Device
+[16:29:00.542] :           Releasing Direct3D
+[16:29:00.547] :           --------------------------------------------------------------------
+[16:29:00.548] :           
+[16:29:00.550] :           SHUTDOWN : FR Scene
+[16:29:00.551] :           SHUTDOWN : Shading system
+[16:29:00.555] :           Unloading DLL : rend_d3d9.dll
+[16:29:00.560] :           Saving configuration...
+[16:29:00.590] :           SHUTDOWN : Configuration system
+[16:29:00.606] :           SHUTDOWN : System
+[16:29:00.607] :           SHUTDOWN : Input system
+[16:29:00.608] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[16:29:56.743] :           
+[16:29:56.743] :           ---- File system initialization ------------------------------------
+[16:29:56.743] :           working directory : d:/NAVY_VIS/engine/
+[16:29:56.744] :           --------------------------------------------------------------------
+[16:29:56.744] :           
+[16:29:56.744] :           INIT : Input system
+[16:29:56.745] :           
+[16:29:56.745] :           ---- System initialization -----------------------------------------
+[16:29:56.745] :           power : AC
+[16:29:56.745] :           memory : 1608 Mb of 4094 Mb
+[16:29:56.745] :           checking cpu clock...
+[16:29:57.746] :           cpu clock : 2402 MHz
+[16:29:57.746] :           --------------------------------------------------------------------
+[16:29:57.746] :           
+[16:29:57.746] :           INIT : Configuration system
+[16:29:57.839] :           Engine version : Engine 2.10.7 win-x86 debug Aug 12 2010
+[16:29:57.840] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:29:57.840] :           Loading configuration...
+[16:29:57.841] :           compiling : default.lua
+[16:29:57.842] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:29:57.842] :           compiling : config.lua
+[16:29:57.843] :           compiling : startup.lua
+[16:29:57.845] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:29:57.845] :           Loading DLL : rend_d3d9.dll
+[16:29:57.885] :           
+[16:29:57.886] :           ---- Direct3D rendering system initialization ----------------------
+[16:29:57.891] :           Selected mode : 800x600 W
+[16:29:57.905] :           D3D_SDK_VERSION : 0x80000020
+[16:29:57.907] :           Creating Direct3D
+[16:29:57.949] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[16:29:57.951] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[16:29:57.952] :           Creating Direct3D Device
+[16:29:58.065] :           Checking device :
+[16:29:58.066] :             INTZ depth stencil is supported
+[16:29:58.067] :             NULL render target is supported
+[16:29:58.067] :           INIT : Draw 2D
+[16:29:58.068] :           compiling : shaders/ui.fx
+[16:29:58.085] :           INIT : Texture manager
+[16:29:58.086] :           INIT : Render target manager
+[16:29:58.086] :           INIT : Model manager
+[16:29:58.087] :           --------------------------------------------------------------------
+[16:29:58.087] :           
+[16:29:58.088] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[16:29:58.143] :           INIT : PhysX allocator
+[16:29:58.144] :           
+[16:29:58.144] :           ---- SciVis initialization -----------------------------------------
+[16:29:58.145] :           INIT : PhysX
+[16:29:58.505] :           INIT : FR Scene
+[16:29:58.506] :           INIT : Shading system
+[16:29:58.507] :           compiling : shaders/shaders.lua
+[16:29:58.508] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[16:29:58.509] :           --------------------------------------------------------------------
+[16:29:58.510] :           
+[16:29:58.520] :           >  
+[16:29:58.521] :           > ---- creating U-boat ---- 
+[16:29:58.523] :           view mesh : uboat.esx|boat1
+[16:29:58.524] :           Loading : uboat.esx
+[16:30:02.840] :           compiling : shaders/surface.fx
+[16:30:02.874] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[16:30:02.875] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[16:30:02.875] :           HDF mesh  : uboat.esx|flowsurf2
+[16:30:02.876] :           HSF mesh  : uboat.esx|flowsurf2
+[16:30:02.877] :           RB mesh   : uboat.esx|stat
+[16:30:02.878] :           building voxels for : uboat.esx|flowsurf2
+[16:30:02.879] :           voxel size : 1
+[16:30:03.165] :           done : 3281 voxels
+[16:30:03.165] :           > ---- done ---- 
+[16:30:03.166] :           >  
+[16:30:03.204] :           Loading : *black
+[16:30:04.713] :           > rolling :  102405 0.60544711351395 
+[16:30:05.413] :           > rolling :  147204.9375 0.70375198125839 
+[16:30:06.063] :           > rolling :  188804.859375 0.80661606788635 
+[16:30:06.613] :           > rolling :  224004.875 0.90598368644714 
+[16:30:07.062] :           > rolling :  252804.9375 1.0122102499008 
+[16:30:07.362] :           > rolling :  272004.96875 1.1008188724518 
+[16:30:07.662] :           > rolling :  291205.03125 1.2123799324036 
+[16:30:07.862] :           > rolling :  304005.03125 1.3065049648285 
+[16:30:08.062] :           > rolling :  316805.0625 1.421370267868 
+[16:30:08.212] :           > rolling :  326405.09375 1.5221643447876 
+[16:30:08.362] :           > rolling :  336005.125 1.6333805322647 
+[16:30:08.462] :           > rolling :  342405.125 1.7117712497711 
+[16:30:08.612] :           > rolling :  352005.15625 1.8319754600525 
+[16:30:08.712] :           > rolling :  358405.15625 1.9111187458038 
+[16:30:08.862] :           > rolling :  368005.15625 2.0221555233002 
+[16:30:09.012] :           > rolling :  377605.1875 2.115852355957 
+[16:30:09.212] :           > rolling :  390405.25 2.2027335166931 
+[16:30:12.810] :           > rolling :  620805.6875 2.3276798725128 
+[16:30:12.910] :           > rolling :  627205.6875 2.4597358703613 
+[16:30:12.960] :           > rolling :  630405.6875 2.5254774093628 
+[16:30:13.060] :           > rolling :  636805.6875 2.6552734375 
+[16:30:13.110] :           > rolling :  640005.75 2.7189130783081 
+[16:30:13.210] :           > rolling :  646405.75 2.842554807663 
+[16:30:13.260] :           > rolling :  649605.75 2.9020428657532 
+[16:30:13.360] :           > rolling :  656005.75 3.0147089958191 
+[16:30:13.460] :           > rolling :  662405.75 3.1171936988831 
+[16:30:13.560] :           > rolling :  668805.75 3.2072265148163 
+[16:30:13.710] :           > rolling :  678405.75 3.313972234726 
+[16:30:14.010] :           > rolling :  697605.875 3.4018476009369 
+[16:30:17.708] :           > rolling :  934404.3125 3.5707564353943 
+[16:30:17.758] :           > rolling :  937604.3125 3.6478140354156 
+[16:30:17.808] :           > rolling :  940804.25 3.721410036087 
+[16:30:17.908] :           > rolling :  947204.125 3.857088804245 
+[16:30:17.958] :           > rolling :  950404.125 3.9185762405396 
+[16:30:18.058] :           > rolling :  956804.0625 4.0274682044983 
+[16:30:18.158] :           > rolling :  963204 4.1159954071045 
+[16:30:18.308] :           > rolling :  972803.8125 4.2072515487671 
+[16:30:22.457] :           > rolling :  1238400.375 4.301661491394 
+[16:30:22.656] :           > rolling :  1251200.25 4.417293548584 
+[16:30:28.354] :           > rolling :  1615995.625 4.5158715248108 
+[16:30:28.454] :           > rolling :  1622395.625 4.6198287010193 
+[16:30:28.554] :           > rolling :  1628795.5 4.7323670387268 
+[16:30:28.654] :           > rolling :  1635195.5 4.8517031669617 
+[16:30:28.704] :           > rolling :  1638395.25 4.9132657051086 
+[16:30:28.804] :           > rolling :  1644795.25 5.0386862754822 
+[16:30:28.854] :           > rolling :  1647995.125 5.1018843650818 
+[16:30:28.954] :           > rolling :  1654395.125 5.2274627685547 
+[16:30:29.054] :           > rolling :  1660795 5.3494210243225 
+[16:30:29.104] :           > rolling :  1663995 5.4080729484558 
+[16:30:29.204] :           > rolling :  1670395 5.5187468528748 
+[16:30:29.304] :           > rolling :  1676794.875 5.6179704666138 
+[16:30:29.404] :           > rolling :  1683194.875 5.7027177810669 
+[16:30:29.604] :           > rolling :  1695994.5 5.8178753852844 
+[16:30:33.102] :           > rolling :  1919991.75 5.9536986351013 
+[16:30:33.152] :           > rolling :  1923191.75 6.1135382652283 
+[16:30:33.202] :           > rolling :  1926391.75 6.2723054885864 
+[16:30:33.253] :           > rolling :  1929591.5 6.4291834831238 
+[16:30:33.303] :           > rolling :  1932791.5 6.5833444595337 
+[16:30:33.353] :           > rolling :  1935991.5 6.7339515686035 
+[16:30:33.402] :           > rolling :  1939191.375 6.8801717758179 
+[16:30:33.452] :           > rolling :  1942391.375 7.0211734771729 
+[16:30:33.502] :           > rolling :  1945591.375 7.1561317443848 
+[16:30:33.552] :           > rolling :  1948791.375 7.2842421531677 
+[16:30:33.602] :           > rolling :  1951991.25 7.4047222137451 
+[16:30:33.652] :           > rolling :  1955191.25 7.5168213844299 
+[16:30:33.702] :           > rolling :  1958391.25 7.6198182106018 
+[16:30:33.752] :           > rolling :  1961591.25 7.7130308151245 
+[16:30:33.802] :           > rolling :  1964791.125 7.7958211898804 
+[16:30:33.852] :           > rolling :  1967991.125 7.8675947189331 
+[16:30:33.902] :           > rolling :  1971191.125 7.9278144836426 
+[16:30:33.952] :           > rolling :  1974391.125 7.9760007858276 
+[16:30:34.006] :           > rolling :  1977591 8.0208415985107 
+[16:30:34.052] :           > rolling :  1980791 8.0347166061401 
+[16:30:34.102] :           > rolling :  1983991 8.0445499420166 
+[16:30:34.152] :           > rolling :  1987191 8.0410327911377 
+[16:30:37.800] :           > rolling :  2220787.75 8.1782150268555 
+[16:30:37.850] :           > rolling :  2223987.75 8.3864192962646 
+[16:30:37.900] :           > rolling :  2227187.75 8.5849332809448 
+[16:30:37.950] :           > rolling :  2230387.75 8.7726802825928 
+[16:30:38.000] :           > rolling :  2233587.75 8.9486198425293 
+[16:30:38.050] :           > rolling :  2236787.75 9.1117677688599 
+[16:30:38.100] :           > rolling :  2239987.75 9.2611865997314 
+[16:30:38.150] :           > rolling :  2243187.5 9.3960046768188 
+[16:30:38.200] :           > rolling :  2246387.5 9.5154161453247 
+[16:30:38.250] :           > rolling :  2249587.5 9.6186923980713 
+[16:30:38.300] :           > rolling :  2252787.5 9.7051830291748 
+[16:30:38.350] :           > rolling :  2255987.25 9.7743196487427 
+[16:30:38.400] :           > rolling :  2259187.25 9.8256244659424 
+[16:30:38.450] :           > rolling :  2262387.25 9.8587055206299 
+[16:30:38.500] :           > rolling :  2265587.25 9.8732595443726 
+[16:30:38.550] :           > rolling :  2268787.25 9.8690748214722 
+[16:30:38.600] :           > rolling :  2271987.25 9.846043586731 
+[16:30:38.650] :           > rolling :  2275187.25 9.8041734695435 
+[16:30:42.448] :           > rolling :  2518384 10.032866477966 
+[16:30:42.498] :           > rolling :  2521584 10.202247619629 
+[16:30:42.549] :           > rolling :  2524784 10.35514831543 
+[16:30:42.598] :           > rolling :  2527984 10.490800857544 
+[16:30:42.648] :           > rolling :  2531184 10.608514785767 
+[16:30:42.701] :           > rolling :  2534383.75 10.707680702209 
+[16:30:42.748] :           > rolling :  2537583.75 10.78777885437 
+[16:30:42.798] :           > rolling :  2540783.75 10.848371505737 
+[16:30:42.848] :           > rolling :  2543983.75 10.889123916626 
+[16:30:42.898] :           > rolling :  2547183.5 10.909808158875 
+[16:30:42.949] :           > rolling :  2550383.5 10.910293579102 
+[16:30:47.197] :           > rolling :  2822380 11.027764320374 
+[16:30:58.745] :           >  
+[16:30:58.746] :           > ---- creating U-boat ---- 
+[16:30:58.746] :           view mesh : uboat.esx|boat1
+[16:30:59.523] :           HDF mesh  : uboat.esx|flowsurf2
+[16:30:59.524] :           HSF mesh  : uboat.esx|flowsurf2
+[16:30:59.525] :           RB mesh   : uboat.esx|stat
+[16:30:59.526] :           building voxels for : uboat.esx|flowsurf2
+[16:30:59.527] :           voxel size : 1
+[16:30:59.811] :           done : 3281 voxels
+[16:30:59.812] :           > ---- done ---- 
+[16:30:59.812] :           >  
+[16:31:46.606] :           
+[16:31:46.607] :           ---- SciVis shutting down ------------------------------------------
+[16:31:46.608] :           SHUTDOWN : PhysX
+[16:31:46.646] :           --------------------------------------------------------------------
+[16:31:46.646] :           
+[16:31:46.647] :           SHUTDOWN : PhysX allocator
+[16:31:46.647] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[16:31:46.650] :           
+[16:31:46.650] :           ---- Direct3D rendering system shutting down -----------------------
+[16:31:46.651] :           SHUTDOWN : Model manager
+[16:31:46.651] :           SHUTDOWN : Render target manager
+[16:31:46.651] :           SHUTDOWN : Texture manager
+[16:31:46.652] :           SHUTDOWN : Draw 2D
+[16:31:46.652] :           Releasing Direct3D Device
+[16:31:46.653] :           Releasing Direct3D
+[16:31:46.655] :           --------------------------------------------------------------------
+[16:31:46.656] :           
+[16:31:46.656] :           SHUTDOWN : FR Scene
+[16:31:46.657] :           SHUTDOWN : Shading system
+[16:31:46.658] :           Unloading DLL : rend_d3d9.dll
+[16:31:46.670] :           Saving configuration...
+[16:31:46.705] :           SHUTDOWN : Configuration system
+[16:31:46.723] :           SHUTDOWN : System
+[16:31:46.724] :           SHUTDOWN : Input system
+[16:31:46.724] :           SHUTDOWN : File system
