@@ -1,0 +1,22 @@
+global proc playSound() 
+{
+	string $selection[] =  `ls -sl`; 
+	if ( size( $selection ) != 0 )
+	{
+		string $name = $selection[0]+".Sound";
+		string $type = getAttr("-type "+$name);
+		if($type == "string")
+		{
+			string $value = getAttr($name);
+			eclipseShell play2DSound($value);
+		}
+		else
+		{
+			print("Error: Attribute 'Sound' must be string type.");
+		}
+	}
+	else
+	{
+		print("Error: You must select object.");
+	}
+}
