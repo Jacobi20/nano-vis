@@ -10,7 +10,7 @@ cfg.setvar('d3d_anisotropy_level'       , 16);
 cfg.setvar('d3d_mipmap_lod_bias'        , 0);
 cfg.setvar('ship_show_hull'             , true);
 cfg.setvar('ship_show_voxels'           , false);
-cfg.setvar('ship_show_submerge'         , false);
+cfg.setvar('ship_show_submerge'         , true);
 cfg.setvar('ship_hsf_method'            , 'surface');
 
 
@@ -35,4 +35,5 @@ input.bind ("F3", "ship_show_voxels    = not ship_show_voxels");
 input.bind ("F4", "ship_show_submerge  = not ship_show_submerge");
 input.bind ("F5", "dofile('run.lua')");
 input.bind ("F6", "naval.reload_shaders()");
+input.bind ("F7", "do_rolling()");
 input.bind ("F10", "core.quit()");
