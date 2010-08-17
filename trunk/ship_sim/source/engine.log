@@ -3910,3 +3910,742 @@
 [16:31:46.723] :           SHUTDOWN : System
 [16:31:46.724] :           SHUTDOWN : Input system
 [16:31:46.724] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[16:28:14.786] :           
+[16:28:14.803] :           ---- File system initialization ------------------------------------
+[16:28:14.803] :           working directory : d:/NAVY_VIS/engine/
+[16:28:14.804] :           --------------------------------------------------------------------
+[16:28:14.804] :           
+[16:28:14.804] :           INIT : Input system
+[16:28:14.805] :           
+[16:28:14.805] :           ---- System initialization -----------------------------------------
+[16:28:14.805] :           power : AC
+[16:28:14.805] :           memory : 1674 Mb of 4094 Mb
+[16:28:14.806] :           checking cpu clock...
+[16:28:15.806] :           cpu clock : 2402 MHz
+[16:28:15.806] :           --------------------------------------------------------------------
+[16:28:15.806] :           
+[16:28:15.807] :           INIT : Configuration system
+[16:28:15.899] :           Engine version : Engine 2.10.10 win-x86 debug Aug 16 2010
+[16:28:15.900] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:28:15.900] :           Loading configuration...
+[16:28:15.901] :           compiling : default.lua
+[16:28:15.901] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:28:15.902] :           compiling : config.lua
+[16:28:15.903] :           compiling : startup.lua
+[16:28:15.904] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:28:15.905] :           Loading DLL : rend_d3d9.dll
+[16:28:15.946] :           
+[16:28:15.947] :           ---- Direct3D rendering system initialization ----------------------
+[16:28:15.952] :           Selected mode : 800x600 W
+[16:28:15.976] :           D3D_SDK_VERSION : 0x80000020
+[16:28:15.978] :           Creating Direct3D
+[16:28:16.021] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[16:28:16.022] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[16:28:16.022] :           Creating Direct3D Device
+[16:28:16.160] :           Checking device :
+[16:28:16.161] :             INTZ depth stencil is supported
+[16:28:16.161] :             NULL render target is supported
+[16:28:16.162] :           INIT : Draw 2D
+[16:28:16.162] :           compiling : shaders/ui.fx
+[16:28:16.179] :           INIT : Texture manager
+[16:28:16.180] :           INIT : Render target manager
+[16:28:16.180] :           INIT : Model manager
+[16:28:16.181] :           --------------------------------------------------------------------
+[16:28:16.182] :           
+[16:28:16.182] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[16:28:16.232] :           INIT : PhysX allocator
+[16:28:16.233] :           
+[16:28:16.233] :           ---- SciVis initialization -----------------------------------------
+[16:28:16.234] :           INIT : PhysX
+[16:28:16.633] :           INIT : FR Scene
+[16:28:16.634] :           INIT : Shading system
+[16:28:16.634] :           compiling : shaders/shaders.lua
+[16:28:16.635] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[16:28:16.636] :           --------------------------------------------------------------------
+[16:28:16.637] :           
+[16:28:19.489] :           >  
+[16:28:19.489] :           > ---- creating U-boat ---- 
+[16:28:19.490] :           view mesh : uboat.esx|boat1
+[16:28:19.491] :           Loading : uboat.esx
+[16:28:23.752] :           compiling : shaders/surface.fx
+[16:28:23.805] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[16:28:23.805] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[16:28:23.806] :           HDF mesh  : uboat.esx|flowsurf2
+[16:28:23.807] :           HSF mesh  : uboat.esx|flowsurf2
+[16:28:23.807] :           RB mesh   : uboat.esx|stat
+[16:28:23.828] :           building voxels for : uboat.esx|flowsurf2
+[16:28:23.829] :           voxel size : 1
+[16:28:24.114] :           done : 3281 voxels
+[16:28:24.115] :           > ---- done ---- 
+[16:28:24.115] :           >  
+[16:28:24.152] :           Loading : *black
+[16:28:37.345] :           
+[16:28:37.346] :           ---- SciVis shutting down ------------------------------------------
+[16:28:37.347] :           SHUTDOWN : PhysX
+[16:28:37.381] :           --------------------------------------------------------------------
+[16:28:37.382] :           
+[16:28:37.383] :           SHUTDOWN : PhysX allocator
+[16:28:37.383] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[16:28:37.386] :           
+[16:28:37.387] :           ---- Direct3D rendering system shutting down -----------------------
+[16:28:37.387] :           SHUTDOWN : Model manager
+[16:28:37.388] :           SHUTDOWN : Render target manager
+[16:28:37.388] :           SHUTDOWN : Texture manager
+[16:28:37.389] :           SHUTDOWN : Draw 2D
+[16:28:37.389] :           Releasing Direct3D Device
+[16:28:37.390] :           Releasing Direct3D
+[16:28:37.395] :           --------------------------------------------------------------------
+[16:28:37.397] :           
+[16:28:37.403] :           SHUTDOWN : FR Scene
+[16:28:37.404] :           SHUTDOWN : Shading system
+[16:28:37.426] :           Unloading DLL : rend_d3d9.dll
+[16:28:37.431] :           Saving configuration...
+[16:28:37.466] :           SHUTDOWN : Configuration system
+[16:28:37.482] :           SHUTDOWN : System
+[16:28:37.483] :           SHUTDOWN : Input system
+[16:28:37.483] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[16:32:52.486] :           
+[16:32:52.487] :           ---- File system initialization ------------------------------------
+[16:32:52.487] :           working directory : d:/NAVY_VIS/engine/
+[16:32:52.487] :           --------------------------------------------------------------------
+[16:32:52.487] :           
+[16:32:52.487] :           INIT : Input system
+[16:32:52.488] :           
+[16:32:52.488] :           ---- System initialization -----------------------------------------
+[16:32:52.488] :           power : AC
+[16:32:52.488] :           memory : 1671 Mb of 4094 Mb
+[16:32:52.489] :           checking cpu clock...
+[16:32:53.489] :           cpu clock : 2402 MHz
+[16:32:53.489] :           --------------------------------------------------------------------
+[16:32:53.489] :           
+[16:32:53.490] :           INIT : Configuration system
+[16:32:53.581] :           Engine version : Engine 2.10.10 win-x86 debug Aug 16 2010
+[16:32:53.581] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:32:53.582] :           Loading configuration...
+[16:32:53.582] :           compiling : default.lua
+[16:32:53.583] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:32:53.583] :           compiling : config.lua
+[16:32:53.584] :           compiling : startup.lua
+[16:32:53.586] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:32:53.587] :           Loading DLL : rend_d3d9.dll
+[16:32:53.624] :           
+[16:32:53.625] :           ---- Direct3D rendering system initialization ----------------------
+[16:32:53.631] :           Selected mode : 800x600 W
+[16:32:53.641] :           D3D_SDK_VERSION : 0x80000020
+[16:32:53.642] :           Creating Direct3D
+[16:32:53.684] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[16:32:53.686] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[16:32:53.687] :           Creating Direct3D Device
+[16:32:53.787] :           Checking device :
+[16:32:53.788] :             INTZ depth stencil is supported
+[16:32:53.789] :             NULL render target is supported
+[16:32:53.790] :           INIT : Draw 2D
+[16:32:53.791] :           compiling : shaders/ui.fx
+[16:32:53.808] :           INIT : Texture manager
+[16:32:53.810] :           INIT : Render target manager
+[16:32:53.811] :           INIT : Model manager
+[16:32:53.812] :           --------------------------------------------------------------------
+[16:32:53.813] :           
+[16:32:53.814] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[16:32:53.865] :           INIT : PhysX allocator
+[16:32:53.866] :           
+[16:32:53.867] :           ---- SciVis initialization -----------------------------------------
+[16:32:53.868] :           INIT : PhysX
+[16:32:54.269] :           INIT : FR Scene
+[16:32:54.270] :           INIT : Shading system
+[16:32:54.272] :           compiling : shaders/shaders.lua
+[16:32:54.274] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[16:32:54.275] :           Loading : sea.esx
+[16:32:54.284] :           SHUTDOWN : PhysX allocator
+[16:32:54.285] : [ ERROR ] App init : scene node 'sea.esx|esx' not found
+[16:32:54.286] :           
+[16:32:54.287] :           ---- Direct3D rendering system shutting down -----------------------
+[16:32:54.288] :           SHUTDOWN : Model manager
+[16:32:54.289] :           SHUTDOWN : Render target manager
+[16:32:54.290] :           SHUTDOWN : Texture manager
+[16:32:54.291] :           SHUTDOWN : Draw 2D
+[16:32:54.292] :           Releasing Direct3D Device
+[16:32:54.314] :           Releasing Direct3D
+[16:32:54.329] :           --------------------------------------------------------------------
+[16:32:54.333] :           
+[16:32:54.335] :           SHUTDOWN : FR Scene
+[16:32:54.337] :           SHUTDOWN : Shading system
+[16:32:54.342] :           Unloading DLL : rend_d3d9.dll
+[16:32:54.347] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[16:32:54.353] :           SHUTDOWN : Configuration system
+[16:32:54.354] :           SHUTDOWN : System
+[16:32:54.355] :           SHUTDOWN : Input system
+[16:32:54.356] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[16:33:50.709] :           
+[16:33:50.709] :           ---- File system initialization ------------------------------------
+[16:33:50.710] :           working directory : d:/NAVY_VIS/engine/
+[16:33:50.710] :           --------------------------------------------------------------------
+[16:33:50.710] :           
+[16:33:50.710] :           INIT : Input system
+[16:33:50.711] :           
+[16:33:50.711] :           ---- System initialization -----------------------------------------
+[16:33:50.711] :           power : AC
+[16:33:50.711] :           memory : 1698 Mb of 4094 Mb
+[16:33:50.712] :           checking cpu clock...
+[16:33:51.712] :           cpu clock : 2402 MHz
+[16:33:51.712] :           --------------------------------------------------------------------
+[16:33:51.712] :           
+[16:33:51.712] :           INIT : Configuration system
+[16:33:51.805] :           Engine version : Engine 2.10.10 win-x86 debug Aug 16 2010
+[16:33:51.806] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:33:51.806] :           Loading configuration...
+[16:33:51.807] :           compiling : default.lua
+[16:33:51.807] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:33:51.808] :           compiling : config.lua
+[16:33:51.809] :           compiling : startup.lua
+[16:33:51.810] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:33:51.811] :           Loading DLL : rend_d3d9.dll
+[16:33:51.857] :           
+[16:33:51.858] :           ---- Direct3D rendering system initialization ----------------------
+[16:33:51.862] :           Selected mode : 800x600 W
+[16:33:51.872] :           D3D_SDK_VERSION : 0x80000020
+[16:33:51.874] :           Creating Direct3D
+[16:33:51.916] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[16:33:51.918] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[16:33:51.919] :           Creating Direct3D Device
+[16:33:52.034] :           Checking device :
+[16:33:52.035] :             INTZ depth stencil is supported
+[16:33:52.036] :             NULL render target is supported
+[16:33:52.037] :           INIT : Draw 2D
+[16:33:52.038] :           compiling : shaders/ui.fx
+[16:33:52.057] :           INIT : Texture manager
+[16:33:52.058] :           INIT : Render target manager
+[16:33:52.059] :           INIT : Model manager
+[16:33:52.060] :           --------------------------------------------------------------------
+[16:33:52.061] :           
+[16:33:52.062] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[16:34:41.758] :           INIT : PhysX allocator
+[16:34:41.758] :           
+[16:34:41.759] :           ---- SciVis initialization -----------------------------------------
+[16:34:41.759] :           INIT : PhysX
+[16:34:42.139] :           INIT : FR Scene
+[16:34:42.139] :           INIT : Shading system
+[16:34:42.139] :           compiling : shaders/shaders.lua
+[16:34:42.140] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[16:34:44.441] :           Loading : sea.esx
+[16:34:44.449] :           SHUTDOWN : PhysX allocator
+[16:34:44.449] : [ ERROR ] App init : scene node 'sea.esx|esx' not found
+[16:34:44.450] :           
+[16:34:44.450] :           ---- Direct3D rendering system shutting down -----------------------
+[16:34:44.451] :           SHUTDOWN : Model manager
+[16:34:44.451] :           SHUTDOWN : Render target manager
+[16:34:44.451] :           SHUTDOWN : Texture manager
+[16:34:44.452] :           SHUTDOWN : Draw 2D
+[16:34:44.452] :           Releasing Direct3D Device
+[16:34:44.469] :           Releasing Direct3D
+[16:34:44.472] :           --------------------------------------------------------------------
+[16:34:44.476] :           
+[16:34:44.476] :           SHUTDOWN : FR Scene
+[16:34:44.476] :           SHUTDOWN : Shading system
+[16:34:44.477] :           Unloading DLL : rend_d3d9.dll
+[16:34:44.480] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[16:34:44.485] :           SHUTDOWN : Configuration system
+[16:34:44.486] :           SHUTDOWN : System
+[16:34:44.486] :           SHUTDOWN : Input system
+[16:34:44.486] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[16:36:07.783] :           
+[16:36:07.783] :           ---- File system initialization ------------------------------------
+[16:36:07.784] :           working directory : d:/NAVY_VIS/engine/
+[16:36:07.784] :           --------------------------------------------------------------------
+[16:36:07.785] :           
+[16:36:07.785] :           INIT : Input system
+[16:36:07.786] :           
+[16:36:07.786] :           ---- System initialization -----------------------------------------
+[16:36:07.786] :           power : AC
+[16:36:07.787] :           memory : 1685 Mb of 4094 Mb
+[16:36:07.787] :           checking cpu clock...
+[16:36:08.787] :           cpu clock : 2400 MHz
+[16:36:08.787] :           --------------------------------------------------------------------
+[16:36:08.787] :           
+[16:36:08.787] :           INIT : Configuration system
+[16:36:08.884] :           Engine version : Engine 2.10.10 win-x86 debug Aug 16 2010
+[16:36:08.885] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:36:08.886] :           Loading configuration...
+[16:36:08.886] :           compiling : default.lua
+[16:36:08.887] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:36:08.887] :           compiling : config.lua
+[16:36:08.888] :           compiling : startup.lua
+[16:36:08.890] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:36:08.891] :           Loading DLL : rend_d3d9.dll
+[16:36:08.928] :           
+[16:36:08.929] :           ---- Direct3D rendering system initialization ----------------------
+[16:36:08.934] :           Selected mode : 800x600 W
+[16:36:08.947] :           D3D_SDK_VERSION : 0x80000020
+[16:36:08.949] :           Creating Direct3D
+[16:36:08.992] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[16:36:08.994] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[16:36:08.996] :           Creating Direct3D Device
+[16:36:09.107] :           Checking device :
+[16:36:09.108] :             INTZ depth stencil is supported
+[16:36:09.109] :             NULL render target is supported
+[16:36:09.110] :           INIT : Draw 2D
+[16:36:09.111] :           compiling : shaders/ui.fx
+[16:36:09.133] :           INIT : Texture manager
+[16:36:09.134] :           INIT : Render target manager
+[16:36:09.137] :           INIT : Model manager
+[16:36:09.139] :           --------------------------------------------------------------------
+[16:36:09.141] :           
+[16:36:09.143] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[16:36:11.459] :           INIT : PhysX allocator
+[16:36:11.460] :           
+[16:36:11.460] :           ---- SciVis initialization -----------------------------------------
+[16:36:11.461] :           INIT : PhysX
+[16:36:11.828] :           INIT : FR Scene
+[16:36:11.829] :           INIT : Shading system
+[16:36:11.834] :           compiling : shaders/shaders.lua
+[16:36:11.835] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[16:36:11.840] :           Loading : sea.esx
+[16:36:11.849] :           SHUTDOWN : PhysX allocator
+[16:36:11.849] : [ ERROR ] App init : scene node 'sea.esx|esx' not found
+[16:36:11.850] :           
+[16:36:11.851] :           ---- Direct3D rendering system shutting down -----------------------
+[16:36:11.851] :           SHUTDOWN : Model manager
+[16:36:11.851] :           SHUTDOWN : Render target manager
+[16:36:11.852] :           SHUTDOWN : Texture manager
+[16:36:11.853] :           SHUTDOWN : Draw 2D
+[16:36:11.854] :           Releasing Direct3D Device
+[16:36:11.876] :           Releasing Direct3D
+[16:36:11.878] :           --------------------------------------------------------------------
+[16:36:11.879] :           
+[16:36:11.879] :           SHUTDOWN : FR Scene
+[16:36:11.880] :           SHUTDOWN : Shading system
+[16:36:11.881] :           Unloading DLL : rend_d3d9.dll
+[16:36:11.885] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[16:36:11.890] :           SHUTDOWN : Configuration system
+[16:36:11.890] :           SHUTDOWN : System
+[16:36:11.891] :           SHUTDOWN : Input system
+[16:36:11.891] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[16:36:34.522] :           
+[16:36:34.522] :           ---- File system initialization ------------------------------------
+[16:36:34.523] :           working directory : d:/NAVY_VIS/engine/
+[16:36:34.523] :           --------------------------------------------------------------------
+[16:36:34.523] :           
+[16:36:34.523] :           INIT : Input system
+[16:36:34.524] :           
+[16:36:34.524] :           ---- System initialization -----------------------------------------
+[16:36:34.524] :           power : AC
+[16:36:34.524] :           memory : 1689 Mb of 4094 Mb
+[16:36:34.524] :           checking cpu clock...
+[16:36:35.525] :           cpu clock : 2402 MHz
+[16:36:35.525] :           --------------------------------------------------------------------
+[16:36:35.525] :           
+[16:36:35.525] :           INIT : Configuration system
+[16:36:35.618] :           Engine version : Engine 2.10.10 win-x86 debug Aug 16 2010
+[16:36:35.618] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:36:35.619] :           Loading configuration...
+[16:36:35.619] :           compiling : default.lua
+[16:36:35.620] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:36:35.620] :           compiling : config.lua
+[16:36:35.621] :           compiling : startup.lua
+[16:36:35.623] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:36:35.624] :           Loading DLL : rend_d3d9.dll
+[16:36:35.661] :           
+[16:36:35.661] :           ---- Direct3D rendering system initialization ----------------------
+[16:36:35.666] :           Selected mode : 800x600 W
+[16:36:35.679] :           D3D_SDK_VERSION : 0x80000020
+[16:36:35.681] :           Creating Direct3D
+[16:36:35.723] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[16:36:35.725] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[16:36:35.726] :           Creating Direct3D Device
+[16:36:35.829] :           Checking device :
+[16:36:35.830] :             INTZ depth stencil is supported
+[16:36:35.831] :             NULL render target is supported
+[16:36:35.833] :           INIT : Draw 2D
+[16:36:35.834] :           compiling : shaders/ui.fx
+[16:36:35.855] :           INIT : Texture manager
+[16:36:35.857] :           INIT : Render target manager
+[16:36:35.859] :           INIT : Model manager
+[16:36:35.861] :           --------------------------------------------------------------------
+[16:36:35.862] :           
+[16:36:35.864] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[16:36:48.764] :           INIT : PhysX allocator
+[16:36:48.764] :           
+[16:36:48.765] :           ---- SciVis initialization -----------------------------------------
+[16:36:48.765] :           INIT : PhysX
+[16:36:49.167] :           INIT : FR Scene
+[16:36:49.168] :           INIT : Shading system
+[16:36:49.169] :           compiling : shaders/shaders.lua
+[16:36:49.170] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+
+-------------------------------------------------------------------------------
+[16:43:50.603] :           
+[16:43:50.603] :           ---- File system initialization ------------------------------------
+[16:43:50.603] :           working directory : d:/NAVY_VIS/engine/
+[16:43:50.604] :           --------------------------------------------------------------------
+[16:43:50.604] :           
+[16:43:50.604] :           INIT : Input system
+[16:43:50.605] :           
+[16:43:50.605] :           ---- System initialization -----------------------------------------
+[16:43:50.605] :           power : AC
+[16:43:50.605] :           memory : 1641 Mb of 4094 Mb
+[16:43:50.606] :           checking cpu clock...
+[16:43:51.606] :           cpu clock : 2402 MHz
+[16:43:51.606] :           --------------------------------------------------------------------
+[16:43:51.606] :           
+[16:43:51.606] :           INIT : Configuration system
+[16:43:51.698] :           Engine version : Engine 2.10.10 win-x86 debug Aug 16 2010
+[16:43:51.699] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:43:51.699] :           Loading configuration...
+[16:43:51.700] :           compiling : default.lua
+[16:43:51.700] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:43:51.701] :           compiling : config.lua
+[16:43:51.702] :           compiling : startup.lua
+[16:43:51.703] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:43:51.704] :           Loading DLL : rend_d3d9.dll
+[16:43:51.753] :           
+[16:43:51.754] :           ---- Direct3D rendering system initialization ----------------------
+[16:43:51.758] :           Selected mode : 800x600 W
+[16:43:51.774] :           D3D_SDK_VERSION : 0x80000020
+[16:43:51.776] :           Creating Direct3D
+[16:43:51.819] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[16:43:51.821] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[16:43:51.822] :           Creating Direct3D Device
+[16:43:51.940] :           Checking device :
+[16:43:51.941] :             INTZ depth stencil is supported
+[16:43:51.943] :             NULL render target is supported
+[16:43:51.944] :           INIT : Draw 2D
+[16:43:51.945] :           compiling : shaders/ui.fx
+[16:43:51.993] :           INIT : Texture manager
+[16:43:51.994] :           INIT : Render target manager
+[16:43:51.996] :           INIT : Model manager
+[16:43:51.997] :           --------------------------------------------------------------------
+[16:43:51.998] :           
+[16:43:51.999] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[16:43:54.020] :           INIT : PhysX allocator
+[16:43:54.021] :           
+[16:43:54.021] :           ---- SciVis initialization -----------------------------------------
+[16:43:54.032] :           INIT : PhysX
+[16:43:54.407] :           INIT : FR Scene
+[16:43:54.408] :           INIT : Shading system
+[16:43:54.408] :           compiling : shaders/shaders.lua
+[16:43:54.409] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[16:43:56.609] :           Loading : sea.esx
+[16:43:56.619] :           compiling : shaders/surface.fx
+[16:43:56.651] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[16:43:56.652] :           --------------------------------------------------------------------
+[16:43:56.652] :           
+[16:43:56.654] :           Loading : *black
+[16:44:00.100] :           >  
+[16:44:00.101] :           > ---- creating U-boat ---- 
+[16:44:00.101] :           view mesh : uboat.esx|boat1
+[16:44:00.102] :           Loading : uboat.esx
+[16:44:04.389] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[16:44:04.390] :           HDF mesh  : uboat.esx|flowsurf2
+[16:44:04.391] :           HSF mesh  : uboat.esx|flowsurf2
+[16:44:04.392] :           RB mesh   : uboat.esx|stat
+[16:44:04.393] :           building voxels for : uboat.esx|flowsurf2
+[16:44:04.394] :           voxel size : 1
+[16:44:04.678] :           done : 3281 voxels
+[16:44:04.679] :           > ---- done ---- 
+[16:44:04.679] :           >  
+[16:45:29.829] :           
+[16:45:29.830] :           ---- SciVis shutting down ------------------------------------------
+[16:45:29.832] :           SHUTDOWN : PhysX
+[16:45:29.867] :           --------------------------------------------------------------------
+[16:45:29.868] :           
+[16:45:29.869] :           SHUTDOWN : PhysX allocator
+
+-------------------------------------------------------------------------------
+[16:46:42.971] :           
+[16:46:42.972] :           ---- File system initialization ------------------------------------
+[16:46:42.972] :           working directory : d:/NAVY_VIS/engine/
+[16:46:42.972] :           --------------------------------------------------------------------
+[16:46:42.972] :           
+[16:46:42.973] :           INIT : Input system
+[16:46:42.973] :           
+[16:46:42.973] :           ---- System initialization -----------------------------------------
+[16:46:42.973] :           power : AC
+[16:46:42.973] :           memory : 1632 Mb of 4094 Mb
+[16:46:42.974] :           checking cpu clock...
+[16:46:43.974] :           cpu clock : 2401 MHz
+[16:46:43.974] :           --------------------------------------------------------------------
+[16:46:43.974] :           
+[16:46:43.975] :           INIT : Configuration system
+[16:46:44.067] :           Engine version : Engine 2.10.10 win-x86 debug Aug 16 2010
+[16:46:44.068] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[16:46:44.068] :           Loading configuration...
+[16:46:44.069] :           compiling : default.lua
+[16:46:44.070] : [ ERROR ] cannot open default.lua: No such file or directory
+[16:46:44.070] :           compiling : config.lua
+[16:46:44.072] :           compiling : startup.lua
+[16:46:44.073] : [ ERROR ] cannot open startup.lua: No such file or directory
+[16:46:44.074] :           Loading DLL : rend_d3d9.dll
+[16:46:44.112] :           
+[16:46:44.112] :           ---- Direct3D rendering system initialization ----------------------
+[16:46:44.117] :           Selected mode : 800x600 W
+[16:46:44.127] :           D3D_SDK_VERSION : 0x80000020
+[16:46:44.129] :           Creating Direct3D
+[16:46:44.171] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[16:46:44.173] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[16:46:44.174] :           Creating Direct3D Device
+[16:46:44.272] :           Checking device :
+[16:46:44.273] :             INTZ depth stencil is supported
+[16:46:44.274] :             NULL render target is supported
+[16:46:44.275] :           INIT : Draw 2D
+[16:46:44.275] :           compiling : shaders/ui.fx
+[16:46:44.292] :           INIT : Texture manager
+[16:46:44.293] :           INIT : Render target manager
+[16:46:44.294] :           INIT : Model manager
+[16:46:44.295] :           --------------------------------------------------------------------
+[16:46:44.296] :           
+[16:46:44.297] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[16:46:46.480] :           INIT : PhysX allocator
+[16:46:46.481] :           
+[16:46:46.481] :           ---- SciVis initialization -----------------------------------------
+[16:46:46.482] :           INIT : PhysX
+[16:46:46.836] :           INIT : FR Scene
+[16:46:46.837] :           INIT : Shading system
+[16:46:46.837] :           compiling : shaders/shaders.lua
+[16:46:46.838] : [ ERROR ] cannot open shaders/shaders.lua: No such file or directory
+[16:46:46.839] :           Loading : sea.esx
+[16:46:46.848] :           compiling : shaders/surface.fx
+[16:46:46.881] : [WARNING] shader '*color7F7F7FFF' not found, default created
+[16:46:46.881] :           --------------------------------------------------------------------
+[16:46:46.882] :           
+[16:46:46.883] :           Loading : *black
+[16:46:47.950] :           >  
+[16:46:47.951] :           > ---- creating U-boat ---- 
+[16:46:47.952] :           view mesh : uboat.esx|boat1
+[16:46:47.952] :           Loading : uboat.esx
+[16:46:52.252] : [WARNING] shader '*colorBDBDBDFF' not found, default created
+[16:46:52.253] :           HDF mesh  : uboat.esx|flowsurf2
+[16:46:52.253] :           HSF mesh  : uboat.esx|flowsurf2
+[16:46:52.254] :           RB mesh   : uboat.esx|stat
+[16:46:52.255] :           building voxels for : uboat.esx|flowsurf2
+[16:46:52.255] :           voxel size : 1
+[16:46:52.542] :           done : 3281 voxels
+[16:46:52.543] :           > ---- done ---- 
+[16:46:52.543] :           >  
+[16:46:55.478] :           
+[16:46:55.478] :           ---- SciVis shutting down ------------------------------------------
+[16:46:55.480] :           SHUTDOWN : PhysX
+[16:46:55.514] :           --------------------------------------------------------------------
+[16:46:55.514] :           
+[16:46:55.514] :           SHUTDOWN : PhysX allocator
+[16:46:55.515] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[16:46:55.518] :           
+[16:46:55.518] :           ---- Direct3D rendering system shutting down -----------------------
+[16:46:55.518] :           SHUTDOWN : Model manager
+[16:46:55.519] :           SHUTDOWN : Render target manager
+[16:46:55.519] :           SHUTDOWN : Texture manager
+[16:46:55.520] :           SHUTDOWN : Draw 2D
+[16:46:55.520] :           Releasing Direct3D Device
+[16:46:55.520] :           Releasing Direct3D
+[16:46:55.523] :           --------------------------------------------------------------------
+[16:46:55.524] :           
+[16:46:55.524] :           SHUTDOWN : FR Scene
+[16:46:55.525] :           SHUTDOWN : Shading system
+[16:46:55.545] :           Unloading DLL : rend_d3d9.dll
+[16:46:55.552] :           Saving configuration...
+[16:46:55.582] :           SHUTDOWN : Configuration system
+[16:46:55.597] :           SHUTDOWN : System
+[16:46:55.598] :           SHUTDOWN : Input system
+[16:46:55.599] :           SHUTDOWN : File system
+
+-------------------------------------------------------------------------------
+[18:04:39.256] :           
+[18:04:39.256] :           ---- File system initialization ------------------------------------
+[18:04:39.257] :           working directory : d:/NAVY_VIS/engine/
+[18:04:39.257] :           --------------------------------------------------------------------
+[18:04:39.257] :           
+[18:04:39.257] :           INIT : Input system
+[18:04:39.258] :           
+[18:04:39.258] :           ---- System initialization -----------------------------------------
+[18:04:39.258] :           power : AC
+[18:04:39.258] :           memory : 1477 Mb of 4094 Mb
+[18:04:39.259] :           checking cpu clock...
+[18:04:40.259] :           cpu clock : 2402 MHz
+[18:04:40.259] :           --------------------------------------------------------------------
+[18:04:40.259] :           
+[18:04:40.259] :           INIT : Configuration system
+[18:04:40.370] :           Engine version : Engine 2.10.10 win-x86 release Aug 16 2010
+[18:04:40.371] :           Command line   : "d:\NAVY_VIS\engine\launch.exe" -dir "..\ship_sim\data" -game "..\ship_sim\ship_sim.dll"
+[18:04:40.371] :           Loading configuration...
+[18:04:40.372] :           compiling : default.lua
+[18:04:40.373] : [ ERROR ] cannot open default.lua: No such file or directory
+[18:04:40.373] :           compiling : config.lua
+[18:04:40.374] :           compiling : startup.lua
+[18:04:40.375] : [ ERROR ] cannot open startup.lua: No such file or directory
+[18:04:40.375] :           Loading DLL : rend_d3d9.dll
+[18:04:40.413] :           
+[18:04:40.414] :           ---- Direct3D rendering system initialization ----------------------
+[18:04:40.420] :           Selected mode : 800x600 W
+[18:04:40.431] :           D3D_SDK_VERSION : 0x80000020
+[18:04:40.432] :           Creating Direct3D
+[18:04:40.476] :           Adapter #  0 : NVIDIA GeForce GTX 260 \\.\DISPLAY1
+[18:04:40.477] :           Adapter #  1 : NVIDIA GeForce GTX 260 \\.\DISPLAY2
+[18:04:40.479] :           Creating Direct3D Device
+[18:04:40.599] :           Checking device :
+[18:04:40.600] :             INTZ depth stencil is supported
+[18:04:40.601] :             NULL render target is supported
+[18:04:40.602] :           INIT : Draw 2D
+[18:04:40.604] :           compiling : shaders/ui.fx
+[18:04:40.622] :           INIT : Texture manager
+[18:04:40.623] :           INIT : Render target manager
+[18:04:40.624] :           INIT : Model manager
+[18:04:40.625] :           --------------------------------------------------------------------
+[18:04:40.626] :           
+[18:04:40.627] :           Loading DLL : ..\ship_sim\ship_sim.dll
+[18:04:40.674] :           INIT : PhysX allocator
+[18:04:40.675] :           
+[18:04:40.677] :           ---- SciVis initialization -----------------------------------------
+[18:04:40.678] :           INIT : PhysX
+[18:04:41.071] :           INIT : FR Scene
+[18:04:41.072] :           INIT : Shading system
+[18:04:41.073] :           compiling : shaders/shaders.lua
+[18:04:41.077] :           compiling : shaders/surface0000.fx
+[18:04:41.150] :           compiling : shaders/surface0001.fx
+[18:04:41.186] :           Loading : sea.esx
+[18:04:41.189] :           --------------------------------------------------------------------
+[18:04:41.190] :           
+[18:04:41.208] :           Loading : textures/water.tga
+[18:04:41.219] :           Loading : *black
+[18:04:43.816] :           >  
+[18:04:43.818] :           > ---- creating U-boat ---- 
+[18:04:43.819] :           view mesh : uboat.esx|boat1
+[18:04:43.820] :           Loading : uboat.esx
+[18:04:44.612] :           HDF mesh  : uboat.esx|flowsurf2
+[18:04:44.627] :           HSF mesh  : uboat.esx|flowsurf2
+[18:04:44.628] :           RB mesh   : uboat.esx|stat
+[18:04:44.630] :           building voxels for : uboat.esx|flowsurf2
+[18:04:44.631] :           voxel size : 1
+[18:04:44.656] :           done : 3281 voxels
+[18:04:44.657] :           > ---- done ---- 
+[18:04:44.658] :           >  
+[18:04:44.666] :           Loading : textures/plain/steel.tga
+[18:04:44.675] :           Loading : textures/plain/steel_spec.tga
+[18:04:44.684] :           Loading : textures/plain/steel_local.tga
+[18:06:01.621] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.637] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.653] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.670] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.686] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.703] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.720] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.736] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.753] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.770] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.786] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.803] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.822] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.836] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.853] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.870] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.886] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.903] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.919] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.936] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.953] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.970] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:01.986] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:02.003] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:02.019] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:02.037] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:11.932] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:11.949] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:11.966] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:11.983] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:11.999] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.016] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.032] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.049] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.065] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.482] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.499] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.515] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.532] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.549] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.567] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.582] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.599] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.615] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.632] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.649] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.665] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.682] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.698] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.715] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.732] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.749] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.765] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.782] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.799] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.815] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.832] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.932] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.949] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.965] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.987] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:12.999] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.015] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.032] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.048] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.065] : [ ERROR ] Lua: run.lua:137: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.232] : [ ERROR ] Lua: run.lua:140: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.248] : [ ERROR ] Lua: run.lua:140: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.265] : [ ERROR ] Lua: run.lua:140: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.282] : [ ERROR ] Lua: run.lua:140: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.298] : [ ERROR ] Lua: run.lua:140: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.315] : [ ERROR ] Lua: run.lua:140: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.332] : [ ERROR ] Lua: run.lua:140: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.515] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.532] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.548] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.565] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.582] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.599] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.615] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.632] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.649] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.665] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.681] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.698] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.715] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.732] : [ ERROR ] Lua: run.lua:138: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.948] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.965] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:13.981] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:14.003] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:14.015] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:14.032] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:14.048] : [ ERROR ] Lua: run.lua:141: attempt to call global 'SCI_ShipForce' (a nil value)
+[18:06:15.379] :           
+[18:06:15.380] :           ---- SciVis shutting down ------------------------------------------
+[18:06:15.382] :           SHUTDOWN : PhysX
+[18:06:15.416] :           --------------------------------------------------------------------
+[18:06:15.417] :           
+[18:06:15.418] :           SHUTDOWN : PhysX allocator
+[18:06:15.419] :           Unloading DLL : ..\ship_sim\ship_sim.dll
+[18:06:15.423] :           
+[18:06:15.424] :           ---- Direct3D rendering system shutting down -----------------------
+[18:06:15.425] :           SHUTDOWN : Model manager
+[18:06:15.426] :           SHUTDOWN : Render target manager
+[18:06:15.427] :           SHUTDOWN : Texture manager
+[18:06:15.428] :           SHUTDOWN : Draw 2D
+[18:06:15.429] :           Releasing Direct3D Device
+[18:06:15.430] :           Releasing Direct3D
+[18:06:15.434] :           --------------------------------------------------------------------
+[18:06:15.437] :           
+[18:06:15.439] :           SHUTDOWN : FR Scene
+[18:06:15.443] :           SHUTDOWN : Shading system
+[18:06:15.468] :           Unloading DLL : rend_d3d9.dll
+[18:06:15.472] :           Saving configuration...
+[18:06:15.508] :           SHUTDOWN : Configuration system
+[18:06:15.509] :           SHUTDOWN : System
+[18:06:15.510] :           SHUTDOWN : Input system
+[18:06:15.510] :           SHUTDOWN : File system

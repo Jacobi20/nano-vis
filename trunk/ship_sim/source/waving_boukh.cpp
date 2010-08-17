@@ -40,6 +40,9 @@ class EWavingBoukh : public IWaving {
 		virtual float		GetWaveSlopeX		( const EVec4 &init_pos ) const;
 		
 	protected:
+		IPxFREntity		r_ent;
+		IPxTriMesh		sea_mesh;
+	
 		float	time;
 		EVec4				GetPositionAtTime	( const EVec4 &init_pos, float time ) const;
 	
@@ -85,6 +88,11 @@ EWavingBoukh::EWavingBoukh( lua_State *L, int idx )
 	//Wmin  = 0.5*0.2f ;	//	Минимальная частота
 	
 	InitGenerator();
+	
+	sea_mesh	=	ge()->LoadMeshFromFile("sea.esx|sea");
+	
+	r_ent		=	sci_vis->GetFRScene()->AddEntity();
+	r_ent->SetMesh( sea_mesh );
 }
 
 
@@ -106,7 +114,7 @@ void EWavingBoukh::InitGenerator( void )
 
 EWavingBoukh::~EWavingBoukh( void )
 {
-
+	sci_vis->GetFRScene()->RemoveEntity( r_ent );
 }
 
 

@@ -70,6 +70,8 @@ ESciVis::ESciVis( void )
 ESciVis::~ESciVis( void )
 {
 	LOG_SPLIT("SciVis shutting down");
+	
+	waving	=	NULL;
 
 	//	unregister ship API :
 	lua_State *L = CoreLua();
