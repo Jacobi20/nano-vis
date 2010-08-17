@@ -34,6 +34,6 @@ input.bind ("F2", "ship_show_hull      = not ship_show_hull");
 input.bind ("F3", "ship_show_voxels    = not ship_show_voxels");
 input.bind ("F4", "ship_show_submerge  = not ship_show_submerge");
 input.bind ("F5", "dofile('run.lua')");
-input.bind ("F6", "naval.reload_shaders()");
+input.bind ("F6", "rs.reload_shaders()");
 input.bind ("F7", "do_rolling()");
 input.bind ("F10", "core.quit()");

@@ -59,3 +59,27 @@ function define_diffuse_shader ( path )
 		is_solid		=	true;
 	}
 end
+
+
+function define_water_shader ( path )
+	local injection = [[
+		float2 offset		=	0.01*float2(time*2, time);
+		float2	uv0			=	sample_normal ( sampler1, input.uv0*7+offset*2 ).xy * 0.1;
+				uv0			+=	sample_normal ( sampler1, -input.uv0*7+offset*3 ).xy * 0.07;
+				uv0			+=	sample_normal ( sampler1, input.uv0*7+offset*5 ).xy * 0.2;
+		surface.diffuse 	= 	sample_color ( sampler0, input.uv0 + 0.05*normalize(uv0)).rgb;
+		surface.alpha		=	sample_color ( sampler0, input.uv0 + 0.05*normalize(uv0)).a+0.3;
+
+		surface.diffuse 	= 	float3(0.5, 0.5, 1.0);
+		surface.alpha		=	0.5;
+	]];
+
+	fr.define_shader {
+		name			=	path;
+		texture_path0	=	"textures/waves_color.tga";
+		texture_path1	=	"textures/waves.tga";
+		effect_path		=	inject_surface_fx( injection );
+		is_solid		=	false;
+		is_translucent	=	true;
+	}
+end

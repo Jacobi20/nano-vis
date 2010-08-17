@@ -34,6 +34,6 @@ init_shader_lib();
 
 define_dsn_shader("textures/plain/steel.tga");
 
-define_diffuse_shader("textures/water.tga");
+define_water_shader("textures/water.tga");
 
 term_shader_lib();
