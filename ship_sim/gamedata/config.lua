@@ -12,6 +12,7 @@ cfg.setvar('ship_show_hull'             , true);
 cfg.setvar('ship_show_voxels'           , false);
 cfg.setvar('ship_show_submerge'         , true);
 cfg.setvar('ship_hsf_method'            , 'surface');
+cfg.setvar('d3d_antialiasing'           , 4);
 
 
 -- key bindings --

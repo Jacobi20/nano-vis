@@ -61,7 +61,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="&quot;PhysXLoader.lib&quot; &quot;NxCooking.lib&quot; &quot;NxCharacter.lib&quot;"
-				OutputFile="..\$(ProjectName).dll"
+				OutputFile="..\game.dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -135,7 +135,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="&quot;PhysXLoader.lib&quot; &quot;NxCooking.lib&quot; &quot;NxCharacter.lib&quot;"
-				OutputFile="..\$(ProjectName).dll"
+				OutputFile="..\game.dll"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
