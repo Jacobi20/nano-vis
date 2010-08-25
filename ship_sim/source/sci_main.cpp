@@ -52,7 +52,7 @@ ESciVis::ESciVis( void )
 	
 	InitPhysX();
 	
-	scene	=	rs()->CreateFRScene();
+	rs()->InstallForward();
 	
 	waving	=	create_boukh_waving(NULL, 0);
 	
@@ -77,8 +77,6 @@ ESciVis::~ESciVis( void )
 	lua_State *L = CoreLua();
 	ELuaShip::Unregister(L);
 	
-	scene	=	NULL;
-
 	ShutdownPhysX();
 	
 	LOG_SPLIT("");
@@ -101,7 +99,7 @@ void ESciVis::Frame(uint dtime)
 
 	if (rs()->BeginFrame()) {
 
-		if (scene) {
+		if (GetFRScene()) {
 		
 			CoreExecuteString( va("if sci_frame then sci_frame(%f); end;", dtime/1000.0f) );
 
@@ -109,12 +107,12 @@ void ESciVis::Frame(uint dtime)
 			float zf = 1000.0f;		
 			float tf = tanf(deg2rad(view.fov/2));
 			
-			scene->SetProjection( zn, zf, zf * tf * aspect, zf * tf );
-			scene->SetView( view.position, view.orient );
+			GetFRScene()->SetProjection( zn, zf, zf * tf * aspect, zf * tf );
+			GetFRScene()->SetView( view.position, view.orient );
 			
-			scene->SetDirectLight( EVec4(1,1,1,1), EVec4(0,0,0,1), 1, 1);
+			GetFRScene()->SetDirectLight( EVec4(1,1,1,1), EVec4(0,0,0,1), 1, 1);
 		
-			rs()->RenderFrame( scene );
+			rs()->RenderFrame();
 		}
 		
 		rs()->EndFrame();
