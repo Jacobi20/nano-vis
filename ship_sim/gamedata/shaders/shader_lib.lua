@@ -27,6 +27,13 @@
 --	shader library
 -------------------------------------------------------------------------------
 
+function postfix(path, postfix)
+	local ext	=	string.sub(path, -3, -1);
+	local name	=	string.sub(path,  0, -5);
+	return name .. postfix .. "." .. ext;
+end
+
+
 function define_dsn_shader ( path )
 	local injection = [[
 		surface.diffuse 	= 	sample_color ( sampler0, input.uv0 ).rgb;
@@ -41,7 +48,7 @@ function define_dsn_shader ( path )
 		texture_path0	=	path;
 		texture_path1	=	postfix(path, "_spec");
 		texture_path2	=	postfix(path, "_local");
-		effect_path		=	inject_surface_fx( injection );
+		injection		=	injection;
 		is_solid		=	true;
 	}
 end
@@ -55,7 +62,7 @@ function define_diffuse_shader ( path )
 	fr.define_shader {
 		name			=	path;
 		texture_path0	=	path;
-		effect_path		=	inject_surface_fx( injection );
+		injection		=	injection;
 		is_solid		=	true;
 	}
 end
@@ -78,7 +85,7 @@ function define_water_shader ( path )
 		name			=	path;
 		texture_path0	=	"textures/waves_color.tga";
 		texture_path1	=	"textures/waves.tga";
-		effect_path		=	inject_surface_fx( injection );
+		injection		=	injection;
 		is_solid		=	false;
 		is_translucent	=	true;
 	}

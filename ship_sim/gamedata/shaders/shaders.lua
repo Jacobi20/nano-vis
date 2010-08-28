@@ -22,18 +22,12 @@
 -- THE SOFTWARE.
 -------------------------------------------------------------------------------
 
-
-dofile('shaders/shader_api.lua');
 dofile('shaders/shader_lib.lua');
 
 -------------------------------------------------------------------------------
 --	Shaders :
 -------------------------------------------------------------------------------
 
-init_shader_lib();
-
 define_dsn_shader("textures/plain/steel.tga");
 
 define_water_shader("textures/water.tga");
-
-term_shader_lib();
