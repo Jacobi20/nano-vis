@@ -111,6 +111,8 @@ void ESciVis::Frame(uint dtime)
 			GetFRScene()->SetView( view.position, view.orient );
 			
 			GetFRScene()->SetDirectLight( EVec4(1,1,1,1), EVec4(0,0,0,1), 1, 1);
+			
+			phys()->DebugRender( rs()->GetDVScene() );
 		
 			rs()->RenderFrame();
 		}
