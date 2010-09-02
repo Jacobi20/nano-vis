@@ -28,6 +28,11 @@ input.bind ("F4", "ship_show_submerge  = not ship_show_submerge");
 input.bind ("N", "state.submersion 		= not state.submersion" );
 input.bind ("M", "state.sunking 		= not state.sunking" );
 
+input.bind("1", "dofile('exp01/exp01.lua')");
+input.bind("2", "dofile('exp02/exp02.lua')");
+input.bind("3", "dofile('exp03/exp03.lua')");
+input.bind("4", "dofile('exp04/exp04.lua')");
+
 -- local avc = vmath.vec4(1,2,3,1);
 -- local x = avc:x();
 
@@ -190,7 +195,7 @@ function do_rolling()
 		
 		uboat:set_position	( 0, 0, -0.5 );	
 		uboat:set_angles	( 90, 0, roll );
-		uboat:simulate		( 1 );
+		uboat:simulate		( 0.001 );
 		
 		local ra 	= uboat:get_right_arm();
 		local hsf 	= uboat:get_hsf_force()/1000;
@@ -201,6 +206,8 @@ function do_rolling()
 		f:flush();
 	end
 	
+	uboat:set_position	( 0, 0, -0.5 );	
+	uboat:set_angles	( 90, 0, nil );
 	io.close(f);
 
 	print("Done.");
