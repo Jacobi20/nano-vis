@@ -12,6 +12,31 @@ local	gamma	=	gravity * 1000;		--	water weight density
 local function sqr(a) return a*a; end;
 
 -----------------------------------------------------------------------
+--	WAVING  --
+-----------------------------------------------------------------------
+
+local  waving = {
+	length	=	40;	--	lambda, m
+	height	=	2;	--	h, 		m
+	period	=	0.1;	--	tau, 	s
+	
+	wave = function(this, t, x)
+		local offset, angle, k, r0, a0;
+		local sgm; -- sigma
+		
+		k 	= 	2 * math.pi / this.length;
+		r0	=	this.height / 2;
+		sgm	=	math.sqrt(k*gravity);
+		a0	=	k * r0;
+		
+		offset	=	 r0 * math.cos(k*x - sgm*t);
+		angle	=	-a0 * math.sin(k*x - sgm*t);
+		
+		return offset, angle;
+	end
+};
+
+-----------------------------------------------------------------------
 --	SUBMARINE  --
 -----------------------------------------------------------------------
 --	attributes :
@@ -33,11 +58,11 @@ local	Ixx			=	M/12 * (B0*B0 + 4*Zg*Zg);	--	ineria						(1.8)
 	
 local 	lambda33	=	0;		--	attached water mass
 local 	lambda44	=	0;		--	attached water inertia
-local 	mu33		=	-3000000;	--	linear damping coeeficient
+local 	mu33		=	-1000000;	--	linear damping coeeficient
 local 	mu44		=	-1000000;	--	angular damping coeeficient
 	
 --	derived properties :
-local 	zeta		=	1;	--	linear offset
+local 	zeta		=	0;	--	linear offset
 local 	zeta_d		=	0;	--	linear velocity
 local 	zeta_dd		=	0;	--	linear acceleration
 local 	theta		=	0;	--	angle (roll)
@@ -86,91 +111,45 @@ local function Mr(theta)
 	return D * (R-Zg) * math.sin(theta);
 end
 
---local function
 
-local function update_forces(dt)
+--  [ integration ]  --
+local function integrate(t, dt)
+
+	zeta_w, theta_w = waving:wave(t, 0);
+
+	--	integrate forces :
+
+	local Ftotal = Fr(zeta + zeta_w) + Fd(zeta_d);
 	
+	zeta_dd = 	Ftotal / M;
+	zeta_d 	= 	zeta_d + zeta_dd * dt;
+	zeta   	= 	zeta + zeta_d * dt;
+
+	
+	--	integrate torques :
+	--	...
 end
-
-
-local function integrate(dt)
-	zeta_d = zeta_d + zeta_dd * dt;
-	zeta   = zeta + zeta_d * dt;
-
-	local Ftotal = Fr(zeta) + Fd(zeta_d);
-	zeta_dd = Ftotal / M;
-	
-end
-
------------------------------------------------------------------------
---	WAVING  --
------------------------------------------------------------------------
-
-local  waving = {
-	length	=	90;	--	lambda, m
-	height	=	5;	--	h, 		m
-	period	=	7;	--	tau, 	s
-	
-	wave = function(this, t, x)
-		local offset, angle, k, r0, a0;
-		local sgm; -- sigma
-		
-		k 	= 	2 * math.pi / this.length;
-		r0	=	this.height / 2;
-		sgm	=	math.sqrt(k*gravity);
-		a0	=	k * r0;
-		
-		offset	=	 r0 * math.cos(k*x - sgm*t);
-		angle	=	-a0 * math.sin(k*x - sgm*t);
-		
-		return offset, angle;
-	end
-};
 
 
 -----------------------------------------------------------------------
 --	EXPERIMENT  --
 -----------------------------------------------------------------------
 
-local function plot(F, x0, x1, step)
-	local f = io.open("exp01/plot.txt", "w");
-	for x=x0, x1, step do
-		local y = F(x);
-		local out	= string.format("%g %g", x, y);
-		f:write(out.."\n");
-	end
-	io.close(f);
-end
-
-plot(Fr, -20, 7, 0.1);
-
-
-local function z()
-	integrate(0.1);
-	return zeta;
-end
-
-plot(z, 0, 300, 1);
-
-----------------------
-
 local function do_experiment()
-	local f = io.open("exp01/waving.txt", "w");
-	for t=0, 100, 0.125 do
-		local offset, angle = waving:wave(t, 0);
-		local out	= string.format("%g %g %g", t, offset, angle);
+	local f = io.open("exp01/exp01.txt", "w");
+	
+	local dt = 1/16;
+	
+	for t=0, 100, dt do
+		local zeta_w, theta_w = waving:wave(t, 0);
+
+		integrate(t, dt);
+		
+		local out	= string.format("%g %g %g", t, zeta_w, zeta);
 		f:write(out.."\n");
 	end
 	io.close(f);
 
-	local f = io.open("exp01/fr.txt", "w");
-	
-	for x=0, 20, 0.2 do
-		force = Fr(x);
-		local out	= string.format("%g %g", x, force);
-		f:write(out.."\n");
-	end
-	io.close(f);
 end
 
 do_experiment();
