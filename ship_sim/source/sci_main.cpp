@@ -96,6 +96,8 @@ void ESciVis::Frame(uint dtime)
 	InputSystem()->ProcessInput();
 	
 	FramePhysX( dtime / 1000.0f );
+	
+	phys()->RunSimulation(dtime);
 
 	if (rs()->BeginFrame()) {
 
@@ -111,6 +113,9 @@ void ESciVis::Frame(uint dtime)
 			GetFRScene()->SetView( view.position, view.orient );
 			
 			GetFRScene()->SetDirectLight( EVec4(1,1,1,1), EVec4(0,0,0,1), 1, 1);
+			
+			rs()->GetDVScene()->SetView( view.position, view.orient );
+			rs()->GetDVScene()->SetProjection( zn, zf, zf * tf * aspect, zf * tf );
 			
 			phys()->DebugRender( rs()->GetDVScene() );
 		

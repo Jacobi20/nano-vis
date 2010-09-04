@@ -55,10 +55,9 @@ EShip::EShip( lua_State *L, int idx )
 //
 EShip::~EShip( void )
 {
-	if (ship_body) {
-		sci_vis->GetNxScene()->releaseActor( *ship_body );
-	}
-	
+	phys()->RemoveEntity( ship_body );
+	ship_body = NULL;
+
 	sci_vis->GetFRScene()->RemoveEntity( r_ent );
 }
 
@@ -83,13 +82,7 @@ void EShip::Simulate( float dtime, IPxWaving waving )
 //
 void EShip::GetPose( EVec4 &position, EQuat &orient )
 {
-	NxQuat	nxq	=	ship_body->getGlobalOrientationQuat();
-	NxVec3	nxv	=	ship_body->getGlobalPosition();
-	EQuat	q	=	EQuat(nxq.x, nxq.y, nxq.z, nxq.w);
-	EVec4	p	=	EVec4(nxv.x, nxv.y, nxv.z, 1);
-	
-	position	=	p;
-	orient		=	q;
+	ship_body->GetPose( position, orient );
 }
 
 
@@ -98,8 +91,7 @@ void EShip::GetPose( EVec4 &position, EQuat &orient )
 //
 void EShip::SetPose( EVec4 &position, EQuat &orient )
 {
-	ship_body->setGlobalOrientationQuat( ToNxQuat( orient ) );
-	ship_body->setGlobalPosition( ToNxVec3( EVec3(position.x, position.y, position.z) ) );
+	ship_body->SetPose( position, orient );
 }
 
 
@@ -118,7 +110,7 @@ void EShip::UpdateForces( float dtime, IPxWaving waving )
 	if (!ship_body)	{	RAISE_EXCEPTION("ship rigid body not created");	}
 
 	float  weight	=	GRAVITY * ship_mass;
-	NxVec3 gravity	=	NxVec3(0, 0, -weight);
+	EVec4 gravity	=	EVec4(0, 0, -weight*20,0);
 	
 	EQuat	q;
 	EVec4	p;
@@ -127,8 +119,7 @@ void EShip::UpdateForces( float dtime, IPxWaving waving )
 	EMatrix4 world		=	QuatToMatrix(q) * Matrix4Translate(p);
 	mesh_submerged_hsf	=	GetSubmergedMesh( world, EPlane(0,0,1,0) );	
 	
-	NxVec3 cm = ship_body->getCMassLocalPosition();
-	ship_body->addForceAtLocalPos( gravity, cm );
+	ship_body->AddForce( gravity );
 
 	if (!waving) {
 		waving	=	sci_vis->waving;
@@ -144,13 +135,13 @@ void EShip::UpdateForces( float dtime, IPxWaving waving )
 //
 void EShip::AddForce( EVec3 force, EVec3 point, bool local_point )
 {
-	NxVec3 p = ToNxVec3( point );
-	NxVec3 f = ToNxVec3( force );
+	EVec4 p = Vec3ToVec4( point );
+	EVec4 f = Vec3ToVec4( force );
 	
 	if (local_point) {
-		ship_body->addForceAtLocalPos( f, p );
+		ship_body->AddForceAtLocalPos( f, p );
 	} else {
-		ship_body->addForceAtPos( f, p );
+		ship_body->AddForceAtPos( f, p );
 	}
 }
 
@@ -160,18 +151,17 @@ void EShip::AddForce( EVec3 force, EVec3 point, bool local_point )
 //
 void EShip::AddMomentum( EVec3 momentum, bool local_momentum )
 {
-	if (local_momentum) {
-		ship_body->addLocalTorque( ToNxVec3( momentum ) );
-	} else {
-		ship_body->addTorque( ToNxVec3( momentum ) );
-	}
+	//if (local_momentum) {
+	//	ship_body->addLocalTorque( ToNxVec3( momentum ) );
+	//} else {
+	//	ship_body->addTorque( ToNxVec3( momentum ) );
+	//}
 }
 
 
 EVec3 EShip::GetCenterMass( void )
 {
-	NxVec3 cm = ship_body->getCMassLocalPosition();
-	return EVec3( cm.x, cm.y, cm.z );
+	return Vec4ToVec3( ship_body->GetCMOffset() );
 }
 
 
