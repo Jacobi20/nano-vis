@@ -96,8 +96,10 @@ class EShip : public IShip {
 		IPxTriMesh		mesh_hdf;
 		IPxTriMesh		mesh_submerged_hsf;
 		IPxTriMesh		mesh_submerged_hdf;
+		
+		IPxPhysEntity	ship_body;
 
-		NxActor			*ship_body;
+		//NxActor			*ship_body;
 		
 		IPxVar			ship_show_voxels;
 		IPxVar			ship_show_hull;

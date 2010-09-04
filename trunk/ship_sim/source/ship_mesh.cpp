@@ -75,12 +75,20 @@ void EShip::MakeRigidBody( const EString path, float mass )
 	LOGF("RB mesh   : %s", path.CStr());
 	IPxTriMesh phys_mesh	=	ge()->LoadMeshFromFile( path.CStr() );
 	
-	if (ship_body) {
-		sci_vis->GetNxScene()->releaseActor( *ship_body );
-	}
+	//if (ship_body) {
+	//	sci_vis->GetNxScene()->releaseActor( *ship_body );
+	//}
+	//
+	//ship_body	=	sci_vis->CreatePhysMesh( phys_mesh, EVec4(0,0,0,1), EQuat(0,0,0,1), mass );
+	//ship_mass	=	ship_body->getMass();
+	ship_body	=	phys()->AddEntity();
 	
-	ship_body	=	sci_vis->CreatePhysMesh( phys_mesh, EVec4(0,0,0,1), EQuat(0,0,0,1), mass );
-	ship_mass	=	ship_body->getMass();
+	ship_body->SetMesh( phys_mesh );
+	ship_body->SetMass( mass );
+	ship_body->SetPose( EVec4(0,0,0,1), EQuat(0,0,0,1) );
+	ship_body->SetDynamic();
+	
+	ship_body->Spawn();
 }
 
 

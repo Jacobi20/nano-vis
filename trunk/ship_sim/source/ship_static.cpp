@@ -42,9 +42,11 @@ EPlane EShip::GetShipXOZPlane( void )
 	
 	GetPose(position, orient);
 	QuatToAnglesRad( orient, yaw, pitch, roll );
-	
-	NxVec3	cm	=	ship_body->getCMassGlobalPosition();
-	return 	PlaneFromPointNormal( EVec4(cm.x, cm.y, cm.z, 1), Vec3Cross( EVec3(cos(yaw), sin(yaw), 0), EVec3(0,0,1) ) );
+
+	//	TODO : Fix, CM is not coincide with center of the local coordibates	
+	EVec4	cmofs	=	ship_body->GetCMOffset();
+	EVec4	cm		=	position + cmofs;	
+	return 	PlaneFromPointNormal( cm, Vec3Cross( EVec3(cos(yaw), sin(yaw), 0), EVec3(0,0,1) ) );
 }
 
 
@@ -112,7 +114,8 @@ void EShip::UpdateHSFBox(float dtime, IPxWaving waving)
 				float	wh = waving->GetPosition(EVec4(pos.x, pos.y, pos.z, 1)).z;
 				float	fs = StaticWaveForce(pos, dx, dy, dz, wh);					//	static force
 				
-				ship_body->addForceAtPos( NxVec3(0,0,fs), NxVec3(pos.x, pos.y, pos.z) );
+				//ship_body->AddForceAtPos( NxVec3(0,0,fs), NxVec3(pos.x, pos.y, pos.z) );
+				ship_body->AddForceAtPos( EVec4(0,0,fs,0), pos );
 			}
 		}
 	}
@@ -152,7 +155,8 @@ void EShip::UpdateHSFVoxel( float dtime, IPxWaving waving )
 		float	wh = waving->GetPosition(EVec4(pos.x, pos.y, pos.z, 1)).z;
 		float	fs = StaticWaveForce(pos, dx, dy, dz, wh);					//	static force
 		
-		ship_body->addForceAtPos( NxVec3(0,0,fs), NxVec3(pos.x, pos.y, pos.z) );
+		//ship_body->addForceAtPos( NxVec3(0,0,fs), NxVec3(pos.x, pos.y, pos.z) );
+		ship_body->AddForceAtPos( EVec4(0,0,fs,0), pos );
 
 		//	compute total forces :
 		total_hsf_force		+=	fs;
@@ -223,7 +227,7 @@ void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
 		//	force vector :		
 		EVec3	fv	=	EVec3( -f*n.x, -f*n.y, -f*n.z );
 		
-		ship_body->addForceAtPos( ToNxVec3(fv), NxVec3(c.x, c.y, c.z) );
+		ship_body->AddForceAtPos( Vec3ToVec4(fv), Vec3ToPoint4(c) );
 		
 		//	compute total forces :
 		//	TODO : wrong momentum computation!
