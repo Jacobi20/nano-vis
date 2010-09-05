@@ -44,7 +44,7 @@ void EShip::UpdateHDF( float dtime, IPxWaving waving )
 		EVec3 fe_pos		=	QuatRotateVector( mesh_hdf->TriangleCenter(i), orient ) + EVec3(position.Ptr());
 		EVec3 fe_normal		=	QuatRotateVector( mesh_hdf->TriangleNormal(i), orient );
 		float fe_area		=	mesh_hdf->TriangleArea(i);
-		EVec3 fe_vel_global	=	Vec4ToVec3( ship_body->GetPointVelocity( Vec3ToVec4(fe_pos) ) );
+		EVec3 fe_vel_global	=	Vec4ToVec3( ship_body->GetPointVelocity( Vec3ToVec4(mesh_hdf->TriangleCenter(i)) ) );
 		
 		EVec3 flow_vel		=	Vec4ToVec3( waving->GetVelocity( Vec3ToPoint4(fe_pos) ) );
 		float wave_h		=				waving->GetPosition( Vec3ToPoint4(fe_pos) ).z;

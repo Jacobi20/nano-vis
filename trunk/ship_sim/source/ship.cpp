@@ -59,6 +59,7 @@ EShip::~EShip( void )
 	ship_body = NULL;
 
 	sci_vis->GetFRScene()->RemoveEntity( r_ent );
+	sci_vis->GetFRScene()->RemoveEntity( r_ent2 );
 }
 
 
@@ -110,7 +111,7 @@ void EShip::UpdateForces( float dtime, IPxWaving waving )
 	if (!ship_body)	{	RAISE_EXCEPTION("ship rigid body not created");	}
 
 	float  weight	=	GRAVITY * ship_mass;
-	EVec4 gravity	=	EVec4(0, 0, -weight*20,0);
+	EVec4 gravity	=	EVec4(0, 0, -weight,0);
 	
 	EQuat	q;
 	EVec4	p;
@@ -126,7 +127,7 @@ void EShip::UpdateForces( float dtime, IPxWaving waving )
 	}	
 	
 	UpdateHSF( dtime, waving );
-	UpdateHDF( dtime, waving );
+	//UpdateHDF( dtime, waving );
 }
 
 
