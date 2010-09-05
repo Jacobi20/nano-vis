@@ -59,7 +59,7 @@ class EShip : public IShip {
 		virtual EVec3		GetInertiaMomentum	( EVec3 axis );
 
 	protected:
-		IPxFREntity			r_ent;
+		IPxFREntity			r_ent, r_ent2;
 	
 		EPlane				GetShipXOZPlane		( void );
 	

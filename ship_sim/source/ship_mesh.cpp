@@ -37,8 +37,10 @@ void EShip::SetVisMesh( const EString path )
 	LOGF("view mesh : %s", path.CStr());
 	mesh_vis		=	ge()->LoadMeshFromFile( path.CStr() );
 	r_ent			=	sci_vis->GetFRScene()->AddEntity();
+	r_ent2			=	sci_vis->GetFRScene()->AddEntity();
 	
 	r_ent->SetMesh( mesh_vis );
+	r_ent2->SetMesh( mesh_vis );
 }
 
 
@@ -89,6 +91,8 @@ void EShip::MakeRigidBody( const EString path, float mass )
 	ship_body->SetDynamic();
 	
 	ship_body->Spawn();
+	
+	ship_mass	=	mass;
 }
 
 

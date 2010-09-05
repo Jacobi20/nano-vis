@@ -226,8 +226,10 @@ void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
 
 		//	force vector :		
 		EVec3	fv	=	EVec3( -f*n.x, -f*n.y, -f*n.z );
+		fv.x = 0;
+		fv.y = 0;
 		
-		ship_body->AddForceAtPos( Vec3ToVec4(fv), Vec3ToPoint4(c) );
+	//	ship_body->AddForceAtPos( Vec3ToVec4(fv), Vec3ToPoint4(c) );
 		
 		//	compute total forces :
 		//	TODO : wrong momentum computation!
@@ -245,5 +247,8 @@ void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
 
 	EVec3 b		=	center_of_buyoancy;
 	right_arm	=	PlaneDistance(ship_plane, EVec4(b.x, b.y, b.z, 1));
+	
+	ship_body->AddForceAtPos( EVec4(0,0,total_hsf_force,1), Vec3ToPoint4(center_of_buyoancy) );
+	
 }
 

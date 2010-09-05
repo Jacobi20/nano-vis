@@ -45,7 +45,7 @@ state = {
 	pitch_dec	=	false;
 	dist_inc	=	false;
 	dist_dec	=	false;
-	yaw		=	0;
+	yaw		=	-35;
 	roll	=	0;
 	pitch	=	5;
 	dist	=	100;
@@ -115,15 +115,15 @@ function create_uboat()
 	print("---- creating U-boat ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 5 );
+	ship:set_resistance	( 0 );
 	
 	ship:set_vis_mesh	( "uboat.esx|boat1"			);
 	ship:set_hdf_mesh	( "uboat.esx|flowsurf2" 		);
 	ship:set_hsf_mesh	( "uboat.esx|flowsurf2" 		);
 	ship:make_rigidbody	( "uboat.esx|stat", 2205000	);
 	
-	ship:set_position	( 0, 0, -1.5 );	
-	ship:set_angles		( 90, 0, 50 );
+	ship:set_position	( 0, 30, 0 );	
+	ship:set_angles		( 180, 0, 0 );
 	
 	ship:build_voxels	( "uboat.esx|flowsurf2", 1	);
 	
@@ -146,7 +146,7 @@ function create_cutter()
 	ship:make_rigidbody	( "boat.esx|stat", 500000	);
 	
 	ship:set_position	( 0, 0,  0 );	
-	ship:set_angles		( 0, 0, 50 );
+	ship:set_angles		( 90, 0, 50);
 	
 	ship:build_voxels	( "boat.esx|flow", 1	);
 	
@@ -155,8 +155,10 @@ function create_cutter()
 	return ship;
 end
 
-uboat	=	create_cutter();
---uboat	=	create_uboat();
+--uboat	=	create_cutter();
+uboat	=	create_uboat();
+
+ship_hsf_method	=	"surface";
 
 
 -------------------------------------------------------------------------------
