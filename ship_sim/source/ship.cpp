@@ -120,7 +120,7 @@ void EShip::UpdateForces( float dtime, IPxWaving waving )
 	EMatrix4 world		=	QuatToMatrix(q) * Matrix4Translate(p);
 	mesh_submerged_hsf	=	GetSubmergedMesh( world, EPlane(0,0,1,0) );	
 
-	ship_body->AddForceAtLocalPos( gravity, EVec4(0,0,-2,0) );
+	ship_body->AddForceAtLocalPos( gravity, EVec4(0,0,-1,0) );
 
 	if (!waving) {
 		waving	=	sci_vis->waving;
