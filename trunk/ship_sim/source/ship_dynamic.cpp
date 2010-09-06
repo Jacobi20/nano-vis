@@ -46,6 +46,8 @@ void EShip::UpdateHDF( float dtime, IPxWaving waving )
 		float fe_area		=	mesh_hdf->TriangleArea(i);
 		EVec3 fe_vel_global	=	Vec4ToVec3( ship_body->GetPointVelocity( Vec3ToVec4(mesh_hdf->TriangleCenter(i)) ) );
 		
+		rs()->GetDVScene()->DrawArrow( Vec3ToVec4(fe_pos), Vec3ToVec4(fe_vel_global), 1, EVec4(0.5, 0.5, 1.0, 1.0));
+		
 		EVec3 flow_vel		=	Vec4ToVec3( waving->GetVelocity( Vec3ToPoint4(fe_pos) ) );
 		float wave_h		=				waving->GetPosition( Vec3ToPoint4(fe_pos) ).z;
 		
