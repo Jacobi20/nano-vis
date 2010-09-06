@@ -45,7 +45,7 @@ state = {
 	pitch_dec	=	false;
 	dist_inc	=	false;
 	dist_dec	=	false;
-	yaw		=	-35;
+	yaw		=	0;
 	roll	=	0;
 	pitch	=	5;
 	dist	=	100;
@@ -122,8 +122,8 @@ function create_uboat()
 	ship:set_hsf_mesh	( "uboat.esx|flowsurf2" 		);
 	ship:make_rigidbody	( "uboat.esx|stat", 2205000	);
 	
-	ship:set_position	( 0, 30, 0 );	
-	ship:set_angles		( 180, 0, 0 );
+	ship:set_position	( 0, 20, 0 );	
+	ship:set_angles		( 0, 0, 0 );
 	
 	ship:build_voxels	( "uboat.esx|flowsurf2", 1	);
 	
@@ -155,7 +155,6 @@ function create_cutter()
 	return ship;
 end
 
---uboat	=	create_cutter();
 uboat	=	create_uboat();
 
 ship_hsf_method	=	"surface";
@@ -228,6 +227,9 @@ function sci_frame(dtime)
 	DriveShip();
 	
 	uboat:simulate( dtime );
+	
+	--uboat:add_force( vmath.vec4(0,0,-2000000,0), vmath.vec4(0,0,0,1), true);
+	
 
 	if state.yaw_inc	then	state.yaw	=	state.yaw 	+ dtime * rotation; end;
 	if state.yaw_dec	then	state.yaw	=	state.yaw 	- dtime * rotation; end;
