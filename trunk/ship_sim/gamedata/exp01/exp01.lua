@@ -16,8 +16,8 @@ local function sqr(a) return a*a; end;
 -----------------------------------------------------------------------
 
 local  waving = {
-	length	=	40;	--	lambda, m
-	height	=	2;	--	h, 		m
+	length	=	100;	--	lambda, m
+	height	=	1.5;	--	h, 		m
 	period	=	0.1;	--	tau, 	s
 	
 	wave = function(this, t, x)
@@ -36,13 +36,16 @@ local  waving = {
 	end
 };
 
+local k = 2 * math.pi / waving.length;
+
 -----------------------------------------------------------------------
 --	SUBMARINE  --
 -----------------------------------------------------------------------
 --	attributes :
 -----------------------------------------------------------------------
 
-local function S(t,r)	--	(1.2) 
+--	(1.2)	--
+local function S(t,r)	
 	return (t-r)*math.sqrt(t*(2*r-t)) + r*r*(math.asin((t-r)/r) + math.pi/2 );	
 end
 
@@ -112,14 +115,43 @@ local function Mr(theta)
 end
 
 
+--	(1.35)	--
+function S2(z)
+	if z>=R  then return 0; end;
+	if z<=-R then return 0; end;
+	return math.sqrt(R*R - z*z);
+end
+
+function kappa()
+	local S0 = S2(T-R+zeta);
+
+	local dz = 1/16;
+	
+	local function dS(z) 
+		return (S2(z+dz) - S2(z))/dz;
+	end
+	
+	local I  = 0;
+	for z=0, T+zeta, dz do
+		I = I + math.exp(-k * z) * dS(z) * dz;
+	end
+	
+	local k = - 1 / S0 * I;
+	return k;
+end
+
+
+
 --  [ integration ]  --
 local function integrate(t, dt)
 
 	zeta_w, theta_w = waving:wave(t, 0);
 
 	--	integrate forces :
+	local k = kappa();
+	--k = 1;
 
-	local Ftotal = Fr(zeta + zeta_w) + Fd(zeta_d);
+	local Ftotal = k * Fr(zeta + zeta_w) + Fd(zeta_d);
 	
 	zeta_dd = 	Ftotal / M;
 	zeta_d 	= 	zeta_d + zeta_dd * dt;
