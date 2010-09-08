@@ -114,7 +114,6 @@ void EShip::UpdateHSFBox(float dtime, IPxWaving waving)
 				float	wh = waving->GetPosition(EVec4(pos.x, pos.y, pos.z, 1)).z;
 				float	fs = StaticWaveForce(pos, dx, dy, dz, wh);					//	static force
 				
-				//ship_body->AddForceAtPos( NxVec3(0,0,fs), NxVec3(pos.x, pos.y, pos.z) );
 				ship_body->AddForceAtPos( EVec4(0,0,fs,0), pos );
 			}
 		}
@@ -155,7 +154,6 @@ void EShip::UpdateHSFVoxel( float dtime, IPxWaving waving )
 		float	wh = waving->GetPosition(EVec4(pos.x, pos.y, pos.z, 1)).z;
 		float	fs = StaticWaveForce(pos, dx, dy, dz, wh);					//	static force
 		
-		//ship_body->addForceAtPos( NxVec3(0,0,fs), NxVec3(pos.x, pos.y, pos.z) );
 		ship_body->AddForceAtPos( EVec4(0,0,fs,0), pos );
 
 		//	compute total forces :
@@ -226,19 +224,13 @@ void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
 
 		//	force vector :		
 		EVec3	fv	=	EVec3( -f*n.x, -f*n.y, -f*n.z );
-		//fv.x = 0;
-		//fv.y = 0;
 		
 		ship_body->AddForceAtPos( Vec3ToVec4(fv), Vec3ToPoint4(c) );
 
+		/*
 		rs()->GetDVScene()->DrawArrow( Vec3ToPoint4(c), Vec3ToVec4(fv), 0.000003, EVec4(1,0,0,1) );	 
-		
-		//	compute total forces :
-		//	TODO : wrong momentum computation!
-		//EVec3	local_r		=	QuatRotateVector( c - pos3, orient );
-		//EVec3	momentum	=	Vec3Cross( local_r, fv );
-		//total_hsf_momentum	+=	momentum;
-		
+		*/
+
 		//	computing right arm :
 		center_of_buyoancy	+=	(fv.z * c);
 		total_hsf_force		+=	fv.z;
@@ -249,8 +241,5 @@ void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
 
 	EVec3 b		=	center_of_buyoancy;
 	right_arm	=	PlaneDistance(ship_plane, EVec4(b.x, b.y, b.z, 1));
-	
-	//ship_body->AddForceAtPos( EVec4(0,0,total_hsf_force,1), Vec3ToPoint4(center_of_buyoancy) );
-	
 }
 

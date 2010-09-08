@@ -124,6 +124,7 @@ function create_uboat()
 	
 	ship:set_position	( 0, 20, 60 );	
 	ship:set_angles		( 180, 40, 40 );
+	ship:set_cmass		( 0,0,0 );
 	
 	ship:build_voxels	( "uboat.esx|flowsurf2", 1	);
 	
@@ -155,8 +156,32 @@ function create_cutter()
 	return ship;
 end
 
-cutter	=	create_cutter();
-uboat	=	create_uboat();
+function create_ssn668()
+	print("");
+	print("---- creating SSN-668 'Los Angeles' ----");
+	local ship = naval.create_ship();
+
+	ship:set_resistance	( 5 );
+	
+	ship:set_vis_mesh	( "ssn668.esx|vismesh"			);
+	ship:set_hdf_mesh	( "ssn668.esx|hydromesh" 		);
+	ship:set_hsf_mesh	( "ssn668.esx|hydromesh" 		);
+	ship:make_rigidbody	( "ssn668.esx|physmesh", 6800000	);
+	
+	ship:set_position	( 0, 0, -2 );	
+	ship:set_angles		( 180, 0, 0 );
+	ship:set_cmass		( 4.2, 0, -3 );
+	
+	ship:build_voxels	( "ssn668.esx|hydromesh", 2	);
+	
+	print("---- done ----");
+	print("");
+	return ship;
+end
+
+
+--cutter	=	create_cutter();
+uboat	=	create_ssn668();
 
 ship_hsf_method	=	"surface";
 

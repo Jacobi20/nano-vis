@@ -60,6 +60,7 @@ class ELuaShip : public Luna<ELuaShip> {
 		int get_right_arm	( lua_State *L );		//
 		
 		int	get_center_mass	( lua_State *L );		//
+		int set_cmass		( lua_State *L );		//
 		
 		int	simulate		( lua_State *L );		//
 		

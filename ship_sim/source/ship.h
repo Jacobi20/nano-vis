@@ -50,6 +50,7 @@ class EShip : public IShip {
 		virtual void		MakeRigidBody		( const EString path, float mass );
 		virtual void		AddForce			( EVec3 force, EVec3 point, bool local_point );
 		virtual void		AddMomentum			( EVec3 momentum, bool local_momentum );
+		virtual void		SetCMass			( float x, float y, float z );
 		
 		virtual EVec3		GetHSFMomentum		( void ) { return total_hsf_momentum; }
 		virtual float		GetHSFForce			( void ) { return total_hsf_force; }
@@ -90,6 +91,7 @@ class EShip : public IShip {
 		float			ship_height;
 		float			ship_mass;
 		float			self_time;
+		EVec4			cmass;
 	
 		IPxTriMesh		mesh_vis;
 		IPxTriMesh		mesh_hsf;

@@ -64,6 +64,7 @@ LUNA_IMP_METHOD	(ELuaShip,	get_hsf_force	)
 LUNA_IMP_METHOD	(ELuaShip,	get_center_mass	)
 LUNA_IMP_METHOD	(ELuaShip,	get_right_arm	)
 LUNA_IMP_METHOD	(ELuaShip,	simulate		)
+LUNA_IMP_METHOD	(ELuaShip,	set_cmass		)
 LUNA_IMP_END	(ELuaShip					)
 
 /*-----------------------------------------------------------------------------
@@ -274,6 +275,19 @@ int ELuaShip::simulate( lua_State *L )
 	float dt = lua.RequireNumber(1, "dtime");
 	
 	ship->Simulate( dt, NULL );
+	
+	return 0;
+}
+
+
+int ELuaShip::set_cmass( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	float x		=	lua.RequireNumber( 1, "cmass X position"		);
+	float y		=	lua.RequireNumber( 2, "cmass Y position"	);
+	float z		=	lua.RequireNumber( 3, "cmass Z position"	);
+	
+	ship->SetCMass(x,y,z);
 	
 	return 0;
 }

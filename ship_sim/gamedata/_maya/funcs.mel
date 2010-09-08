@@ -114,7 +114,7 @@ global proc string GetProjectDir()
 
 global proc LoadEclipsePlugin()
 {
-	string $plugin_path = GetProjectDir() + "/../system/maya_tools.mll";
+	string $plugin_path = GetProjectDir() + "/../../engine/maya_tools.mll";
 	loadPlugin $plugin_path;
 }
 
