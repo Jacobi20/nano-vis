@@ -17,8 +17,8 @@ local function sqr(a) return a*a; end;
 
 local  waving = {
 	length	=	100;	--	lambda, m
-	height	=	1.5;	--	h, 		m
-	period	=	0.1;	--	tau, 	s
+	height	=	0.5;	--	h, 		m
+	period	=	2.1;	--	tau, 	s
 	
 	wave = function(this, t, x)
 		local offset, angle, k, r0, a0;
@@ -34,7 +34,23 @@ local  waving = {
 		
 		return offset, angle;
 	end
+	
+	
 };
+
+local function a_d(t)
+	local dt = 1/16;
+	local offs0, angle0 = waving:wave(t,0);
+	local offs1, angle1 = waving:wave(t+dt,0);
+	return (angle1 - angle0) / dt;
+end
+
+local function a_dd(t)
+	local dt = 1/16;
+	local a_d0 = a_d(t);
+	local a_d1 = a_d(t+dt);
+	return (a_d1 - a_d0) / dt;
+end
 
 local k = 2 * math.pi / waving.length;
 
@@ -111,7 +127,7 @@ end
 
 --	(1.12)	--	
 local function Mr(theta)
-	return D * (R-Zg) * math.sin(theta);
+	return -D * (Zg) * math.sin(theta);
 end
 
 
@@ -156,10 +172,20 @@ local function integrate(t, dt)
 	zeta_dd = 	Ftotal / M;
 	zeta_d 	= 	zeta_d + zeta_dd * dt;
 	zeta   	= 	zeta + zeta_d * dt;
-
 	
 	--	integrate torques :
-	--	...
+	local Zpp = Zp + zeta;
+	local A0 = gamma / g * (
+			math.pi*R*R*R*R/8 + 
+			R*R*R*R*math.asin((Zpp)/R) +
+			Zpp/12 * math.sqrt(R*R-Zpp*Zpp) * (5*R*R - 2*Zpp*Zpp)
+		);
+	
+	local Mtotal 	= Mr(theta - theta_w) + Md(theta_d)
+					- gamma * (Zp+zeta) * L * S(T+zeta, R) * (theta - theta_w) - (Ixx - A0) * a_dd(t);
+	theta_dd = 	Mtotal / Ixx;
+	theta_d  =  theta_d + theta_dd * dt;
+	theta  	 =  theta + theta_d * dt;
 end
 
 
@@ -177,7 +203,7 @@ local function do_experiment()
 
 		integrate(t, dt);
 		
-		local out	= string.format("%g %g %g", t, zeta_w, zeta);
+		local out	= string.format("%g %g %g %g %g", t, zeta_w, zeta, theta_w, theta);
 		f:write(out.."\n");
 	end
 	io.close(f);

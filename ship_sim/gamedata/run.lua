@@ -155,7 +155,7 @@ function create_cutter()
 	return ship;
 end
 
-uboat2	=	create_cutter();
+cutter	=	create_cutter();
 uboat	=	create_uboat();
 
 ship_hsf_method	=	"surface";
@@ -166,11 +166,11 @@ ship_hsf_method	=	"surface";
 -------------------------------------------------------------------------------
 
 function DriveShip()
-	if state.ship_fw then SCI_ShipForce( vmath.vec4( 20000000,0,0,0), vmath.vec4(-50,0,-0.4,1)); end;
-	if state.ship_bw then SCI_ShipForce( vmath.vec4(-20000000,0,0,0), vmath.vec4(-50,0,-0.4,1)); end;
+	if state.ship_fw then uboat:add_force( vmath.vec4( 20000000,0,0,0), vmath.vec4(-50,0,-0.4,1), true); end;
+	if state.ship_bw then uboat:add_force( vmath.vec4(-20000000,0,0,0), vmath.vec4(-50,0,-0.4,1), true); end;
 	
-	if state.ship_sl then SCI_ShipForce( vmath.vec4(0,  10000000,0,0), vmath.vec4(-50,0,-0.4,1)); end;
-	if state.ship_sr then SCI_ShipForce( vmath.vec4(0, -10000000,0,0), vmath.vec4(-50,0,-0.4,1)); end;
+	if state.ship_sl then uboat:add_force( vmath.vec4(0,  10000000,0,0), vmath.vec4(-50,0,-0.4,1), true); end;
+	if state.ship_sr then uboat:add_force( vmath.vec4(0, -10000000,0,0), vmath.vec4(-50,0,-0.4,1), true); end;
 	
 	if state.submersion then
 		uboat:add_force( vmath.vec4(0,0,-16537500,0), vmath.vec4(0,0,0,1), true);
@@ -227,7 +227,8 @@ function sci_frame(dtime)
 	
 	DriveShip();
 	
-	uboat:simulate( dtime );
+	if uboat  then uboat:simulate(dtime);  end;
+	if cutter then cutter:simulate(dtime); end
 	
 	--uboat:add_force( vmath.vec4(0,0,-2000000,0), vmath.vec4(0,0,0,1), true);
 	
