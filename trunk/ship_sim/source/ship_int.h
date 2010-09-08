@@ -70,6 +70,7 @@ class IShip : public ICoreObject {
 		virtual void		MakeRigidBody		( const EString path, float mass ) = 0;
 		virtual void		AddForce			( EVec3 force, EVec3 point, bool local_point ) = 0;
 		virtual void		AddMomentum			( EVec3 momentum, bool local_momentum ) = 0;
+		virtual void		SetCMass			( float x, float y, float z ) = 0;
 
 		virtual EVec3		GetHSFMomentum		( void ) = 0;
 		virtual float		GetHSFForce			( void ) = 0;

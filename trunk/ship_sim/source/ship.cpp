@@ -46,6 +46,8 @@ EShip::EShip( lua_State *L, int idx )
 	CONFIG_REGISTER_VAR(ship_show_submerge, false		);
 	CONFIG_REGISTER_VAR(ship_hsf_method,	"surface"	);
 	
+	SetCMass( 0, 0, 0 );
+	
 	SetResistance( 0 );
 }
 
@@ -120,7 +122,7 @@ void EShip::UpdateForces( float dtime, IPxWaving waving )
 	EMatrix4 world		=	QuatToMatrix(q) * Matrix4Translate(p);
 	mesh_submerged_hsf	=	GetSubmergedMesh( world, EPlane(0,0,1,0) );	
 
-	ship_body->AddForceAtLocalPos( gravity, EVec4(0,0,-1,0) );
+	ship_body->AddForceAtLocalPos( gravity, cmass );
 
 	if (!waving) {
 		waving	=	sci_vis->waving;
@@ -169,4 +171,16 @@ EVec3 EShip::GetCenterMass( void )
 EVec3 EShip::GetInertiaMomentum( EVec3 axis )
 {
 	return EVec3( 0, 0, 0 );
+}
+
+
+//
+//	EShip::SetCMass
+//
+void EShip::SetCMass( float x, float y, float z )
+{
+	cmass.x	=	x;
+	cmass.y	=	y;
+	cmass.z	=	z;
+	cmass.w	=	0;
 }
