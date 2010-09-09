@@ -242,6 +242,6 @@ void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
 	EVec3 b		=	center_of_buyoancy;
 	right_arm	=	PlaneDistance(ship_plane, EVec4(b.x, b.y, b.z, 1));
 
-	rs()->GetDVScene()->DrawArrow( Vec3ToPoint4(b), EVec4(0,0,total_hsf_force,0), 0.0000003, EVec4(1,0,0,1) );	 
+	//rs()->GetDVScene()->DrawArrow( Vec3ToPoint4(b), EVec4(0,0,total_hsf_force,0), 0.0000003, EVec4(1,0,0,1) );	 
 }
 

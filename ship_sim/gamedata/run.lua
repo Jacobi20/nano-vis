@@ -169,7 +169,7 @@ function create_ssn668()
 	ship:make_rigidbody	( "ssn668.esx|physmesh", 6000000	);
 	
 	ship:set_position	( 0, 10, -2 );	
-	ship:set_angles		( -90, 0, 40 );
+	ship:set_angles		( -90, 0, 4 );
 	ship:set_cmass		( 3.8, 0, -3 );
 	
 	ship:build_voxels	( "ssn668.esx|hydromesh", 2	);
