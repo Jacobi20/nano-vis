@@ -121,6 +121,14 @@ EWavingBoukh::~EWavingBoukh( void )
 void EWavingBoukh::Update( float dtime )
 {
 	time	+=	dtime;
+	
+	uint n = sea_mesh->GetVertexNum();
+	
+	//for (uint i=0; i<n; i++) {
+	//	
+	//}
+	//
+	//r_ent->SetMesh(
 }
 
 
