@@ -211,6 +211,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ship_hxfmti.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ship_mesh.cpp"
 				>
 			</File>

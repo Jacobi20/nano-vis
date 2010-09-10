@@ -29,3 +29,16 @@
 	Ship hydrodynamic and hydrostatic microtriangle hull integration
 	HXFMTI
 -----------------------------------------------------------------------------*/
+
+struct vec4	{
+		float x,y,z,w;
+	}
+
+
+//
+//	EShip::UpdateHXFTessMicroTris
+//
+void EShip::UpdateHXFTessMicroTris( float dtime, IPxWaving waving )
+{
+	
+}
