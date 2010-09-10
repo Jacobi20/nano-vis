@@ -82,6 +82,8 @@ class EShip : public IShip {
 		void				UpdateHSFBox	( float dtime, IPxWaving waving );
 		void				UpdateHSFVoxel	( float dtime, IPxWaving waving );
 		void				UpdateHSFSurface( float dtime, IPxWaving waving );
+		
+		void				UpdateHXFTessMicroTris	( float dtime, IPxWaving waving );
 
 		EPxVoxelGrid	voxel_grid;
 		
