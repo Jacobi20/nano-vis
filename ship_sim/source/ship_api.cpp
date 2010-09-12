@@ -53,6 +53,7 @@ LUNA_IMP_METHOD	(ELuaShip,	set_hdf_mesh	)
 LUNA_IMP_METHOD	(ELuaShip,	set_resistance	)
 LUNA_IMP_METHOD	(ELuaShip,	make_rigidbody	)
 LUNA_IMP_METHOD	(ELuaShip,	build_voxels	)
+LUNA_IMP_METHOD	(ELuaShip,	build_surf_dxdy	)
 LUNA_IMP_METHOD	(ELuaShip,	add_force		)
 LUNA_IMP_METHOD	(ELuaShip,	add_momentum	)
 LUNA_IMP_METHOD	(ELuaShip,	get_angles		)
@@ -115,6 +116,14 @@ int ELuaShip::build_voxels( lua_State *L )
 {
 	LUA_INTERFACE(L);
 	ship->BuildVoxels( lua.RequireString( 1, "mesh path"), lua.RequireNumber( 2, "voxel size" ) );
+	return 0;
+}
+
+
+int ELuaShip::build_surf_dxdy( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	ship->BuildSurfaceDXDY( lua.RequireString( 1, "mesh path"), lua.RequireNumber( 2, "density" ) );
 	return 0;
 }
 

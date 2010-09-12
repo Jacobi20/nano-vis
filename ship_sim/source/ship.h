@@ -28,6 +28,13 @@
 	Naive ship simulator :
 -----------------------------------------------------------------------------*/
 
+struct ESurfElem {
+		EVec4	position;
+		EVec4	normal;
+		float	area;
+	};
+
+
 class EShip : public IShip {
 	public:
 							EShip				( lua_State *L, int idx );
@@ -42,6 +49,7 @@ class EShip : public IShip {
 		virtual void		SetPose				( EVec4 &position, EQuat &orient );
 		
 		virtual void		BuildVoxels			( const EString path, float cube_size );
+		virtual void		BuildSurfaceDXDY	( const EString path, float density );
 		
 		virtual void		SetVisMesh			( const EString path );
 		virtual void		SetHSFMesh			( const EString path );
@@ -83,7 +91,7 @@ class EShip : public IShip {
 		void				UpdateHSFVoxel	( float dtime, IPxWaving waving );
 		void				UpdateHSFSurface( float dtime, IPxWaving waving );
 		
-		void				UpdateHXFTessMicroTris	( float dtime, IPxWaving waving );
+		void				UpdateHXFSE	( float dtime, IPxWaving waving );
 
 		EPxVoxelGrid	voxel_grid;
 		
@@ -102,6 +110,9 @@ class EShip : public IShip {
 		IPxTriMesh		mesh_submerged_hdf;
 		
 		IPxPhysEntity	ship_body;
+		
+		vector<ESurfElem>	surf_elements_local;
+		vector<ESurfElem>	surf_elements_global;
 
 		//NxActor			*ship_body;
 		

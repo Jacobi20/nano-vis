@@ -30,15 +30,121 @@
 	HXFMTI
 -----------------------------------------------------------------------------*/
 
-struct vec4	{
-		float x,y,z,w;
+//
+//	EShip::BuildSurfaceElements
+//
+void EShip::BuildSurfaceDXDY( const EString path, float density )
+{
+	LOGF("building surface elements : %s", path.CStr());
+	LOGF("density : %g", density);
+	
+	if (density <= 0) {
+		LOG_WARNING("EShip::BuildSurfaceDXDY(): density < 0");
+		density = 0;
 	}
+
+	float	total_surface_area = 0;	
+	
+	IPxTriMesh	mesh	=	ge()->LoadMeshFromFile( path.CStr() );
+
+	for (uint i=0; i<mesh->GetTriangleNum(); i++) {
+	
+		uint i0, i1, i2;
+		mesh->GetTriangle(i, i0, i1, i2);
+		
+		EVec3	v0	=	mesh->GetVertex(i0).position;
+		EVec3	v1	=	mesh->GetVertex(i1).position;
+		EVec3	v2	=	mesh->GetVertex(i2).position;
+		EVec3	v01	=	v1 - v0;	//	u
+		EVec3	v02	=	v2 - v0;	//	v
+
+		EVec3	n	=	mesh->TriangleNormal(i);
+		float	s	=	mesh->TriangleArea(i);
+		
+		total_surface_area += s;
+		
+		uint elem_num = (uint)(s * density);
+		
+		float	ds = s / elem_num;
+		
+		//for (uint j=0; j<elem_num; j++) {
+		//
+		//	ESurfElem	se;
+		//	
+		//	float u=0, v=0;
+		//	do {
+		//		u	=	FRand(0,1);
+		//		v	=	FRand(0,1);
+		//	} while (u+v>1);
+		//	
+		//	se.position	=	Vec3ToPoint4( v0 + v01 * u + v02 * v );
+		//	se.normal	=	Vec3ToVec4  ( n );
+		//	se.area		=	ds;
+		//
+		//	surf_elements_local.push_back(se);
+		//}
+
+		for (float u=0; u<=1; u+=0.25) {
+			for (float v=0; v<=1; v+=0.25) {
+				ESurfElem	se;
+				
+				float ds = s/16;
+				
+				if (u+v>1) continue;
+				
+				se.position	=	Vec3ToPoint4( v0 + v01 * u + v02 * v );
+				se.normal	=	Vec3ToVec4  ( n );
+				se.area		=	ds;
+				
+				surf_elements_local.push_back(se);
+			}
+		}
+	}
+	
+	LOGF("done : %d surface elements", surf_elements_local.size());
+}
 
 
 //
 //	EShip::UpdateHXFTessMicroTris
 //
-void EShip::UpdateHXFTessMicroTris( float dtime, IPxWaving waving )
+void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 {
+	if (surf_elements_local.empty()) {
+		LOG_WARNING(__FUNCTION__"() : surface element buffer is empty");
+		return;
+	}
+	
+	EVec4 p;
+	EQuat q;
+	EMatrix4 t;
+	
+	GetPose(p, q);
+	t = Matrix4FromPose( p, q );
+	
+	for (uint i=0; i<surf_elements_local.size(); i++) {
+		
+		ESurfElem	se = surf_elements_local[i];
+		
+		se.position	=	Matrix4Transform( se.position, t );
+		se.normal	=	Matrix4Transform( se.normal,   t );
+
+		
+		float depth =	-se.position.z;
+		
+		if (depth<0) {
+			continue;
+		}
+		
+		float	p	=	GRAVITY * WATER_DENSITY * (-se.position.z);
+		float	s	=	se.area;
+		EVec4	f	=	- (se.normal * (p * s));
+		
+		rs()->GetDVScene()->DrawPoint( se.position, 0.1, EVec4(0.0, 1.0, 0.5, 1.0 ) );
+		
+		ship_body->AddForceAtPos( f, se.position );
+		
+		//rs()->GetDVScene()->DrawArrow( se.position, se.normal, 0.5, EVec4(0.0, 1.0, 0.5, 1.0 ) );
+	}
 	
 }

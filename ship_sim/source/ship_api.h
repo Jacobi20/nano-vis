@@ -44,7 +44,8 @@ class ELuaShip : public Luna<ELuaShip> {
 		int	set_resistance	( lua_State *L );		//	sets water resistance
 		
 		int make_rigidbody	( lua_State *L );		//	makes RB form list of shapes
-		int build_voxels	( lua_State *L );		//	makes RB form list of shapes
+		int build_voxels	( lua_State *L );		//	fill hull with voxels
+		int build_surf_dxdy	( lua_State *L );		//	build small surface elements
 
 		int	add_force		( lua_State *L );		//	adds force
 		int add_momentum	( lua_State *L );		//	adds momentum
