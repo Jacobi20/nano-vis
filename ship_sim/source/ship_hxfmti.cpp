@@ -67,37 +67,21 @@ void EShip::BuildSurfaceDXDY( const EString path, float density )
 		
 		float	ds = s / elem_num;
 		
-		//for (uint j=0; j<elem_num; j++) {
-		//
-		//	ESurfElem	se;
-		//	
-		//	float u=0, v=0;
-		//	do {
-		//		u	=	FRand(0,1);
-		//		v	=	FRand(0,1);
-		//	} while (u+v>1);
-		//	
-		//	se.position	=	Vec3ToPoint4( v0 + v01 * u + v02 * v );
-		//	se.normal	=	Vec3ToVec4  ( n );
-		//	se.area		=	ds;
-		//
-		//	surf_elements_local.push_back(se);
-		//}
-
-		for (float u=0; u<=1; u+=0.25) {
-			for (float v=0; v<=1; v+=0.25) {
-				ESurfElem	se;
-				
-				float ds = s/16;
-				
-				if (u+v>1) continue;
-				
-				se.position	=	Vec3ToPoint4( v0 + v01 * u + v02 * v );
-				se.normal	=	Vec3ToVec4  ( n );
-				se.area		=	ds;
-				
-				surf_elements_local.push_back(se);
-			}
+		for (uint j=0; j<elem_num; j++) {
+		
+			ESurfElem	se;
+			
+			float u=0, v=0;
+			do {
+				u	=	FRand(0,1);
+				v	=	FRand(0,1);
+			} while (u+v>1);
+			
+			se.position	=	Vec3ToPoint4( v0 + v01 * u + v02 * v );
+			se.normal	=	Vec3ToVec4  ( n );
+			se.area		=	ds;
+		
+			surf_elements_local.push_back(se);
 		}
 	}
 	
