@@ -69,6 +69,7 @@ void EShip::UpdateHSF( float dtime, IPxWaving waving )
 	if (ship_hsf_method->String()=="box")		UpdateHSFBox	( dtime, waving ); else
 	if (ship_hsf_method->String()=="voxel")		UpdateHSFVoxel	( dtime, waving ); else
 	if (ship_hsf_method->String()=="surface")	UpdateHSFSurface( dtime, waving ); else 
+	if (ship_hsf_method->String()=="hxfse")		UpdateHXFSE		( dtime, waving ); else 
 	{
 		LOG_WARNING("'%s' unknown HSF method", ship_hsf_method->String().CStr());
 	}

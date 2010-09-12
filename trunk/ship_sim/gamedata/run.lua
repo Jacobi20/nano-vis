@@ -169,10 +169,11 @@ function create_ssn668()
 	ship:make_rigidbody	( "ssn668.esx|physmesh", 6000000	);
 	
 	ship:set_position	( 0, 10, -2 );	
-	ship:set_angles		( -90, 0, 4 );
+	ship:set_angles		( -90, 0, 0 );
 	ship:set_cmass		( 3.8, 0, -3 );
 	
 	ship:build_voxels	( "ssn668.esx|hydromesh", 2	);
+	ship:build_surf_dxdy( "ssn668.esx|hydromesh", 4	);
 	
 	print("---- done ----");
 	print("");
@@ -183,7 +184,7 @@ end
 --cutter	=	create_cutter();
 uboat	=	create_ssn668();
 
-ship_hsf_method	=	"surface";
+ship_hsf_method	=	"hxfse";
 
 
 -------------------------------------------------------------------------------
