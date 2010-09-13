@@ -117,6 +117,12 @@ void ESciVis::Frame(uint dtime)
 			rs()->GetDVScene()->SetView( view.position, view.orient );
 			rs()->GetDVScene()->SetProjection( zn, zf, zf * tf * aspect, zf * tf );
 			
+			
+			rs()->GetDVScene()->DrawArrow( EVec4(0,0,1,1), EVec4(1,0,0,0), 1.0f, EVec4(1,0,0,1 ) );
+			rs()->GetDVScene()->DrawArrow( EVec4(0,0,1,1), EVec4(0,1,0,0), 1.0f, EVec4(0,1,0,1 ) );
+			rs()->GetDVScene()->DrawArrow( EVec4(0,0,1,1), EVec4(0,0,1,0), 1.0f, EVec4(0,0,1,1 ) );
+			
+			
 			phys()->DebugRender( rs()->GetDVScene() );
 		
 			rs()->RenderFrame();
