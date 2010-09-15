@@ -49,7 +49,7 @@ class EShip : public IShip {
 		virtual void		SetPose				( EVec4 &position, EQuat &orient );
 		
 		virtual void		BuildVoxels			( const EString path, float cube_size );
-		virtual void		BuildSurfaceDXDY	( const EString path, float density );
+		virtual void		BuildSurfaceDXDY	( const EString path, float density, float gathering_radius );
 		
 		virtual void		SetVisMesh			( const EString path );
 		virtual void		SetHSFMesh			( const EString path );
@@ -91,7 +91,9 @@ class EShip : public IShip {
 		void				UpdateHSFVoxel	( float dtime, IPxWaving waving );
 		void				UpdateHSFSurface( float dtime, IPxWaving waving );
 		
-		void				UpdateHXFSE	( float dtime, IPxWaving waving );
+		void				UpdateHXFSE		( float dtime, IPxWaving waving );
+		void				BalanceHXFSE	( void );
+		void				BalanceHXFSEAxis( const EBBox &box, uint axis_id );
 
 		EPxVoxelGrid	voxel_grid;
 		
@@ -110,9 +112,9 @@ class EShip : public IShip {
 		IPxTriMesh		mesh_submerged_hdf;
 		
 		IPxPhysEntity	ship_body;
-		
-		vector<ESurfElem>	surf_elements_local;
-		vector<ESurfElem>	surf_elements_global;
+
+		float				surf_elements_radius;		
+		vector<ESurfElem>	surf_elements;
 
 		//NxActor			*ship_body;
 		

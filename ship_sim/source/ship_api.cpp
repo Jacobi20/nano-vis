@@ -123,7 +123,7 @@ int ELuaShip::build_voxels( lua_State *L )
 int ELuaShip::build_surf_dxdy( lua_State *L )
 {
 	LUA_INTERFACE(L);
-	ship->BuildSurfaceDXDY( lua.RequireString( 1, "mesh path"), lua.RequireNumber( 2, "density" ) );
+	ship->BuildSurfaceDXDY( lua.RequireString( 1, "mesh path"), lua.RequireNumber( 2, "density" ), lua.RequireNumber(3, "radius") );
 	return 0;
 }
 
