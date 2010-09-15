@@ -179,6 +179,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\mersenne.h"
+				>
+			</File>
+			<File
 				RelativePath=".\sci_api.cpp"
 				>
 			</File>
