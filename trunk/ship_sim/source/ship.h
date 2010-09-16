@@ -93,7 +93,7 @@ class EShip : public IShip {
 		
 		void				UpdateHXFSE		( float dtime, IPxWaving waving );
 		void				BalanceHXFSE	( void );
-		void				BalanceHXFSEAxis( const EBBox &box, uint axis_id );
+		void				BalanceHXFSEAxis( const EBBox &box, uint axis_id, float step );
 
 		EPxVoxelGrid	voxel_grid;
 		

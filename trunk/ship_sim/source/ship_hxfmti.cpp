@@ -31,7 +31,6 @@
 	HXFMTI
 -----------------------------------------------------------------------------*/
 
-RandMT	mtrand;
 
 static uint GetNumPoints( float num ) {
 	if (num<=1) {
@@ -58,6 +57,8 @@ static uint GetNumPoints( float num ) {
 //
 void EShip::BuildSurfaceDXDY( const EString path, float density, float gathering_radius )
 {
+	RandMT	mtrand;
+
 	this->surf_elements_radius = gathering_radius;
 
 	LOGF("building surface elements : %s", path.CStr());
@@ -173,14 +174,57 @@ void EShip::BuildSurfaceDXDY( const EString path, float density, float gathering
 //
 //	EShip::BalanceHXFSEAxis
 //
-void EShip::BalanceHXFSEAxis( const EBBox &box, uint axis_id )
+void EShip::BalanceHXFSEAxis( const EBBox &box, uint axis_id, float step )
 {
-	uint table_axis0[3] = {0,1,2};
-	uint table_axis1[3] = {1,2,0};
-	uint table_axis2[3] = {2,0,1};
-	uint ax0	=	table_axis0[ axis_id ];
-	uint ax1	=	table_axis1[ axis_id ];
-	uint ax2	=	table_axis2[ axis_id ];
+	const uint table_axis0[3] =	{0,1,2};
+	const uint table_axis1[3] =	{1,2,0};
+	const uint table_axis2[3] =	{2,0,1};
+	uint ax0			=	table_axis0[ axis_id ];	//	pseudo-x
+	uint ax1			=	table_axis1[ axis_id ];	//	pseudo-y
+	uint ax2			=	table_axis2[ axis_id ];	//	pseudo-z
+	
+	for (float x1 = box.Min()[ax1]; x1 <= box.Max()[ax1]; x1 += step)
+	for (float x2 = box.Min()[ax2]; x2 <= box.Max()[ax2]; x2 += step)
+	{
+		vector<ESurfElem*>	ses;
+		
+		for (uint i=0; i<surf_elements.size(); i++) {
+			
+			ESurfElem *se	= &surf_elements[i];
+			EVec4		p	= se->position;
+			
+			if ( (p.v[ax1] > x1) && (p.v[ax1] <= x1+step)  
+			  && (p.v[ax2] > x2) && (p.v[ax2] <= x2+step) ) {
+				ses.push_back( se );
+			}
+
+		}
+
+		float	force_abs = 0;
+		float	force = 0;
+
+		if (!ses.empty()) {
+			//	compute force deviation :
+			for (uint j=0; j<ses.size(); j++) {
+				ESurfElem *se = ses[j];
+				
+				float f	=	se->area * se->normal.v[ax0];
+				
+				force		+= f;
+				force_abs	+= abs(f);
+			}
+
+			//	reduce error :
+			if (abs(force_abs)>0.0001f) {
+				LOGF("%03d : %8.5f %8.5f", ses.size(), force, force_abs);
+
+				for (uint j=0; j<ses.size(); j++) {
+					ESurfElem *se = ses[j];
+					se->normal.v[ax0] += (1.00*force / force_abs / ses.size());
+				}
+			}
+		}
+	}
 	
 	
 }
@@ -198,97 +242,10 @@ void EShip::BalanceHXFSE( void )
 	
 	LOGF("balancing...");
 	
-	BalanceHXFSEAxis( bbox, 0 );
+	BalanceHXFSEAxis( bbox, 0, 0.50f );
+	//BalanceHXFSEAxis( bbox, 1, 0.50f );
+	//BalanceHXFSEAxis( bbox, 2, 0.50f );
 	
-	return;
-	
-	float step = 3;
-	
-	bbox.Grow( step/2, step/2, step/2 );
-	
-	for (float x=bbox.Min().x; x<=bbox.Max().x; x+=step) {
-		for (float y=bbox.Min().y; y<=bbox.Max().y; y+=step) {
-			for (float z=bbox.Min().z; z<=bbox.Max().z; z+=step) {
-			
-				vector<ESurfElem*>	ses_x;
-				vector<ESurfElem*>	ses_y;
-				vector<ESurfElem*>	ses_z;
-				
-				for (uint i=0; i<surf_elements.size(); i++) {
-					
-					ESurfElem *se	= &surf_elements[i];
-					EVec4		p	= se->position;
-					
-					if ( (p.x > x) && (p.x < x+step)  &&  (p.y > y) && (p.y < y+step) ) {
-						ses_z.push_back( se );
-					}
-					
-					if ( (p.y > y) && (p.y < y+step)  &&  (p.z > z) && (p.z < z+step) ) {
-						ses_x.push_back( se );
-					}
-					
-					if ( (p.z > z) && (p.z < z+step)  &&  (p.x > x) && (p.x < x+step) ) {
-						ses_y.push_back( se );
-					}
-
-					EVec4	force_abs(0,0,0,0);
-					EVec4	force(0,0,0,0);
-					
-					//	compute force deviation by X-axis :
-					for (uint j=0; j<ses_x.size(); j++) {
-						ESurfElem *se = ses_x[j];
-						
-						float f	=	se->area * se->normal.x;
-						
-						force.x += f;
-						force_abs.x += abs(f);
-					}
-					
-					//	compute force deviation by Y-axis :
-					for (uint j=0; j<ses_y.size(); j++) {
-						ESurfElem *se = ses_y[j];
-						
-						float f	=	se->area * se->normal.y;
-						
-						force.y += f;
-						force_abs.y += abs(f);
-					}
-					
-					//	compute force deviation by Z-axis :
-					for (uint j=0; j<ses_z.size(); j++) {
-						ESurfElem *se = ses_z[j];
-						
-						float f	=	se->area * se->normal.z;
-						
-						force.z += f;
-						force_abs.z += abs(f);
-					}
-					
-					//	Reduce error :
-					
-					//	reduce error by X-axis :
-					for (uint j=0; j<ses_x.size(); j++) {
-						ESurfElem *se = ses_x[j];
-						se->normal.x += force.x / force_abs.x;
-					}
-					
-					//	reduce error by Y-axis :
-					for (uint j=0; j<ses_y.size(); j++) {
-						ESurfElem *se = ses_y[j];
-						se->normal.y += force.y / force_abs.y;
-					}
-					
-					//	reduce error by Z-axis :
-					for (uint j=0; j<ses_z.size(); j++) {
-						ESurfElem *se = ses_z[j];
-						se->normal.z += force.z / force_abs.z;
-					}
-				}
-			
-			}
-		}
-	}
-
 	LOGF("done.");
 }
 
@@ -334,6 +291,7 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 
 		//	compute pressure and force :
 		float	pr	=	GRAVITY * WATER_DENSITY * (-se.position.z);
+		//float	pr	=	100*GRAVITY;
 		float	s	=	se.area;
 		EVec4	f	=	- (se.normal * (pr * s)) * factor;
 
@@ -352,7 +310,7 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 		if (normal.y < -0.999f) { num_pnts[1] -= factor; }
 		if (normal.z < -0.999f) { num_pnts[2] -= factor; }
 
-		//rs()->GetDVScene()->DrawArrow( se.position, se.normal, 0.5, EVec4(0.0, 1.0, 0.5, 1.0 ) );
+		rs()->GetDVScene()->DrawArrow( se.position, se.normal, 0.5, EVec4(0.0, 1.0, 0.5, 1.0 ) );
 	}
 	
 	//LOGF("%7.2f %7.2f %7.2f", num_pnts[0], num_pnts[1], num_pnts[2]);
