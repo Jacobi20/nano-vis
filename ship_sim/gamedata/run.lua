@@ -197,7 +197,7 @@ function create_box()
 	ship:set_cmass		( 0, 0, 0 );
 	
 	ship:build_voxels	( "box.esx|box", 2	);
-	ship:build_surf_dxdy( "box.esx|box", 5, 2 );
+	ship:build_surf_dxdy( "box.esx|box", 2, 2 );
 	
 	print("---- done ----");
 	print("");
