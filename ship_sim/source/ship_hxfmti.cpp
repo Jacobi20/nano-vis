@@ -24,7 +24,6 @@
 
 #include "sci_local.h"
 #include "ship.h"
-#include "mersenne.h"
 
 /*-----------------------------------------------------------------------------
 	Ship hydrodynamic and hydrostatic microtriangle hull integration
@@ -52,28 +51,37 @@ static uint GetNumPoints( float num ) {
 	return 1;
 }
 
+
+
+
 //
 //	EShip::BuildSurfaceElements
 //
 void EShip::BuildSurfaceDXDY( const EString path, float density, float gathering_radius )
 {
-	RandMT	mtrand;
+	hxfgrid.path		=	path;
+	hxfgrid.density		=	density;
+	hxfgrid.radius		=	gathering_radius;
+}
 
-	this->surf_elements_radius = gathering_radius;
 
-	LOGF("building surface elements : %s", path.CStr());
-	LOGF("density : %g", density);
-	LOGF("radius  : %g", surf_elements_radius);
-	
-	if (density <= 0) {
+//
+//	EShip::UpdateHXFSEGrid
+//
+void EShip::UpdateHXFSEGrid( void )
+{
+	hxfgrid.grid.reserve( hxfgrid.grid.size() + 1 );
+	hxfgrid.grid.clear();
+
+	if (hxfgrid.density <= 0) {
 		LOG_WARNING("EShip::BuildSurfaceDXDY(): density < 0");
-		density = 0;
+		hxfgrid.density = 0;
 	}
 
 	double	total_surface_area = 0;	
 	double	total_surface_area2 = 0;	
 	
-	IPxTriMesh	mesh	=	ge()->LoadMeshFromFile( path.CStr() );
+	IPxTriMesh	mesh	=	ge()->LoadMeshFromFile( hxfgrid.path.CStr() );
 
 	for (uint i=0; i<mesh->GetTriangleNum(); i++) {
 	
@@ -89,53 +97,9 @@ void EShip::BuildSurfaceDXDY( const EString path, float density, float gathering
 
 		EVec3	n	=	mesh->TriangleNormal(i);
 		double	s	=	mesh->TriangleArea(i);
-
-#if 0
-		const uint TESS_FACTOR = 4; 		
-		float d = 1.0f/(float)TESS_FACTOR;
-		
-		for (uint ui=0; ui<TESS_FACTOR; ui++) {
-			for (uint vi=0; vi<TESS_FACTOR; vi++) {
-			
-				float u = ui * d;
-				float v = vi * d;
-				
-				uint tri_num =	(1 + TESS_FACTOR) * (TESS_FACTOR) / 2 
-							 +	(TESS_FACTOR) * (TESS_FACTOR - 1) / 2 ;
-				
-				
-				EVec3	vn0	=	v0 + v01*(u+0) + v02*(v+0);
-				EVec3	vn1	=	v0 + v01*(u+d) + v02*(v+0);
-				EVec3	vn2	=	v0 + v01*(u+d) + v02*(v+d);
-				EVec3	vn3	=	v0 + v01*(u+0) + v02*(v+d);
-				
-				EVec3	c0	=	(vn0 + vn1 + vn2) / 3.0f;
-				EVec3	c1	=	(vn0 + vn2 + vn3) / 3.0f;
-				
-				if (ui+vi<TESS_FACTOR) {
-					ESurfElem se0, se1;
-					se0.position	= Vec3ToPoint4(c0);
-					se1.position	= Vec3ToPoint4(c0);
-					
-					se0.normal		= Vec3ToVec4(n);
-					se1.normal		= Vec3ToVec4(n);
-					
-					se0.area		= s/tri_num;
-					se1.area		= s/tri_num;
-					
-					if (ui+vi != TESS_FACTOR) {
-						surf_elements.push_back(se0);
-						surf_elements.push_back(se1);
-					} else {
-						surf_elements.push_back(se0);
-					}
-				}
-			}
-		}
-#else		
 		total_surface_area += s;
 		
-		uint elem_num = GetNumPoints(s * density);
+		uint elem_num = GetNumPoints(s * hxfgrid.density);
 		if (elem_num<1) {
 			elem_num = 1;
 		}
@@ -149,8 +113,8 @@ void EShip::BuildSurfaceDXDY( const EString path, float density, float gathering
 			do {
 				u	=	FRand(0,1);
 				v	=	FRand(0,1);
-				u	=	mtrand.randomMTf();
-				v	=	mtrand.randomMTf();
+				u	=	hxfgrid.mtrand.randomMTf();
+				v	=	hxfgrid.mtrand.randomMTf();
 			} while (u+v>1);
 			
 			total_surface_area2 += ds;
@@ -158,107 +122,18 @@ void EShip::BuildSurfaceDXDY( const EString path, float density, float gathering
 			se.position	=	Vec3ToPoint4( v0 + v01 * u + v02 * v );
 			se.normal	=	Vec3ToVec4  ( n );
 			se.area		=	ds;
-			surf_elements.push_back(se);
+			hxfgrid.grid.push_back(se);
 		} 
-#endif		
 	}
-	
-	BalanceHXFSE();
-	LOGF("%f %f", total_surface_area, total_surface_area2);
-	
-	LOGF("done : %d surface elements", surf_elements.size());
-}
-
-
-
-//
-//	EShip::BalanceHXFSEAxis
-//
-void EShip::BalanceHXFSEAxis( const EBBox &box, uint axis_id, float step )
-{
-	const uint table_axis0[3] =	{0,1,2};
-	const uint table_axis1[3] =	{1,2,0};
-	const uint table_axis2[3] =	{2,0,1};
-	uint ax0			=	table_axis0[ axis_id ];	//	pseudo-x
-	uint ax1			=	table_axis1[ axis_id ];	//	pseudo-y
-	uint ax2			=	table_axis2[ axis_id ];	//	pseudo-z
-	
-	for (float x1 = box.Min()[ax1]; x1 <= box.Max()[ax1]; x1 += step)
-	for (float x2 = box.Min()[ax2]; x2 <= box.Max()[ax2]; x2 += step)
-	{
-		vector<ESurfElem*>	ses;
-		
-		for (uint i=0; i<surf_elements.size(); i++) {
-			
-			ESurfElem *se	= &surf_elements[i];
-			EVec4		p	= se->position;
-			
-			if ( (p.v[ax1] > x1) && (p.v[ax1] <= x1+step)  
-			  && (p.v[ax2] > x2) && (p.v[ax2] <= x2+step) ) {
-				ses.push_back( se );
-			}
-
-		}
-
-		float	force_abs = 0;
-		float	force = 0;
-
-		if (!ses.empty()) {
-			//	compute force deviation :
-			for (uint j=0; j<ses.size(); j++) {
-				ESurfElem *se = ses[j];
-				
-				float f	=	se->area * se->normal.v[ax0];
-				
-				force		+= f;
-				force_abs	+= abs(f);
-			}
-
-			//	reduce error :
-			if (abs(force_abs)>0.0001f) {
-				LOGF("%03d : %8.5f %8.5f", ses.size(), force, force_abs);
-
-				for (uint j=0; j<ses.size(); j++) {
-					ESurfElem *se = ses[j];
-					se->normal.v[ax0] += (1.00*force / force_abs / ses.size());
-				}
-			}
-		}
-	}
-	
-	
-}
-
-
-void EShip::BalanceHXFSE( void )
-{
-	EBBox	bbox;
-	
-	for (uint i=0; i<surf_elements.size(); i++) {
-		ESurfElem	se = surf_elements[i];
-		
-		bbox.Expand(se.position);
-	}
-	
-	LOGF("balancing...");
-	
-	BalanceHXFSEAxis( bbox, 0, 0.50f );
-	//BalanceHXFSEAxis( bbox, 1, 0.50f );
-	//BalanceHXFSEAxis( bbox, 2, 0.50f );
-	
-	LOGF("done.");
 }
 
 
 //
-//	EShip::UpdateHXFTessMicroTris
+//	EShip::UpdateHXFSE
 //
 void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 {
-	if (surf_elements.empty()) {
-		LOG_WARNING(__FUNCTION__"() : surface element buffer is empty");
-		return;
-	}
+	UpdateHXFSEGrid();
 	
 	EVec4 p;
 	EQuat q;
@@ -272,9 +147,9 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 	float num_pnts[3] = {0,0,0};
 	
 	
-	for (uint i=0; i<surf_elements.size(); i++) {
+	for (uint i=0; i<hxfgrid.grid.size(); i++) {
 		
-		ESurfElem	se		= surf_elements[i];
+		ESurfElem	se		= hxfgrid.grid[i];
 		EVec4		normal	= se.normal;
 
 		//	transform surface element to world space :		
@@ -295,8 +170,8 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 		float	s	=	se.area;
 		EVec4	f	=	- (se.normal * (pr * s)) * factor;
 
-		//ship_body->AddForceAtPos( f, se.position );
-		ship_body->AddForce( f );
+		ship_body->AddForceAtPos( f, se.position );
+		//ship_body->AddForce( f );
 		
 		//	debug point :
 		EVec4	color	=	Vec4Lerp( EVec4(1,0,0,1), EVec4(1,1,0,1), factor);
@@ -310,13 +185,32 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 		if (normal.y < -0.999f) { num_pnts[1] -= factor; }
 		if (normal.z < -0.999f) { num_pnts[2] -= factor; }
 
-		rs()->GetDVScene()->DrawArrow( se.position, se.normal, 0.5, EVec4(0.0, 1.0, 0.5, 1.0 ) );
+		//rs()->GetDVScene()->DrawArrow( se.position, se.normal, 0.5, EVec4(0.0, 1.0, 0.5, 1.0 ) );
 	}
 	
 	//LOGF("%7.2f %7.2f %7.2f", num_pnts[0], num_pnts[1], num_pnts[2]);
 	
+	//
+	//	damp wrong
+	//
 	EVec4	force, torque;	
 	ship_body->GetTotalForces( force, torque );
+	//
+	//struct weigth {
+	//	static float func ( float x ) {
+	//		float y = exp(1-x);
+	//		return Clamp<float>(y, 0, 1);
+	//	}
+	//};
+	//
+	//const float DAMPING_FORCE_THRESHOLD		=	80000;
+	//const float DAMPING_TORQUE_THRESHOLD	=	80000;
+	//
+	//float	force_abs		=	Vec4Length( force );
+	//float	torque_abs		=	Vec4Length( torque );
+	//
+	//float	force_damping	=	force_abs
+	
 	//
 	LOGF("force  (kN)   : %8.3f %8.3f %8.3f", force.x / 1000.0f, force.y / 1000.0f, force.z / 1000.0f);
 	//LOGF("torque (kN*m) : %8.1f", Vec4Length(torque) / 1000.0f );
