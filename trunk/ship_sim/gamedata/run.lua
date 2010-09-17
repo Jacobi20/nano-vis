@@ -161,19 +161,19 @@ function create_ssn668()
 	print("---- creating SSN-668 'Los Angeles' ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 5 );
+	ship:set_resistance	( 1 );
 	
 	ship:set_vis_mesh	( "ssn668.esx|vismesh"			);
 	ship:set_hdf_mesh	( "ssn668.esx|hydromesh" 		);
 	ship:set_hsf_mesh	( "ssn668.esx|hydromesh" 		);
 	ship:make_rigidbody	( "ssn668.esx|physmesh", 6000000	);
 	
-	ship:set_position	( 0, 10, -2 );	
-	ship:set_angles		( -90, 0, 0 );
+	ship:set_position	( 0, 10, 50 );	
+	ship:set_angles		( -90, 50, 50 );
 	ship:set_cmass		( 3.8, 0, -3 );
 	
 	ship:build_voxels	( "ssn668.esx|hydromesh", 2	);
-	ship:build_surf_dxdy( "ssn668.esx|hydromesh", 10, 0.1	);
+	ship:build_surf_dxdy( "ssn668.esx|hydromesh", 5, 0.1	);
 	
 	print("---- done ----");
 	print("");
@@ -185,19 +185,19 @@ function create_box()
 	print("---- creating Box ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 0 );
+	ship:set_resistance	( 5 );
 	
 	ship:set_vis_mesh	( "box.esx|box"				);
 	ship:set_hdf_mesh	( "box.esx|box" 			);
 	ship:set_hsf_mesh	( "box.esx|box" 			);
-	ship:make_rigidbody	( "box.esx|box",  1500000	);
+	ship:make_rigidbody	( "box.esx|box",  750000	);
 	
-	ship:set_position	( 0, 0, -10 );	
-	ship:set_angles		( 0, 0, 0 );
+	ship:set_position	( 0, 0, 10 );	
+	ship:set_angles		( 40, 40, 40 );
 	ship:set_cmass		( 0, 0, 0 );
 	
 	ship:build_voxels	( "box.esx|box", 2	);
-	ship:build_surf_dxdy( "box.esx|box", 2, 2 );
+	ship:build_surf_dxdy( "box.esx|box", 5, 2 );
 	
 	print("---- done ----");
 	print("");
@@ -206,6 +206,7 @@ end
 
 
 --cutter	=	create_cutter();
+--uboat	=	create_ssn668();
 uboat	=	create_box();
 
 ship_hsf_method	=	"hxfse";
@@ -278,8 +279,13 @@ function sci_frame(dtime)
 	
 	DriveShip();
 	
-	if uboat  then uboat:simulate(dtime);  end;
-	if cutter then cutter:simulate(dtime); end
+	if uboat  then 
+		uboat:simulate(dtime);  
+	end;
+	
+	if cutter then 
+		cutter:simulate(dtime); 
+	end
 	
 	--uboat:add_force( vmath.vec4(0,0,-2000000,0), vmath.vec4(0,0,0,1), true);
 	

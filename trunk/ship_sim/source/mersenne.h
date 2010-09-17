@@ -60,6 +60,8 @@
 // in the code, cut'n'paste this bit to create a .h for use in
 // other programs
 
+#pragma once
+
 #ifndef _RANDMT_H_
 #define _RANDMT_H_
 

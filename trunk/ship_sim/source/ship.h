@@ -28,6 +28,8 @@
 	Naive ship simulator :
 -----------------------------------------------------------------------------*/
 
+#include "mersenne.h"
+
 struct ESurfElem {
 		EVec4	position;
 		EVec4	normal;
@@ -90,10 +92,19 @@ class EShip : public IShip {
 		void				UpdateHSFBox	( float dtime, IPxWaving waving );
 		void				UpdateHSFVoxel	( float dtime, IPxWaving waving );
 		void				UpdateHSFSurface( float dtime, IPxWaving waving );
-		
+
+		void				UpdateHXFSEGrid	( void );		
 		void				UpdateHXFSE		( float dtime, IPxWaving waving );
 		void				BalanceHXFSE	( void );
 		void				BalanceHXFSEAxis( const EBBox &box, uint axis_id, float step );
+		struct {
+			RandMT				mtrand;
+			EString				path;
+			float				density;
+			float				radius;
+			vector<ESurfElem>	grid;
+		} hxfgrid;
+		
 
 		EPxVoxelGrid	voxel_grid;
 		
@@ -113,8 +124,6 @@ class EShip : public IShip {
 		
 		IPxPhysEntity	ship_body;
 
-		float				surf_elements_radius;		
-		vector<ESurfElem>	surf_elements;
 
 		//NxActor			*ship_body;
 		
