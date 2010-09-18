@@ -103,8 +103,10 @@ void ESciVis::Frame(uint dtime)
 
 		if (GetFRScene()) {
 		
+			waving->Update( dtime / 1000.0f );
+		
 			CoreExecuteString( va("if sci_frame then sci_frame(%f); end;", dtime/1000.0f) );
-
+			
 			float zn = 0.1;
 			float zf = 1000.0f;		
 			float tf = tanf(deg2rad(view.fov/2));

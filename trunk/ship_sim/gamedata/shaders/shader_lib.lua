@@ -77,13 +77,14 @@ function define_water_shader ( path )
 		surface.diffuse 	= 	sample_color ( sampler0, input.uv0 + 0.05*normalize(uv0)).rgb;
 		surface.alpha		=	sample_color ( sampler0, input.uv0 + 0.05*normalize(uv0)).a+0.3;
 
-		surface.diffuse 	= 	float3(0.5, 0.5, 1.0);
-		surface.alpha		=	0.5;
+		
+		surface.diffuse 	= 	sample_color ( sampler0, input.uv0 ).rgb;
+		surface.alpha		=	sample_color ( sampler0, input.uv0 ).a;
 	]];
 
 	fr.define_shader {
 		name			=	path;
-		texture_path0	=	"textures/waves_color.tga";
+		texture_path0	=	"textures/wave_grid.tga";
 		texture_path1	=	"textures/waves.tga";
 		injection		=	injection;
 		is_solid		=	false;

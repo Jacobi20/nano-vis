@@ -122,13 +122,20 @@ void EWavingBoukh::Update( float dtime )
 {
 	time	+=	dtime;
 	
-	uint n = sea_mesh->GetVertexNum();
+	IPxTriMesh	mesh	=	sea_mesh->Clone();
 	
-	//for (uint i=0; i<n; i++) {
-	//	
-	//}
-	//
-	//r_ent->SetMesh(
+	uint n = mesh->GetVertexNum();
+	
+	for (uint i=0; i<n; i++) {
+		EVertex	v;
+		
+		v	=	mesh->GetVertex( i );
+		v.position.z	=	GetPosition( Vec3ToVec4(v.position) ).z;
+		
+		mesh->SetVertex( i, v );
+	}
+	
+	r_ent->SetMesh( mesh );
 }
 
 
@@ -139,7 +146,7 @@ EVec4 EWavingBoukh::GetPositionAtTime( const EVec4 &init_pos, float time ) const
 	float A		=	1.5;
 	
 	
-#if 1
+#if 0
 	
 	float dW = (Wmax-Wmin)/(float)NN;
 	
@@ -157,12 +164,21 @@ EVec4 EWavingBoukh::GetPositionAtTime( const EVec4 &init_pos, float time ) const
 		sum_cos += A_2D[i] * c;		
 	}
 #else
-	float wx	=	0.1f;
-	float wt	=	0.5f;
-	sum_sin		=	sin( wx * PI * init_pos.x  +  wt * PI * time );
-	sum_cos		=	cos( wx * PI * init_pos.x  +  wt * PI * time );
+	float		s	=	init_pos.x + 0.3*init_pos.y;
+
+	float wx	=	0.02f;
+	float wt	=	0.4f;
+	sum_sin		=	0;//sin( wx * PI * init_pos.x  +  wt * PI * time );
+	sum_cos		=	
+		+	1.000 * cos(  1*wx * PI * init_pos.x  +  wt * PI * time )
+		+	0.500 * cos(  3*wx * PI * init_pos.x  +  wt * PI * time )
+		+	0.250 * cos(  7*wx * PI * init_pos.x  +  wt * PI * time )
+		+	1.000 * cos(  1*wx * PI * s  +  wt * PI * time )
+		+	0.500 * cos(  3*wx * PI * s  +  wt * PI * time )
+		+	0.250 * cos(  7*wx * PI * s  +  wt * PI * time )
+		;
 #endif	
-	return EVec4(A*sum_sin, 0, A*sum_sin, 0);
+	return EVec4(0, 0, A*sum_cos, 0);
 }
 
 

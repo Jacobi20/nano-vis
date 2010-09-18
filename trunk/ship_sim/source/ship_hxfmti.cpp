@@ -155,10 +155,12 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 		//	transform surface element to world space :		
 		se.position	=	Matrix4Transform( se.position, t );
 		se.normal	=	Matrix4Transform( se.normal,   t );
+		
+		float wz = waving->GetPosition( se.position ).z;
 
 		//	compute depth and force factor :
 		float	factor	=	0;
-		float	depth	=	-se.position.z;
+		float	depth	=	-se.position.z + wz;
 		
 		if (depth>=0) {
 			factor = 1;
@@ -166,26 +168,14 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 
 		//	compute pressure and force :
 		float	pr	=	GRAVITY * WATER_DENSITY * (-se.position.z);
-		//float	pr	=	100*GRAVITY;
 		float	s	=	se.area;
 		EVec4	f	=	- (se.normal * (pr * s)) * factor;
 
 		ship_body->AddForceAtPos( f, se.position );
-		//ship_body->AddForce( f );
 		
 		//	debug point :
-		EVec4	color	=	Vec4Lerp( EVec4(1,0,0,1), EVec4(1,1,0,1), factor);
-		rs()->GetDVScene()->DrawPoint( se.position, 0.1f, color );
-		
-		
-		if (normal.x >  0.999f) { num_pnts[0] += factor; }
-		if (normal.y >  0.999f) { num_pnts[1] += factor; }
-		if (normal.z >  0.999f) { num_pnts[2] += factor; }
-		if (normal.x < -0.999f) { num_pnts[0] -= factor; }
-		if (normal.y < -0.999f) { num_pnts[1] -= factor; }
-		if (normal.z < -0.999f) { num_pnts[2] -= factor; }
-
-		//rs()->GetDVScene()->DrawArrow( se.position, se.normal, 0.5, EVec4(0.0, 1.0, 0.5, 1.0 ) );
+		//EVec4	color	=	Vec4Lerp( EVec4(1,0,0,1), EVec4(1,1,0,1), factor);
+		//rs()->GetDVScene()->DrawPoint( se.position, 0.1f, color );
 	}
 	
 	//LOGF("%7.2f %7.2f %7.2f", num_pnts[0], num_pnts[1], num_pnts[2]);
@@ -195,23 +185,6 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 	//
 	EVec4	force, torque;	
 	ship_body->GetTotalForces( force, torque );
-	//
-	//struct weigth {
-	//	static float func ( float x ) {
-	//		float y = exp(1-x);
-	//		return Clamp<float>(y, 0, 1);
-	//	}
-	//};
-	//
-	//const float DAMPING_FORCE_THRESHOLD		=	80000;
-	//const float DAMPING_TORQUE_THRESHOLD	=	80000;
-	//
-	//float	force_abs		=	Vec4Length( force );
-	//float	torque_abs		=	Vec4Length( torque );
-	//
-	//float	force_damping	=	force_abs
-	
-	//
-	LOGF("force  (kN)   : %8.3f %8.3f %8.3f", force.x / 1000.0f, force.y / 1000.0f, force.z / 1000.0f);
-	//LOGF("torque (kN*m) : %8.1f", Vec4Length(torque) / 1000.0f );
+
+	//LOGF("force  (kN)   : %8.3f %8.3f %8.3f", force.x / 1000.0f, force.y / 1000.0f, force.z / 1000.0f);
 }
