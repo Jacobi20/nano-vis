@@ -45,7 +45,7 @@ state = {
 	pitch_dec	=	false;
 	dist_inc	=	false;
 	dist_dec	=	false;
-	yaw		=	0;
+	yaw		=	-90;
 	roll	=	0;
 	pitch	=	5;
 	dist	=	110;
@@ -122,11 +122,12 @@ function create_uboat()
 	ship:set_hsf_mesh	( "uboat.esx|flowsurf2" 		);
 	ship:make_rigidbody	( "uboat.esx|stat", 2205000	);
 	
-	ship:set_position	( -0, 20, 60 );	
-	ship:set_angles		( 180, 40, 40 );
-	ship:set_cmass		( 0,0,0 );
+	ship:set_position	( 0, 0, 0 );	
+	ship:set_angles		( 70, 0, 0 );
+	ship:set_cmass		( 0,0,-1 );
 	
 	ship:build_voxels	( "uboat.esx|flowsurf2", 1	);
+	ship:build_surf_dxdy( "uboat.esx|flowsurf2", 1, 0.1	);
 	
 	print("---- done ----");
 	print("");
@@ -139,7 +140,7 @@ function create_cutter()
 	print("---- creating Coast Guard Ship ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 5 );
+	ship:set_resistance	( 10 );
 	
 	ship:set_vis_mesh	( "boat.esx|boat1"			);
 	ship:set_hdf_mesh	( "boat.esx|flow" 			);
@@ -147,9 +148,11 @@ function create_cutter()
 	ship:make_rigidbody	( "boat.esx|stat", 500000	);
 	
 	ship:set_position	( 0, 0,  0 );	
-	ship:set_angles		( 90, 0, 50);
+	ship:set_angles		( 40, 0, 10);
+	ship:set_cmass		( 0, 0, 1 );
 	
 	ship:build_voxels	( "boat.esx|flow", 1	);
+	ship:build_surf_dxdy( "boat.esx|flow", 3, 0.1	);
 	
 	print("---- done ----");
 	print("");
@@ -161,19 +164,19 @@ function create_ssn668()
 	print("---- creating SSN-668 'Los Angeles' ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 1 );
+	ship:set_resistance	( 5 );
 	
 	ship:set_vis_mesh	( "ssn668.esx|vismesh"			);
 	ship:set_hdf_mesh	( "ssn668.esx|hydromesh" 		);
 	ship:set_hsf_mesh	( "ssn668.esx|hydromesh" 		);
 	ship:make_rigidbody	( "ssn668.esx|physmesh", 6000000	);
 	
-	ship:set_position	( 0, 10, 50 );	
-	ship:set_angles		( -90, 50, 50 );
+	ship:set_position	( 0, 0, -50 );	
+	ship:set_angles		( 90, 0, 0 );
 	ship:set_cmass		( 3.8, 0, -3 );
 	
 	ship:build_voxels	( "ssn668.esx|hydromesh", 2	);
-	ship:build_surf_dxdy( "ssn668.esx|hydromesh", 5, 0.1	);
+	ship:build_surf_dxdy( "ssn668.esx|hydromesh", 1, 0.1	);
 	
 	print("---- done ----");
 	print("");
@@ -192,12 +195,12 @@ function create_box()
 	ship:set_hsf_mesh	( "box.esx|box" 			);
 	ship:make_rigidbody	( "box.esx|box",  750000	);
 	
-	ship:set_position	( 0, 0, 10 );	
-	ship:set_angles		( 40, 40, 40 );
+	ship:set_position	( 0, 0, 50 );	
+	ship:set_angles		( 90, 30, 30 );
 	ship:set_cmass		( 0, 0, 0 );
 	
 	ship:build_voxels	( "box.esx|box", 2	);
-	ship:build_surf_dxdy( "box.esx|box", 5, 2 );
+	ship:build_surf_dxdy( "box.esx|box", 10, 2 );
 	
 	print("---- done ----");
 	print("");
@@ -205,9 +208,10 @@ function create_box()
 end
 
 
---cutter	=	create_cutter();
 --uboat	=	create_ssn668();
-uboat	=	create_box();
+uboat	=	create_cutter();
+--uboat	=	create_uboat();
+--uboat	=	create_box();
 
 ship_hsf_method	=	"hxfse";
 --ship_hsf_method	=	"surface";
