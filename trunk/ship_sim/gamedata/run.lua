@@ -147,7 +147,7 @@ function create_cutter()
 	ship:set_hsf_mesh	( "boat.esx|flow" 			);
 	ship:make_rigidbody	( "boat.esx|stat", 500000	);
 	
-	ship:set_position	( 0, 0,  0 );	
+	ship:set_position	( 0, 0,  30 );	
 	ship:set_angles		( 40, 0, 10);
 	ship:set_cmass		( 0, 0, 1 );
 	
@@ -171,7 +171,7 @@ function create_ssn668()
 	ship:set_hsf_mesh	( "ssn668.esx|hydromesh" 		);
 	ship:make_rigidbody	( "ssn668.esx|physmesh", 6000000	);
 	
-	ship:set_position	( 0, 0, -50 );	
+	ship:set_position	( 0, 0, -20 );	
 	ship:set_angles		( 90, 0, 0 );
 	ship:set_cmass		( 3.8, 0, -3 );
 	
@@ -209,8 +209,8 @@ end
 
 
 --uboat	=	create_ssn668();
-uboat	=	create_cutter();
---uboat	=	create_uboat();
+--uboat	=	create_cutter();
+uboat	=	create_uboat();
 --uboat	=	create_box();
 
 ship_hsf_method	=	"hxfse";
