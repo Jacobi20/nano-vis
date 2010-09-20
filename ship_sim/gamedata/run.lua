@@ -147,7 +147,7 @@ function create_cutter()
 	ship:set_hsf_mesh	( "boat.esx|flow" 			);
 	ship:make_rigidbody	( "boat.esx|stat", 500000	);
 	
-	ship:set_position	( 0, 0,  30 );	
+	ship:set_position	( 0, 0,  0 );	
 	ship:set_angles		( 40, 0, 10);
 	ship:set_cmass		( 0, 0, 1 );
 	
@@ -171,8 +171,8 @@ function create_ssn668()
 	ship:set_hsf_mesh	( "ssn668.esx|hydromesh" 		);
 	ship:make_rigidbody	( "ssn668.esx|physmesh", 6000000	);
 	
-	ship:set_position	( 0, 0, -20 );	
-	ship:set_angles		( 90, 0, 0 );
+	ship:set_position	( 0, 0, 0 );	
+	ship:set_angles		( 0, 0, 0 );
 	ship:set_cmass		( 3.8, 0, -3 );
 	
 	ship:build_voxels	( "ssn668.esx|hydromesh", 2	);
@@ -195,12 +195,12 @@ function create_box()
 	ship:set_hsf_mesh	( "box.esx|box" 			);
 	ship:make_rigidbody	( "box.esx|box",  750000	);
 	
-	ship:set_position	( 0, 0, 50 );	
+	ship:set_position	( 0, 0, 10 );	
 	ship:set_angles		( 90, 30, 30 );
 	ship:set_cmass		( 0, 0, 0 );
 	
 	ship:build_voxels	( "box.esx|box", 2	);
-	ship:build_surf_dxdy( "box.esx|box", 10, 2 );
+	ship:build_surf_dxdy( "box.esx|box", 1, 2 );
 	
 	print("---- done ----");
 	print("");
@@ -208,9 +208,12 @@ function create_box()
 end
 
 
+local rolling_log = io.open("rolling.log", "w");
+
+
 --uboat	=	create_ssn668();
---uboat	=	create_cutter();
-uboat	=	create_uboat();
+uboat	=	create_cutter();
+--uboat	=	create_uboat();
 --uboat	=	create_box();
 
 ship_hsf_method	=	"hxfse";
@@ -285,6 +288,13 @@ function sci_frame(dtime)
 	
 	if uboat  then 
 		uboat:simulate(dtime);  
+
+		local yaw, pitch, roll 	= uboat:get_angles();
+		local x, y, z 			= uboat:get_position();
+		local out				= string.format("%f %f %f %f %f %f", yaw, pitch, roll, x, y, z);
+		rolling_log:write(out.."\n");
+		rolling_log:flush();
+
 	end;
 	
 	if cutter then 

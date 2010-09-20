@@ -155,27 +155,19 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 		//	transform surface element to world space :		
 		se.position	=	Matrix4Transform( se.position, t );
 		se.normal	=	Matrix4Transform( se.normal,   t );
-		
-		float wz = waving->GetPosition( se.position ).z;
-
-		//	compute depth and force factor :
-		float	factor	=	0;
-		float	depth	=	-se.position.z + wz;
-		
-		if (depth>=0) {
-			factor = 1;
-		}
 
 		//	compute pressure and force :
-		float	pr	=	GRAVITY * WATER_DENSITY * (-se.position.z);
+		float	pr	=	waving->GetPressure( se.position );
 		float	s	=	se.area;
-		EVec4	f	=	- (se.normal * (pr * s)) * factor;
+		EVec4	f	=	- (se.normal * (pr * s));
+
+		float	factor	=	pr > 0 ? 1 : 0;
 
 		ship_body->AddForceAtPos( f, se.position );
 		
 		//	debug point :
-		//EVec4	color	=	Vec4Lerp( EVec4(1,0,0,1), EVec4(1,1,0,1), factor);
-		//rs()->GetDVScene()->DrawPoint( se.position, 0.1f, color );
+		EVec4	color	=	Vec4Lerp( EVec4(1,0,0,0), EVec4(1,1,0,1), factor);
+		rs()->GetDVScene()->DrawPoint( se.position, 0.1f, color );
 	}
 	
 	//LOGF("%7.2f %7.2f %7.2f", num_pnts[0], num_pnts[1], num_pnts[2]);
