@@ -37,6 +37,7 @@ class EWavingBoukh : public IWaving {
 		virtual void		Update				( float dtime );
 		virtual	EVec4		GetVelocity			( const EVec4 &init_pos ) const;
 		virtual	EVec4		GetPosition			( const EVec4 &init_pos ) const;
+		virtual float		GetPressure			( const EVec4 &init_pos ) const;
 		virtual float		GetWaveSlopeX		( const EVec4 &init_pos ) const;
 		
 	protected:
@@ -47,6 +48,8 @@ class EWavingBoukh : public IWaving {
 		EVec4				GetPositionAtTime	( const EVec4 &init_pos, float time ) const;
 	
 		void				InitGenerator	( void );
+		void				GetWave			( float lambda, float x, float t, float zeta, float &offset, float &pressure, float &angle ) const;
+		void				GetWaveC		( EVec4 pos, float t, float &offset, float &pressure, float &angle ) const;
 	
 		float	h3		;	// --- высота волный 3%-ой обеспеченности, м --- 	 			
 		float	Wmax	;	/*2.0f*/ // == Максимальная частота ==
@@ -67,7 +70,9 @@ IWaving	*create_boukh_waving(lua_State *L, int idx) { return new EWavingBoukh(L,
 	Implementation :
 -----------------------------------------------------------------------------*/
 
-
+//
+//
+//
 EWavingBoukh::EWavingBoukh( lua_State *L, int idx )
 {
 	time	=	0;
@@ -96,6 +101,9 @@ EWavingBoukh::EWavingBoukh( lua_State *L, int idx )
 }
 
 
+//
+//
+//
 void EWavingBoukh::InitGenerator( void )
 {
 	float dW = (Wmax-Wmin)/(float)NN;
@@ -112,12 +120,18 @@ void EWavingBoukh::InitGenerator( void )
 }
 
 
+//
+//
+//
 EWavingBoukh::~EWavingBoukh( void )
 {
 	sci_vis->GetFRScene()->RemoveEntity( r_ent );
 }
 
 
+//
+//
+//
 void EWavingBoukh::Update( float dtime )
 {
 	time	+=	dtime;
@@ -139,49 +153,89 @@ void EWavingBoukh::Update( float dtime )
 }
 
 
-EVec4 EWavingBoukh::GetPositionAtTime( const EVec4 &init_pos, float time ) const
+//
+//	EWavingBoukh::GetWave
+//
+void EWavingBoukh::GetWave( float lambda, float x, float t, float zeta, float &offset, float &pressure, float &angle ) const
 {
-	float sum_sin = 0.0;
-	float sum_cos = 0.0;
-	float A		=	1.5;
+	float	r0		=	0.5f * 0.17f * pow(lambda, 0.75f);
+	float	k		=	2 * PI / lambda;
+	float	a0		=	k * r0;
+	float	rz		=	r0 * exp(-k * zeta);
+	float	az		=	a0 * exp(-k * zeta);
+	float	sigma	=	sqrt( GRAVITY * k );
+	float	gamma	=	GRAVITY * WATER_DENSITY;
 	
-	
-#if 0
-	
-	float dW = (Wmax-Wmin)/(float)NN;
-	
-	float x	= init_pos.x*2;
-	float t = time * 2;
-	A = 0.0;
-
-	for(int i=0; i<NN; i++) {
-		float W	=	Wmin + i * dW;
-		float K	=	W * W / GRAVITY;
-		float s, c;
-		
-		sincos(K*x - W*t + Fi_2D[i], s, c);
-		sum_sin += A_2D[i] * s;		
-		sum_cos += A_2D[i] * c;		
-	}
-#else
-	float		s	=	init_pos.x + 0.3*init_pos.y;
-
-	float wx	=	0.02f;
-	float wt	=	0.4f;
-	sum_sin		=	0;//sin( wx * PI * init_pos.x  +  wt * PI * time );
-	sum_cos		=	
-		+	1.000 * cos(  1*wx * PI * init_pos.x  +  wt * PI * time )
-		+	0.500 * cos(  3*wx * PI * init_pos.x  +  wt * PI * time )
-		+	0.250 * cos(  7*wx * PI * init_pos.x  +  wt * PI * time )
-		+	1.000 * cos(  1*wx * PI * s  +  wt * PI * time )
-		+	0.500 * cos(  3*wx * PI * s  +  wt * PI * time )
-		+	0.250 * cos(  7*wx * PI * s  +  wt * PI * time )
-		;
-#endif	
-	return EVec4(0, 0, A*sum_cos, 0);
+	offset			= - rz * cos(k*x - sigma*t);
+	pressure		= - gamma * rz * cos(k*x - sigma*t);
+	angle			= - az * sin(k*x - sigma*t);
 }
 
 
+//
+//	EWavingBoukh::GetWaveC
+//
+void EWavingBoukh::GetWaveC( EVec4 pos, float t, float &offset, float &pressure, float &angle )	const
+{
+	offset		=	0;
+	pressure	=	0;
+	angle		=	0;
+	
+	GetWave(20, pos.x, t, -pos.z, offset, pressure, angle );
+	
+	return;
+	
+	for (uint i=0; i<4; i++) {
+		float	x	=	0.8*pos.x + 0.125 * pos.y;
+		float	o, p, a;
+		GetWave( 40 / (float)(1+i), x, time, -pos.z, o, p, a );
+		
+		offset		+=	o;
+		pressure	+=	p;
+		angle		+=	a;
+	}	
+	
+	for (uint i=0; i<4; i++) {
+		float	x	=	pos.x - 0.125 * pos.y;
+		float	o, p, a;
+		GetWave( 50 / (float)(1+i), x, time, -pos.z, o, p, a );
+		
+		offset		+=	o;
+		pressure	+=	p;
+		angle		+=	a;
+	}	
+}
+
+//
+//	EWavingBoukh::GetPressure
+//
+float EWavingBoukh::GetPressure( const EVec4 &pos ) const
+{
+	float offset, pressure, angle;
+	GetWaveC( pos, time, offset, pressure, angle );
+	
+	float p0	=	GRAVITY * WATER_DENSITY * (-pos.z + offset);
+	
+	if (pos.z>offset) return 0;
+	return p0;
+	return pressure + p0;
+}
+
+
+//
+//	EWavingBoukh::GetPositionAtTime
+//
+EVec4 EWavingBoukh::GetPositionAtTime( const EVec4 &init_pos, float time ) const
+{
+	float offset, pressure, angle;
+	GetWaveC( init_pos, time, offset, pressure, angle );
+	return EVec4( init_pos.x, init_pos.y, init_pos.z + offset, 1 );
+}
+
+
+//
+//	EWavingBoukh::GetWaveSlopeX
+//
 float EWavingBoukh::GetWaveSlopeX( const EVec4 &init_pos ) const
 {
 	EVec4	p	=	init_pos;
@@ -195,12 +249,18 @@ float EWavingBoukh::GetWaveSlopeX( const EVec4 &init_pos ) const
 }
 
 
+//
+//	EWavingBoukh::GetPosition
+//
 EVec4 EWavingBoukh::GetPosition( const EVec4 &init_pos ) const
 {
 	return GetPositionAtTime( init_pos, time );
 }
 
 
+//
+//	EWavingBoukh::GetVelocity
+//
 EVec4 EWavingBoukh::GetVelocity( const EVec4 &init_pos ) const
 {
 	float dt = 0.00390625;	//	1 / 256
