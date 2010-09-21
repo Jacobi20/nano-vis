@@ -183,11 +183,12 @@ void EWavingBoukh::GetWaveC( EVec4 pos, float t, float &offset, float &dpressure
 	angle		=	0;
 	
 	//GetWave(20, pos.x, -pos.z, time, offset, dpressure, angle );
+	//return;
 	
 	for (uint i=0; i<3; i++) {
 		float	x	=	pos.x;
 		float	o, p, a;
-		GetWave( 100 / (float)(1+i), x, -pos.z, time, o, p, a );
+		GetWave( 70 / (float)(1+i), x, -pos.z, time, o, p, a );
 		
 		offset		+=	o;
 		dpressure	+=	p;
@@ -210,16 +211,19 @@ void EWavingBoukh::GetWaveC( EVec4 pos, float t, float &offset, float &dpressure
 //
 float EWavingBoukh::GetPressure( const EVec4 &pos ) const
 {
-	float offset, dpressure, angle;
-	GetWaveC( pos, time, offset, dpressure, angle );
-	
-	float p0	=	GRAVITY * WATER_DENSITY * (-pos.z + offset);
-	
-	
-	
-	if (pos.z>offset) {	
+	float offset, dpressure, angle, surf_offs, dummy;
+
+	GetWaveC( EVec4(pos.x, pos.y, 0, 1), time, surf_offs, dummy, dummy );
+
+	if (pos.z>surf_offs) {	
 		return 0;
 	}
+
+	GetWaveC( pos, time, offset, dpressure, angle );
+	
+	//float p0	=	GRAVITY * WATER_DENSITY * abs(surf_offs - pos.z);
+	float p0	=	GRAVITY * WATER_DENSITY * abs(-pos.z) + dpressure;
+	
 	return p0;
 }
 
@@ -265,6 +269,7 @@ EVec4 EWavingBoukh::GetPosition( const EVec4 &init_pos ) const
 //
 EVec4 EWavingBoukh::GetVelocity( const EVec4 &init_pos ) const
 {
+	return EVec4(0,0,0,0);
 	float dt = 0.00390625;	//	1 / 256
 	EVec4 p1 = GetPositionAtTime(init_pos, time);
 	EVec4 p2 = GetPositionAtTime(init_pos, time + dt);
