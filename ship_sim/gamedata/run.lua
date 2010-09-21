@@ -193,7 +193,7 @@ function create_box()
 	ship:set_vis_mesh	( "box.esx|box"				);
 	ship:set_hdf_mesh	( "box.esx|box" 			);
 	ship:set_hsf_mesh	( "box.esx|box" 			);
-	ship:make_rigidbody	( "box.esx|box",  750000	);
+	ship:make_rigidbody	( "box.esx|box",  1000000	);
 	
 	ship:set_position	( 0, 0, 10 );	
 	ship:set_angles		( 90, 30, 30 );
