@@ -50,8 +50,10 @@ void EShip::UpdateHDF( float dtime, IPxWaving waving )
 		rs()->GetDVScene()->DrawArrow( Vec3ToVec4(fe_pos), Vec3ToVec4(fe_vel_global), 1, EVec4(0.5, 0.5, 1.0, 1.0));
 		*/
 		
-		EVec3 flow_vel		=	Vec4ToVec3( waving->GetVelocity( Vec3ToPoint4(fe_pos) ) );
-		float wave_h		=				waving->GetPosition( Vec3ToPoint4(fe_pos) ).z;
+		EVec4	p = EVec4(fe_pos.x, fe_pos.y, 0, 1);
+		
+		EVec3 flow_vel		=	Vec4ToVec3( waving->GetVelocity( p ) );
+		float wave_h		=				waving->GetPosition( p ).z;		  
 		
 		if (wave_h < fe_pos.z) {	
 			continue;

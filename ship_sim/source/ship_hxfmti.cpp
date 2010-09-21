@@ -162,12 +162,12 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 		EVec4	f	=	- (se.normal * (pr * s));
 
 		float	factor	=	pr > 0 ? 1 : 0;
-		factor	=	Clamp<float>(pr/10000.0, 0,1);
+		factor	=	Clamp<float>(pr/100000.0, 0,1);
 
 		ship_body->AddForceAtPos( f, se.position );
 		
 		//	debug point :
-		EVec4	color	=	Vec4Lerp( EVec4(1,0,0,0), EVec4(1,1,0,1), factor);
+		EVec4	color	=	Vec4Lerp( EVec4(0,0,1,1), EVec4(1,1,0,1), factor);
 		rs()->GetDVScene()->DrawPoint( se.position, 0.1f, color );
 	}
 	
