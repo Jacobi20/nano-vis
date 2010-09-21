@@ -162,6 +162,7 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 		EVec4	f	=	- (se.normal * (pr * s));
 
 		float	factor	=	pr > 0 ? 1 : 0;
+		factor	=	Clamp<float>(pr/10000.0, 0,1);
 
 		ship_body->AddForceAtPos( f, se.position );
 		

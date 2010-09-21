@@ -48,8 +48,8 @@ class EWavingBoukh : public IWaving {
 		EVec4				GetPositionAtTime	( const EVec4 &init_pos, float time ) const;
 	
 		void				InitGenerator	( void );
-		void				GetWave			( float lambda, float x, float t, float zeta, float &offset, float &pressure, float &angle ) const;
-		void				GetWaveC		( EVec4 pos, float t, float &offset, float &pressure, float &angle ) const;
+		void				GetWave			( float lambda, float x, float zeta, float t, float &offset, float &dpressure, float &angle ) const;
+		void				GetWaveC		( EVec4 pos, float t, float &offset, float &dpressure, float &angle ) const;
 	
 		float	h3		;	// --- высота волный 3%-ой обеспеченности, м --- 	 			
 		float	Wmax	;	/*2.0f*/ // == Максимальная частота ==
@@ -156,54 +156,53 @@ void EWavingBoukh::Update( float dtime )
 //
 //	EWavingBoukh::GetWave
 //
-void EWavingBoukh::GetWave( float lambda, float x, float t, float zeta, float &offset, float &pressure, float &angle ) const
+void EWavingBoukh::GetWave( float lambda, float x, float zeta, float t, float &offset, float &dpressure, float &angle ) const
 {
-	float	r0		=	0.5f * 0.17f * pow(lambda, 0.75f);
-	float	k		=	2 * PI / lambda;
-	float	a0		=	k * r0;
-	float	rz		=	r0 * exp(-k * zeta);
-	float	az		=	a0 * exp(-k * zeta);
-	float	sigma	=	sqrt( GRAVITY * k );
-	float	gamma	=	GRAVITY * WATER_DENSITY;
+	float	r0		=	0.5 * 0.5 * 0.17f * pow(lambda, 0.75f);			//	max oscillation radius of water particles
+	//float	r0		=	lambda / 20.0f;						//	max oscillation radius of water particles
+	float	k		=	2 * PI / lambda;					//	wave number
+	float	a0		=	k * r0;								//	maximum wave slope angle
+	float	rz		=	r0 * exp(-k * zeta);				//	oscillation radius on depth 'zeta'
+	float	az		=	a0 * exp(-k * zeta);				//	slope angle radius on depth 'zeta'
+	float	sigma	=	sqrt( GRAVITY * k );				//	sigma
+	float	gamma	=	GRAVITY * WATER_DENSITY;			//	water weight density
 	
-	offset			= - rz * cos(k*x - sigma*t);
-	pressure		= - gamma * rz * cos(k*x - sigma*t);
-	angle			= - az * sin(k*x - sigma*t);
+	offset			= - rz * cos(k*x - sigma*t);			//	particle offset
+	dpressure		= - gamma * rz * cos(k*x - sigma*t);	//	dynamic pressure
+	angle			= - az * sin(k*x - sigma*t);			//	wave slope angle
 }
 
 
 //
 //	EWavingBoukh::GetWaveC
 //
-void EWavingBoukh::GetWaveC( EVec4 pos, float t, float &offset, float &pressure, float &angle )	const
+void EWavingBoukh::GetWaveC( EVec4 pos, float t, float &offset, float &dpressure, float &angle )	const
 {
 	offset		=	0;
-	pressure	=	0;
+	dpressure	=	0;
 	angle		=	0;
 	
-	GetWave(20, pos.x, t, -pos.z, offset, pressure, angle );
+	//GetWave(20, pos.x, -pos.z, time, offset, dpressure, angle );
 	
-	return;
-	
-	for (uint i=0; i<4; i++) {
-		float	x	=	0.8*pos.x + 0.125 * pos.y;
+	for (uint i=0; i<3; i++) {
+		float	x	=	pos.x;
 		float	o, p, a;
-		GetWave( 40 / (float)(1+i), x, time, -pos.z, o, p, a );
+		GetWave( 100 / (float)(1+i), x, -pos.z, time, o, p, a );
 		
 		offset		+=	o;
-		pressure	+=	p;
+		dpressure	+=	p;
 		angle		+=	a;
 	}	
 	
-	for (uint i=0; i<4; i++) {
+	for (uint i=0; i<3; i++) {
 		float	x	=	pos.x - 0.125 * pos.y;
 		float	o, p, a;
-		GetWave( 50 / (float)(1+i), x, time, -pos.z, o, p, a );
+		GetWave( 50 / (float)(1+i), x, -pos.z, time, o, p, a );
 		
 		offset		+=	o;
-		pressure	+=	p;
+		dpressure	+=	p;
 		angle		+=	a;
-	}	
+	}
 }
 
 //
@@ -211,14 +210,17 @@ void EWavingBoukh::GetWaveC( EVec4 pos, float t, float &offset, float &pressure,
 //
 float EWavingBoukh::GetPressure( const EVec4 &pos ) const
 {
-	float offset, pressure, angle;
-	GetWaveC( pos, time, offset, pressure, angle );
+	float offset, dpressure, angle;
+	GetWaveC( pos, time, offset, dpressure, angle );
 	
 	float p0	=	GRAVITY * WATER_DENSITY * (-pos.z + offset);
 	
-	if (pos.z>offset) return 0;
+	
+	
+	if (pos.z>offset) {	
+		return 0;
+	}
 	return p0;
-	return pressure + p0;
 }
 
 
