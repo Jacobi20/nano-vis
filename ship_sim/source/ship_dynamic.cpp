@@ -35,6 +35,11 @@
 //
 void EShip::UpdateHDF( float dtime, IPxWaving waving )
 {
+	if (ship_hsf_method->String()=="hxfse")	{
+		return;
+	}
+	
+
 	EVec4	position;
 	EQuat	orient;
 	GetPose(position, orient);
@@ -44,7 +49,7 @@ void EShip::UpdateHDF( float dtime, IPxWaving waving )
 		EVec3 fe_pos		=	QuatRotateVector( mesh_hdf->TriangleCenter(i), orient ) + EVec3(position.Ptr());
 		EVec3 fe_normal		=	QuatRotateVector( mesh_hdf->TriangleNormal(i), orient );
 		float fe_area		=	mesh_hdf->TriangleArea(i);
-		EVec3 fe_vel_global	=	Vec4ToVec3( ship_body->GetPointVelocity( Vec3ToVec4(mesh_hdf->TriangleCenter(i)) ) );
+		EVec3 fe_vel_global	=	Vec4ToVec3( ship_body->GetLocalPointVelocity( Vec3ToVec4(mesh_hdf->TriangleCenter(i)) ) );
 		
 		/*
 		rs()->GetDVScene()->DrawArrow( Vec3ToVec4(fe_pos), Vec3ToVec4(fe_vel_global), 1, EVec4(0.5, 0.5, 1.0, 1.0));

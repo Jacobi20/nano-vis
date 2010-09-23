@@ -120,10 +120,10 @@ function create_uboat()
 	ship:set_vis_mesh	( "uboat.esx|boat1"			);
 	ship:set_hdf_mesh	( "uboat.esx|flowsurf2" 		);
 	ship:set_hsf_mesh	( "uboat.esx|flowsurf2" 		);
-	ship:make_rigidbody	( "uboat.esx|stat", 2205000	);
+	ship:make_rigidbody	( "uboat.esx|stat", 1805000	);
 	
 	ship:set_position	( 0, 0, 50 );	
-	ship:set_angles		( 0, 0, 0 );
+	ship:set_angles		( 40, 0, 0 );
 	ship:set_cmass		( 0,0,-1 );
 	
 	ship:build_voxels	( "uboat.esx|flowsurf2", 1	);
@@ -140,14 +140,14 @@ function create_cutter()
 	print("---- creating Coast Guard Ship ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 5 );
+	ship:set_resistance	( 2 );
 	
 	ship:set_vis_mesh	( "boat.esx|boat1"			);
 	ship:set_hdf_mesh	( "boat.esx|flow" 			);
 	ship:set_hsf_mesh	( "boat.esx|flow" 			);
-	ship:make_rigidbody	( "boat.esx|stat", 500000	);
+	ship:make_rigidbody	( "boat.esx|stat", 450000	);
 	
-	ship:set_position	( 0, 0,  0 );	
+	ship:set_position	( 0, 0, 0 );	
 	ship:set_angles		( 90, 0, 10);
 	ship:set_cmass		( 0, 0, 0 );
 	
@@ -172,7 +172,7 @@ function create_ssn668()
 	ship:make_rigidbody	( "ssn668.esx|physmesh", 6000000	);
 	
 	ship:set_position	( 0, 0, 0 );	
-	ship:set_angles		( 0, 0, 0 );
+	ship:set_angles		(150, 0, 0 );
 	ship:set_cmass		( 3.8, 0, -3 );
 	
 	ship:build_voxels	( "ssn668.esx|hydromesh", 2	);
@@ -212,8 +212,8 @@ local rolling_log = io.open("rolling.log", "w");
 
 
 --uboat	=	create_ssn668();
-uboat	=	create_cutter();
---uboat	=	create_uboat();
+--uboat	=	create_cutter();
+uboat	=	create_uboat();
 --uboat	=	create_box();
 
 ship_hsf_method	=	"hxfse";

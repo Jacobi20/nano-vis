@@ -151,6 +151,12 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 		
 		ESurfElem	se		= hxfgrid.grid[i];
 		EVec4		normal	= se.normal;
+		
+		EVec4		vse		= ship_body->GetLocalPointVelocity( se.position );	//	local point velocity
+		EVec4		vwtr	= EVec4(0,0,0,0);									//	water velocity
+		EVec4		vel		= vse - vwtr;
+		float		vel_p2	= Vec4LengthSqr( vel );								//	squared point velocity relative to water particles
+		EVec4		vdir	= Vec4Normalize( vel );
 
 		//	transform surface element to world space :		
 		se.position	=	Matrix4Transform( se.position, t );
@@ -162,13 +168,18 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 		EVec4	f	=	- (se.normal * (pr * s));
 
 		float	factor	=	pr > 0 ? 1 : 0;
-		factor	=	Clamp<float>(pr/100000.0, 0,1);
+		
+		//	compute dynamic pressure :
+		float	v_dot_n	=	Vec4Dot( vdir, se.normal );
+		float	fds		=	water_resistance_cx * vel_p2 / 2 * abs(v_dot_n) * se.area * WATER_DENSITY * factor;
+		EVec4	fd		=	- (vdir * fds);
 
-		ship_body->AddForceAtPos( f, se.position );
+
+		ship_body->AddForceAtPos( f + fd, se.position );
 		
 		//	debug point :
-		EVec4	color	=	Vec4Lerp( EVec4(0,0,1,1), EVec4(1,1,0,1), factor);
-		rs()->GetDVScene()->DrawPoint( se.position, 0.1f, color );
+		//EVec4	color	=	Vec4Lerp( EVec4(0,0,1,1), EVec4(1,1,0,1), factor);
+		//rs()->GetDVScene()->DrawPoint( se.position, 0.1f, color );
 	}
 	
 	//LOGF("%7.2f %7.2f %7.2f", num_pnts[0], num_pnts[1], num_pnts[2]);
