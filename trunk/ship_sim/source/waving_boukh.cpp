@@ -158,6 +158,11 @@ void EWavingBoukh::Update( float dtime )
 //
 void EWavingBoukh::GetWave( float lambda, float x, float zeta, float t, float &offset, float &dpressure, float &angle ) const
 {
+	if (lambda<0.001f) {
+		offset		=	0;
+		dpressure	=	0;
+		angle		=	0;
+	}
 	float	r0		=	0.5 * 0.5 * 0.17f * pow(lambda, 0.75f);			//	max oscillation radius of water particles
 	//float	r0		=	lambda / 20.0f;						//	max oscillation radius of water particles
 	float	k		=	2 * PI / lambda;					//	wave number
@@ -188,7 +193,7 @@ void EWavingBoukh::GetWaveC( EVec4 pos, float t, float &offset, float &dpressure
 	for (uint i=0; i<3; i++) {
 		float	x	=	pos.x;
 		float	o, p, a;
-		GetWave( 70 / (float)(1+i), x, -pos.z, time, o, p, a );
+		GetWave( 20 / (float)(1+i), x, -pos.z, time, o, p, a );
 		
 		offset		+=	o;
 		dpressure	+=	p;
@@ -270,9 +275,5 @@ EVec4 EWavingBoukh::GetPosition( const EVec4 &init_pos ) const
 EVec4 EWavingBoukh::GetVelocity( const EVec4 &init_pos ) const
 {
 	return EVec4(0,0,0,0);
-	float dt = 0.00390625;	//	1 / 256
-	EVec4 p1 = GetPositionAtTime(init_pos, time);
-	EVec4 p2 = GetPositionAtTime(init_pos, time + dt);
-	return (p2 - p1) / dt;
 }
 
