@@ -193,10 +193,10 @@ function create_box()
 	ship:set_vis_mesh	( "box.esx|box"				);
 	ship:set_hdf_mesh	( "box.esx|box" 			);
 	ship:set_hsf_mesh	( "box.esx|box" 			);
-	ship:make_rigidbody	( "box.esx|box",  1000000	);
+	ship:make_rigidbody	( "box.esx|box",  8000000	);
 	
 	ship:set_position	( 0, 0, 10 );	
-	ship:set_angles		( 90, 30, 30 );
+	ship:set_angles		( 90, 0, 0 );
 	ship:set_cmass		( 0, 0, 0 );
 	
 	ship:build_voxels	( "box.esx|box", 2	);
@@ -213,8 +213,8 @@ local rolling_log = io.open("rolling.log", "w");
 
 --uboat	=	create_ssn668();
 --uboat	=	create_cutter();
-uboat	=	create_uboat();
---uboat	=	create_box();
+--uboat	=	create_uboat();
+uboat	=	create_box();
 
 ship_hsf_method	=	"hxfse";
 --ship_hsf_method	=	"surface";
