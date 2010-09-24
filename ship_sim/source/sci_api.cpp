@@ -32,6 +32,7 @@
 static const luaL_Reg navallib[] = {
 		{ "remove_all_ships",	ESciVis::remove_all_ships	},
 		{ "set_view",			ESciVis::set_view			},
+		{ "setup_waving",		ESciVis::setup_waving		},
 		{ NULL, NULL	},
 	};
 
@@ -60,6 +61,30 @@ int ESciVis::remove_all_ships( lua_State *L )
 	ELuaShip::Unregister(L);
 	ELuaShip::Register(L);
 	self->ships.clear();
+	return 0;
+}
+
+
+//
+//	ESciVis::setup_waving
+//
+int ESciVis::setup_waving( lua_State *L )
+{
+	LUA_INTERFACE(L);
+
+	float	base		= 1;	
+	float	bands[10]	= {0,0,0,0,0, 0,0,0,0,0};
+	
+	base	=	lua.RequireNumber(1, "base harmonic frequency");
+	
+	int n	=	min(lua_gettop(L)-1, 10);
+	
+	for (int i=0; i<n; i++) {
+		bands[i]	=	lua.RequireNumber(i+2, va("amplitude of %dth harmonic", i));
+	}
+
+	self->waving->SetupWaving( base, 10, bands );
+	
 	return 0;
 }
 

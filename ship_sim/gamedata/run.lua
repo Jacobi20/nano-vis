@@ -122,7 +122,7 @@ function create_uboat()
 	ship:set_hsf_mesh	( "uboat.esx|flowsurf2" 		);
 	ship:make_rigidbody	( "uboat.esx|stat", 1805000	);
 	
-	ship:set_position	( 0, 0, 50 );	
+	ship:set_position	( 0, 0, -50 );	
 	ship:set_angles		( 40, 0, 0 );
 	ship:set_cmass		( 0,0,-1 );
 	
@@ -210,11 +210,13 @@ end
 
 local rolling_log = io.open("rolling.log", "w");
 
+naval.setup_waving(0.5, 
+		0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
---uboat	=	create_ssn668();
+uboat	=	create_ssn668();
 --uboat	=	create_cutter();
 --uboat	=	create_uboat();
-uboat	=	create_box();
+--uboat	=	create_box();
 
 ship_hsf_method	=	"hxfse";
 --ship_hsf_method	=	"surface";

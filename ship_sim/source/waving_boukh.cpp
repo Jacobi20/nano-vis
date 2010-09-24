@@ -27,7 +27,10 @@
 /*-----------------------------------------------------------------------------
 	Waving :
 -----------------------------------------------------------------------------*/
-const uint	NN			=	50;
+
+const uint EQ_BAND_NUM			=	7;
+const uint EQ_SPECTRUM_SIZE		=	1 << (EQ_BAND_NUM-1);
+
 
 class EWavingBoukh : public IWaving {
 	public:
@@ -39,10 +42,22 @@ class EWavingBoukh : public IWaving {
 		virtual	EVec4		GetPosition			( const EVec4 &init_pos ) const;
 		virtual float		GetPressure			( const EVec4 &init_pos ) const;
 		virtual float		GetWaveSlopeX		( const EVec4 &init_pos ) const;
+		virtual void		SetupWaving			( float base, uint num_bands, float *bands );
 		
 	protected:
 		IPxFREntity		r_ent;
 		IPxTriMesh		sea_mesh;
+
+		struct {		
+			float		base_freq;
+			float		bands			[EQ_BAND_NUM];
+			float		frequency		[EQ_SPECTRUM_SIZE];
+			float		spectrum		[EQ_SPECTRUM_SIZE];
+			float		phases			[EQ_SPECTRUM_SIZE];
+			float		wave_number		[EQ_SPECTRUM_SIZE];
+		} wave;
+
+		float			GetAmplitudeByHarmonic	( uint n );		
 	
 		float	time;
 		EVec4				GetPositionAtTime	( const EVec4 &init_pos, float time ) const;
@@ -50,18 +65,6 @@ class EWavingBoukh : public IWaving {
 		void				InitGenerator	( void );
 		void				GetWave			( float lambda, float x, float zeta, float t, float &offset, float &dpressure, float &angle ) const;
 		void				GetWaveC		( EVec4 pos, float t, float &offset, float &dpressure, float &angle ) const;
-	
-		float	h3		;	// --- высота волный 3%-ой обеспеченности, м --- 	 			
-		float	Wmax	;	/*2.0f*/ // == Максимальная частота ==
-		float	BSp		;	/*1.3f*/  // == Параметр формы спектра ==
-		float	ASp		;	/*10*/ // == Параметр масштаба спектра ==
-
-		float	Wmin	;	/*0.2f*/	//	Минимальная частота
-		float	W0		;	/*1.2f*/	//	Средняя частота волны, рад/c
-		float	A_2D	[NN];
-		float	Fi_2D	[NN];
-		float	W		[NN];
-	
 	};
 
 IWaving	*create_boukh_waving(lua_State *L, int idx) { return new EWavingBoukh(L, idx); }
@@ -77,23 +80,6 @@ EWavingBoukh::EWavingBoukh( lua_State *L, int idx )
 {
 	time	=	0;
 
-	Wmax	=	 5.1f	;
-	W0		=	 3.51f	;
-	Wmin	=	 0.5f	;
-	BSp		=	 0.030f;
-	ASp		=	 0.233f	;
-
-	h3		=	5		;
-	
-	//	extreme resonance :
-	//Wmax  = 0.5*2.0f;	// == Максимальная частота ==
-	//W0	  = 0.5*1.2f ;	//	Средняя частота волны, рад/c
-	//BSp   = 0.5*1.3f ;	// == Параметр формы спектра ==
-	//ASp   = 10;		// == Параметр масштаба спектра ==
-	//Wmin  = 0.5*0.2f ;	//	Минимальная частота
-	
-	InitGenerator();
-	
 	sea_mesh	=	ge()->LoadMeshFromFile("sea.esx|sea");
 	
 	r_ent		=	sci_vis->GetFRScene()->AddEntity();
@@ -102,26 +88,7 @@ EWavingBoukh::EWavingBoukh( lua_State *L, int idx )
 
 
 //
-//
-//
-void EWavingBoukh::InitGenerator( void )
-{
-	float dW = (Wmax-Wmin)/(float)NN;
-	
-	for (int i=0; i<NN; i++) { 
-		W[i]=Wmin+i*dW;
-	}
-
-	for(int i=0; i<NN; i++) {
-		float w	 = W[i];
-		A_2D[i]	 = (float)sqrt(2*ASp*(1.0f/(w*w*w*w*w))*exp(-BSp/(w*w*w*w))*dW);
-		Fi_2D[i] = (float)FRand()*2.0f*PI ;//rand() - 0..1
-	}
-}
-
-
-//
-//
+//	EWavingBoukh::~EWavingBoukh
 //
 EWavingBoukh::~EWavingBoukh( void )
 {
@@ -129,8 +96,78 @@ EWavingBoukh::~EWavingBoukh( void )
 }
 
 
+/*-----------------------------------------------------------------------------
+	Spectral stuff :
+-----------------------------------------------------------------------------*/
+
 //
+//	EWavingBoukh::GetAmplitudeByHarmonic
 //
+float EWavingBoukh::GetAmplitudeByHarmonic( uint hrm )
+{
+	if (hrm==0) {
+		return 0;
+	}
+
+	for (uint i=0; i<EQ_BAND_NUM; i++) {
+		uint bandhrm0	=	1 << (i);
+		uint bandhrm1	=	1 << (i+1);
+		
+		if ( bandhrm0 <= hrm && hrm < bandhrm1 ) {
+			
+			float	x	=	hrm;
+			float	a0	=	wave.bands[i];
+			float	a1	=	wave.bands[i+1];
+			float	f0	=	(float)bandhrm0;
+			float	f1	=	(float)bandhrm1;
+			float	k	=	(a1 - a0) / (f1 - f0);
+			
+			float	y	=	k * (x - f0) + a0;
+			
+			return	y;
+		}
+	}
+	
+	SIGNAL("hrm > 2^EQ_BAND_NUM-1");
+	return 0;
+}
+
+//
+//	EWavingBoukh::SetupWaving
+//
+void EWavingBoukh::SetupWaving( float base, uint num_bands, float *bands )
+{
+	wave.base_freq		=	base;
+	
+	//	read equalizer bands :
+	for (uint i=0; i<EQ_BAND_NUM; i++) {
+		if (i<num_bands) {
+			wave.bands[i] = bands[i];
+		} else {
+			wave.bands[i] = 0;
+		}
+	}
+	
+	//	setup wave stuff :
+	for (uint i=0; i<EQ_SPECTRUM_SIZE; i++) {
+		wave.frequency[i]	=	wave.base_freq * i;
+		wave.spectrum[i]	=	GetAmplitudeByHarmonic( i );
+		wave.phases[i]		=	FRand(0, 2*PI);
+		wave.wave_number[i]	=	wave.frequency[i] * wave.frequency[i] / GRAVITY;
+
+		LOGF("%d : %5.2f Hz, %5.2f m, %5.2f Pi", i, wave.frequency[i], wave.spectrum[i], wave.phases[i]/PI);
+			
+	}
+	
+}
+
+
+/*-----------------------------------------------------------------------------
+	Spectral runtime stuff :
+-----------------------------------------------------------------------------*/
+
+//
+//	EWavingBoukh::Update
 //
 void EWavingBoukh::Update( float dtime )
 {
@@ -187,12 +224,27 @@ void EWavingBoukh::GetWaveC( EVec4 pos, float t, float &offset, float &dpressure
 	dpressure	=	0;
 	angle		=	0;
 	
-	//GetWave(20, pos.x, -pos.z, time, offset, dpressure, angle );
-	//return;
+	float	gamma	=	GRAVITY * WATER_DENSITY;
+	float	x		=	pos.x;
+	float	z		=	-pos.z;
+
+	for (uint i=0; i<EQ_SPECTRUM_SIZE; i++) {
 	
-	for (uint i=0; i<3; i++) {
-		float	x	=	pos.x;
-		float	o, p, a;
+		float	r	=	wave.spectrum[i];
+		float	f	=	wave.frequency[i];
+		float	k	=	wave.wave_number[i];
+		float	ph	=	wave.phases[i];
+	
+		float	o	=	- r * exp(-k*z) * cos(ph + k*x - f*t);
+		float	p	=	- r * exp(-k*z) * cos(ph + k*x - f*t) * gamma;
+		float	a	=	0;
+		
+		offset		+=	o;
+		dpressure	+=	p;
+	}
+	
+	
+/*	for (uint i=0; i<3; i++) {
 		GetWave( 20 / (float)(1+i), x, -pos.z, time, o, p, a );
 		
 		offset		+=	o;
@@ -208,7 +260,7 @@ void EWavingBoukh::GetWaveC( EVec4 pos, float t, float &offset, float &dpressure
 		offset		+=	o;
 		dpressure	+=	p;
 		angle		+=	a;
-	}
+	}	*/
 }
 
 //
