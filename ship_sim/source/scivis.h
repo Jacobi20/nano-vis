@@ -66,7 +66,7 @@ class ESciVis : public IGame, public self_ref<ESciVis>, public IUIDrawCB {
 		void		RegisterAPI			( void );
 		static int	remove_all_ships	( lua_State *L );
 		static int	set_view			( lua_State *L );
-		static int	setup_waving		( lua_State *L );
+		static int	get_wave_offset		( lua_State *L );
 		
 	public:
 		float				global_simulation_time;
