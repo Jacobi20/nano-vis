@@ -195,7 +195,7 @@ function create_box()
 	ship:set_hsf_mesh	( "box.esx|box" 			);
 	ship:make_rigidbody	( "box.esx|box",  8000000	);
 	
-	ship:set_position	( 0, 0, 10 );	
+	ship:set_position	( 0, 0, 100 );	
 	ship:set_angles		( 90, 0, 0 );
 	ship:set_cmass		( 0, 0, 0 );
 	
@@ -210,11 +210,9 @@ end
 
 local rolling_log = io.open("rolling.log", "w");
 
-naval.setup_waving(0.5, 
-		0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-uboat	=	create_ssn668();
---uboat	=	create_cutter();
+--uboat	=	create_ssn668();
+uboat	=	create_cutter();
 --uboat	=	create_uboat();
 --uboat	=	create_box();
 
@@ -284,7 +282,7 @@ function sci_frame(dtime)
 	local	rotation = 60;
 	game_time = game_time + dtime;
 	
-	dtime = 0.016;
+	dtime = 0.03;
 	
 	DriveShip();
 	
@@ -292,8 +290,17 @@ function sci_frame(dtime)
 		uboat:simulate(dtime);  
 
 		local yaw, pitch, roll 	= uboat:get_angles();
+		yaw		=	math.rad(yaw);
+		pitch	=	math.rad(pitch);
+		roll	=	math.rad(roll);
 		local x, y, z 			= uboat:get_position();
-		local out				= string.format("%f %f %f %f %f %f", yaw, pitch, roll, x, y, z);
+		-- local wave_offset0		= naval.get_wave_offset(x,y,0);
+		-- local wave_offset1		= naval.get_wave_offset(x+1/16,y,0);
+		local wave_offset0		= naval.get_wave_offset(0,0,0);
+		local wave_offset1		= naval.get_wave_offset(1/16,0,0);
+		local wave_offset		= (wave_offset0 + wave_offset1)/2;
+		local wave_slope		= math.atan(16*(wave_offset1 - wave_offset0));
+		local out				= string.format("%f %f %f %f %f %f %f %f", yaw, pitch, roll, x, y, z, wave_offset, wave_slope);
 		rolling_log:write(out.."\n");
 		rolling_log:flush();
 

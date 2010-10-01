@@ -28,46 +28,45 @@
 	Waving :
 -----------------------------------------------------------------------------*/
 
-const uint EQ_BAND_NUM			=	7;
-const uint EQ_SPECTRUM_SIZE		=	1 << (EQ_BAND_NUM-1);
+const uint WAVE_BAND_NUM		=	20;
 
+struct point_wave_s {
+		float	offset;
+		float	pressure;
+	};
 
-class EWavingBoukh : public IWaving {
+class EWaving : public IWaving {
 	public:
-							EWavingBoukh		( lua_State *L, int idx );
-							~EWavingBoukh		( void );
+							EWaving		( lua_State *L, int idx );
+							~EWaving		( void );
 											
 		virtual void		Update				( float dtime );
 		virtual	EVec4		GetVelocity			( const EVec4 &init_pos ) const;
 		virtual	EVec4		GetPosition			( const EVec4 &init_pos ) const;
 		virtual float		GetPressure			( const EVec4 &init_pos ) const;
 		virtual float		GetWaveSlopeX		( const EVec4 &init_pos ) const;
-		virtual void		SetupWaving			( float base, uint num_bands, float *bands );
 		
 	protected:
+		float			time;
+
 		IPxFREntity		r_ent;
 		IPxTriMesh		sea_mesh;
 
 		struct {		
-			float		base_freq;
-			float		bands			[EQ_BAND_NUM];
-			float		frequency		[EQ_SPECTRUM_SIZE];
-			float		spectrum		[EQ_SPECTRUM_SIZE];
-			float		phases			[EQ_SPECTRUM_SIZE];
-			float		wave_number		[EQ_SPECTRUM_SIZE];
+			float	max_freq;					//	angular, 'omega'
+			float	amplitudes[WAVE_BAND_NUM];	//	amplitudes
+			float	frequency[WAVE_BAND_NUM];	//	i * max_freq / BAND_NUM
+			float	phases[WAVE_BAND_NUM];		//	rand(2*Pi)
+			float	wave_num[WAVE_BAND_NUM];	//	k
 		} wave;
+		
+		virtual void	InitWaving			( void );
+		point_wave_s	GetWave				( float x, float y, float depth, float time ) const;
 
-		float			GetAmplitudeByHarmonic	( uint n );		
-	
-		float	time;
-		EVec4				GetPositionAtTime	( const EVec4 &init_pos, float time ) const;
-	
-		void				InitGenerator	( void );
-		void				GetWave			( float lambda, float x, float zeta, float t, float &offset, float &dpressure, float &angle ) const;
-		void				GetWaveC		( EVec4 pos, float t, float &offset, float &dpressure, float &angle ) const;
+		EVec4			GetPositionAtTime	( const EVec4 &init_pos, float time ) const;
 	};
 
-IWaving	*create_boukh_waving(lua_State *L, int idx) { return new EWavingBoukh(L, idx); }
+IWaving	*create_waving(lua_State *L, int idx) { return new EWaving(L, idx); }
 
 /*-----------------------------------------------------------------------------
 	Implementation :
@@ -76,7 +75,7 @@ IWaving	*create_boukh_waving(lua_State *L, int idx) { return new EWavingBoukh(L,
 //
 //
 //
-EWavingBoukh::EWavingBoukh( lua_State *L, int idx )
+EWaving::EWaving( lua_State *L, int idx )
 {
 	time	=	0;
 
@@ -84,13 +83,15 @@ EWavingBoukh::EWavingBoukh( lua_State *L, int idx )
 	
 	r_ent		=	sci_vis->GetFRScene()->AddEntity();
 	r_ent->SetMesh( sea_mesh );
+	
+	InitWaving();
 }
 
 
 //
-//	EWavingBoukh::~EWavingBoukh
+//	EWaving::~EWaving
 //
-EWavingBoukh::~EWavingBoukh( void )
+EWaving::~EWaving( void )
 {
 	sci_vis->GetFRScene()->RemoveEntity( r_ent );
 }
@@ -100,65 +101,38 @@ EWavingBoukh::~EWavingBoukh( void )
 	Spectral stuff :
 -----------------------------------------------------------------------------*/
 
-//
-//	EWavingBoukh::GetAmplitudeByHarmonic
-//
-float EWavingBoukh::GetAmplitudeByHarmonic( uint hrm )
+static float SpectrumPM(float w)
 {
-	if (hrm==0) {
-		return 0;
-	}
-
-	for (uint i=0; i<EQ_BAND_NUM; i++) {
-		uint bandhrm0	=	1 << (i);
-		uint bandhrm1	=	1 << (i+1);
-		
-		if ( bandhrm0 <= hrm && hrm < bandhrm1 ) {
-			
-			float	x	=	hrm;
-			float	a0	=	wave.bands[i];
-			float	a1	=	wave.bands[i+1];
-			float	f0	=	(float)bandhrm0;
-			float	f1	=	(float)bandhrm1;
-			float	k	=	(a1 - a0) / (f1 - f0);
-			
-			float	y	=	k * (x - f0) + a0;
-			
-			return	y;
-		}
-	}
+	//	Pierson-Moskowitz :
+	float	Asp	=	20.0f;
+	float	Bsp	=	4.0f;
 	
-	SIGNAL("hrm > 2^EQ_BAND_NUM-1");
-	return 0;
+	return Asp * expf(-Bsp / (w*w*w*w)) / (w*w*w*w*w);
 }
 
 //
-//	EWavingBoukh::SetupWaving
+//	EWaving::SetupWaving
 //
-void EWavingBoukh::SetupWaving( float base, uint num_bands, float *bands )
+void EWaving::InitWaving( void )
 {
-	wave.base_freq		=	base;
+	wave.max_freq	=	 6;
 	
-	//	read equalizer bands :
-	for (uint i=0; i<EQ_BAND_NUM; i++) {
-		if (i<num_bands) {
-			wave.bands[i] = bands[i];
-		} else {
-			wave.bands[i] = 0;
-		}
-	}
-	
-	//	setup wave stuff :
-	for (uint i=0; i<EQ_SPECTRUM_SIZE; i++) {
-		wave.frequency[i]	=	wave.base_freq * i;
-		wave.spectrum[i]	=	GetAmplitudeByHarmonic( i );
-		wave.phases[i]		=	FRand(0, 2*PI);
-		wave.wave_number[i]	=	wave.frequency[i] * wave.frequency[i] / GRAVITY;
+	float	dw		=	wave.max_freq / (float)WAVE_BAND_NUM;
 
-		LOGF("%d : %5.2f Hz, %5.2f m, %5.2f Pi", i, wave.frequency[i], wave.spectrum[i], wave.phases[i]/PI);
-			
-	}
+	wave.frequency[0]	=	0;
+	wave.amplitudes[0]	=	0;
+	wave.phases[0]		=	0;
+	wave.wave_num[0]	=	0;
 	
+	for (uint i=1; i<WAVE_BAND_NUM; i++) {
+	
+		float	w	=	dw * i;
+	
+		wave.frequency[i]	=	w;
+		wave.amplitudes[i]	=	sqrt(2* SpectrumPM(w) * dw);
+		wave.phases[i]		=	FRand(0, 2 * PI);
+		wave.wave_num[i]	=	w * w / GRAVITY;
+	}
 }
 
 
@@ -167,9 +141,9 @@ void EWavingBoukh::SetupWaving( float base, uint num_bands, float *bands )
 -----------------------------------------------------------------------------*/
 
 //
-//	EWavingBoukh::Update
+//	EWaving::Update
 //
-void EWavingBoukh::Update( float dtime )
+void EWaving::Update( float dtime )
 {
 	time	+=	dtime;
 	
@@ -191,115 +165,62 @@ void EWavingBoukh::Update( float dtime )
 
 
 //
-//	EWavingBoukh::GetWave
+//	EWaving::GetWave
+//	returns wave attributes in a point
 //
-void EWavingBoukh::GetWave( float lambda, float x, float zeta, float t, float &offset, float &dpressure, float &angle ) const
+point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  const
 {
-	if (lambda<0.001f) {
-		offset		=	0;
-		dpressure	=	0;
-		angle		=	0;
-	}
-	float	r0		=	0.5 * 0.5 * 0.17f * pow(lambda, 0.75f);			//	max oscillation radius of water particles
-	//float	r0		=	lambda / 20.0f;						//	max oscillation radius of water particles
-	float	k		=	2 * PI / lambda;					//	wave number
-	float	a0		=	k * r0;								//	maximum wave slope angle
-	float	rz		=	r0 * exp(-k * zeta);				//	oscillation radius on depth 'zeta'
-	float	az		=	a0 * exp(-k * zeta);				//	slope angle radius on depth 'zeta'
-	float	sigma	=	sqrt( GRAVITY * k );				//	sigma
-	float	gamma	=	GRAVITY * WATER_DENSITY;			//	water weight density
-	
-	offset			= - rz * cos(k*x - sigma*t);			//	particle offset
-	dpressure		= - gamma * rz * cos(k*x - sigma*t);	//	dynamic pressure
-	angle			= - az * sin(k*x - sigma*t);			//	wave slope angle
-}
+	point_wave_s	pw;
+	pw.offset	=	0;
+	pw.pressure	=	depth * WATER_DENSITY * GRAVITY;
 
-
-//
-//	EWavingBoukh::GetWaveC
-//
-void EWavingBoukh::GetWaveC( EVec4 pos, float t, float &offset, float &dpressure, float &angle )	const
-{
-	offset		=	0;
-	dpressure	=	0;
-	angle		=	0;
-	
-	float	gamma	=	GRAVITY * WATER_DENSITY;
-	float	x		=	pos.x;
-	float	z		=	-pos.z;
-
-	for (uint i=0; i<EQ_SPECTRUM_SIZE; i++) {
-	
-		float	r	=	wave.spectrum[i];
-		float	f	=	wave.frequency[i];
-		float	k	=	wave.wave_number[i];
-		float	ph	=	wave.phases[i];
-	
-		float	o	=	- r * exp(-k*z) * cos(ph + k*x - f*t);
-		float	p	=	- r * exp(-k*z) * cos(ph + k*x - f*t) * gamma;
-		float	a	=	0;
-		
-		offset		+=	o;
-		dpressure	+=	p;
+	//	compute vertical offset :	
+	for (uint i=0; i<WAVE_BAND_NUM; i++) {
+		float	amp		=	wave.amplitudes[i];
+		float	freq	=	wave.frequency[i];
+		float	phase	=	wave.phases[i];
+		float	k		=	wave.wave_num[i];
+		float	fade	=	(depth<0) ? 1 : exp( - k * depth );
+		pw.offset	+=	fade * amp * cos(freq * time + k * x + phase);
 	}
 	
+	//	compute pressure offset :	
+	pw.pressure	 +=	pw.offset * GRAVITY * WATER_DENSITY;
 	
-/*	for (uint i=0; i<3; i++) {
-		GetWave( 20 / (float)(1+i), x, -pos.z, time, o, p, a );
-		
-		offset		+=	o;
-		dpressure	+=	p;
-		angle		+=	a;
-	}	
-	
-	for (uint i=0; i<3; i++) {
-		float	x	=	pos.x - 0.125 * pos.y;
-		float	o, p, a;
-		GetWave( 50 / (float)(1+i), x, -pos.z, time, o, p, a );
-		
-		offset		+=	o;
-		dpressure	+=	p;
-		angle		+=	a;
-	}	*/
-}
-
-//
-//	EWavingBoukh::GetPressure
-//
-float EWavingBoukh::GetPressure( const EVec4 &pos ) const
-{
-	float offset, dpressure, angle, surf_offs, dummy;
-
-	GetWaveC( EVec4(pos.x, pos.y, 0, 1), time, surf_offs, dummy, dummy );
-
-	if (pos.z>surf_offs) {	
-		return 0;
+	if ((-depth) > pw.offset) {
+		pw.pressure = 0;
 	}
-
-	GetWaveC( pos, time, offset, dpressure, angle );
 	
-	//float p0	=	GRAVITY * WATER_DENSITY * abs(surf_offs - pos.z);
-	float p0	=	GRAVITY * WATER_DENSITY * abs(-pos.z) + dpressure;
-	
-	return p0;
+	return pw;
 }
 
 
 //
-//	EWavingBoukh::GetPositionAtTime
+//	EWaving::GetPressure
 //
-EVec4 EWavingBoukh::GetPositionAtTime( const EVec4 &init_pos, float time ) const
+float EWaving::GetPressure( const EVec4 &pos ) const
 {
-	float offset, pressure, angle;
-	GetWaveC( init_pos, time, offset, pressure, angle );
-	return EVec4( init_pos.x, init_pos.y, init_pos.z + offset, 1 );
+	point_wave_s	pw	=	GetWave(pos.x, pos.y, -pos.z, time);
+	
+	return pw.pressure;
 }
 
 
 //
-//	EWavingBoukh::GetWaveSlopeX
+//	EWaving::GetPositionAtTime
 //
-float EWavingBoukh::GetWaveSlopeX( const EVec4 &init_pos ) const
+EVec4 EWaving::GetPositionAtTime( const EVec4 &init_pos, float time ) const
+{
+	point_wave_s	pw	=	GetWave(init_pos.x, init_pos.y, -init_pos.z, time);
+	
+	return EVec4( init_pos.x, init_pos.y, init_pos.z + pw.offset, 1 );
+}
+
+
+//
+//	EWaving::GetWaveSlopeX
+//
+float EWaving::GetWaveSlopeX( const EVec4 &init_pos ) const
 {
 	EVec4	p	=	init_pos;
 	float	dx	=	0.1f;
@@ -313,18 +234,18 @@ float EWavingBoukh::GetWaveSlopeX( const EVec4 &init_pos ) const
 
 
 //
-//	EWavingBoukh::GetPosition
+//	EWaving::GetPosition
 //
-EVec4 EWavingBoukh::GetPosition( const EVec4 &init_pos ) const
+EVec4 EWaving::GetPosition( const EVec4 &init_pos ) const
 {
 	return GetPositionAtTime( init_pos, time );
 }
 
 
 //
-//	EWavingBoukh::GetVelocity
+//	EWaving::GetVelocity
 //
-EVec4 EWavingBoukh::GetVelocity( const EVec4 &init_pos ) const
+EVec4 EWaving::GetVelocity( const EVec4 &init_pos ) const
 {
 	return EVec4(0,0,0,0);
 }

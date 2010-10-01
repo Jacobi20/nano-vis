@@ -50,7 +50,6 @@ class IWaving : public ICoreObject {
 		virtual EVec4		GetPosition		( const EVec4 &init_pos ) const = 0;
 		virtual float		GetPressure		( const EVec4 &init_pos ) const = 0;
 		virtual float		GetWaveSlopeX	( const EVec4 &init_pos ) const = 0;
-		virtual void		SetupWaving		( float base, uint num_bands, float *bands ) = 0;
 	};
 	
 	

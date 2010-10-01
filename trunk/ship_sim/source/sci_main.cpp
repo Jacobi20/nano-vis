@@ -35,7 +35,7 @@ ESciVis *self_ref<ESciVis>::self = NULL;
 	Nano vis :
 -----------------------------------------------------------------------------*/
 
-IWaving	*create_boukh_waving(lua_State *L, int idx);
+IWaving	*create_waving(lua_State *L, int idx);
 
 //
 //	ESciVis::ESciVis
@@ -54,11 +54,13 @@ ESciVis::ESciVis( void )
 	
 	rs()->InstallForward();
 	
-	waving	=	create_boukh_waving(NULL, 0);
+	waving	=	create_waving(NULL, 0);
 	
 	//	register ship API :
 	ELuaShip::Register(L);
 	RegisterAPI();
+	
+	CoreExecuteString("dofile('run.lua')");
 	
 	LOG_SPLIT("");
 }
@@ -88,6 +90,8 @@ ESciVis::~ESciVis( void )
 //
 void ESciVis::Frame(uint dtime)
 {
+	dtime = 30;	//	~1/60
+
 	uint w, h;
 	rs()->GetScreenSize(w, h);
 	float aspect = (float)w / (float)h;

@@ -32,7 +32,7 @@
 static const luaL_Reg navallib[] = {
 		{ "remove_all_ships",	ESciVis::remove_all_ships	},
 		{ "set_view",			ESciVis::set_view			},
-		{ "setup_waving",		ESciVis::setup_waving		},
+		{ "get_wave_offset",	ESciVis::get_wave_offset	},
 		{ NULL, NULL	},
 	};
 
@@ -61,30 +61,6 @@ int ESciVis::remove_all_ships( lua_State *L )
 	ELuaShip::Unregister(L);
 	ELuaShip::Register(L);
 	self->ships.clear();
-	return 0;
-}
-
-
-//
-//	ESciVis::setup_waving
-//
-int ESciVis::setup_waving( lua_State *L )
-{
-	LUA_INTERFACE(L);
-
-	float	base		= 1;	
-	float	bands[10]	= {0,0,0,0,0, 0,0,0,0,0};
-	
-	base	=	lua.RequireNumber(1, "base harmonic frequency");
-	
-	int n	=	min(lua_gettop(L)-1, 10);
-	
-	for (int i=0; i<n; i++) {
-		bands[i]	=	lua.RequireNumber(i+2, va("amplitude of %dth harmonic", i));
-	}
-
-	self->waving->SetupWaving( base, 10, bands );
-	
 	return 0;
 }
 
@@ -120,7 +96,24 @@ int ESciVis::set_view( lua_State *L )
 }
 
 
-
+//
+//	ESciVis::get_wave_offset
+//
+int ESciVis::get_wave_offset( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	float	x		=	LuaRequireNumber(L, 1, "x");
+	float	y		=	LuaRequireNumber(L, 2, "y");
+	float	z		=	LuaRequireNumber(L, 3, "z");
+	
+	EVec4 offs = self->waving->GetPosition(EVec4(x,y,z,1));
+	
+	lua_pushnumber(L, offs.z);
+	
+	lua.SetNResults(1);
+	
+	return 1;
+}
 
 
 
