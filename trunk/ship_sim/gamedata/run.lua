@@ -216,7 +216,7 @@ uboat	=	create_cutter();
 --uboat	=	create_uboat();
 --uboat	=	create_box();
 
-ship_hsf_method	=	"hxfse";
+ship_hsf_method	=	"hxfse_omp";
 --ship_hsf_method	=	"surface";
 
 

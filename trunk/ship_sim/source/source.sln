@@ -127,4 +127,9 @@ Global
 		{759EDAA1-755E-4072-89CA-C61F53E67EE1} = {CE571641-EA52-497B-9891-D243A87149DD}
 		{A40A7FC2-1B96-46D2-9C0E-1BCE78172E9B} = {CE571641-EA52-497B-9891-D243A87149DD}
 	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		AMDCaPersistentConfig = Release|Win32
+		AMDCaPersistentStartup = ship_sim
+		AMDCaProjectFile = E:\SPACE_MARINES_2_0\game_ship\source\CodeAnalyst\source.caw
+	EndGlobalSection
 EndGlobal

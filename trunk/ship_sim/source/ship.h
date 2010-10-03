@@ -95,6 +95,7 @@ class EShip : public IShip {
 
 		void				UpdateHXFSEGrid	( void );		
 		void				UpdateHXFSE		( float dtime, IPxWaving waving );
+		void				UpdateHXFSE_OMP	( float dtime, IPxWaving waving );
 		void				BalanceHXFSE	( void );
 		void				BalanceHXFSEAxis( const EBBox &box, uint axis_id, float step );
 		struct {
