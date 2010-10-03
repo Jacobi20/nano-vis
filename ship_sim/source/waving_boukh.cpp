@@ -28,11 +28,18 @@
 	Waving :
 -----------------------------------------------------------------------------*/
 
-const uint WAVE_BAND_NUM		=	20;
+const uint WAVE_BAND_NUM		=	10;
 
 struct point_wave_s {
 		float	offset;
 		float	pressure;
+	};
+	
+struct wave_s {
+		float	amplitude;
+		float	frequency;
+		float	phase;
+		float	wave_num;
 	};
 
 class EWaving : public IWaving {
@@ -54,6 +61,7 @@ class EWaving : public IWaving {
 
 		struct {		
 			float	max_freq;					//	angular, 'omega'
+			wave_s	waves[WAVE_BAND_NUM];
 			float	amplitudes[WAVE_BAND_NUM];	//	amplitudes
 			float	frequency[WAVE_BAND_NUM];	//	i * max_freq / BAND_NUM
 			float	phases[WAVE_BAND_NUM];		//	rand(2*Pi)
@@ -115,7 +123,7 @@ static float SpectrumPM(float w)
 //
 void EWaving::InitWaving( void )
 {
-	wave.max_freq	=	 6;
+	wave.max_freq	=	 3;
 	
 	float	dw		=	wave.max_freq / (float)WAVE_BAND_NUM;
 
@@ -123,6 +131,11 @@ void EWaving::InitWaving( void )
 	wave.amplitudes[0]	=	0;
 	wave.phases[0]		=	0;
 	wave.wave_num[0]	=	0;
+
+	wave.waves[0].frequency	=	0;
+	wave.waves[0].amplitude	=	0;
+	wave.waves[0].phase		=	0;
+	wave.waves[0].wave_num	=	0;
 	
 	for (uint i=1; i<WAVE_BAND_NUM; i++) {
 	
@@ -132,6 +145,11 @@ void EWaving::InitWaving( void )
 		wave.amplitudes[i]	=	sqrt(2* SpectrumPM(w) * dw);
 		wave.phases[i]		=	FRand(0, 2 * PI);
 		wave.wave_num[i]	=	w * w / GRAVITY;
+
+		wave.waves[i].frequency	=	w;
+		wave.waves[i].amplitude	=	sqrt(2* SpectrumPM(w) * dw);
+		wave.waves[i].phase		=	wave.phases[i];
+		wave.waves[i].wave_num	=	w * w / GRAVITY;
 	}
 }
 
@@ -176,11 +194,14 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 
 	//	compute vertical offset :	
 	for (uint i=0; i<WAVE_BAND_NUM; i++) {
-		float	amp		=	wave.amplitudes[i];
-		float	freq	=	wave.frequency[i];
-		float	phase	=	wave.phases[i];
-		float	k		=	wave.wave_num[i];
+
+		register float	amp		=	wave.waves[i].amplitude;
+		register float	freq	=	wave.waves[i].frequency;
+		register float	phase	=	wave.waves[i].phase;
+		register float	k		=	wave.waves[i].wave_num;
+
 		float	fade	=	(depth<0) ? 1 : exp( - k * depth );
+		
 		pw.offset	+=	fade * amp * cos(freq * time + k * x + phase);
 	}
 	

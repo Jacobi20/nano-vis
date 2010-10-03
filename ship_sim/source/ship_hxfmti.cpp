@@ -24,6 +24,7 @@
 
 #include "sci_local.h"
 #include "ship.h"
+#include <omp.h>
 
 /*-----------------------------------------------------------------------------
 	Ship hydrodynamic and hydrostatic microtriangle hull integration
@@ -142,11 +143,8 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 	GetPose(p, q);
 	t = Matrix4FromPose( p, q );
 	
-	EVec4	tf, tm;	//	total force and total momentum
-
 	float num_pnts[3] = {0,0,0};
-	
-	
+
 	for (uint i=0; i<hxfgrid.grid.size(); i++) {
 		
 		ESurfElem	se		= hxfgrid.grid[i];
@@ -176,19 +174,93 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 
 
 		ship_body->AddForceAtPos( f + fd, se.position );
-		
-		//	debug point :
-		//EVec4	color	=	Vec4Lerp( EVec4(0,0,1,1), EVec4(1,1,0,1), factor);
-		//rs()->GetDVScene()->DrawPoint( se.position, 0.1f, color );
 	}
-	
-	//LOGF("%7.2f %7.2f %7.2f", num_pnts[0], num_pnts[1], num_pnts[2]);
 	
 	//
 	//	damp wrong
 	//
 	EVec4	force, torque;	
 	ship_body->GetTotalForces( force, torque );
+}
 
-	//LOGF("force  (kN)   : %8.3f %8.3f %8.3f", force.x / 1000.0f, force.y / 1000.0f, force.z / 1000.0f);
+
+//
+//	EShip::UpdateHXFSE
+//
+void EShip::UpdateHXFSE_OMP( float dtime, IPxWaving waving )
+{
+	UpdateHXFSEGrid();
+
+	//	prepare data :
+	struct app_force_s {
+		EVec4	point;
+		EVec4	force;
+	};
+
+	uint num = hxfgrid.grid.size();
+
+	vector<app_force_s>	app_forces;
+	app_forces.resize( num );
+	
+	ESurfElem	*grid	=	&hxfgrid.grid[0];
+	app_force_s	*forces	=	&app_forces[0];
+	
+	//	setup OpemMP :
+	omp_set_dynamic(0);      
+	omp_set_num_threads(10);
+
+	//		
+	EVec4 p;
+	EQuat q;
+	EMatrix4 t;
+	
+	GetPose(p, q);
+	t = Matrix4FromPose( p, q );
+	
+	int i;
+	#pragma omp parallel shared(grid, forces) private(i) 
+	{
+	
+		#pragma omp for
+		for (i=0; i<num; i++) {
+			
+			ESurfElem	se		= grid[i];
+			EVec4		normal	= se.normal;
+			
+			EVec4		vse		= ship_body->GetLocalPointVelocity( se.position );	//	local point velocity
+			EVec4		vwtr	= EVec4(0,0,0,0);									//	water velocity
+			EVec4		vel		= vse - vwtr;
+			float		vel_p2	= Vec4LengthSqr( vel );								//	squared point velocity relative to water particles
+			EVec4		vdir	= Vec4Normalize( vel );
+
+			//	transform surface element to world space :		
+			se.position	=	Matrix4Transform( se.position, t );
+			se.normal	=	Matrix4Transform( se.normal,   t );
+
+			//	compute pressure and force :
+			float	pr	=	waving->GetPressure( se.position );
+			float	s	=	se.area;
+			EVec4	f	=	- (se.normal * (pr * s));
+
+			float	factor	=	pr > 0 ? 1 : 0;
+			
+			//	compute dynamic pressure :
+			float	v_dot_n	=	Vec4Dot( vdir, se.normal );
+			float	fds		=	water_resistance_cx * vel_p2 / 2 * abs(v_dot_n) * se.area * WATER_DENSITY * factor;
+			EVec4	fd		=	- (vdir * fds);
+
+			forces[i].force	=	fd + f;
+			forces[i].point	=	se.position;
+		}
+	}
+	
+	for (uint i=0; i<num; i++) {
+		ship_body->AddForceAtPos( forces[i].force, forces[i].point );
+	}
+	
+	//
+	//	damp wrong
+	//
+	EVec4	force, torque;	
+	ship_body->GetTotalForces( force, torque );
 }
