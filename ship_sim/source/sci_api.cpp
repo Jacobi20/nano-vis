@@ -29,13 +29,6 @@
 	Nano vis :
 -----------------------------------------------------------------------------*/
 
-static const luaL_Reg navallib[] = {
-		{ "remove_all_ships",	ESciVis::remove_all_ships	},
-		{ "set_view",			ESciVis::set_view			},
-		{ "get_wave_offset",	ESciVis::get_wave_offset	},
-		{ NULL, NULL	},
-	};
-
 //
 //	ESciVis::RegisterAPI
 //
@@ -44,8 +37,11 @@ void ESciVis::RegisterAPI( void )
 	lua_State *L = CoreLua();
 	LUA_INTERFACE(L);
 	
-	luaL_register(L, "naval", navallib);
-	lua_pop(L, 1);
+	LUALIB_DECLARE	("naval")
+	LUALIB_METHOD	( remove_all_ships )
+	LUALIB_METHOD	( set_view )
+	LUALIB_METHOD	( get_wave_offset )
+	LUALIB_REGISTER	( L )
 
 	//	add 'naval.create_ship' :
 	CoreExecuteString("naval.create_ship = ELuaShip;");

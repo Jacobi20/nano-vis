@@ -115,15 +115,15 @@ function create_uboat()
 	print("---- creating U-boat ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 5 );
+	ship:set_resistance	( 2 );
 	
 	ship:set_vis_mesh	( "uboat.esx|boat1"			);
 	ship:set_hdf_mesh	( "uboat.esx|flowsurf2" 		);
 	ship:set_hsf_mesh	( "uboat.esx|flowsurf2" 		);
 	ship:make_rigidbody	( "uboat.esx|stat", 1805000	);
 	
-	ship:set_position	( 0, 0, -50 );	
-	ship:set_angles		( 40, 0, 0 );
+	ship:set_position	( 0, 0, 40 );	
+	ship:set_angles		( 90, 30, 30 );
 	ship:set_cmass		( 0,0,-1 );
 	
 	ship:build_voxels	( "uboat.esx|flowsurf2", 1	);
@@ -172,7 +172,7 @@ function create_ssn668()
 	ship:make_rigidbody	( "ssn668.esx|physmesh", 6000000	);
 	
 	ship:set_position	( 0, 0, 0 );	
-	ship:set_angles		(150, 0, 0 );
+	ship:set_angles		( 90, 0, 0 );
 	ship:set_cmass		( 3.8, 0, -3 );
 	
 	ship:build_voxels	( "ssn668.esx|hydromesh", 2	);
