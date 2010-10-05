@@ -144,6 +144,8 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 	t = Matrix4FromPose( p, q );
 	
 	float num_pnts[3] = {0,0,0};
+	
+	waving->MakeDirty();
 
 	for (uint i=0; i<hxfgrid.grid.size(); i++) {
 		
