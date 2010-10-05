@@ -21,9 +21,9 @@ input.bind ("A",	"_ShipSL()");
 input.bind ("X",  "_ShipSR()");
 
 input.bind ("F1", "show_info()"  	);
-input.bind ("F2", "ship_show_hull      = not ship_show_hull"  	);
-input.bind ("F3", "ship_show_voxels    = not ship_show_voxels" 	);
-input.bind ("F4", "ship_show_submerge  = not ship_show_submerge");
+input.bind ("F2", "cfg.vars.ship_show_hull      = not cfg.vars.ship_show_hull"  	);
+input.bind ("F3", "cfg.vars.ship_show_voxels    = not cfg.vars.ship_show_voxels" 	);
+input.bind ("F4", "cfg.vars.ship_show_submerge  = not cfg.vars.hip_show_submerge");
 
 input.bind ("N", "state.submersion 		= not state.submersion" );
 input.bind ("M", "state.sunking 		= not state.sunking" );
@@ -216,7 +216,7 @@ uboat	=	create_cutter();
 --uboat	=	create_uboat();
 --uboat	=	create_box();
 
-ship_hsf_method	=	"hxfse_omp";
+cfg.vars.ship_hsf_method	=	"hxfse_omp";
 --ship_hsf_method	=	"surface";
 
 

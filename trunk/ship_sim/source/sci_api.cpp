@@ -106,7 +106,7 @@ int ESciVis::get_wave_offset( lua_State *L )
 	
 	lua_pushnumber(L, offs.z);
 	
-	lua.SetNResults(1);
+	lua.SetStackGrow(1);
 	
 	return 1;
 }
