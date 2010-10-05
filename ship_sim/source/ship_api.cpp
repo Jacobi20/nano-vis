@@ -172,7 +172,7 @@ int ELuaShip::get_angles( lua_State *L )
 	lua_pushnumber( L, yaw );
 	lua_pushnumber( L, pitch );
 	lua_pushnumber( L, roll );
-	lua.SetNResults(3);
+	lua.SetStackGrow(3);
 	return 3;
 }
 
@@ -187,7 +187,7 @@ int ELuaShip::get_position( lua_State *L )
 	lua_pushnumber( L, p.x );
 	lua_pushnumber( L, p.y );
 	lua_pushnumber( L, p.z );
-	lua.SetNResults(3);
+	lua.SetStackGrow(3);
 	return 3;
 }
 
@@ -237,7 +237,7 @@ int ELuaShip::get_hsf_momentum( lua_State *L )
 
 	LuaPushVec4( L, EVec4(m.x, m.y, m.z, 0) );
 	
-	lua.SetNResults(1);
+	lua.SetStackGrow(1);
 	return 1;
 }
 
@@ -249,7 +249,7 @@ int ELuaShip::get_hsf_force( lua_State *L )
 
 	lua_pushnumber(L, f);
 
-	lua.SetNResults(1);
+	lua.SetStackGrow(1);
 	return 1;
 }
 
@@ -261,7 +261,7 @@ int ELuaShip::get_center_mass( lua_State *L )
 
 	LuaPushVec4( L, EVec4(cm.x, cm.y, cm.z, 0) );
 
-	lua.SetNResults(1);
+	lua.SetStackGrow(1);
 	return 1;
 }
 
@@ -273,7 +273,7 @@ int ELuaShip::get_right_arm( lua_State *L )
 
 	lua_pushnumber(L, ra);
 
-	lua.SetNResults(1);
+	lua.SetStackGrow(1);
 	return 1;
 }
 
