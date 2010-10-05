@@ -28,7 +28,11 @@
 	Waving :
 -----------------------------------------------------------------------------*/
 
-const uint WAVE_BAND_NUM		=	10;
+const uint	WAVE_BAND_NUM			=	30;
+const uint	WAVE_GRID_SIZE			=	400;
+const float WAVE_GRID_OFFSET_X		=	-200.0f;
+const float WAVE_GRID_OFFSET_Y		=	-200.0f;
+const uint	WAVE_DEPTH_OF_SILENCE	=	50;			// there are no waves
 
 struct point_wave_s {
 		float	offset;
@@ -41,6 +45,12 @@ struct wave_s {
 		float	phase;
 		float	wave_num;
 	};
+	
+struct wave_sample_s {
+		bool	dirty;							//	is sample dirty
+		float	zoffset;						//	vertical offset
+	};	
+
 
 class EWaving : public IWaving {
 	public:
@@ -52,6 +62,7 @@ class EWaving : public IWaving {
 		virtual	EVec4		GetPosition			( const EVec4 &init_pos ) const;
 		virtual float		GetPressure			( const EVec4 &init_pos ) const;
 		virtual float		GetWaveSlopeX		( const EVec4 &init_pos ) const;
+		virtual void		MakeDirty			( void );
 		
 	protected:
 		float			time;
@@ -67,6 +78,8 @@ class EWaving : public IWaving {
 			float	phases[WAVE_BAND_NUM];		//	rand(2*Pi)
 			float	wave_num[WAVE_BAND_NUM];	//	k
 		} wave;
+		
+		mutable wave_sample_s	wave_grid[WAVE_GRID_SIZE][WAVE_GRID_SIZE];
 		
 		virtual void	InitWaving			( void );
 		point_wave_s	GetWave				( float x, float y, float depth, float time ) const;
@@ -105,6 +118,16 @@ EWaving::~EWaving( void )
 }
 
 
+
+void EWaving::MakeDirty( void )
+{
+	for (uint i=0; i<WAVE_GRID_SIZE; i++) {
+		for (uint j=0; j<WAVE_GRID_SIZE; j++) {
+			wave_grid[i][j].dirty	=	true;
+		}
+	}
+}
+
 /*-----------------------------------------------------------------------------
 	Spectral stuff :
 -----------------------------------------------------------------------------*/
@@ -123,7 +146,7 @@ static float SpectrumPM(float w)
 //
 void EWaving::InitWaving( void )
 {
-	wave.max_freq	=	 3;
+	wave.max_freq	=	 4;
 	
 	float	dw		=	wave.max_freq / (float)WAVE_BAND_NUM;
 
@@ -191,9 +214,14 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 	point_wave_s	pw;
 	pw.offset	=	0;
 	pw.pressure	=	depth * WATER_DENSITY * GRAVITY;
-
+	
 	//	compute vertical offset :	
 	for (uint i=0; i<WAVE_BAND_NUM; i++) {
+	
+		float x2 = x;
+		if ((i&1)==1) {
+			x2 = x*0.7 * (i%3) + y*0.3 * (i%2);
+		}
 
 		register float	amp		=	wave.waves[i].amplitude;
 		register float	freq	=	wave.waves[i].frequency;
@@ -202,7 +230,7 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 
 		float	fade	=	(depth<0) ? 1 : exp( - k * depth );
 		
-		pw.offset	+=	fade * amp * cos(freq * time + k * x + phase);
+		pw.offset	+=	fade * amp * cos(freq * time + k * x2 + phase);
 	}
 	
 	//	compute pressure offset :	
@@ -221,9 +249,42 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 //
 float EWaving::GetPressure( const EVec4 &pos ) const
 {
-	point_wave_s	pw	=	GetWave(pos.x, pos.y, -pos.z, time);
+	float gx	=	pos.x - WAVE_GRID_OFFSET_X;
+	float gy	=	pos.y - WAVE_GRID_OFFSET_Y;
+	int ix		=	(int)floor(gx);	//	integer part
+	int iy		=	(int)floor(gy);	//	integer part
+	float fx	=	gx - floor(gx);	//	fractional part
+	float fy	=	gy - floor(gy);	//	fractional part
+	float cx	=	floor(pos.x) + 0.5;
+	float cy	=	floor(pos.y) + 0.5;
 	
-	return pw.pressure;
+	ix	=	Clamp<int>(ix, 0, WAVE_GRID_SIZE-1);	
+	iy	=	Clamp<int>(iy, 0, WAVE_GRID_SIZE-1);	
+	
+	
+	if (wave_grid[ix][iy].dirty) {
+		wave_sample_s	*ws =	&wave_grid[ix][iy];
+	
+		point_wave_s	pw	=	GetWave( cx, cy, 0, time );
+		ws->zoffset			=	pw.offset;
+		ws->dirty			=	false;
+		
+		rs()->GetDVScene()->DrawPoint( EVec4(cx, cy, pw.offset, 1), 1, EVec4(0,0,1,1) );
+	}
+
+	float zoffset	= wave_grid[ix][iy].zoffset;
+	float depth		= -pos.z;
+	
+	if (pos.z>zoffset) {
+		return 0;
+	} else {
+		float	ps		=	(depth) * WATER_DENSITY * GRAVITY;
+		float	fade	=	(depth<0) ? 1 : exp( - 0.5f * depth );	//	'great' approximation
+		float	pd		=	fade * zoffset * WATER_DENSITY * GRAVITY;
+		return	ps + pd;
+	}
+
+	return 0;
 }
 
 

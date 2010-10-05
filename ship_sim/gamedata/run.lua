@@ -212,11 +212,11 @@ local rolling_log = io.open("rolling.log", "w");
 
 
 --uboat	=	create_ssn668();
-uboat	=	create_cutter();
---uboat	=	create_uboat();
+--uboat	=	create_cutter();
+uboat	=	create_uboat();
 --uboat	=	create_box();
 
-cfg.vars.ship_hsf_method	=	"hxfse_omp";
+cfg.vars.ship_hsf_method	=	"hxfse";
 --ship_hsf_method	=	"surface";
 
 
