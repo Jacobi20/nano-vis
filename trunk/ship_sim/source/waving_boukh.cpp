@@ -28,7 +28,7 @@
 	Waving :
 -----------------------------------------------------------------------------*/
 
-const uint	WAVE_BAND_NUM			=	30;
+const uint	WAVE_BAND_NUM			=	80;
 const uint	WAVE_GRID_SIZE			=	400;
 const float WAVE_GRID_OFFSET_X		=	-200.0f;
 const float WAVE_GRID_OFFSET_Y		=	-200.0f;
@@ -57,7 +57,7 @@ class EWaving : public IWaving {
 							EWaving		( lua_State *L, int idx );
 							~EWaving		( void );
 											
-		virtual void		Update				( float dtime );
+		virtual void		Update				( float dtime, const EVec4 &view_pos );
 		virtual	EVec4		GetVelocity			( const EVec4 &init_pos ) const;
 		virtual	EVec4		GetPosition			( const EVec4 &init_pos ) const;
 		virtual float		GetPressure			( const EVec4 &init_pos ) const;
@@ -135,10 +135,15 @@ void EWaving::MakeDirty( void )
 static float SpectrumPM(float w)
 {
 	//	Pierson-Moskowitz :
-	float	Asp	=	20.0f;
-	float	Bsp	=	4.0f;
+	//float	Asp	=	20.0f;
+	//float	Bsp	=	4.0f;
+	//return Asp * expf(-Bsp / (w*w*w*w)) / (w*w*w*w*w);
 	
-	return Asp * expf(-Bsp / (w*w*w*w)) / (w*w*w*w*w);
+	//	Lopatuhin, (60)
+	float	U	=	8;
+	float	g	=	GRAVITY;
+	return 0.0081 * (g*g) * powf(w, -5) * exp( -0.74 * pow(w*U/g, -4) );
+	
 }
 
 //
@@ -170,7 +175,7 @@ void EWaving::InitWaving( void )
 		wave.wave_num[i]	=	w * w / GRAVITY;
 
 		wave.waves[i].frequency	=	w;
-		wave.waves[i].amplitude	=	sqrt(2* SpectrumPM(w) * dw);
+		wave.waves[i].amplitude	=	sqrt(2 * SpectrumPM(w) * dw);
 		wave.waves[i].phase		=	wave.phases[i];
 		wave.waves[i].wave_num	=	w * w / GRAVITY;
 	}
@@ -184,7 +189,7 @@ void EWaving::InitWaving( void )
 //
 //	EWaving::Update
 //
-void EWaving::Update( float dtime )
+void EWaving::Update( float dtime, const EVec4 &view_pos )
 {
 	time	+=	dtime;
 	
@@ -192,14 +197,70 @@ void EWaving::Update( float dtime )
 	
 	uint n = mesh->GetVertexNum();
 	
+
+#if 1
 	for (uint i=0; i<n; i++) {
 		EVertex	v;
 		
 		v	=	mesh->GetVertex( i );
 		v.position.z	=	GetPosition( Vec3ToVec4(v.position) ).z;
+
+		v.uv0.x			=	v.position.x/4;
+		v.uv0.y			=	v.position.y/4;
 		
 		mesh->SetVertex( i, v );
 	}
+#else
+	float	zpos		=	view_pos.z;
+	float	scale		=	Clamp<float>(fabs(zpos), 1, 1000) * 200;
+	float	offset_x	=	view_pos.x;	
+	float	offset_y	=	view_pos.y;	
+
+	for (uint i=0; i<n; i++) {
+		EVertex	v;
+		
+		v	=	mesh->GetVertex( i );
+		
+		float	x	=	v.position.x;
+		float	y	=	v.position.y;
+		
+		float	r	=	sqrt(x * x + y * y);
+		
+		if (r==0) {
+			continue;
+		}
+		
+		float	c	=	x / r;
+		float	s	=	y / r;
+		
+		float	rs	=	pow(r, 8);
+		
+		x	=	rs * c;
+		y	=	rs * s;
+		
+		x	*=	scale;
+		y	*=	scale;
+		
+		x	+=	offset_x;
+		y	+=	offset_y;
+		
+		v.position.x	=	x;
+		v.position.y	=	y;
+		
+		v.uv0.x			=	x/4;
+		v.uv0.y			=	y/4;
+		
+		mesh->SetVertex( i, v );
+	}
+	
+	for (uint i=0; i<n; i++) {
+		EVertex	v;
+		v	=	mesh->GetVertex( i );
+		v.position.z	=	GetPosition( Vec3ToVec4(v.position) ).z;
+		mesh->SetVertex( i, v );
+	}
+#endif
+	
 	
 	r_ent->SetMesh( mesh );
 }
@@ -219,9 +280,6 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 	for (uint i=0; i<WAVE_BAND_NUM; i++) {
 	
 		float x2 = x;
-		if ((i&1)==1) {
-			x2 = x*0.7 * (i%3) + y*0.3 * (i%2);
-		}
 
 		register float	amp		=	wave.waves[i].amplitude;
 		register float	freq	=	wave.waves[i].frequency;
@@ -260,8 +318,11 @@ float EWaving::GetPressure( const EVec4 &pos ) const
 	
 	ix	=	Clamp<int>(ix, 0, WAVE_GRID_SIZE-1);	
 	iy	=	Clamp<int>(iy, 0, WAVE_GRID_SIZE-1);	
+
+	point_wave_s	pw	=	GetWave( pos.x, pos.y, -pos.z, time );
+	return pw.pressure;
 	
-	
+#if 0	
 	if (wave_grid[ix][iy].dirty) {
 		wave_sample_s	*ws =	&wave_grid[ix][iy];
 	
@@ -269,7 +330,7 @@ float EWaving::GetPressure( const EVec4 &pos ) const
 		ws->zoffset			=	pw.offset;
 		ws->dirty			=	false;
 		
-		rs()->GetDVScene()->DrawPoint( EVec4(cx, cy, pw.offset, 1), 1, EVec4(0,0,1,1) );
+		rs()->GetDVScene()->DrawPoint( EVec4(cx, cy, pw.offset, 1), 0.33f, EVec4(0,0,1,1) );
 	}
 
 	float zoffset	= wave_grid[ix][iy].zoffset;
@@ -283,6 +344,7 @@ float EWaving::GetPressure( const EVec4 &pos ) const
 		float	pd		=	fade * zoffset * WATER_DENSITY * GRAVITY;
 		return	ps + pd;
 	}
+#endif	
 
 	return 0;
 }
