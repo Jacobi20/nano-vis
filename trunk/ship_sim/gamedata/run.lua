@@ -115,7 +115,7 @@ function create_uboat()
 	print("---- creating U-boat ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 2 );
+	ship:set_resistance	( 5 );
 	
 	ship:set_vis_mesh	( "uboat.esx|boat1"			);
 	ship:set_hdf_mesh	( "uboat.esx|flowsurf2" 		);
@@ -124,7 +124,7 @@ function create_uboat()
 	
 	ship:set_position	( 0, 0, 0 );	
 	ship:set_angles		( 90, 0, 0 );
-	ship:set_cmass		( 0,0,-1 );
+	ship:set_cmass		( 0,0,-0.5 );
 	
 	ship:build_voxels	( "uboat.esx|flowsurf2", 1	);
 	ship:build_surf_dxdy( "uboat.esx|flowsurf2", 1, 0.1	);
@@ -145,7 +145,7 @@ function create_cutter()
 	ship:set_vis_mesh	( "boat.esx|boat1"			);
 	ship:set_hdf_mesh	( "boat.esx|flow" 			);
 	ship:set_hsf_mesh	( "boat.esx|flow" 			);
-	ship:make_rigidbody	( "boat.esx|stat", 550000	);
+	ship:make_rigidbody	( "boat.esx|stat", 400000	);
 	
 	ship:set_position	( 0, 0, 0 );	
 	ship:set_angles		( 90, 0, 10);
@@ -195,8 +195,8 @@ function create_box()
 	ship:set_hsf_mesh	( "box.esx|box" 			);
 	ship:make_rigidbody	( "box.esx|box",  8000000	);
 	
-	ship:set_position	( 0, 0, 100 );	
-	ship:set_angles		( 90, 0, 0 );
+	ship:set_position	( 0, 0, 0 );	
+	ship:set_angles		( 0, 0, 90 );
 	ship:set_cmass		( 0, 0, 0 );
 	
 	ship:build_voxels	( "box.esx|box", 2	);
@@ -212,8 +212,8 @@ local rolling_log = io.open("rolling.log", "w");
 
 
 --uboat	=	create_ssn668();
-uboat	=	create_cutter();
---uboat	=	create_uboat();
+--uboat	=	create_cutter();
+uboat	=	create_uboat();
 --uboat	=	create_box();
 
 cfg.vars.ship_hsf_method	=	"hxfse";

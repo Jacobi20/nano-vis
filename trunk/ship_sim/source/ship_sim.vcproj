@@ -181,10 +181,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\mersenne.h"
-				>
-			</File>
-			<File
 				RelativePath=".\sci_api.cpp"
 				>
 			</File>
@@ -256,6 +252,10 @@
 			</File>
 			<File
 				RelativePath=".\grid.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mersenne.h"
 				>
 			</File>
 			<File

@@ -174,6 +174,9 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 		float	fds		=	water_resistance_cx * vel_p2 / 2 * abs(v_dot_n) * se.area * WATER_DENSITY * factor;
 		EVec4	fd		=	- (vdir * fds);
 
+		//float	lf		=	Clamp<float>(pr / (WATER_DENSITY*GRAVITY), 0, 1);
+		//EVec4	color	=	Vec4Lerp( EVec4(1,1,0,0), EVec4(1,1,0,1), lf );
+		//rs()->GetDVScene()->DrawPoint( se.position, 0.1, color );
 
 		ship_body->AddForceAtPos( f + fd, se.position );
 	}

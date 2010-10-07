@@ -135,15 +135,15 @@ void EWaving::MakeDirty( void )
 static float SpectrumPM(float w)
 {
 	//	Pierson-Moskowitz :
-	//float	Asp	=	20.0f;
-	//float	Bsp	=	4.0f;
-	//return Asp * expf(-Bsp / (w*w*w*w)) / (w*w*w*w*w);
+	float	Asp	=	20.0f;
+	float	Bsp	=	4.0f;
+	w *= 1.5;
+	return	Asp * expf(-Bsp / (w*w*w*w)) / (w*w*w*w*w);
 	
 	//	Lopatuhin, (60)
-	float	U	=	8;
-	float	g	=	GRAVITY;
-	return 0.0081 * (g*g) * powf(w, -5) * exp( -0.74 * pow(w*U/g, -4) );
-	
+	//float	U	=	15;
+	//float	g	=	GRAVITY;
+	//return 0.0081 * (g*g) * powf(w, -5) * exp( -0.74 * pow(w*U/g, -4) );
 }
 
 //
@@ -151,7 +151,7 @@ static float SpectrumPM(float w)
 //
 void EWaving::InitWaving( void )
 {
-	wave.max_freq	=	 4;
+	wave.max_freq	=	 10;
 	
 	float	dw		=	wave.max_freq / (float)WAVE_BAND_NUM;
 
