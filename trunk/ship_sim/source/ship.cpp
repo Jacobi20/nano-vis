@@ -108,9 +108,9 @@ void EShip::SetPose( EVec4 &position, EQuat &orient )
 //
 void EShip::UpdateForces( float dtime, IPxWaving waving )
 {
-	if (!mesh_hdf)	{	RAISE_EXCEPTION("HDF mesh not created");		}
-	if (!mesh_hsf)	{	RAISE_EXCEPTION("HSF mesh not created");		}
-	if (!ship_body)	{	RAISE_EXCEPTION("ship rigid body not created");	}
+	if (!mesh_hdf)	{	RUNTIME_ERROR("HDF mesh not created");		}
+	if (!mesh_hsf)	{	RUNTIME_ERROR("HSF mesh not created");		}
+	if (!ship_body)	{	RUNTIME_ERROR("ship rigid body not created");	}
 
 	float  weight	=	GRAVITY * ship_mass;
 	EVec4 gravity	=	EVec4(0, 0, -weight,0);

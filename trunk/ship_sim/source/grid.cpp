@@ -178,7 +178,7 @@ void EVoxelGrid::BuildGrid( const IPxTriMesh mesh, EVec3 origin, float step_x, f
 		float z = origin.z + (float)idz * szz;
 
 		if (!bbox.Contains( EVec4( x, y, z, 1 ) )) {
-			RAISE_EXCEPTION("mesh has holes or origin point is outside of closed mesh");
+			RUNTIME_ERROR("mesh has holes or origin point is outside of closed mesh");
 		}
 		
 		EVec3	dir;	
@@ -210,7 +210,7 @@ void EVoxelGrid::Fill( const IPxTriMesh mesh, EVec3 origin, float szx, float szy
 	//AddVoxel( voxel );
 	//
 	//if (!bbox.Contains( EVec4( origin.x, origin.y, origin.z, 1 ) )) {
-	//	RAISE_EXCEPTION("mesh has holes or origin point is outside of closed mesh");
+	//	RUNTIME_ERROR("mesh has holes or origin point is outside of closed mesh");
 	//}
 
 	//EVec3	dir;	

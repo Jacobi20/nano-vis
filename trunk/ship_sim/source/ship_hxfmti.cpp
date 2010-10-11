@@ -181,6 +181,8 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 		ship_body->AddForceAtPos( f + fd, se.position );
 	}
 	
+	
+	
 	//
 	//	damp wrong
 	//
