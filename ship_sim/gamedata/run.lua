@@ -212,8 +212,8 @@ local rolling_log = io.open("rolling.log", "w");
 
 
 --uboat	=	create_ssn668();
---uboat	=	create_cutter();
-uboat	=	create_uboat();
+uboat	=	create_cutter();
+--uboat	=	create_uboat();
 --uboat	=	create_box();
 
 cfg.vars.ship_hsf_method	=	"hxfse";
@@ -288,16 +288,25 @@ function sci_frame(dtime)
 	
 	if uboat  then 
 		uboat:simulate(dtime);  
+		
 
 		local yaw, pitch, roll 	= uboat:get_angles();
+		local x, y, z 			= uboat:get_position();
+
+		yaw = 90;
+		x   = 0;
+		y   = 0;
+		uboat:set_angles(yaw, pitch, roll);
+		uboat:set_position(x,y,z);
+
 		yaw		=	math.rad(yaw);
 		pitch	=	math.rad(pitch);
 		roll	=	math.rad(roll);
-		local x, y, z 			= uboat:get_position();
+		
 		-- local wave_offset0		= naval.get_wave_offset(x,y,0);
 		-- local wave_offset1		= naval.get_wave_offset(x+1/16,y,0);
 		local wave_offset0		= naval.get_wave_offset(0,0,0);
-		local wave_offset1		= naval.get_wave_offset(1/16,0,0);
+		local wave_offset1		= naval.get_wave_offset(0.001,0,0);
 		local wave_offset		= (wave_offset0 + wave_offset1)/2;
 		local wave_slope		= math.atan(16*(wave_offset1 - wave_offset0));
 		local out				= string.format("%f %f %f %f %f %f %f %f", yaw, pitch, roll, x, y, z, wave_offset, wave_slope);

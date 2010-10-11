@@ -66,7 +66,7 @@ void ESciVis::InitPhysX( void )
 	//	coocking lib :
 	nx_cook	=	NxGetCookingLib(NX_PHYSICS_SDK_VERSION);
 	if (!nx_cook) {
-		RAISE_EXCEPTION("NxGetCookingLib() failed");
+		RUNTIME_ERROR("NxGetCookingLib() failed");
 	}
 	nx_cook->NxInitCooking();
 	
@@ -229,7 +229,7 @@ NxConvexMesh *ESciVis::BuildConvexMesh( const IPxTriMesh input_mesh )
 	bool r = nx_cook->NxCookConvexMesh(convex_mesh_desc, buf);
 	
 	if (!r) {
-		RAISE_EXCEPTION("mesh contains to many vertices");
+		RUNTIME_ERROR("mesh contains to many vertices");
 	}
 
 	return nx->createConvexMesh(MemoryReadBuffer(buf.data));

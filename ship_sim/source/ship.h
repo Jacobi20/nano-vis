@@ -65,6 +65,7 @@ class EShip : public IShip {
 		virtual EVec3		GetHSFMomentum		( void ) { return total_hsf_momentum; }
 		virtual float		GetHSFForce			( void ) { return total_hsf_force; }
 		virtual float		GetRightArm			( void ) { return right_arm; }
+		virtual float		GetMCH				( void ) { return mch; }
 
 		virtual EVec3		GetCenterMass		( void );
 		virtual EVec3		GetInertiaMomentum	( EVec3 axis );
@@ -80,6 +81,7 @@ class EShip : public IShip {
 		float				right_arm;
 		EVec3				total_hsf_momentum;
 		EVec3				center_of_hsf_force;
+		float				mch;
 		
 		float				water_resistance_cx;
 	
