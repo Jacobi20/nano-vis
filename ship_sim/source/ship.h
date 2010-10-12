@@ -97,7 +97,6 @@ class EShip : public IShip {
 
 		void				UpdateHXFSEGrid	( void );		
 		void				UpdateHXFSE		( float dtime, IPxWaving waving );
-		void				UpdateHXFSE_OMP	( float dtime, IPxWaving waving );
 		void				BalanceHXFSE	( void );
 		void				BalanceHXFSEAxis( const EBBox &box, uint axis_id, float step );
 		struct {
@@ -107,6 +106,11 @@ class EShip : public IShip {
 			float				radius;
 			vector<ESurfElem>	grid;
 		} hxfgrid;
+		
+		struct {
+			float	yaw, pitch, roll;
+			float	x,y,z;
+		} lastpose;
 		
 
 		EPxVoxelGrid	voxel_grid;
