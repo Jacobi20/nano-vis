@@ -65,6 +65,8 @@ class EWaving : public IWaving {
 		virtual void		MakeDirty			( void );
 		
 	protected:
+		bool			still;
+		
 		float			time;
 
 		IPxFREntity		r_ent;
@@ -137,8 +139,8 @@ static float SpectrumPM(float w)
 	//	Pierson-Moskowitz :
 	//float	Asp	=	0.230f;
 	//float	Bsp	=	0.030f;
-	float	Asp	=	5;
-	float	Bsp	=	4;
+	float	Asp	=	1;
+	float	Bsp	=	1;
 	return	Asp * expf(-Bsp / (w*w*w*w)) / (w*w*w*w*w);
 	
 	//	Lopatuhin, (60)
@@ -180,6 +182,13 @@ void EWaving::InitWaving( void )
 		wave.waves[i].phase		=	wave.phases[i];
 		wave.waves[i].wave_num	=	w * w / GRAVITY;
 	}
+	
+	still = true;
+	for (uint i=1; i<WAVE_BAND_NUM; i++) {
+		if (abs(wave.waves[i].amplitude) > 0.00001f ) {
+			still = false;
+		}
+	}
 }
 
 
@@ -198,8 +207,6 @@ void EWaving::Update( float dtime, const EVec4 &view_pos )
 	
 	uint n = mesh->GetVertexNum();
 	
-
-#if 1
 	for (uint i=0; i<n; i++) {
 		EVertex	v;
 		
@@ -211,57 +218,6 @@ void EWaving::Update( float dtime, const EVec4 &view_pos )
 		
 		mesh->SetVertex( i, v );
 	}
-#else
-	float	zpos		=	view_pos.z;
-	float	scale		=	Clamp<float>(fabs(zpos), 1, 1000) * 200;
-	float	offset_x	=	view_pos.x;	
-	float	offset_y	=	view_pos.y;	
-
-	for (uint i=0; i<n; i++) {
-		EVertex	v;
-		
-		v	=	mesh->GetVertex( i );
-		
-		float	x	=	v.position.x;
-		float	y	=	v.position.y;
-		
-		float	r	=	sqrt(x * x + y * y);
-		
-		if (r==0) {
-			continue;
-		}
-		
-		float	c	=	x / r;
-		float	s	=	y / r;
-		
-		float	rs	=	pow(r, 8);
-		
-		x	=	rs * c;
-		y	=	rs * s;
-		
-		x	*=	scale;
-		y	*=	scale;
-		
-		x	+=	offset_x;
-		y	+=	offset_y;
-		
-		v.position.x	=	x;
-		v.position.y	=	y;
-		
-		v.uv0.x			=	x/4;
-		v.uv0.y			=	y/4;
-		
-		mesh->SetVertex( i, v );
-	}
-	
-	for (uint i=0; i<n; i++) {
-		EVertex	v;
-		v	=	mesh->GetVertex( i );
-		v.position.z	=	GetPosition( Vec3ToVec4(v.position) ).z;
-		mesh->SetVertex( i, v );
-	}
-#endif
-	
 	
 	r_ent->SetMesh( mesh );
 }
@@ -276,6 +232,13 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 	point_wave_s	pw;
 	pw.offset	=	0;
 	pw.pressure	=	depth * WATER_DENSITY * GRAVITY;
+
+	if (still) {
+		if (depth<0) { 
+			pw.pressure = 0;
+		}
+		return pw;
+	}
 	
 	//	compute vertical offset :	
 	for (uint i=0; i<WAVE_BAND_NUM; i++) {

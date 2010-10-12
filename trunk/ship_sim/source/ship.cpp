@@ -95,6 +95,12 @@ void EShip::GetPose( EVec4 &position, EQuat &orient )
 void EShip::SetPose( EVec4 &position, EQuat &orient )
 {
 	ship_body->SetPose( position, orient );
+	
+	//	update last pose to avoid big velocities :
+	lastpose.x		=	position.x;
+	lastpose.y		=	position.y;
+	lastpose.z		=	position.z;
+	QuatToAnglesRad( orient, lastpose.yaw, lastpose.pitch, lastpose.roll );
 }
 
 
@@ -130,6 +136,12 @@ void EShip::UpdateForces( float dtime, IPxWaving waving )
 	
 	UpdateHSF( dtime, waving );
 	UpdateHDF( dtime, waving );
+	
+	
+	lastpose.x		=	p.x;
+	lastpose.y		=	p.y;
+	lastpose.z		=	p.z;
+	QuatToAnglesRad( q, lastpose.yaw, lastpose.pitch, lastpose.roll );
 }
 
 

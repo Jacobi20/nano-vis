@@ -140,7 +140,7 @@ function create_cutter()
 	print("---- creating Coast Guard Ship ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 5 );
+	ship:set_resistance	( 0.5 );
 	
 	ship:set_vis_mesh	( "boat.esx|boat1"			);
 	ship:set_hdf_mesh	( "boat.esx|flow" 			);
@@ -148,7 +148,7 @@ function create_cutter()
 	ship:make_rigidbody	( "boat.esx|stat", 400000	);
 	
 	ship:set_position	( 0, 0, 0 );	
-	ship:set_angles		( 90, 0, 10);
+	ship:set_angles		( 90, 0, 0);
 	ship:set_cmass		( 0, 0, 0 );
 	
 	ship:build_voxels	( "boat.esx|flow", 1	);
