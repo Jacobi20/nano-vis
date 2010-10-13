@@ -115,7 +115,7 @@ function create_uboat()
 	print("---- creating U-boat ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 5 );
+	ship:set_resistance	( 0.3 );
 	
 	ship:set_vis_mesh	( "uboat.esx|boat1"			);
 	ship:set_hdf_mesh	( "uboat.esx|flowsurf2" 		);
@@ -140,7 +140,7 @@ function create_cutter()
 	print("---- creating Coast Guard Ship ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 0.5 );
+	ship:set_resistance	( 1.0 );
 	
 	ship:set_vis_mesh	( "boat.esx|boat1"			);
 	ship:set_hdf_mesh	( "boat.esx|flow" 			);
@@ -152,7 +152,7 @@ function create_cutter()
 	ship:set_cmass		( 0, 0, 0 );
 	
 	ship:build_voxels	( "boat.esx|flow", 1	);
-	ship:build_surf_dxdy( "boat.esx|flow", 1, 0.1	);
+	ship:build_surf_dxdy( "boat.esx|flow", 2, 0.1	);
 	
 	print("---- done ----");
 	print("");
@@ -209,6 +209,7 @@ end
 
 
 local rolling_log = io.open("rolling.log", "w");
+--local rolling_log = io.open("uboat_calibration_roll_5_deg.log", "w");
 
 
 --uboat	=	create_ssn668();
@@ -305,10 +306,11 @@ function sci_frame(dtime)
 		
 		-- local wave_offset0		= naval.get_wave_offset(x,y,0);
 		-- local wave_offset1		= naval.get_wave_offset(x+1/16,y,0);
-		local wave_offset0		= naval.get_wave_offset(0,0,0);
-		local wave_offset1		= naval.get_wave_offset(0.001,0,0);
+		local step              = 0.001
+		local wave_offset0		= naval.get_wave_offset(-step,0,0);
+		local wave_offset1		= naval.get_wave_offset( step,0,0);
 		local wave_offset		= (wave_offset0 + wave_offset1)/2;
-		local wave_slope		= math.atan(16*(wave_offset1 - wave_offset0));
+		local wave_slope		= math.atan((wave_offset1 - wave_offset0)/(2*step));
 		local out				= string.format("%f %f %f %f %f %f %f %f", yaw, pitch, roll, x, y, z, wave_offset, wave_slope);
 		rolling_log:write(out.."\n");
 		rolling_log:flush();

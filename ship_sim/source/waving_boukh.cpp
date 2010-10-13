@@ -139,7 +139,7 @@ static float SpectrumPM(float w)
 	//	Pierson-Moskowitz :
 	//float	Asp	=	0.230f;
 	//float	Bsp	=	0.030f;
-	float	Asp	=	1;
+	float	Asp	=	0.5;
 	float	Bsp	=	1;
 	return	Asp * expf(-Bsp / (w*w*w*w)) / (w*w*w*w*w);
 	
