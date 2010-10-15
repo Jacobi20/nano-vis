@@ -241,6 +241,7 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 	}
 	
 	//	compute vertical offset :	
+#if 0	
 	for (uint i=0; i<WAVE_BAND_NUM; i++) {
 	
 		float x2 = x;
@@ -254,6 +255,12 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 		
 		pw.offset	+=	fade * amp * cos(freq * time + k * x2 + phase);
 	}
+#else
+	float	w	=	1;
+	float	k	=	w * w / GRAVITY;
+	pw.offset	=	0.5 * sin(w * time + k * x);
+#endif
+	
 	
 	//	compute pressure offset :	
 	pw.pressure	 +=	pw.offset * GRAVITY * WATER_DENSITY;

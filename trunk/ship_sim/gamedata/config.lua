@@ -1,18 +1,33 @@
 -- engine settings --
 -- warning: syntax errors will cause configuration resetting --
 
-cfg.setvar('d3d_wireframe'              , nil);
-cfg.setvar('d3d_fullscr'                , false);
-cfg.setvar('d3d_mode'                   , 0);
-cfg.setvar('d3d_xpos'                   , 233);
-cfg.setvar('d3d_ypos'                   , 117);
-cfg.setvar('d3d_anisotropy_level'       , 16);
-cfg.setvar('d3d_mipmap_lod_bias'        , 0);
-cfg.setvar('ship_show_hull'             , true);
-cfg.setvar('ship_show_voxels'           , false);
-cfg.setvar('ship_show_submerge'         , false);
-cfg.setvar('ship_hsf_method'            , 'hxfse');
-cfg.setvar('d3d_antialiasing'           , 1);
+cfg.setvar('d3d_wireframe'                 , nil);
+cfg.setvar('d3d_fullscr'                   , false);
+cfg.setvar('d3d_mode'                      , 0);
+cfg.setvar('d3d_xpos'                      , 1087);
+cfg.setvar('d3d_ypos'                      , 115);
+cfg.setvar('d3d_anisotropy_level'          , 16);
+cfg.setvar('d3d_mipmap_lod_bias'           , 0);
+cfg.setvar('ship_show_hull'                , true);
+cfg.setvar('ship_show_voxels'              , false);
+cfg.setvar('ship_show_submerge'            , false);
+cfg.setvar('ship_hsf_method'               , 'hxfse');
+cfg.setvar('d3d_antialiasing'              , 1);
+cfg.setvar('phys_debug'                    , false);
+cfg.setvar('phys_draw_wireframe'           , false);
+cfg.setvar('phys_draw_aabb'                , false);
+cfg.setvar('phys_draw_features_text'       , false);
+cfg.setvar('phys_draw_contact_points'      , false);
+cfg.setvar('phys_no_deactivation'          , false);
+cfg.setvar('phys_no_help_text'             , false);
+cfg.setvar('phys_draw_text'                , false);
+cfg.setvar('phys_profile_timings'          , false);
+cfg.setvar('phys_enable_sat_comparison'    , false);
+cfg.setvar('phys_disable_bullet_lcp'       , false);
+cfg.setvar('phys_enable_ccd'               , false);
+cfg.setvar('phys_draw_constraints'         , false);
+cfg.setvar('phys_draw_constraint_limits'   , false);
+cfg.setvar('phys_fast_wireframe'           , false);
 
 
 -- key bindings --

@@ -208,8 +208,9 @@ function create_box()
 end
 
 
-local rolling_log = io.open("rolling.log", "w");
+--local rolling_log = io.open("rolling.log", "w");
 --local rolling_log = io.open("uboat_calibration_roll_5_deg.log", "w");
+local rolling_log = io.open("cutter_calibration_roll_5_deg_kappa.log", "w");
 
 
 --uboat	=	create_ssn668();
@@ -217,7 +218,7 @@ uboat	=	create_cutter();
 --uboat	=	create_uboat();
 --uboat	=	create_box();
 
-cfg.vars.ship_hsf_method	=	"hxfse";
+user.ship_hsf_method	=	"hxfse";
 --ship_hsf_method	=	"surface";
 
 
