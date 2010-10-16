@@ -145,14 +145,14 @@ function create_cutter()
 	ship:set_vis_mesh	( "boat.esx|boat1"			);
 	ship:set_hdf_mesh	( "boat.esx|flow" 			);
 	ship:set_hsf_mesh	( "boat.esx|flow" 			);
-	ship:make_rigidbody	( "boat.esx|stat", 400000	);
+	ship:make_rigidbody	( "boat.esx|stat", 500000	);
 	
-	ship:set_position	( 0, 0, 0 );	
-	ship:set_angles		( 90, 0, 0);
+	ship:set_position	( 0, -50, 30 );	
+	ship:set_angles		( 90, 10, 0);
 	ship:set_cmass		( 0, 0, 0 );
 	
 	ship:build_voxels	( "boat.esx|flow", 1	);
-	ship:build_surf_dxdy( "boat.esx|flow", 2, 0.1	);
+	ship:build_surf_dxdy( "boat.esx|flow", 1, 0.1	);
 	
 	print("---- done ----");
 	print("");
@@ -295,9 +295,9 @@ function sci_frame(dtime)
 		local yaw, pitch, roll 	= uboat:get_angles();
 		local x, y, z 			= uboat:get_position();
 
-		yaw = 90;
-		x   = 0;
-		y   = 0;
+		-- yaw = 90;
+		-- x   = 0;
+		-- y   = 0;
 		uboat:set_angles(yaw, pitch, roll);
 		uboat:set_position(x,y,z);
 

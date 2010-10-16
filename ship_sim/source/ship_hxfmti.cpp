@@ -165,19 +165,27 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 		//	compute pressure and force :
 		float	pr	=	waving->GetPressure( se.position );
 		float	s	=	se.area;
-		EVec4	f	=	- (se.normal * (pr * s));
 
 		float	factor	=	pr > 0 ? 1 : 0;
 		
 		//	compute dynamic pressure :
-		float	v_dot_n	=	Vec4Dot( vdir, se.normal );
-		//float	fds		=	water_resistance_cx * vel_p2 / 2 * abs(v_dot_n) * se.area * WATER_DENSITY * factor;
-		float	fds		=	water_resistance_cx * sqrt(vel_p2) * abs(v_dot_n) * se.area * WATER_DENSITY * factor;
-		EVec4	fd		=	- (vdir * fds);
+		#if 1
+			float	v_dot_n	=	Vec4Dot( vdir, se.normal );
+			//float	fds		=	water_resistance_cx * vel_p2 / 2 * abs(v_dot_n) * se.area * WATER_DENSITY * factor;
+			float	fds		=	water_resistance_cx * sqrt(vel_p2) * abs(v_dot_n) * se.area * WATER_DENSITY * factor;
+			EVec4	fd		=	- (vdir * fds);
+		#else
+			float	v_dot_n	=	Vec4Dot( vdir, se.normal );
+			float	pd		=	water_resistance_cx * sqrt(vel_p2) * (v_dot_n) * se.area * WATER_DENSITY * factor;
+			pr +=	pd;
+		#endif
+		/*
+		float	lf		=	Clamp<float>(pr / (1), 0, 1);
+		EVec4	color	=	Vec4Lerp( EVec4(1,1,1,0), EVec4(1,1,1,1), lf );
+		rs()->GetDVScene()->DrawPoint( se.position, 0.1, color );
+		*/
 
-		//float	lf		=	Clamp<float>(pr / (WATER_DENSITY*GRAVITY), 0, 1);
-		//EVec4	color	=	Vec4Lerp( EVec4(1,1,0,0), EVec4(1,1,0,1), lf );
-		//rs()->GetDVScene()->DrawPoint( se.position, 0.1, color );
+		EVec4	f	=	- (se.normal * (pr * s));
 
 		ship_body->AddForceAtPos( f + fd, se.position );
 	}

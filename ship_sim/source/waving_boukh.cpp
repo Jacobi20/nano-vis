@@ -28,7 +28,7 @@
 	Waving :
 -----------------------------------------------------------------------------*/
 
-const uint	WAVE_BAND_NUM			=	80;
+const uint	WAVE_BAND_NUM			=	30;
 const uint	WAVE_GRID_SIZE			=	400;
 const float WAVE_GRID_OFFSET_X		=	-200.0f;
 const float WAVE_GRID_OFFSET_Y		=	-200.0f;
@@ -139,7 +139,7 @@ static float SpectrumPM(float w)
 	//	Pierson-Moskowitz :
 	//float	Asp	=	0.230f;
 	//float	Bsp	=	0.030f;
-	float	Asp	=	0.5;
+	float	Asp	=	1;
 	float	Bsp	=	1;
 	return	Asp * expf(-Bsp / (w*w*w*w)) / (w*w*w*w*w);
 	
@@ -241,7 +241,7 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 	}
 	
 	//	compute vertical offset :	
-#if 0	
+#if 1	
 	for (uint i=0; i<WAVE_BAND_NUM; i++) {
 	
 		float x2 = x;
