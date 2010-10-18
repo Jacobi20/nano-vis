@@ -28,7 +28,7 @@
 	Waving :
 -----------------------------------------------------------------------------*/
 
-const uint	WAVE_BAND_NUM			=	30;
+const uint	WAVE_BAND_NUM			=	60;
 const uint	WAVE_GRID_SIZE			=	400;
 const float WAVE_GRID_OFFSET_X		=	-200.0f;
 const float WAVE_GRID_OFFSET_Y		=	-200.0f;
@@ -63,9 +63,12 @@ class EWaving : public IWaving {
 		virtual float		GetPressure			( const EVec4 &init_pos ) const;
 		virtual float		GetWaveSlopeX		( const EVec4 &init_pos ) const;
 		virtual void		MakeDirty			( void );
+		virtual void		SetWindSpeed		( float u );
 		
 	protected:
 		bool			still;
+		
+		float			u_wind;
 		
 		float			time;
 
@@ -83,8 +86,10 @@ class EWaving : public IWaving {
 		
 		mutable wave_sample_s	wave_grid[WAVE_GRID_SIZE][WAVE_GRID_SIZE];
 		
-		virtual void	InitWaving			( void );
+		virtual void	InitWaving			( bool new_phases );
 		point_wave_s	GetWave				( float x, float y, float depth, float time ) const;
+		
+		float			SpectrumPM			( float w );
 
 		EVec4			GetPositionAtTime	( const EVec4 &init_pos, float time ) const;
 	};
@@ -100,6 +105,7 @@ IWaving	*create_waving(lua_State *L, int idx) { return new EWaving(L, idx); }
 //
 EWaving::EWaving( lua_State *L, int idx )
 {
+	u_wind	=	0;
 	time	=	0;
 
 	sea_mesh	=	ge()->LoadMeshFromFile("sea.esx|sea");
@@ -107,7 +113,7 @@ EWaving::EWaving( lua_State *L, int idx )
 	r_ent		=	sci_vis->GetFRScene()->AddEntity();
 	r_ent->SetMesh( sea_mesh );
 	
-	InitWaving();
+	InitWaving(true);
 }
 
 
@@ -134,25 +140,34 @@ void EWaving::MakeDirty( void )
 	Spectral stuff :
 -----------------------------------------------------------------------------*/
 
-static float SpectrumPM(float w)
+
+void EWaving::SetWindSpeed( float u )
+{
+	u_wind	=	u;
+	
+	InitWaving(false);
+}
+
+
+float EWaving::SpectrumPM(float w)
 {
 	//	Pierson-Moskowitz :
 	//float	Asp	=	0.230f;
 	//float	Bsp	=	0.030f;
-	float	Asp	=	1;
-	float	Bsp	=	1;
-	return	Asp * expf(-Bsp / (w*w*w*w)) / (w*w*w*w*w);
+	//float	Asp	=	1;
+	//float	Bsp	=	1;
+	//return	Asp * expf(-Bsp / (w*w*w*w)) / (w*w*w*w*w);
 	
 	//	Lopatuhin, (60)
-	//float	U	=	25;
-	//float	g	=	GRAVITY;
-	//return 0.0081 * (g*g) * powf(w, -5) * exp( -0.74 * pow(w*U/g, -4) );
+	float	U	=	u_wind;
+	float	g	=	GRAVITY;
+	return 0.0081 * (g*g) * powf(w, -5) * exp( -0.74 * pow(w*U/g, -4) );
 }
 
 //
 //	EWaving::SetupWaving
 //
-void EWaving::InitWaving( void )
+void EWaving::InitWaving( bool new_phases )
 {
 	wave.max_freq	=	 4;
 	
@@ -171,16 +186,19 @@ void EWaving::InitWaving( void )
 	for (uint i=1; i<WAVE_BAND_NUM; i++) {
 	
 		float	w	=	dw * i;
-	
-		wave.frequency[i]	=	w;
-		wave.amplitudes[i]	=	sqrt(2* SpectrumPM(w) * dw);
-		wave.phases[i]		=	FRand(0, 2 * PI);
-		wave.wave_num[i]	=	w * w / GRAVITY;
 
-		wave.waves[i].frequency	=	w;
+		wave.amplitudes[i]		=	sqrt(2* SpectrumPM(w) * dw);
 		wave.waves[i].amplitude	=	sqrt(2 * SpectrumPM(w) * dw);
-		wave.waves[i].phase		=	wave.phases[i];
-		wave.waves[i].wave_num	=	w * w / GRAVITY;
+		
+		if (new_phases) {	
+			wave.frequency[i]	=	w;
+			wave.phases[i]		=	FRand(0, 2 * PI);
+			wave.wave_num[i]	=	w * w / GRAVITY;
+
+			wave.waves[i].frequency	=	w;
+			wave.waves[i].phase		=	wave.phases[i];
+			wave.waves[i].wave_num	=	w * w / GRAVITY;
+		}
 	}
 	
 	still = true;

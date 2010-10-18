@@ -51,6 +51,7 @@ class IWaving : public ICoreObject {
 		virtual float		GetPressure		( const EVec4 &init_pos ) const = 0;
 		virtual float		GetWaveSlopeX	( const EVec4 &init_pos ) const = 0;
 		virtual void		MakeDirty		( void ) = 0;
+		virtual void		SetWindSpeed	( float u ) = 0;
 	};
 	
 	
