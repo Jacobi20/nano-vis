@@ -95,6 +95,7 @@ game_time = 0;
 -------------------------------------------------------------------------------
 
 naval.remove_all_ships();
+naval.set_wind(0);
 
 function show_info()
 	local x,y,z;
@@ -110,49 +111,24 @@ function show_info()
 	print("");
 end
 
-function create_uboat()
-	print("");
-	print("---- creating U-boat ----");
-	local ship = naval.create_ship();
-
-	ship:set_resistance	( 0.3 );
-	
-	ship:set_vis_mesh	( "uboat.esx|boat1"			);
-	ship:set_hdf_mesh	( "uboat.esx|flowsurf2" 		);
-	ship:set_hsf_mesh	( "uboat.esx|flowsurf2" 		);
-	ship:make_rigidbody	( "uboat.esx|stat", 1805000	);
-	
-	ship:set_position	( 0, 0, 0 );	
-	ship:set_angles		( 90, 0, 0 );
-	ship:set_cmass		( 0,0,-0.5 );
-	
-	ship:build_voxels	( "uboat.esx|flowsurf2", 1	);
-	ship:build_surf_dxdy( "uboat.esx|flowsurf2", 1, 0.1	);
-	
-	print("---- done ----");
-	print("");
-	return ship;
-end
-
-
-function create_cutter()
+function create_tanker()
 	print("");
 	print("---- creating Coast Guard Ship ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 1.0 );
+	ship:set_resistance	( 1 );
 	
-	ship:set_vis_mesh	( "boat.esx|boat1"			);
-	ship:set_hdf_mesh	( "boat.esx|flow" 			);
-	ship:set_hsf_mesh	( "boat.esx|flow" 			);
-	ship:make_rigidbody	( "boat.esx|stat", 500000	);
+	ship:set_vis_mesh	( "tanker.esx|ship"			);
+	ship:set_hdf_mesh	( "tanker.esx|ship" 		);
+	ship:set_hsf_mesh	( "tanker.esx|ship" 		);
+	ship:make_rigidbody	( "tanker.esx|rb", 	5000000	);
 	
-	ship:set_position	( 0, -50, 30 );	
-	ship:set_angles		( 90, 10, 0);
-	ship:set_cmass		( 0, 0, 0 );
+	ship:set_position	( 0, -30, -1 );	
+	ship:set_angles		( 45, 0, 5);
+	ship:set_cmass		( 0, 0, 0.19 );
 	
-	ship:build_voxels	( "boat.esx|flow", 1	);
-	ship:build_surf_dxdy( "boat.esx|flow", 1, 0.1	);
+	ship:build_voxels	( "tanker.esx|ship", 1	);
+	ship:build_surf_dxdy( "tanker.esx|ship", 3, 0.1	);
 	
 	print("---- done ----");
 	print("");
@@ -164,43 +140,19 @@ function create_ssn668()
 	print("---- creating SSN-668 'Los Angeles' ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 5 );
+	ship:set_resistance	( 1.0 );
 	
 	ship:set_vis_mesh	( "ssn668.esx|vismesh"			);
 	ship:set_hdf_mesh	( "ssn668.esx|hydromesh" 		);
 	ship:set_hsf_mesh	( "ssn668.esx|hydromesh" 		);
-	ship:make_rigidbody	( "ssn668.esx|physmesh", 6000000	);
+	ship:make_rigidbody	( "ssn668.esx|physmesh", 5000000	);
 	
-	ship:set_position	( 0, 0, 0 );	
-	ship:set_angles		( 90, 0, 0 );
-	ship:set_cmass		( 3.8, 0, -3 );
-	
-	ship:build_voxels	( "ssn668.esx|hydromesh", 2	);
-	ship:build_surf_dxdy( "ssn668.esx|hydromesh", 1, 0.1	);
-	
-	print("---- done ----");
-	print("");
-	return ship;
-end
-
-function create_box()
-	print("");
-	print("---- creating Box ----");
-	local ship = naval.create_ship();
-
-	ship:set_resistance	( 5 );
-	
-	ship:set_vis_mesh	( "box.esx|box"				);
-	ship:set_hdf_mesh	( "box.esx|box" 			);
-	ship:set_hsf_mesh	( "box.esx|box" 			);
-	ship:make_rigidbody	( "box.esx|box",  8000000	);
-	
-	ship:set_position	( 0, 0, 0 );	
-	ship:set_angles		( 0, 0, 90 );
+	ship:set_position	( 0, 30, -2.2 );	
+	ship:set_angles		( 45, 0, 5 );
 	ship:set_cmass		( 0, 0, 0 );
 	
-	ship:build_voxels	( "box.esx|box", 2	);
-	ship:build_surf_dxdy( "box.esx|box", 1, 2 );
+	ship:build_voxels	( "ssn668.esx|hydromesh", 2	);
+	ship:build_surf_dxdy( "ssn668.esx|hydromesh", 3, 0.1	);
 	
 	print("---- done ----");
 	print("");
@@ -208,19 +160,13 @@ function create_box()
 end
 
 
---local rolling_log = io.open("rolling.log", "w");
---local rolling_log = io.open("uboat_calibration_roll_5_deg.log", "w");
-local rolling_log = io.open("cutter_calibration_roll_5_deg_kappa.log", "w");
+local rolling_log1 = io.open("rolling1.log", "w");
+local rolling_log2 = io.open("rolling2.log", "w");
 
-
---uboat	=	create_ssn668();
-uboat	=	create_cutter();
---uboat	=	create_uboat();
---uboat	=	create_box();
+uboat	=	create_tanker();
+uboat2	=	create_ssn668();
 
 user.ship_hsf_method	=	"hxfse";
---ship_hsf_method	=	"surface";
-
 
 -------------------------------------------------------------------------------
 --	frame :
@@ -244,50 +190,9 @@ end
 
 
 --------------------------------------------------
+wind = 0;
 
-function do_rolling()
-	
---	ship_hsf_method	=	"voxel";
-	ship_hsf_method	=	"surface";
-
-	print("");
-	print("Rolling experiment");
-	local f = io.open("rolling.txt", "w");
-	
-	for roll=0, 180, 1 do
-		
-		uboat:set_position	( 0, 0, -0.5 );	
-		uboat:set_angles	( 90, 0, roll );
-		uboat:simulate		( 0.001 );
-		
-		local ra 	= uboat:get_right_arm();
-		local hsf 	= uboat:get_hsf_force()/1000;
-		
-		local out	= string.format("%8.4f %7.4f %7.4f", roll, ra, hsf);
-		print(out);
-		f:write(out.."\n");
-		f:flush();
-	end
-	
-	uboat:set_position	( 0, 0, -0.5 );	
-	uboat:set_angles	( 90, 0, nil );
-	io.close(f);
-
-	print("Done.");
-end
-
-
-function sci_frame(dtime)
-
---	SCI_ShipForce( vmath.vec4(0, 0,-5000000,0), vmath.vec4(50,0,0,1));
-
-	local	rotation = 60;
-	game_time = game_time + dtime;
-	
-	dtime = 0.03;
-	
-	DriveShip();
-	
+function sim_ship(uboat, logfile, dtime)
 	if uboat  then 
 		uboat:simulate(dtime);  
 		
@@ -295,9 +200,9 @@ function sci_frame(dtime)
 		local yaw, pitch, roll 	= uboat:get_angles();
 		local x, y, z 			= uboat:get_position();
 
-		-- yaw = 90;
-		-- x   = 0;
-		-- y   = 0;
+		yaw = 45;
+		x   = 0;
+		--y   = 0;
 		uboat:set_angles(yaw, pitch, roll);
 		uboat:set_position(x,y,z);
 
@@ -313,10 +218,25 @@ function sci_frame(dtime)
 		local wave_offset		= (wave_offset0 + wave_offset1)/2;
 		local wave_slope		= math.atan((wave_offset1 - wave_offset0)/(2*step));
 		local out				= string.format("%f %f %f %f %f %f %f %f", yaw, pitch, roll, x, y, z, wave_offset, wave_slope);
-		rolling_log:write(out.."\n");
-		rolling_log:flush();
+		logfile:write(out.."\n");
+		logfile:flush();
 
 	end;
+end
+
+function sci_frame(dtime)
+
+--	SCI_ShipForce( vmath.vec4(0, 0,-5000000,0), vmath.vec4(50,0,0,1));
+
+	local	rotation = 60;
+	game_time = game_time + dtime;
+	
+	dtime = 0.03;
+	
+	DriveShip();
+
+	sim_ship(uboat,  rolling_log1, dtime);
+	sim_ship(uboat2, rolling_log2, dtime);
 	
 	if cutter then 
 		cutter:simulate(dtime); 
