@@ -95,7 +95,7 @@ game_time = 0;
 -------------------------------------------------------------------------------
 
 naval.remove_all_ships();
-naval.set_wind(0);
+naval.set_wind(10);
 
 function show_info()
 	local x,y,z;
@@ -116,19 +116,19 @@ function create_tanker()
 	print("---- creating Coast Guard Ship ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 1 );
+	ship:set_resistance	( 0.9 );
 	
 	ship:set_vis_mesh	( "tanker.esx|ship"			);
 	ship:set_hdf_mesh	( "tanker.esx|ship" 		);
 	ship:set_hsf_mesh	( "tanker.esx|ship" 		);
-	ship:make_rigidbody	( "tanker.esx|rb", 	5000000	);
+	ship:make_rigidbody	( "tanker.esx|rb", 	6000000	);
 	
-	ship:set_position	( 0, -30, -1 );	
-	ship:set_angles		( 45, 0, 5);
-	ship:set_cmass		( 0, 0, 0.19 );
+	ship:set_position	( 0, -65, -1.5 );	
+	ship:set_angles		( 90, 0, 5);
+	ship:set_cmass		( 0, 0, 0.2 );
 	
 	ship:build_voxels	( "tanker.esx|ship", 1	);
-	ship:build_surf_dxdy( "tanker.esx|ship", 3, 0.1	);
+	ship:build_surf_dxdy( "tanker.esx|ship", 2.2, 0.1	);
 	
 	print("---- done ----");
 	print("");
@@ -140,19 +140,19 @@ function create_ssn668()
 	print("---- creating SSN-668 'Los Angeles' ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 1.0 );
+	ship:set_resistance	( 1.2 );
 	
 	ship:set_vis_mesh	( "ssn668.esx|vismesh"			);
 	ship:set_hdf_mesh	( "ssn668.esx|hydromesh" 		);
 	ship:set_hsf_mesh	( "ssn668.esx|hydromesh" 		);
-	ship:make_rigidbody	( "ssn668.esx|physmesh", 5000000	);
+	ship:make_rigidbody	( "ssn668.esx|physmesh", 6000000	);
 	
-	ship:set_position	( 0, 30, -2.2 );	
-	ship:set_angles		( 45, 0, 5 );
+	ship:set_position	( 0, 65, -3.4 );	
+	ship:set_angles		( 90, 0, 5 );
 	ship:set_cmass		( 0, 0, 0 );
 	
 	ship:build_voxels	( "ssn668.esx|hydromesh", 2	);
-	ship:build_surf_dxdy( "ssn668.esx|hydromesh", 3, 0.1	);
+	ship:build_surf_dxdy( "ssn668.esx|hydromesh", 3.2, 0.1	);
 	
 	print("---- done ----");
 	print("");
@@ -190,7 +190,6 @@ end
 
 
 --------------------------------------------------
-wind = 0;
 
 function sim_ship(uboat, logfile, dtime)
 	if uboat  then 
@@ -200,7 +199,7 @@ function sim_ship(uboat, logfile, dtime)
 		local yaw, pitch, roll 	= uboat:get_angles();
 		local x, y, z 			= uboat:get_position();
 
-		yaw = 45;
+		yaw = 90;
 		x   = 0;
 		--y   = 0;
 		uboat:set_angles(yaw, pitch, roll);
@@ -224,12 +223,15 @@ function sim_ship(uboat, logfile, dtime)
 	end;
 end
 
+wind = 0;
+
 function sci_frame(dtime)
 
 --	SCI_ShipForce( vmath.vec4(0, 0,-5000000,0), vmath.vec4(50,0,0,1));
 
 	local	rotation = 60;
 	game_time = game_time + dtime;
+	
 	
 	dtime = 0.03;
 	
