@@ -95,7 +95,9 @@ game_time = 0;
 -------------------------------------------------------------------------------
 
 naval.remove_all_ships();
-naval.set_wind(10);
+naval.set_wind(15);
+
+local main_yaw = 90
 
 function show_info()
 	local x,y,z;
@@ -124,11 +126,11 @@ function create_tanker()
 	ship:make_rigidbody	( "tanker.esx|rb", 	6000000	);
 	
 	ship:set_position	( 0, -65, -1.5 );	
-	ship:set_angles		( 90, 0, 5);
+	ship:set_angles		( main_yaw, 0, 0);
 	ship:set_cmass		( 0, 0, 0.2 );
 	
 	ship:build_voxels	( "tanker.esx|ship", 1	);
-	ship:build_surf_dxdy( "tanker.esx|ship", 2.2, 0.1	);
+	ship:build_surf_dxdy( "tanker.esx|ship", 0.5, 0.1	);
 	
 	print("---- done ----");
 	print("");
@@ -148,11 +150,11 @@ function create_ssn668()
 	ship:make_rigidbody	( "ssn668.esx|physmesh", 6000000	);
 	
 	ship:set_position	( 0, 65, -3.4 );	
-	ship:set_angles		( 90, 0, 5 );
+	ship:set_angles		( main_yaw, 0, 0 );
 	ship:set_cmass		( 0, 0, 0 );
 	
 	ship:build_voxels	( "ssn668.esx|hydromesh", 2	);
-	ship:build_surf_dxdy( "ssn668.esx|hydromesh", 3.2, 0.1	);
+	ship:build_surf_dxdy( "ssn668.esx|hydromesh", 0.5, 0.1	);
 	
 	print("---- done ----");
 	print("");
@@ -199,7 +201,7 @@ function sim_ship(uboat, logfile, dtime)
 		local yaw, pitch, roll 	= uboat:get_angles();
 		local x, y, z 			= uboat:get_position();
 
-		yaw = 90;
+		yaw = main_yaw;
 		x   = 0;
 		--y   = 0;
 		uboat:set_angles(yaw, pitch, roll);
