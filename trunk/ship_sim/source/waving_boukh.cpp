@@ -152,11 +152,9 @@ void EWaving::SetWindSpeed( float u )
 float EWaving::SpectrumPM(float w)
 {
 	//	Pierson-Moskowitz :
-	//float	Asp	=	0.230f;
-	//float	Bsp	=	0.030f;
-	//float	Asp	=	1;
-	//float	Bsp	=	1;
-	//return	Asp * expf(-Bsp / (w*w*w*w)) / (w*w*w*w*w);
+	float	Asp	=	0.0f;
+	float	Bsp	=	1.30f;
+	return	Asp * expf(-Bsp / (w*w*w*w)) / (w*w*w*w*w);
 	
 	//	Lopatuhin, (60)
 	float	U	=	u_wind;
@@ -169,7 +167,7 @@ float EWaving::SpectrumPM(float w)
 //
 void EWaving::InitWaving( bool new_phases )
 {
-	wave.max_freq	=	 4;
+	wave.max_freq	=	 2;
 	
 	float	dw		=	wave.max_freq / (float)WAVE_BAND_NUM;
 
