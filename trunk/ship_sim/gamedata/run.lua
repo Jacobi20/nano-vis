@@ -118,19 +118,19 @@ function create_tanker()
 	print("---- creating Coast Guard Ship ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 0.9 );
+	ship:set_resistance	( 0.5 );
 	
 	ship:set_vis_mesh	( "tanker.esx|ship"			);
 	ship:set_hdf_mesh	( "tanker.esx|ship" 		);
 	ship:set_hsf_mesh	( "tanker.esx|ship" 		);
 	ship:make_rigidbody	( "tanker.esx|rb", 	6000000	);
 	
-	ship:set_position	( 0, -65, -1.5 );	
-	ship:set_angles		( main_yaw, 0, 0);
-	ship:set_cmass		( 0, 0, 0.2 );
+	ship:set_position	( 0, -65, 0.25 );	
+	ship:set_angles		( main_yaw, 0, 5);
+	ship:set_cmass		( 0, 0, 0.0 );
 	
 	ship:build_voxels	( "tanker.esx|ship", 1	);
-	ship:build_surf_dxdy( "tanker.esx|ship", 0.5, 0.1	);
+	ship:build_surf_dxdy( "tanker.esx|ship", 0.2, 0.1	);
 	
 	print("---- done ----");
 	print("");
@@ -150,7 +150,7 @@ function create_ssn668()
 	ship:make_rigidbody	( "ssn668.esx|physmesh", 6000000	);
 	
 	ship:set_position	( 0, 65, -3.4 );	
-	ship:set_angles		( main_yaw, 0, 0 );
+	ship:set_angles		( main_yaw, 0, 5 );
 	ship:set_cmass		( 0, 0, 0 );
 	
 	ship:build_voxels	( "ssn668.esx|hydromesh", 2	);

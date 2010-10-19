@@ -28,7 +28,7 @@
 	Waving :
 -----------------------------------------------------------------------------*/
 
-const uint	WAVE_BAND_NUM			=	60;
+const uint	WAVE_BAND_NUM			=	50;
 const uint	WAVE_GRID_SIZE			=	400;
 const float WAVE_GRID_OFFSET_X		=	-200.0f;
 const float WAVE_GRID_OFFSET_Y		=	-200.0f;
@@ -167,7 +167,7 @@ float EWaving::SpectrumPM(float w)
 //
 void EWaving::InitWaving( bool new_phases )
 {
-	wave.max_freq	=	 2;
+	wave.max_freq	=	 1.8;
 	
 	float	dw		=	wave.max_freq / (float)WAVE_BAND_NUM;
 
@@ -228,6 +228,7 @@ void EWaving::Update( float dtime, const EVec4 &view_pos )
 		
 		v	=	mesh->GetVertex( i );
 		v.position.z	=	GetPosition( Vec3ToVec4(v.position) ).z;
+		v.position.y	*=	2;
 
 		v.uv0.x			=	v.position.x/4;
 		v.uv0.y			=	v.position.y/4;
