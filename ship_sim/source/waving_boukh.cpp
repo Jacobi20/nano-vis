@@ -64,12 +64,16 @@ class EWaving : public IWaving {
 		virtual float		GetWaveSlopeX		( const EVec4 &init_pos ) const;
 		virtual void		MakeDirty			( void );
 		virtual void		SetWindSpeed		( float u );
+		virtual void		SetSinWave			( float w, float a );
 		
 	protected:
 		bool			still;
 		
 		float			u_wind;
-		
+
+		bool			sin_wave;
+		float			sin_wave_w;
+		float			sin_wave_a;		
 		float			time;
 
 		IPxFREntity		r_ent;
@@ -143,9 +147,20 @@ void EWaving::MakeDirty( void )
 
 void EWaving::SetWindSpeed( float u )
 {
+	sin_wave = false;
 	u_wind	=	u;
 	
 	InitWaving(false);
+}
+
+
+void EWaving::SetSinWave( float w, float a )
+{
+	sin_wave = true;
+	sin_wave_w = w;
+	sin_wave_a = a;
+	
+	still = false;
 }
 
 
@@ -167,7 +182,7 @@ float EWaving::SpectrumPM(float w)
 //
 void EWaving::InitWaving( bool new_phases )
 {
-	wave.max_freq	=	 1.8;
+	wave.max_freq	=	 4.0;
 	
 	float	dw		=	wave.max_freq / (float)WAVE_BAND_NUM;
 
@@ -258,25 +273,25 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 	}
 	
 	//	compute vertical offset :	
-#if 1	
-	for (uint i=0; i<WAVE_BAND_NUM; i++) {
-	
-		float x2 = x;
-
-		register float	amp		=	wave.waves[i].amplitude;
-		register float	freq	=	wave.waves[i].frequency;
-		register float	phase	=	wave.waves[i].phase;
-		register float	k		=	wave.waves[i].wave_num;
-
-		float	fade	=	(depth<0) ? 1 : exp( - k * depth );
+	if (!sin_wave) {
+		for (uint i=0; i<WAVE_BAND_NUM; i++) {
 		
-		pw.offset	+=	fade * amp * cos(freq * time + k * x2 + phase);
+			float x2 = x;
+
+			register float	amp		=	wave.waves[i].amplitude;
+			register float	freq	=	wave.waves[i].frequency;
+			register float	phase	=	wave.waves[i].phase;
+			register float	k		=	wave.waves[i].wave_num;
+
+			float	fade	=	(depth<0) ? 1 : exp( - k * depth );
+			
+			pw.offset	+=	fade * amp * cos(freq * time + k * x2 + phase);
+		}
+	} else {
+		float	w	=	sin_wave_w;
+		float	k	=	w * w / GRAVITY;
+		pw.offset	=	sin_wave_a * sin(w * time + k * x);
 	}
-#else
-	float	w	=	1;
-	float	k	=	w * w / GRAVITY;
-	pw.offset	=	0.5 * sin(w * time + k * x);
-#endif
 	
 	
 	//	compute pressure offset :	

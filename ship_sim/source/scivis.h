@@ -68,7 +68,8 @@ class ESciVis : public IGame, public self_ref<ESciVis>, public IUIDrawCB {
 		static int	set_view			( lua_State *L );
 		static int	get_wave_offset		( lua_State *L );
 		static int	set_wind			( lua_State *L );
-		
+		static int	set_wave			( lua_State *L );
+				
 	public:
 		float				global_simulation_time;
 		
@@ -87,7 +88,6 @@ class ESciVis : public IGame, public self_ref<ESciVis>, public IUIDrawCB {
 		void				InitPhysX		( void );
 		void				ShutdownPhysX	( void );
 		void				FramePhysX		( float dtime );
-
 		uint				rolling_history_ptr;
 		EVec4				rolling_history[ROLL_HISTORY_SIZE];
 		

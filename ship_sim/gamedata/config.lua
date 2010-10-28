@@ -2,10 +2,10 @@
 -- warning: syntax errors will cause configuration resetting --
 
 cfg.setvar('d3d_wireframe'                 , nil);
-cfg.setvar('d3d_fullscr'                   , true);
-cfg.setvar('d3d_mode'                      , 5);
-cfg.setvar('d3d_xpos'                      , 45);
-cfg.setvar('d3d_ypos'                      , 11);
+cfg.setvar('d3d_fullscr'                   , false);
+cfg.setvar('d3d_mode'                      , 2);
+cfg.setvar('d3d_xpos'                      , 275);
+cfg.setvar('d3d_ypos'                      , 33);
 cfg.setvar('d3d_anisotropy_level'          , 16);
 cfg.setvar('d3d_mipmap_lod_bias'           , 0);
 cfg.setvar('ship_show_hull'                , true);
@@ -50,9 +50,9 @@ input.bind ("S", "_ShipFW()");
 input.bind ("X", "_ShipSR()");
 input.bind ("Z", "_ShipBW()");
 input.bind ("F1", "show_info()");
-input.bind ("F2", "cfg.vars.ship_show_hull      = not cfg.vars.ship_show_hull");
-input.bind ("F3", "cfg.vars.ship_show_voxels    = not cfg.vars.ship_show_voxels");
-input.bind ("F4", "cfg.vars.ship_show_submerge  = not cfg.vars.hip_show_submerge");
+input.bind ("F2", "setup_rolling_on_silent_water()");
+input.bind ("F3", "setup_rolling_on_sin_wave()");
+input.bind ("F4", "setup_rolling_on_wind_wave()");
 input.bind ("F5", "dofile('run.lua')");
 input.bind ("F6", "rs.reload_shaders()");
 input.bind ("F7", "do_rolling()");
