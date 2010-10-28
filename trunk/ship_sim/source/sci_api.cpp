@@ -42,6 +42,7 @@ void ESciVis::RegisterAPI( void )
 	LUALIB_METHOD	( set_view )
 	LUALIB_METHOD	( get_wave_offset )
 	LUALIB_METHOD	( set_wind )
+	LUALIB_METHOD	( set_wave )
 	LUALIB_REGISTER	( L )
 
 	//	add 'naval.create_ship' :
@@ -100,6 +101,19 @@ int ESciVis::set_wind( lua_State *L )
 {
 	LUA_INTERFACE(L);
 	self->waving->SetWindSpeed( lua.RequireNumber(1, "wind velocity") );
+	return 0;
+}
+
+
+//
+//	ESciVis::set_wind
+//
+int ESciVis::set_wave( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	float w = lua.RequireNumber(1, "w");
+	float a = lua.RequireNumber(2, "a");
+	self->waving->SetSinWave(w,a);
 	return 0;
 }
 
