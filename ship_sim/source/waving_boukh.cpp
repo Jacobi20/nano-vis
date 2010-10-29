@@ -147,8 +147,9 @@ void EWaving::MakeDirty( void )
 
 void EWaving::SetWindSpeed( float u )
 {
-	sin_wave = false;
-	u_wind	=	u;
+	time		=	0;
+	sin_wave	=	false;
+	u_wind		=	u;
 	
 	InitWaving(false);
 }
@@ -156,9 +157,10 @@ void EWaving::SetWindSpeed( float u )
 
 void EWaving::SetSinWave( float w, float a )
 {
-	sin_wave = true;
-	sin_wave_w = w;
-	sin_wave_a = a;
+	time		=	0;
+	sin_wave	=	true;
+	sin_wave_w	=	w;
+	sin_wave_a	=	a;
 	
 	still = false;
 }

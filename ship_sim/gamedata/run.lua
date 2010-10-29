@@ -145,9 +145,6 @@ function setup_rolling_on_silent_water()
 	ship	=	create_cutter(5,10);
 end
 
---setup_rolling_on_silent_water()
-setup_rolling_on_sin_wave()
-
 
 function setup_rolling_on_sin_wave()
 	print("---------------------------------------");
@@ -156,7 +153,7 @@ function setup_rolling_on_sin_wave()
 	
 	rolling_log = io.open("sin_wave.log", "w");
 
-	naval.set_wave(1.5,0.15);
+	naval.set_wave(1.5	,0.15);
 	
 	ship:dispose();
 	ship	=	create_cutter(0,3);
@@ -170,11 +167,17 @@ function setup_rolling_on_wind_wave()
 
 	rolling_log = io.open("wind_wave.log", "w");
 	
-	naval.set_wind(10);
+	naval.set_wind(20);
 	
 	ship:dispose();
-	ship	=	create_cutter(0,1);
+	ship	=	create_cutter(0,5);
+	ship:set_angles(45,0,0);
 end
+
+
+--setup_rolling_on_silent_water()
+--setup_rolling_on_sin_wave()
+setup_rolling_on_wind_wave()
 
 
 function sim_ship(ship, logfile, dtime)
@@ -185,10 +188,10 @@ function sim_ship(ship, logfile, dtime)
 		local yaw, pitch, roll 	= ship:get_angles();
 		local x, y, z 			= ship:get_position();
 
-		yaw = 90;
-		--pitch = -0.869;
-		x   = 0;
-		y   = 0;
+		-- yaw = 90;
+		-- --pitch = -0.869;
+		-- x   = 0;
+		-- y   = 0;
 		ship:set_angles(yaw, pitch, roll);
 		ship:set_position(x,y,z);
 
@@ -210,7 +213,33 @@ function sim_ship(ship, logfile, dtime)
 	end;
 end
 
+grid_size = 0;
+local cpu_log = io.open("cpu.log", "w");
+
+
 function sci_frame(dtime)
+
+	--print(grid_size);
+	local cpu = {
+		[0] = 0;
+		[1] = 0;
+		[2] = 0;
+		[3] = 0;
+	};
+	
+	chunk = math.floor(grid_size/4);
+	
+	for i=0, grid_size do
+		if 		i<(chunk*1) then		cpu[0] = cpu[0] + grid_submerging[i];
+		elseif 	i<(chunk*2) then		cpu[1] = cpu[1] + grid_submerging[i];
+		elseif 	i<(chunk*3) then		cpu[2] = cpu[2] + grid_submerging[i];
+		elseif 	i<(chunk*4) then		cpu[3] = cpu[3] + grid_submerging[i];
+		end
+	end
+	
+	local out = string.format("%f %f %f %f", cpu[0], cpu[1], cpu[2], cpu[3]);
+	cpu_log:write(out.."\n");
+	cpu_log:flush();
 
 	local	rotation = 60;
 	game_time = game_time + dtime;
