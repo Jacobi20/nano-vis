@@ -34,6 +34,7 @@ struct ESurfElem {
 		EVec4	position;
 		EVec4	normal;
 		float	area;
+		bool	submerged;
 	};
 
 

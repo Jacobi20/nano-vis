@@ -126,6 +126,11 @@ void EShip::UpdateHXFSEGrid( void )
 			hxfgrid.grid.push_back(se);
 		} 
 	}
+
+	uint n = hxfgrid.grid.size();
+	for (uint i=0; i<n; i++) {
+		swap(hxfgrid.grid[i], hxfgrid.grid[rand()%n]);
+	}
 }
 
 
@@ -184,13 +189,44 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 		EVec4	color	=	Vec4Lerp( EVec4(1,1,1,0), EVec4(1,1,1,1), lf );
 		rs()->GetDVScene()->DrawPoint( se.position, 0.1, color );
 		*/
+		
+		if (factor<0.5) {
+			hxfgrid.grid[i].submerged = false;
+		} else {
+			hxfgrid.grid[i].submerged = true;
+		}
 
 		EVec4	f	=	- (se.normal * (pr * s));
 
 		ship_body->AddForceAtPos( f + fd, se.position );
 	}
 	
+
+	//
+	//	dump computing info :
+	//	
+	do {
+		lua_State *L = CoreLua();
+		LUA_INTERFACE(L);
 	
+		uint n = hxfgrid.grid.size();
+		
+		
+		lua_pushnumber(L, n);
+		lua_setglobal(L, "grid_size");
+		
+		lua_newtable(L);
+		
+		for (uint i=0; i<n; i++) {
+			lua_pushnumber( L, i );
+			int op = 1;
+			if (hxfgrid.grid[i].submerged) { op = 2; }
+			lua_pushnumber( L, op );
+			lua_settable(L, -3);
+		}
+		
+		lua_setglobal(L, "grid_submerging");
+	} while (0);	
 	
 	//
 	//	damp wrong
