@@ -184,11 +184,11 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 			float	pd		=	water_resistance_cx * sqrt(vel_p2) * (v_dot_n) * se.area * WATER_DENSITY * factor;
 			pr +=	pd;
 		#endif
-		/*
+		
 		float	lf		=	Clamp<float>(pr / (1), 0, 1);
-		EVec4	color	=	Vec4Lerp( EVec4(1,1,1,0), EVec4(1,1,1,1), lf );
+		EVec4	color	=	Vec4Lerp( EVec4(1,0,0,1), EVec4(1,1,0,1), lf );
 		rs()->GetDVScene()->DrawPoint( se.position, 0.1, color );
-		*/
+		
 		
 		if (factor<0.5) {
 			hxfgrid.grid[i].submerged = false;

@@ -167,10 +167,10 @@ function setup_rolling_on_wind_wave()
 
 	rolling_log = io.open("wind_wave.log", "w");
 	
-	naval.set_wind(20);
+	naval.set_wind(10);
 	
 	ship:dispose();
-	ship	=	create_cutter(0,5);
+	ship	=	create_cutter(0,20);
 	ship:set_angles(45,0,0);
 end
 
