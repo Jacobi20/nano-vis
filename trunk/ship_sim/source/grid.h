@@ -31,7 +31,7 @@
 #include "array3d.h"
 #include <queue>
 
-typedef hard_ref<class EVoxelGrid>	EPxVoxelGrid;
+typedef HardRef<class EVoxelGrid>	EPxVoxelGrid;
 
 const uint VOXEL_GRID_SIZE	=	10;
 

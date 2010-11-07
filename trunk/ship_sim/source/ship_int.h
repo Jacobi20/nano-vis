@@ -30,8 +30,8 @@
 
 class	IWaving;
 class	IShip;
-typedef hard_ref<IWaving>	IPxWaving;
-typedef hard_ref<IShip>		IPxShip;
+typedef HardRef<IWaving>	IPxWaving;
+typedef HardRef<IShip>		IPxShip;
 
 typedef IWaving	*	(*CreateWaving_f)	( lua_State *L, int idx );
 typedef IShip	*	(*CreateShip_f)		( lua_State *L, int idx );
