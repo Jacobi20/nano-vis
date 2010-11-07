@@ -239,7 +239,7 @@ bool EVoxelGrid::Grow(queue<vxind_s> &Q, const IPxTriMesh mesh, EVec3 origin, fl
 	dir	=	EVec3( szx * dx, szy * dy, szz * dz );
 	
 	EVertex v;
-	mesh.getptr();
+	mesh.getPointer();
 	bool r = false;
 	
 	//	do some attemtps :	
