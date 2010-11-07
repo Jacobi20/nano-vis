@@ -45,10 +45,10 @@ state = {
 	pitch_dec	=	false;
 	dist_inc	=	false;
 	dist_dec	=	false;
-	yaw		=	-125;
+	yaw		=	-90;
 	roll	=	0;
-	pitch	=	20;
-	dist	=	50;
+	pitch	=	10;
+	dist	=	120;
 	
 	submersion	=	false;
 	sunking		=	false;
@@ -99,27 +99,72 @@ naval.remove_all_ships();
 naval.set_wind(0);
 
 function create_cutter(roll, dens)
+	-- print("");
+	-- print("---- creating SSN-668 'Los Angeles' ----");
+	-- local ship = naval.create_ship();
+
+	-- ship:set_resistance	( 1.2 );
+	
+	-- ship:set_vis_mesh	( "ssn668.esx|vismesh"			);
+	-- ship:set_hdf_mesh	( "ssn668.esx|hydromesh" 		);
+	-- ship:set_hsf_mesh	( "ssn668.esx|hydromesh" 		);
+	-- ship:make_rigidbody	( "ssn668.esx|physmesh", 6000000	);
+	
+	-- ship:set_position	( 0, 0, -3.4 );	
+	-- ship:set_angles		( 90, 0, 5 );
+	-- ship:set_cmass		( 0, 0, 0 );
+	
+	-- ship:build_voxels	( "ssn668.esx|hydromesh", 2	);
+	-- ship:build_surf_dxdy( "ssn668.esx|hydromesh", 0.5, 0.1	);
+	
+	-- print("---- done ----");
+	-- print("");
+	-- return ship;
+-------------------------------------------------------------	
 	print("");
-	print("---- creating Coast Guard Ship ----");
+	print("---- creating U-boat ----");
 	local ship = naval.create_ship();
 
 	ship:set_resistance	( 1.0 );
 	
-	ship:set_vis_mesh	( "boat.esx|boat1"			);
-	ship:set_hdf_mesh	( "boat.esx|flow" 			);
-	ship:set_hsf_mesh	( "boat.esx|flow" 			);
-	ship:make_rigidbody	( "boat.esx|stat", 400000	);
+	ship:set_vis_mesh	( "uboat.esx|boat1"			);
+	ship:set_hdf_mesh	( "uboat.esx|flowsurf2" 		);
+	ship:set_hsf_mesh	( "uboat.esx|flowsurf2" 		);
+	ship:make_rigidbody	( "uboat.esx|stat", 2205000	);
 	
-	ship:set_position	( 0, 0, 0.101+0.0 );	
-	ship:set_angles		( 90, -0.869, 0);
-	ship:set_cmass		( 0, 0, 0 );
+	ship:set_position	( 0, 0, 0 );	
+	ship:set_angles		( 90, 0, 0 );
+	ship:set_cmass		( 0,0,-0.5 );
 	
-	ship:build_voxels	( "boat.esx|flow", 1	);
-	ship:build_surf_dxdy( "boat.esx|flow", dens, 0.1	);
+	ship:build_voxels	( "uboat.esx|flowsurf2", 1	);
+	ship:build_surf_dxdy( "uboat.esx|flowsurf2", 0.3, 1	);
 	
 	print("---- done ----");
 	print("");
 	return ship;
+-------------------------------------------------------------	
+	-- print("");
+	-- print("---- creating coast guard ship ----");
+	-- local ship = naval.create_ship();
+
+	-- ship:set_resistance	( 1.0 );
+	
+	-- ship:set_vis_mesh	( "boat.esx|boat1"			);
+	-- ship:set_hdf_mesh	( "boat.esx|flow" 			);
+	-- ship:set_hsf_mesh	( "boat.esx|flow" 			);
+	-- ship:make_rigidbody	( "boat.esx|stat", 400000	);
+	
+	-- ship:set_position	( 0, 0, 0.101+0.0 );	
+	-- ship:set_angles		( 90, -0.869, 0);
+	-- ship:set_cmass		( 0, 0, 0 );
+	
+	-- ship:build_voxels	( "boat.esx|flow", 1	);
+	-- ship:build_surf_dxdy( "boat.esx|flow", dens, 0.1	);
+	
+	-- print("---- done ----");
+	-- print("");
+	-- return ship;
+-------------------------------------------------------------	
 end
 
 ship = create_cutter(0,10);
@@ -167,11 +212,11 @@ function setup_rolling_on_wind_wave()
 
 	rolling_log = io.open("wind_wave.log", "w");
 	
-	naval.set_wind(10);
+	naval.set_wind(15);
 	
 	ship:dispose();
-	ship	=	create_cutter(0,20);
-	ship:set_angles(45,0,0);
+	ship	=	create_cutter(0,1);
+	ship:set_angles(25,0,0);
 end
 
 
@@ -244,7 +289,7 @@ function sci_frame(dtime)
 	local	rotation = 60;
 	game_time = game_time + dtime;
 	
-	dtime = 1 / 30;
+	dtime = 1 / 20;
 	
 	sim_ship(ship,  rolling_log, dtime);
 	

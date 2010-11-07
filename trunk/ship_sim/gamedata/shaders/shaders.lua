@@ -28,7 +28,7 @@ dofile('shaders/shader_lib.lua');
 --	Shaders :
 -------------------------------------------------------------------------------
 
-define_dsn_shader("textures/plain/steel.tga");
+--define_dsn_shader("textures/plain/steel.tga");
 
 define_water_shader("textures/water.tga");
 
@@ -39,6 +39,16 @@ fr.define_shader {
 	
 	injection		=	[[
 		surface.diffuse = 	float3(0.25, 0.25, 0.25);
+	]];
+		
+}
+
+fr.define_shader {
+	name			=	"textures/plain/steel.tga";
+	is_solid		=	true;
+	
+	injection		=	[[
+		surface.diffuse = 	float3(0.35, 0.35, 0.35);
 	]];
 		
 }
