@@ -44,11 +44,11 @@ class ESciVis : public IGame, public self_ref<ESciVis>, public IUIDrawCB {
 	public:		
 		
 		//	utility physical functions :
-		NxActor				*	CreatePhysBox		( float sx, float sy, float sz, const EVec4 &pos, const EQuat &orient, float mass );
-		NxActor				*	CreatePhysMesh		( IPxTriMesh mesh, const EVec4 &pos, const EQuat &orient, float mass );
-		NxActor				*	CreatePhysMesh		( vector<IPxTriMesh> meshes, vector<float> masses );
-		NxScene				*	GetNxScene			( void ) { return nx_scene; }
-		NxConvexMesh		*	BuildConvexMesh		( const IPxTriMesh input_mesh );
+		//NxActor				*	CreatePhysBox		( float sx, float sy, float sz, const EVec4 &pos, const EQuat &orient, float mass );
+		//NxActor				*	CreatePhysMesh		( IPxTriMesh mesh, const EVec4 &pos, const EQuat &orient, float mass );
+		//NxActor				*	CreatePhysMesh		( vector<IPxTriMesh> meshes, vector<float> masses );
+		//NxScene				*	GetNxScene			( void ) { return nx_scene; }
+		//NxConvexMesh		*	BuildConvexMesh		( const IPxTriMesh input_mesh );
 
 		//	naval dynamic  :
 		void					Simulate			( float dtime );
@@ -85,18 +85,18 @@ class ESciVis : public IGame, public self_ref<ESciVis>, public IUIDrawCB {
 
 	protected:
 		//	PhysX stuff :		
-		void				InitPhysX		( void );
-		void				ShutdownPhysX	( void );
-		void				FramePhysX		( float dtime );
-		uint				rolling_history_ptr;
-		EVec4				rolling_history[ROLL_HISTORY_SIZE];
+		//void				InitPhysX		( void );
+		//void				ShutdownPhysX	( void );
+		//void				FramePhysX		( float dtime );
+		//uint				rolling_history_ptr;
+		//EVec4				rolling_history[ROLL_HISTORY_SIZE];
 		
-		ErrorStream			error_stream;
-		EAllocator			allocator;
-		NxPhysicsSDK		*nx;
-		NxScene				*nx_scene;
-		NxCookingInterface	*nx_cook;
-		NxActor				*ship_body;
+		//ErrorStream			error_stream;
+		//EAllocator			allocator;
+		//NxPhysicsSDK		*nx;
+		//NxScene				*nx_scene;
+		//NxCookingInterface	*nx_cook;
+		//NxActor				*ship_body;
 	public:
 
 	};

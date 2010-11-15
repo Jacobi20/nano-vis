@@ -28,6 +28,8 @@ cfg.setvar('phys_enable_ccd'               , false);
 cfg.setvar('phys_draw_constraints'         , false);
 cfg.setvar('phys_draw_constraint_limits'   , false);
 cfg.setvar('phys_fast_wireframe'           , false);
+cfg.setvar('phys_max_substeps'             , 10);
+cfg.setvar('phys_fixed_timestep'           , 0.0166667);
 
 
 -- key bindings --
@@ -50,9 +52,9 @@ input.bind ("S", "_ShipFW()");
 input.bind ("X", "_ShipSR()");
 input.bind ("Z", "_ShipBW()");
 input.bind ("F1", "show_info()");
-input.bind ("F2", "setup_rolling_on_silent_water()");
-input.bind ("F3", "setup_rolling_on_sin_wave()");
-input.bind ("F4", "setup_rolling_on_wind_wave()");
+input.bind ("F2", "cfg.vars.ship_show_hull      = not cfg.vars.ship_show_hull");
+input.bind ("F3", "cfg.vars.ship_show_voxels    = not cfg.vars.ship_show_voxels");
+input.bind ("F4", "cfg.vars.ship_show_submerge  = not cfg.vars.hip_show_submerge");
 input.bind ("F5", "dofile('run.lua')");
 input.bind ("F6", "rs.reload_shaders()");
 input.bind ("F7", "do_rolling()");

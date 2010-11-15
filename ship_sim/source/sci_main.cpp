@@ -50,8 +50,6 @@ ESciVis::ESciVis( void )
 	
 	lua_State *L = CoreLua();
 	
-	InitPhysX();
-	
 	rs()->InstallForward();
 	
 	waving	=	create_waving(NULL, 0);
@@ -79,7 +77,7 @@ ESciVis::~ESciVis( void )
 	lua_State *L = CoreLua();
 	ELuaShip::Unregister(L);
 	
-	ShutdownPhysX();
+	//	ShutdownPhysX();
 	
 	LOG_SPLIT("");
 }
@@ -99,7 +97,7 @@ void ESciVis::Frame(uint dtime)
 	InputSystem()->SetInputMode( IN_KB_SCAN );
 	InputSystem()->ProcessInput();
 	
-	FramePhysX( dtime / 1000.0f );
+	//FramePhysX( dtime / 1000.0f );
 	
 	phys()->RunSimulation(dtime);
 

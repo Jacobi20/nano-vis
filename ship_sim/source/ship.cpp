@@ -57,7 +57,6 @@ EShip::EShip( lua_State *L, int idx )
 //
 EShip::~EShip( void )
 {
-	phys()->RemoveEntity( ship_body );
 	ship_body = NULL;
 
 	sci_vis->GetFRScene()->RemoveEntity( r_ent );
