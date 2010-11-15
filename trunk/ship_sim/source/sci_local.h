@@ -59,15 +59,15 @@ const float WATER_DENSITY	=	1000;		//	kg/m^3
 class ESciVis;
 extern ESciVis	*sci_vis;
 
-NxVec3	ToNxVec3( const EVec3 &v );
-NxQuat	ToNxQuat( const EQuat &q );
-EVec3	ToEVec3	( const NxVec3 &v );
-EQuat	ToEQuat	( const NxQuat &q );
-
-
-#include "nxaux/error_stream.h"
-#include "nxaux/stream.h"
-#include "nxaux/allocator.h"
+//NxVec3	ToNxVec3( const EVec3 &v );
+//NxQuat	ToNxQuat( const EQuat &q );
+//EVec3	ToEVec3	( const NxVec3 &v );
+//EQuat	ToEQuat	( const NxQuat &q );
+//
+//
+//#include "nxaux/error_stream.h"
+//#include "nxaux/stream.h"
+//#include "nxaux/allocator.h"
 
 #include "sci_interfaces.h"
 #include "grid.h"

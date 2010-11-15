@@ -302,26 +302,6 @@
 		<Filter
 			Name="nxaux"
 			>
-			<File
-				RelativePath=".\nxaux\allocator.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\nxaux\allocator.h"
-				>
-			</File>
-			<File
-				RelativePath=".\nxaux\error_stream.h"
-				>
-			</File>
-			<File
-				RelativePath=".\nxaux\stream.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\nxaux\stream.h"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>

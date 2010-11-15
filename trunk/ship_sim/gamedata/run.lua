@@ -21,9 +21,9 @@ input.bind ("A",	"_ShipSL()");
 input.bind ("X",  "_ShipSR()");
 
 input.bind ("F1", "show_info()"  	);
-input.bind ("F2", "setup_rolling_on_silent_water()"  	);
-input.bind ("F3", "setup_rolling_on_sin_wave()"  		);
-input.bind ("F4", "setup_rolling_on_wind_wave()"  		);
+input.bind ("F2", "cfg.vars.ship_show_hull      = not cfg.vars.ship_show_hull"  	);
+input.bind ("F3", "cfg.vars.ship_show_voxels    = not cfg.vars.ship_show_voxels" 	);
+input.bind ("F4", "cfg.vars.ship_show_submerge  = not cfg.vars.hip_show_submerge");
 
 input.bind ("N", "state.submersion 		= not state.submersion" );
 input.bind ("M", "state.sunking 		= not state.sunking" );
@@ -45,10 +45,10 @@ state = {
 	pitch_dec	=	false;
 	dist_inc	=	false;
 	dist_dec	=	false;
-	yaw		=	-90;
+	yaw		=	-125;
 	roll	=	0;
-	pitch	=	10;
-	dist	=	120;
+	pitch	=	20;
+	dist	=	70;
 	
 	submersion	=	false;
 	sunking		=	false;
@@ -87,158 +87,178 @@ function ShipBW()	state.ship_bw		=	false; end;
 function ShipSL()	state.ship_sl		=	false; end;
 function ShipSR()	state.ship_sr		=	false; end;
                                           
+
+game_time = 0;
+
 -------------------------------------------------------------------------------
 --	create ship :
 -------------------------------------------------------------------------------
 
-game_time = 0;
-
-user.ship_hsf_method	=	"hxfse";
-
 naval.remove_all_ships();
-naval.set_wind(0);
+naval.set_wind(20);
 
-function create_cutter(roll, dens)
-	-- print("");
-	-- print("---- creating SSN-668 'Los Angeles' ----");
-	-- local ship = naval.create_ship();
+function show_info()
+	local x,y,z;
+	local yaw, pitch, roll;
+	x,y,z 			=	uboat:get_position();
+	yaw,pitch,roll	=	uboat:get_angles()
+	
+	print("---- ship info ----");
+	print("position : ", x, y, z);
+	print("yaw      : ", yaw 	);
+	print("pitch    : ", pitch 	);
+	print("roll     : ", roll 	);
+	print("");
+end
 
-	-- ship:set_resistance	( 1.2 );
-	
-	-- ship:set_vis_mesh	( "ssn668.esx|vismesh"			);
-	-- ship:set_hdf_mesh	( "ssn668.esx|hydromesh" 		);
-	-- ship:set_hsf_mesh	( "ssn668.esx|hydromesh" 		);
-	-- ship:make_rigidbody	( "ssn668.esx|physmesh", 6000000	);
-	
-	-- ship:set_position	( 0, 0, -3.4 );	
-	-- ship:set_angles		( 90, 0, 5 );
-	-- ship:set_cmass		( 0, 0, 0 );
-	
-	-- ship:build_voxels	( "ssn668.esx|hydromesh", 2	);
-	-- ship:build_surf_dxdy( "ssn668.esx|hydromesh", 0.5, 0.1	);
-	
-	-- print("---- done ----");
-	-- print("");
-	-- return ship;
--------------------------------------------------------------	
+function create_uboat()
 	print("");
 	print("---- creating U-boat ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 1.0 );
+	ship:set_resistance	( 1 );
 	
 	ship:set_vis_mesh	( "uboat.esx|boat1"			);
 	ship:set_hdf_mesh	( "uboat.esx|flowsurf2" 		);
 	ship:set_hsf_mesh	( "uboat.esx|flowsurf2" 		);
-	ship:make_rigidbody	( "uboat.esx|stat", 2205000	);
+	ship:make_rigidbody	( "uboat.esx|stat", 1805000	);
 	
-	ship:set_position	( 0, 0, 0 );	
-	ship:set_angles		( 90, 0, 0 );
+	ship:set_position	( 0, 0, 30 );	
+	ship:set_angles		( 45, 40, 40 );
 	ship:set_cmass		( 0,0,-0.5 );
 	
 	ship:build_voxels	( "uboat.esx|flowsurf2", 1	);
-	ship:build_surf_dxdy( "uboat.esx|flowsurf2", 0.3, 1	);
+	ship:build_surf_dxdy( "uboat.esx|flowsurf2", 1, 0.1	);
 	
 	print("---- done ----");
 	print("");
 	return ship;
--------------------------------------------------------------	
-	-- print("");
-	-- print("---- creating coast guard ship ----");
-	-- local ship = naval.create_ship();
-
-	-- ship:set_resistance	( 1.0 );
-	
-	-- ship:set_vis_mesh	( "boat.esx|boat1"			);
-	-- ship:set_hdf_mesh	( "boat.esx|flow" 			);
-	-- ship:set_hsf_mesh	( "boat.esx|flow" 			);
-	-- ship:make_rigidbody	( "boat.esx|stat", 400000	);
-	
-	-- ship:set_position	( 0, 0, 0.101+0.0 );	
-	-- ship:set_angles		( 90, -0.869, 0);
-	-- ship:set_cmass		( 0, 0, 0 );
-	
-	-- ship:build_voxels	( "boat.esx|flow", 1	);
-	-- ship:build_surf_dxdy( "boat.esx|flow", dens, 0.1	);
-	
-	-- print("---- done ----");
-	-- print("");
-	-- return ship;
--------------------------------------------------------------	
 end
 
-ship = create_cutter(0,10);
 
-local rolling_log = io.open("rolling1.log", "w");
+function create_cutter()
+	print("");
+	print("---- creating Coast Guard Ship ----");
+	local ship = naval.create_ship();
+
+	ship:set_resistance	( 1.0 );
+	
+	ship:set_vis_mesh	( "boat.esx|boat1"			);
+	ship:set_hdf_mesh	( "boat.esx|flow" 			);
+	ship:set_hsf_mesh	( "boat.esx|flow" 			);
+	ship:make_rigidbody	( "boat.esx|stat", 400000	);
+	
+	ship:set_position	( 0, 0, 0 );	
+	ship:set_angles		( 30, 0, 5);
+	ship:set_cmass		( 0, 0, 0 );
+	
+	ship:build_voxels	( "boat.esx|flow", 1	);
+	ship:build_surf_dxdy( "boat.esx|flow", 3, 0.1	);
+	
+	print("---- done ----");
+	print("");
+	return ship;
+end
+
+function create_ssn668()
+	print("");
+	print("---- creating SSN-668 'Los Angeles' ----");
+	local ship = naval.create_ship();
+
+	ship:set_resistance	( 0.2 );
+	
+	ship:set_vis_mesh	( "ssn668.esx|vismesh"			);
+	ship:set_hdf_mesh	( "ssn668.esx|hydromesh" 		);
+	ship:set_hsf_mesh	( "ssn668.esx|hydromesh" 		);
+	ship:make_rigidbody	( "ssn668.esx|physmesh", 6000000	);
+	
+	ship:set_position	( 0, 30, -3.5 );	
+	ship:set_angles		( 90, 0, 5 );
+	ship:set_cmass		( 0, 0, 0 );
+	
+	ship:build_voxels	( "ssn668.esx|hydromesh", 2	);
+	ship:build_surf_dxdy( "ssn668.esx|hydromesh", 3, 0.1	);
+	
+	print("---- done ----");
+	print("");
+	return ship;
+end
+
+function create_box()
+	print("");
+	print("---- creating Box ----");
+	local ship = naval.create_ship();
+
+	ship:set_resistance	( 5 );
+	
+	ship:set_vis_mesh	( "box.esx|box"				);
+	ship:set_hdf_mesh	( "box.esx|box" 			);
+	ship:set_hsf_mesh	( "box.esx|box" 			);
+	ship:make_rigidbody	( "box.esx|box",  8000000	);
+	
+	ship:set_position	( 0, 0, 0 );	
+	ship:set_angles		( 0, 0, 90 );
+	ship:set_cmass		( 0, 0, 0 );
+	
+	ship:build_voxels	( "box.esx|box", 2	);
+	ship:build_surf_dxdy( "box.esx|box", 1, 2 );
+	
+	print("---- done ----");
+	print("");
+	return ship;
+end
+
+
+local rolling_log1 = io.open("rolling1.log", "w");
+local rolling_log2 = io.open("rolling2.log", "w");
+--local rolling_log = io.open("cutter_calibration_roll_5_deg_kappa.log", "w");
+
+
+--uboat	=	create_ssn668();
+--uboat	=	create_cutter();
+uboat	=	create_uboat();
+--uboat	=	create_box();
+
+--uboat2	=	create_ssn668();
+
+user.ship_hsf_method	=	"hxfse";
+--ship_hsf_method	=	"surface";
 
 
 -------------------------------------------------------------------------------
 --	frame :
 -------------------------------------------------------------------------------
 
-function setup_rolling_on_silent_water()
-	print("---------------------------------------");
-	print("  Rolling on silent water");
-	print("---------------------------------------");
+function DriveShip()
+	if state.ship_fw then uboat:add_force( vmath.vec4( 20000000,0,0,0), vmath.vec4(-50,0,-0.4,1), true); end;
+	if state.ship_bw then uboat:add_force( vmath.vec4(-20000000,0,0,0), vmath.vec4(-50,0,-0.4,1), true); end;
 	
-	rolling_log = io.open("silent_water.log", "w");
+	if state.ship_sl then uboat:add_force( vmath.vec4(0,  10000000,0,0), vmath.vec4(-50,0,-0.4,1), true); end;
+	if state.ship_sr then uboat:add_force( vmath.vec4(0, -10000000,0,0), vmath.vec4(-50,0,-0.4,1), true); end;
 	
-	naval.set_wave(0,0);
-	naval.set_wind(0);
-	
-	ship:dispose();
-	ship	=	create_cutter(5,10);
+	if state.submersion then
+		uboat:add_force( vmath.vec4(0,0,-16537500,0), vmath.vec4(0,0,0,1), true);
+	end
+	if state.sunking then
+		uboat:add_force( vmath.vec4(0,0,-2000000,0), vmath.vec4(0,0,0,1), true);
+	end
 end
 
 
-function setup_rolling_on_sin_wave()
-	print("---------------------------------------");
-	print("  Rolling on sin wave");
-	print("---------------------------------------");
-	
-	rolling_log = io.open("sin_wave.log", "w");
 
-	naval.set_wave(1.5	,0.15);
-	
-	ship:dispose();
-	ship	=	create_cutter(0,3);
-end
+--------------------------------------------------
+wind = 0;
 
-
-function setup_rolling_on_wind_wave()
-	print("---------------------------------------");
-	print("  Rolling on sin wave");
-	print("---------------------------------------");
-
-	rolling_log = io.open("wind_wave.log", "w");
-	
-	naval.set_wind(15);
-	
-	ship:dispose();
-	ship	=	create_cutter(0,1);
-	ship:set_angles(25,0,0);
-end
-
-
---setup_rolling_on_silent_water()
---setup_rolling_on_sin_wave()
-setup_rolling_on_wind_wave()
-
-
-function sim_ship(ship, logfile, dtime)
-	if ship  then 
-		ship:simulate(dtime);  
+function sim_ship(uboat, logfile, dtime)
+	if uboat  then 
+		uboat:simulate(dtime);  
 		
 
-		local yaw, pitch, roll 	= ship:get_angles();
-		local x, y, z 			= ship:get_position();
+		local yaw, pitch, roll 	= uboat:get_angles();
+		local x, y, z 			= uboat:get_position();
 
-		-- yaw = 90;
-		-- --pitch = -0.869;
-		-- x   = 0;
-		-- y   = 0;
-		ship:set_angles(yaw, pitch, roll);
-		ship:set_position(x,y,z);
+		uboat:set_angles(yaw, pitch, roll);
+		uboat:set_position(x,y,z);
 
 		yaw		=	math.rad(yaw);
 		pitch	=	math.rad(pitch);
@@ -258,40 +278,25 @@ function sim_ship(ship, logfile, dtime)
 	end;
 end
 
-grid_size = 0;
-local cpu_log = io.open("cpu.log", "w");
-
-
 function sci_frame(dtime)
 
-	--print(grid_size);
-	local cpu = {
-		[0] = 0;
-		[1] = 0;
-		[2] = 0;
-		[3] = 0;
-	};
-	
-	chunk = math.floor(grid_size/4);
-	
-	for i=0, grid_size do
-		if 		i<(chunk*1) then		cpu[0] = cpu[0] + grid_submerging[i];
-		elseif 	i<(chunk*2) then		cpu[1] = cpu[1] + grid_submerging[i];
-		elseif 	i<(chunk*3) then		cpu[2] = cpu[2] + grid_submerging[i];
-		elseif 	i<(chunk*4) then		cpu[3] = cpu[3] + grid_submerging[i];
-		end
-	end
-	
-	local out = string.format("%f %f %f %f", cpu[0], cpu[1], cpu[2], cpu[3]);
-	cpu_log:write(out.."\n");
-	cpu_log:flush();
+--	SCI_ShipForce( vmath.vec4(0, 0,-5000000,0), vmath.vec4(50,0,0,1));
 
 	local	rotation = 60;
 	game_time = game_time + dtime;
 	
-	dtime = 1 / 20;
+	dtime = 0.03;
 	
-	sim_ship(ship,  rolling_log, dtime);
+	DriveShip();
+
+	sim_ship(uboat,  rolling_log1, dtime);
+	sim_ship(uboat2, rolling_log2, dtime);
+	
+	if cutter then 
+		cutter:simulate(dtime); 
+	end
+	
+	--uboat:add_force( vmath.vec4(0,0,-2000000,0), vmath.vec4(0,0,0,1), true);
 	
 
 	if state.yaw_inc	then	state.yaw	=	state.yaw 	+ dtime * rotation; end;
@@ -313,6 +318,7 @@ function sci_frame(dtime)
 	local y		=	-state.dist * math.sin(yaw) * math.cos(-pitch);
 	local z		=	-state.dist * math.sin(-pitch);
 	naval.set_view(90, vmath.vec4(x,y,z,1), state.yaw, state.pitch, state.roll);--state.pitch, state.roll);
+	--naval.set_view(90, vmath.vec4(30,130,1,1), -90,1,0);
 
 end
 

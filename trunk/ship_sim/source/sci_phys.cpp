@@ -25,6 +25,7 @@
 
 #include "sci_local.h"
 
+#if 0
 #include <NxPhysics.h>
 #include <NxCooking.h>
 
@@ -281,4 +282,4 @@ EQuat ToEQuat( const NxQuat &q )
 	return EQuat( q.x, q.y, q.z, q.w );
 }
 
-
+#endif
