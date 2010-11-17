@@ -84,6 +84,8 @@ class EShip : public IShip {
 		EVec3				center_of_hsf_force;
 		float				mch;
 		
+		EVec4				old_position;
+		
 		float				water_resistance_cx;
 	
 		IPxTriMesh			GetSubmergedMesh		( const EMatrix4 &world, const EPlane &plane );

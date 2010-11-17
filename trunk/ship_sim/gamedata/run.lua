@@ -95,7 +95,7 @@ game_time = 0;
 -------------------------------------------------------------------------------
 
 naval.remove_all_ships();
-naval.set_wind(20);
+naval.set_wind(25);
 
 function show_info()
 	local x,y,z;
@@ -116,19 +116,19 @@ function create_uboat()
 	print("---- creating U-boat ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 1 );
+	ship:set_resistance	( 3 );
 	
 	ship:set_vis_mesh	( "uboat.esx|boat1"			);
 	ship:set_hdf_mesh	( "uboat.esx|flowsurf2" 		);
 	ship:set_hsf_mesh	( "uboat.esx|flowsurf2" 		);
 	ship:make_rigidbody	( "uboat.esx|stat", 1805000	);
 	
-	ship:set_position	( 0, 0, 30 );	
-	ship:set_angles		( 45, 40, 40 );
+	ship:set_position	( 0, 0, 0 );	
+	ship:set_angles		( 45, 0, 0 );
 	ship:set_cmass		( 0,0,-0.5 );
 	
 	ship:build_voxels	( "uboat.esx|flowsurf2", 1	);
-	ship:build_surf_dxdy( "uboat.esx|flowsurf2", 1, 0.1	);
+	ship:build_surf_dxdy( "uboat.esx|flowsurf2", 3, 0.1	);
 	
 	print("---- done ----");
 	print("");
@@ -153,7 +153,7 @@ function create_cutter()
 	ship:set_cmass		( 0, 0, 0 );
 	
 	ship:build_voxels	( "boat.esx|flow", 1	);
-	ship:build_surf_dxdy( "boat.esx|flow", 3, 0.1	);
+	ship:build_surf_dxdy( "boat.esx|flow", 0.1, 0.1	);
 	
 	print("---- done ----");
 	print("");
@@ -230,11 +230,22 @@ user.ship_hsf_method	=	"hxfse";
 -------------------------------------------------------------------------------
 
 function DriveShip()
-	if state.ship_fw then uboat:add_force( vmath.vec4( 20000000,0,0,0), vmath.vec4(-50,0,-0.4,1), true); end;
-	if state.ship_bw then uboat:add_force( vmath.vec4(-20000000,0,0,0), vmath.vec4(-50,0,-0.4,1), true); end;
+	local yaw, pitch, roll = uboat:get_angles();
+
+	local force = 16000000;
 	
-	if state.ship_sl then uboat:add_force( vmath.vec4(0,  10000000,0,0), vmath.vec4(-50,0,-0.4,1), true); end;
-	if state.ship_sr then uboat:add_force( vmath.vec4(0, -10000000,0,0), vmath.vec4(-50,0,-0.4,1), true); end;
+	if (state.ship_sl) then yaw = yaw - 10; end
+	if (state.ship_sr) then yaw = yaw + 10; end
+	
+	local fx	=	force * math.cos(math.rad(yaw)) * 1;--math.cos(-pitch);
+	local fy	=	force * math.sin(math.rad(yaw)) * 1;--math.cos(-pitch);
+	local fz	=	force * 0;--math.sin(-pitch);
+	
+	--local x,y,z	=	uboat:get_position(-50,0,-1);
+	local x,y,z	=	-50, 0, -1.5;
+
+	if state.ship_fw then uboat:add_force( vmath.vec4( fx, fy, fz, 0), vmath.vec4(x,y,z,1), true); end;
+	if state.ship_bw then uboat:add_force( vmath.vec4(-fx,-fy,-fz, 0), vmath.vec4(x,y,z,1), true); end;
 	
 	if state.submersion then
 		uboat:add_force( vmath.vec4(0,0,-16537500,0), vmath.vec4(0,0,0,1), true);
@@ -278,6 +289,17 @@ function sim_ship(uboat, logfile, dtime)
 	end;
 end
 
+
+local filtered_view = {
+		x = 40;
+		y = 40;
+		z = 40;
+	}
+	
+function filter(a, b, f) 
+	return a * (1-f) + b * f;
+end	
+
 function sci_frame(dtime)
 
 --	SCI_ShipForce( vmath.vec4(0, 0,-5000000,0), vmath.vec4(50,0,0,1));
@@ -307,18 +329,29 @@ function sci_frame(dtime)
 	if state.pitch_dec	then	state.pitch	=	state.pitch	- dtime * rotation; end;
 	if state.dist_inc	then	state.dist	=	state.dist	* 1.03;	end;
 	if state.dist_dec	then	state.dist	=	state.dist	/ 1.03; 	end;
-
+	
 	--
 	--	view stuff
 	--
-	local yaw	= 	math.rad(state.yaw	);
-	local pitch	= 	math.rad(state.pitch	);
-	local roll	= 	math.rad(state.roll	);
-	local x	 	=	-state.dist * math.cos(yaw) * math.cos(-pitch);
-	local y		=	-state.dist * math.sin(yaw) * math.cos(-pitch);
-	local z		=	-state.dist * math.sin(-pitch);
-	naval.set_view(90, vmath.vec4(x,y,z,1), state.yaw, state.pitch, state.roll);--state.pitch, state.roll);
-	--naval.set_view(90, vmath.vec4(30,130,1,1), -90,1,0);
+	if uboat and false then
+		local yaw, pitch, roll 	= uboat:get_angles();
+		local x, y, z 			= uboat:get_position(1.5,0.5,8.8);
+		filtered_view.x = filter(filtered_view.x, x, 0.1);
+		filtered_view.y = filter(filtered_view.y, y, 0.1);
+		filtered_view.z = filter(filtered_view.z, z, 0.1);
+		local x2 = filtered_view.x;
+		local y2 = filtered_view.y;
+		local z2 = filtered_view.z;
+		naval.set_view(120, vmath.vec4(x2,y2,z2,1), yaw + state.yaw, pitch + state.pitch, roll + state.roll);
+	else
+		local yaw	= 	math.rad(state.yaw	);
+		local pitch	= 	math.rad(state.pitch	);
+		local roll	= 	math.rad(state.roll	);
+		local x	 	=	-state.dist * math.cos(yaw) * math.cos(-pitch);
+		local y		=	-state.dist * math.sin(yaw) * math.cos(-pitch);
+		local z		=	-state.dist * math.sin(-pitch);
+		naval.set_view(120, vmath.vec4(x,y,z,1), state.yaw, state.pitch, state.roll);
+	end
 
 end
 
