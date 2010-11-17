@@ -183,6 +183,20 @@ int ELuaShip::get_position( lua_State *L )
 	EQuat q;
 	EVec4 p;
 	ship->GetPose( p, q );
+
+	float dx = 0, dy = 0, dz = 0;
+	
+	int n = lua_gettop(L);
+	if (n==4) {		//	keep in mind: 3 + 1 (self)
+		dx	=	lua.RequireNumber(1, "x offset");
+		dy	=	lua.RequireNumber(2, "y offset");
+		dz	=	lua.RequireNumber(3, "z offset");
+	}
+	
+	EVec4	offset	=	EVec4(dx, dy, dz, 0);
+	offset	=	QuatRotateVector( offset, q );
+	
+	p = p + offset;
 	
 	lua_pushnumber( L, p.x );
 	lua_pushnumber( L, p.y );

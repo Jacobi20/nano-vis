@@ -75,7 +75,10 @@ void EShip::Simulate( float dtime, IPxWaving waving )
 	EVec4 p;
 	EQuat q;	
 	GetPose(p, q);
-	r_ent->SetPose(p, q);
+	
+	r_ent->SetPose(0.5*(p + old_position), q);
+
+	old_position = p;
 }
 
 
@@ -93,6 +96,7 @@ void EShip::GetPose( EVec4 &position, EQuat &orient )
 //
 void EShip::SetPose( EVec4 &position, EQuat &orient )
 {
+	old_position	=	position;											
 	ship_body->SetPose( position, orient );
 	
 	//	update last pose to avoid big velocities :

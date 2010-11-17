@@ -244,8 +244,11 @@ void EWaving::Update( float dtime, const EVec4 &view_pos )
 		EVertex	v;
 		
 		v	=	mesh->GetVertex( i );
-		v.position.z	=	GetPosition( Vec3ToVec4(v.position) ).z;
+		v.position.x	*=	2;
 		v.position.y	*=	2;
+		v.position.x	+=	view_pos.x;
+		v.position.y	+=	view_pos.y;
+		v.position.z	=	GetPosition( Vec3ToVec4(v.position) ).z;
 
 		v.uv0.x			=	v.position.x/4;
 		v.uv0.y			=	v.position.y/4;

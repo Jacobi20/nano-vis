@@ -30,6 +30,11 @@ cfg.setvar('phys_draw_constraint_limits'   , false);
 cfg.setvar('phys_fast_wireframe'           , false);
 cfg.setvar('phys_max_substeps'             , 10);
 cfg.setvar('phys_fixed_timestep'           , 0.0166667);
+cfg.setvar('phys_linear_damping'           , 0.01);
+cfg.setvar('phys_angular_damping'          , 0.01);
+cfg.setvar('phys_linear_sleep_treshold'    , 0.01);
+cfg.setvar('phys_angular_sleep_treshold'   , 0.01);
+cfg.setvar('phys_contact_proc_treshold'    , 0.01);
 
 
 -- key bindings --
