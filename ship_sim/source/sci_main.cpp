@@ -107,15 +107,20 @@ void ESciVis::Frame(uint dtime)
 		
 			CoreExecuteString( va("if sci_frame then sci_frame(%f); end;", dtime/1000.0f) );
 
-			waving->Update( dtime / 1000.0f, view.position );
+			waving->Update( dtime / 1000.0f, view.position, view.orient );
 		
 			
-			float zn = 0.1;
-			float zf = 1000.0f;		
+			float zn = VIEW_NEAR;
+			float zf = VIEW_FAR;		
 			float tf = tanf(deg2rad(view.fov/2));
 			
 			GetFRScene()->SetProjection( zn, zf, zf * tf * aspect, zf * tf );
 			GetFRScene()->SetView( view.position, view.orient );
+			
+			view.frustum.SetFrustum( zf * tf * aspect, zf * tf, zf );
+			view.frustum.SetPosition( view.position );
+			view.frustum.SetOrient( view.orient );
+			
 			
 			GetFRScene()->SetDirectLight( EVec4(1,1,1,1), EVec4(0,0,0,1), 1, 1);
 			

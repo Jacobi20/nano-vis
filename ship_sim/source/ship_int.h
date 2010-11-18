@@ -45,7 +45,7 @@ struct ERendEnv_s {
 
 class IWaving : public ICoreObject {
 	public:
-		virtual void		Update			( float dtime, const EVec4 &view_pos ) = 0;
+		virtual void		Update			( float dtime, const EVec4 &view_pos, const EQuat &orient ) = 0;
 		virtual EVec4		GetVelocity		( const EVec4 &init_pos ) const = 0;
 		virtual EVec4		GetPosition		( const EVec4 &init_pos ) const = 0;
 		virtual float		GetPressure		( const EVec4 &init_pos ) const = 0;

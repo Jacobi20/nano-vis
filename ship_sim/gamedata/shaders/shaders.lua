@@ -31,7 +31,7 @@ dofile('shaders/shader_lib.lua');
 --define_dsn_shader("textures/plain/steel.tga");
 
 define_water_shader("textures/water.tga");
-
+--define_diffuse_shader("textures/water.tga");
 
 fr.define_shader {
 	name			=	"*color7F7F7FFF";
@@ -51,4 +51,17 @@ fr.define_shader {
 		surface.diffuse = 	float3(0.35, 0.35, 0.35);
 	]];
 		
+}
+
+
+fr.define_shader {
+	name			=	"textures/ocean_sky.tga";
+	is_solid		=	true;
+	is_emissive		=	true;
+	texture_path0 	=	"textures/ocean_sky.tga";
+	
+	injection		=	[[
+		surface.diffuse		=	float3(0,0,0);
+		surface.emission	=	sample_color( sampler0, input.uv0 );
+	]];
 }
