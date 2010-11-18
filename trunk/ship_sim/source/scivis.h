@@ -29,6 +29,9 @@
 	Nano vis :
 -----------------------------------------------------------------------------*/
 
+const float VIEW_FAR	=	1000.0f;
+const float VIEW_NEAR	=	0.1f;
+
 const uint ROLL_HISTORY_SIZE	=	8192;
 
 #include "static_self.h"
@@ -74,9 +77,10 @@ class ESciVis : public IGame, public self_ref<ESciVis>, public IUIDrawCB {
 		float				global_simulation_time;
 		
 		struct {
-			float	fov;
-			EVec4	position;
-			EQuat	orient;
+			float		fov;
+			EVec4		position;
+			EQuat		orient;
+			EFrustum	frustum;
 		} view;
 	
 	public:	

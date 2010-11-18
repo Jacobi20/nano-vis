@@ -85,9 +85,9 @@ function define_water_shader ( path )
 	fr.define_shader {
 		name			=	path;
 		texture_path0	=	"textures/wave_grid.tga";
-		texture_path1	=	"textures/waves.tga";
+		texture_path1	=	"textures/ocean.tga";
 		injection		=	injection;
-		is_solid		=	false;
-		is_translucent	=	true;
+		is_solid		=	true;
+		is_translucent	=	false;
 	}
 end

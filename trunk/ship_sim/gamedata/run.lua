@@ -148,7 +148,7 @@ function create_cutter()
 	ship:set_hsf_mesh	( "boat.esx|flow" 			);
 	ship:make_rigidbody	( "boat.esx|stat", 400000	);
 	
-	ship:set_position	( 0, 0, 0 );	
+	ship:set_position	( -100, 0, 0 );	
 	ship:set_angles		( 30, 0, 5);
 	ship:set_cmass		( 0, 0, 0 );
 	
@@ -172,7 +172,7 @@ function create_ssn668()
 	ship:set_hsf_mesh	( "ssn668.esx|hydromesh" 		);
 	ship:make_rigidbody	( "ssn668.esx|physmesh", 6000000	);
 	
-	ship:set_position	( 0, 30, -3.5 );	
+	ship:set_position	( -30, -30, -3.5 );	
 	ship:set_angles		( 90, 0, 5 );
 	ship:set_cmass		( 0, 0, 0 );
 	
@@ -215,11 +215,11 @@ local rolling_log2 = io.open("rolling2.log", "w");
 
 
 --uboat	=	create_ssn668();
---uboat	=	create_cutter();
 uboat	=	create_uboat();
+--uboat	=	create_uboat();
 --uboat	=	create_box();
 
---uboat2	=	create_ssn668();
+--uboat2	=	create_uboat();
 
 user.ship_hsf_method	=	"hxfse";
 --ship_hsf_method	=	"surface";
@@ -336,6 +336,7 @@ function sci_frame(dtime)
 	if uboat and false then
 		local yaw, pitch, roll 	= uboat:get_angles();
 		local x, y, z 			= uboat:get_position(1.5,0.5,8.8);
+		--local x, y, z 			= uboat:get_position(8.0,0.5,7.8);
 		filtered_view.x = filter(filtered_view.x, x, 0.1);
 		filtered_view.y = filter(filtered_view.y, y, 0.1);
 		filtered_view.z = filter(filtered_view.z, z, 0.1);

@@ -57,7 +57,7 @@ class EWaving : public IWaving {
 							EWaving		( lua_State *L, int idx );
 							~EWaving		( void );
 											
-		virtual void		Update				( float dtime, const EVec4 &view_pos );
+		virtual void		Update				( float dtime, const EVec4 &view_pos, const EQuat &orient );
 		virtual	EVec4		GetVelocity			( const EVec4 &init_pos ) const;
 		virtual	EVec4		GetPosition			( const EVec4 &init_pos ) const;
 		virtual float		GetPressure			( const EVec4 &init_pos ) const;
@@ -78,6 +78,9 @@ class EWaving : public IWaving {
 
 		IPxFREntity		r_ent;
 		IPxTriMesh		sea_mesh;
+		
+		IPxFREntity		r_sky;
+		IPxTriMesh		sky_mesh;
 
 		struct {		
 			float	max_freq;					//	angular, 'omega'
@@ -113,9 +116,13 @@ EWaving::EWaving( lua_State *L, int idx )
 	time	=	0;
 
 	sea_mesh	=	ge()->LoadMeshFromFile("sea.esx|sea");
+	sky_mesh	=	ge()->LoadMeshFromFile("sky.esx|sky");
 	
 	r_ent		=	sci_vis->GetFRScene()->AddEntity();
 	r_ent->SetMesh( sea_mesh );
+	
+	r_sky		=	sci_vis->GetFRScene()->AddEntity();
+	r_sky->SetMesh( sky_mesh );
 	
 	InitWaving(true);
 }
@@ -229,13 +236,95 @@ void EWaving::InitWaving( bool new_phases )
 	Spectral runtime stuff :
 -----------------------------------------------------------------------------*/
 
+EBBox	GetVisibleWaterBounds	( void )
+{
+	EFrustum	frustum	=	ESciVis::self->view.frustum;
+	
+	EPlane	planes[5];
+	planes[0]	=	frustum.GetRightPlane	();
+	planes[1]	=	frustum.GetLeftPlane	();
+	planes[2]	=	frustum.GetTopPlane		();
+	planes[3]	=	frustum.GetBottomPlane	();
+	planes[4]	=	frustum.GetFarPlane		();
+	
+	EPlane	water(0,0,1,0);
+	
+	EBBox	bbox;
+	bbox.MakeSingular();
+
+	LOGF("---------");
+
+	/*for (uint i=0; i<5; i++) {
+		for (uint j=i+1; j<5; j++) {
+			EVec4	p;
+			PlaneIntersection( p, planes[i], planes[j], water );
+			
+			if (frustum.IsPointInside(p, 0.01f)) {
+				LOGF("%d %d", i,j);
+				rs()->GetDVScene()->DrawPoint( p, 10, EVec4(1,1,1,1));
+				bbox.Expand( p );
+			}
+		}
+	}*/
+	
+	bbox.Expand( EVec4( 100, 100, 10,1) );
+	bbox.Expand( EVec4(-100,-100,-10,1) );
+
+	return bbox;	
+}
+
+
+float Lerp(float a, float b, float f) {
+	return a * (1-f) + b * f;
+}
+
 //
 //	EWaving::Update
 //
-void EWaving::Update( float dtime, const EVec4 &view_pos )
+void EWaving::Update( float dtime, const EVec4 &view_pos, const EQuat &orient )
 {
 	time	+=	dtime;
+
+	r_sky->SetPose( view_pos, QuatIdentity() );
 	
+
+	EFrustum	frustum	=	ESciVis::self->view.frustum;
+	IPxTriMesh	mesh	=	sea_mesh->Clone();
+	EPlane		water(0,0,1,0);
+	
+	uint n = mesh->GetVertexNum();
+	
+	for (uint i=0; i<n; i++) {
+		EVertex	v;
+		
+		v	=	mesh->GetVertex( i );
+		
+		float x = v.position.x;
+		float y = v.position.y;
+
+		EVec4 p;		
+		EVec4 o = frustum.GetPosition();
+		EVec4 r = frustum.GetEyeRay( x, y );
+		float t = PlaneTraceRayAgainstPlane(p, o, r, water );
+		
+		rs()->GetDVScene()->DrawArrow( EVec4(0,0,0,1), r, 1, EVec4(0,1,0,0.5));
+
+		//rs()->GetDVScene()->DrawPoint( p, 1, EVec4(1,1,1,1));
+		
+		v.position.x	=	p.x;
+		v.position.y	=	p.y;
+		v.position.z	=	GetPosition( Vec3ToVec4(v.position) ).z;
+
+		v.uv0.x			=	v.position.x/4;
+		v.uv0.y			=	v.position.y/4;
+
+		mesh->SetVertex( i, v );
+	}
+	
+	//r_ent->SetMesh( mesh );
+
+	
+	/*
 	IPxTriMesh	mesh	=	sea_mesh->Clone();
 	
 	uint n = mesh->GetVertexNum();
@@ -244,10 +333,17 @@ void EWaving::Update( float dtime, const EVec4 &view_pos )
 		EVertex	v;
 		
 		v	=	mesh->GetVertex( i );
-		v.position.x	*=	2;
-		v.position.y	*=	2;
-		v.position.x	+=	view_pos.x;
-		v.position.y	+=	view_pos.y;
+
+		float fx = v.position.x;
+		float fy = v.position.y;
+		float max_x = bbox.Max().x;
+		float min_x = bbox.Min().x;
+		float max_y = bbox.Max().y;
+		float min_y = bbox.Min().y;
+		
+
+		v.position.x	=	Lerp( min_x, max_x, fx );
+		v.position.y	=	Lerp( min_y, max_y, fy );
 		v.position.z	=	GetPosition( Vec3ToVec4(v.position) ).z;
 
 		v.uv0.x			=	v.position.x/4;
@@ -255,8 +351,8 @@ void EWaving::Update( float dtime, const EVec4 &view_pos )
 		
 		mesh->SetVertex( i, v );
 	}
-	
 	r_ent->SetMesh( mesh );
+	*/
 }
 
 
