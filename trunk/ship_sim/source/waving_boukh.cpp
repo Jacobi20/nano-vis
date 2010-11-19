@@ -28,7 +28,7 @@
 	Waving :
 -----------------------------------------------------------------------------*/
 
-const uint	WAVE_BAND_NUM			=	20;
+const uint	WAVE_BAND_NUM			=	10;
 const uint	WAVE_GRID_SIZE			=	400;
 const float WAVE_GRID_OFFSET_X		=	-200.0f;
 const float WAVE_GRID_OFFSET_Y		=	-200.0f;
@@ -236,47 +236,39 @@ void EWaving::InitWaving( bool new_phases )
 	Spectral runtime stuff :
 -----------------------------------------------------------------------------*/
 
-EBBox	GetVisibleWaterBounds	( void )
+class EGrid {
+	public:
+				EGrid		( void );
+				~EGrid		( void );
+
+		void	ComputeWeights	( const EFrustum &frustum );
+		void	RelaxGrid		( void );
+		//void	GetMesh
+				
+		EVec3	grid[64][64];
+	};
+
+
+EGrid::EGrid( void )
 {
-	EFrustum	frustum	=	ESciVis::self->view.frustum;
-	
-	EPlane	planes[5];
-	planes[0]	=	frustum.GetRightPlane	();
-	planes[1]	=	frustum.GetLeftPlane	();
-	planes[2]	=	frustum.GetTopPlane		();
-	planes[3]	=	frustum.GetBottomPlane	();
-	planes[4]	=	frustum.GetFarPlane		();
-	
-	EPlane	water(0,0,1,0);
-	
-	EBBox	bbox;
-	bbox.MakeSingular();
-
-	LOGF("---------");
-
-	/*for (uint i=0; i<5; i++) {
-		for (uint j=i+1; j<5; j++) {
-			EVec4	p;
-			PlaneIntersection( p, planes[i], planes[j], water );
-			
-			if (frustum.IsPointInside(p, 0.01f)) {
-				LOGF("%d %d", i,j);
-				rs()->GetDVScene()->DrawPoint( p, 10, EVec4(1,1,1,1));
-				bbox.Expand( p );
-			}
+	for (uint i=0; i<64; i++) {
+		for (uint j=0; j<64; j++) {
+			grid[i][j].x	=	2.0f * ((float)j / 64.0f) - 1.0f;
+			grid[i][j].y	=	2.0f * ((float)i / 64.0f) - 1.0f;
 		}
-	}*/
-	
-	bbox.Expand( EVec4( 100, 100, 10,1) );
-	bbox.Expand( EVec4(-100,-100,-10,1) );
-
-	return bbox;	
+	}
 }
 
 
-float Lerp(float a, float b, float f) {
-	return a * (1-f) + b * f;
+EGrid::~EGrid( void )
+{
 }
+
+
+void EGrid::ComputeWeights( const EFrustum &frustum )
+{
+}
+
 
 //
 //	EWaving::Update
@@ -285,74 +277,129 @@ void EWaving::Update( float dtime, const EVec4 &view_pos, const EQuat &orient )
 {
 	time	+=	dtime;
 
-	r_sky->SetPose( view_pos, QuatIdentity() );
-	
+	uint sw, sh;
+	rs()->GetScreenSize(sw, sh);
+	float aspect = (float)sw / (float)sh;
 
-	EFrustum	frustum	=	ESciVis::self->view.frustum;
-	IPxTriMesh	mesh	=	sea_mesh->Clone();
+	r_sky->SetPose( view_pos, QuatIdentity() );
+
+	EFrustum	Fr		=	ESciVis::self->view.frustum;
+	float		w		=	Fr.getWidth();
+	float		h		=	Fr.getHeight();
+	float		zn		=	Fr.getZNear();
+	float		zf		=	Fr.getZFar();
+
+	EMatrix4	T		=	Matrix4Translate( -ESciVis::self->view.position);
+	EMatrix4	R		=	QuatToMatrix( QuatInverse( ESciVis::self->view.orient ) );
+	EMatrix4	V		=	T * R;
+	EMatrix4	P		=	Matrix4PerspectiveRH( zn/zf*w, zn/zf*h, zn, zf );
 	EPlane		water(0,0,1,0);
 	
+	EMatrix4	iVP		=	Matrix4Inverse( V * P );
+	EMatrix4	newiVP;
+
+	//
+	//	Make projector matrix :
+	//
+	do {
+	
+		EVec4	center	=	ESciVis::self->view.position;
+		float	cam_h	=	center.z;
+		center.z		=	0;
+
+		//	find view ray-water intersection point :
+		EVec4 r0	=	Matrix4Transform( EVec4(0,0, 0,1), iVP );
+		EVec4 r1	=	Matrix4Transform( EVec4(0,0, 1,1), iVP );
+		r0 /= r0.w;
+		r1 /= r1.w;
+		EVec4 p;		
+		EVec4 o		= r0;
+		//EVec4 r	= Vec4Normalize( r1 - r0 );
+		EVec4 r		= r1 - r0;
+		
+		float t		= PlaneTraceRayAgainstPlane(p, o, r, water );
+		
+		const float RANGE = 0.1;
+		
+		if ( t < 0 ) {
+			t = RANGE;
+		}
+		if ( t > RANGE ) {
+			t = RANGE;
+		}
+		
+		p = o + r * t;
+		p.z = 0;
+		
+		rs()->GetDVScene()->DrawPoint( p, 2.0f, EVec4(1,0,0,1.0));
+		
+		//	elevate camera :
+		float c_p_dist		=	Vec3Length( EVec3(center.x, center.y, 0) - EVec3(p.x, p.y, 0) );
+		float elev			=	h * c_p_dist / 2 / zf;
+		
+		elev				=	Clamp<float>( elev, 3, 100 );
+		
+		EMatrix4	newV	=	Matrix4LookAtRH( EVec3(center.x, center.y, elev), EVec3(p.x, p.y, p.z), EVec3(0,0,1) );
+		EMatrix4	newP	=	P;
+		newiVP				=	Matrix4Inverse( newV * newP );
+		
+	} while (0);
+	
+
+	//
+	//	Make grid :
+	//
+	IPxTriMesh	mesh	=	sea_mesh->Clone();
 	uint n = mesh->GetVertexNum();
 	
 	for (uint i=0; i<n; i++) {
 		EVertex	v;
 		
-		v	=	mesh->GetVertex( i );
+		v			=	mesh->GetVertex( i );
+		float x		=	v.position.x*1.3;
+		float y		=	v.position.y*1.3;
 		
-		float x = v.position.x;
-		float y = v.position.y;
+		EVec4 r0	=	Matrix4Transform( EVec4(x,y, 0,1), newiVP );
+		EVec4 r1	=	Matrix4Transform( EVec4(x,y, 1,1), newiVP );
+		r0 /= r0.w;
+		r1 /= r1.w;
+		
 
 		EVec4 p;		
-		EVec4 o = frustum.GetPosition();
-		EVec4 r = frustum.GetEyeRay( x, y );
+		EVec4 o = r0;
+		EVec4 r = r1 - r0;
 		float t = PlaneTraceRayAgainstPlane(p, o, r, water );
+		if (t>1) { t = 1; }
+		if (t<0) { t = 1; }
 		
-		rs()->GetDVScene()->DrawArrow( EVec4(0,0,0,1), r, 1, EVec4(0,1,0,0.5));
+		p	=	o + r*t;
+		
+		//rs()->GetDVScene()->DrawPoint( p, 0.1f, EVec4(0,1,0,0.5));
 
-		//rs()->GetDVScene()->DrawPoint( p, 1, EVec4(1,1,1,1));
-		
+		//
+		//	write vertex :
+		//		
 		v.position.x	=	p.x;
 		v.position.y	=	p.y;
 		v.position.z	=	GetPosition( Vec3ToVec4(v.position) ).z;
 
-		v.uv0.x			=	v.position.x/4;
-		v.uv0.y			=	v.position.y/4;
-
 		mesh->SetVertex( i, v );
 	}
 	
-	//r_ent->SetMesh( mesh );
-
 	
-	/*
-	IPxTriMesh	mesh	=	sea_mesh->Clone();
 	
-	uint n = mesh->GetVertexNum();
-	
+	//
+	//	post process mesh :
+	//
 	for (uint i=0; i<n; i++) {
-		EVertex	v;
-		
-		v	=	mesh->GetVertex( i );
-
-		float fx = v.position.x;
-		float fy = v.position.y;
-		float max_x = bbox.Max().x;
-		float min_x = bbox.Min().x;
-		float max_y = bbox.Max().y;
-		float min_y = bbox.Min().y;
-		
-
-		v.position.x	=	Lerp( min_x, max_x, fx );
-		v.position.y	=	Lerp( min_y, max_y, fy );
-		v.position.z	=	GetPosition( Vec3ToVec4(v.position) ).z;
-
-		v.uv0.x			=	v.position.x/4;
-		v.uv0.y			=	v.position.y/4;
-		
+		EVertex	v	=	mesh->GetVertex( i );
+		v.uv0.x		=	v.position.x/4;
+		v.uv0.y		=	v.position.y/4;
 		mesh->SetVertex( i, v );
 	}
+	
 	r_ent->SetMesh( mesh );
-	*/
+	//r_ent->SetFlag( RSE_HIDDEN );  
 }
 
 
@@ -377,7 +424,7 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 	if (!sin_wave) {
 		for (uint i=0; i<WAVE_BAND_NUM; i++) {
 		
-			float x2 = x;
+			float x2 = x + y * (i%5)/10.0;
 
 			register float	amp		=	wave.waves[i].amplitude;
 			register float	freq	=	wave.waves[i].frequency;

@@ -107,7 +107,6 @@ void ESciVis::Frame(uint dtime)
 		
 			CoreExecuteString( va("if sci_frame then sci_frame(%f); end;", dtime/1000.0f) );
 
-			waving->Update( dtime / 1000.0f, view.position, view.orient );
 		
 			
 			float zn = VIEW_NEAR;
@@ -117,7 +116,7 @@ void ESciVis::Frame(uint dtime)
 			GetFRScene()->SetProjection( zn, zf, zf * tf * aspect, zf * tf );
 			GetFRScene()->SetView( view.position, view.orient );
 			
-			view.frustum.SetFrustum( zf * tf * aspect, zf * tf, zf );
+			view.frustum.SetFrustum( zf * tf * aspect, zf * tf, zn, zf );
 			view.frustum.SetPosition( view.position );
 			view.frustum.SetOrient( view.orient );
 			
@@ -132,6 +131,7 @@ void ESciVis::Frame(uint dtime)
 			rs()->GetDVScene()->DrawArrow( EVec4(0,0,1,1), EVec4(0,1,0,0), 1.0f, EVec4(0,1,0,1 ) );
 			rs()->GetDVScene()->DrawArrow( EVec4(0,0,1,1), EVec4(0,0,1,0), 1.0f, EVec4(0,0,1,1 ) );
 			
+			waving->Update( dtime / 1000.0f, view.position, view.orient );
 			
 			phys()->DebugRender( rs()->GetDVScene() );
 		
