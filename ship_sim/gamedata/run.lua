@@ -95,7 +95,7 @@ game_time = 0;
 -------------------------------------------------------------------------------
 
 naval.remove_all_ships();
-naval.set_wind(25);
+naval.set_wind(0);
 
 function show_info()
 	local x,y,z;
@@ -333,7 +333,7 @@ function sci_frame(dtime)
 	--
 	--	view stuff
 	--
-	if uboat and false then
+	if uboat and true then
 		local yaw, pitch, roll 	= uboat:get_angles();
 		local x, y, z 			= uboat:get_position(1.5,0.5,8.8);
 		--local x, y, z 			= uboat:get_position(8.0,0.5,7.8);
