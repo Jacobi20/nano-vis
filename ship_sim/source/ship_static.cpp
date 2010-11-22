@@ -54,7 +54,7 @@ static float StaticWaveForce( EVec4 pos, float szx, float szy, float szz, float 
 	float wh = wave_height;		//	wave height
 
 	float frac = (wh - (pos.z - 0.5f*szz)) / szz;
-	frac = Clamp<float>(frac, 0,1);
+	frac = clamp<float>(frac, 0,1);
 	
 	return frac * szx * szy * szz * WATER_DENSITY * GRAVITY;
 }

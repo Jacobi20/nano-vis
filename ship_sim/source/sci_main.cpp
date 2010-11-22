@@ -111,7 +111,7 @@ void ESciVis::Frame(uint dtime)
 			
 			float zn = VIEW_NEAR;
 			float zf = VIEW_FAR;		
-			float tf = tanf(deg2rad(view.fov/2));
+			float tf = tanf(vmath::rad(view.fov/2));
 			
 			GetFRScene()->SetProjection( zn, zf, zf * tf * aspect, zf * tf );
 			GetFRScene()->SetView( view.position, view.orient );

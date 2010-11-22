@@ -112,8 +112,8 @@ void EShip::UpdateHXFSEGrid( void )
 			
 			float u=0, v=0;
 			do {
-				u	=	FRand(0,1);
-				v	=	FRand(0,1);
+				u	=	vmath::randf();
+				v	=	vmath::randf();
 				u	=	hxfgrid.mtrand.randomMTf();
 				v	=	hxfgrid.mtrand.randomMTf();
 			} while (u+v>1);

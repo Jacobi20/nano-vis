@@ -216,9 +216,9 @@ int ELuaShip::set_angles( lua_State *L )
 	float yaw	=	lua.RequireNumber( 1, "yaw"		);
 	float pitch	=	lua.RequireNumber( 2, "pitch"	);
 	float roll	=	lua.RequireNumber( 3, "roll"	);
-	q			=	QuatRotationAxis( deg2rad( yaw   ),	EVec3(0,0,1))
-				*	QuatRotationAxis( deg2rad( pitch ),	EVec3(0,1,0))
-				*	QuatRotationAxis( deg2rad( roll  ),	EVec3(1,0,0));
+	q			=	QuatRotationAxis( vmath::rad( yaw   ),	EVec3(0,0,1))
+				*	QuatRotationAxis( vmath::rad( pitch ),	EVec3(0,1,0))
+				*	QuatRotationAxis( vmath::rad( roll  ),	EVec3(1,0,0));
 
 	
 	ship->SetPose( p, q );	
