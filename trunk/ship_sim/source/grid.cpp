@@ -244,7 +244,7 @@ bool EVoxelGrid::Grow(queue<vxind_s> &Q, const IPxTriMesh mesh, EVec3 origin, fl
 	
 	//	do some attemtps :	
 	for (uint i=0; i<10; i++) {
-		EVec3 dd = EVec3( FRand(-0.1f,0.1f), FRand(-0.1f,0.1f), FRand(-0.1f,0.1f) );
+		EVec3 dd = EVec3( vmath::randf(-0.1f,0.1f), vmath::randf(-0.1f,0.1f), vmath::randf(-0.1f,0.1f) );
 		r |= mesh->RayIntersect( origin + dd, dir, v );
 	}
 

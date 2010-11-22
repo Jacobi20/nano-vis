@@ -82,9 +82,9 @@ int ESciVis::set_view( lua_State *L )
 	}
 
 	EQuat	z_up		=	QuatRotationAxis( -PI/2.0f, EVec3(0,0,1)) * QuatRotationAxis(PI/2.0, EVec3(1,0,0));
-	EQuat	qrx			=	QuatRotationAxis( deg2rad(roll),	EVec3(1,0,0) );
-	EQuat	qry			=	QuatRotationAxis( deg2rad(pitch),	EVec3(0,1,0) );
-	EQuat	qrz			=	QuatRotationAxis( deg2rad(yaw),		EVec3(0,0,1) );
+	EQuat	qrx			=	QuatRotationAxis( vmath::rad(roll),	EVec3(1,0,0) );
+	EQuat	qry			=	QuatRotationAxis( vmath::rad(pitch),	EVec3(0,1,0) );
+	EQuat	qrz			=	QuatRotationAxis( vmath::rad(yaw),		EVec3(0,0,1) );
 
 	self->view.fov		=	f;
 	self->view.position	=	p;

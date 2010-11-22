@@ -95,7 +95,7 @@ game_time = 0;
 -------------------------------------------------------------------------------
 
 naval.remove_all_ships();
-naval.set_wind(0);
+naval.set_wind(25);
 
 function show_info()
 	local x,y,z;
@@ -215,11 +215,11 @@ local rolling_log2 = io.open("rolling2.log", "w");
 
 
 --uboat	=	create_ssn668();
+--uboat	=	create_cutter();
 uboat	=	create_uboat();
---uboat	=	create_uboat();
 --uboat	=	create_box();
 
---uboat2	=	create_uboat();
+uboat2	=	create_cutter();
 
 user.ship_hsf_method	=	"hxfse";
 --ship_hsf_method	=	"surface";

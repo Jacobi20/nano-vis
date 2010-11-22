@@ -39,6 +39,7 @@ void EShip::SetVisMesh( const EString path )
 	r_ent			=	sci_vis->GetFRScene()->AddEntity();
 	
 	r_ent->SetMesh( mesh_vis );
+	//r_ent->SetFlag( RSE_HIDDEN );
 }
 
 
