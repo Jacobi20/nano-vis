@@ -28,7 +28,7 @@
 	Waving :
 -----------------------------------------------------------------------------*/
 
-const uint	WAVE_BAND_NUM			=	10;
+const uint	WAVE_BAND_NUM			=	15;
 const uint	WAVE_GRID_SIZE			=	400;
 const float WAVE_GRID_OFFSET_X		=	-200.0f;
 const float WAVE_GRID_OFFSET_Y		=	-200.0f;
@@ -237,240 +237,26 @@ void EWaving::InitWaving( bool new_phases )
 	Spectral runtime stuff :
 -----------------------------------------------------------------------------*/
 
-class EGrid {
-	public:
-				EGrid		( void );
-				~EGrid		( void );
-
-		void	ComputeWeights	( const EFrustum &frustum );
-		void	RelaxGrid		( void );
-		//void	GetMesh
-				
-		EVec3	grid[64][64];
-	};
-
-
-EGrid::EGrid( void )
-{
-	for (uint i=0; i<64; i++) {
-		for (uint j=0; j<64; j++) {
-			grid[i][j].x	=	2.0f * ((float)j / 64.0f) - 1.0f;
-			grid[i][j].y	=	2.0f * ((float)i / 64.0f) - 1.0f;
-		}
-	}
-}
-
-
-EGrid::~EGrid( void )
-{
-}
-
-
-void EGrid::ComputeWeights( const EFrustum &frustum )
-{
-}
-
-
-EMatrix4 GetRangeMatrix( const EMatrix4 &iVP, const EMatrix4 &newVP, const EPlane &water, float wave_h )
-{
-	//	make bound planes :
-	EPlane upper = water.normalize();
-	EPlane lower = water.normalize();
-
-	//upper.d -= wave_h;
-	//lower.d += wave_h;
-	
-	vector<EVec4>	buffer;
-
-	//	transform frustum conrners to world space :
-	float	u	=	1;
-	EVec4	v0	=	Matrix4Transform( EVec4( u, u, u, 1), iVP );	v0	/=	v0.w;
-	EVec4	v1	=	Matrix4Transform( EVec4(-u, u, u, 1), iVP );	v1	/=	v1.w;
-	EVec4	v2	=	Matrix4Transform( EVec4(-u,-u, u, 1), iVP );	v2	/=	v2.w;
-	EVec4	v3	=	Matrix4Transform( EVec4( u,-u, u, 1), iVP );	v3	/=	v3.w;
-	EVec4	v4	=	Matrix4Transform( EVec4( u, u,-u, 1), iVP );	v4	/=	v4.w;
-	EVec4	v5	=	Matrix4Transform( EVec4(-u, u,-u, 1), iVP );	v5	/=	v5.w;
-	EVec4	v6	=	Matrix4Transform( EVec4(-u,-u,-u, 1), iVP );	v6	/=	v6.w;
-	EVec4	v7	=	Matrix4Transform( EVec4( u,-u,-u, 1), iVP );	v7	/=	v7.w;
-	
-	rs()->GetDVScene()->DrawPoint( v0, 0.1f, EVec4(1,1,0,0.5) );
-	rs()->GetDVScene()->DrawPoint( v1, 0.1f, EVec4(1,1,0,0.5) );
-	rs()->GetDVScene()->DrawPoint( v2, 0.1f, EVec4(1,1,0,0.5) );
-	rs()->GetDVScene()->DrawPoint( v3, 0.1f, EVec4(1,1,0,0.5) );
-	rs()->GetDVScene()->DrawPoint( v4, 0.1f, EVec4(1,0,1,1.0) );
-	rs()->GetDVScene()->DrawPoint( v5, 0.1f, EVec4(1,0,1,1.0) );
-	rs()->GetDVScene()->DrawPoint( v6, 0.1f, EVec4(1,0,1,1.0) );
-	rs()->GetDVScene()->DrawPoint( v7, 0.1f, EVec4(1,0,1,1.0) );
-
-	struct segment_s {
-		void fromVec4( const EVec4 &a, const EVec4 &b ) {
-			this->a	=	Vec4ToVec3( a );
-			this->b	=	Vec4ToVec3( b );
-		}
-		EVec3 a, b;
-	};
-	
-	segment_s s[12];
-	
-	s[ 0].fromVec4(	v0,	v1 );	s[ 1].fromVec4(	v1,	v2 );
-	s[ 2].fromVec4(	v2,	v3 );	s[ 3].fromVec4(	v3,	v0 );
-	
-	s[ 4].fromVec4(	v4,	v5 );	s[ 5].fromVec4(	v5,	v6 );
-	s[ 6].fromVec4(	v6,	v7 );	s[ 7].fromVec4(	v7,	v4 );
-	
-	s[ 8].fromVec4(	v0,	v4 );	s[ 9].fromVec4(	v1,	v5 );
-	s[10].fromVec4(	v2,	v6 );	s[11].fromVec4(	v3,	v7 );
-	
-	EVec3	corners[8] = { 
-		Vec4ToVec3( v0 ), 	Vec4ToVec3( v1 ), 	Vec4ToVec3( v2 ), 
-		Vec4ToVec3( v3 ), 	Vec4ToVec3( v4 ), 	Vec4ToVec3( v5 ), 
-		Vec4ToVec3( v6 ), 	Vec4ToVec3( v7 )
-	};
-	
-	
-	//	add intersections :
-	for (uint i=0; i<12; i++) {
-		EVec3 a = s[i].a;
-		EVec3 b = s[i].b;
-		
-		float frac;
-		
-		if ( upper.traceSegment( a, b, frac ) ) {
-			EVec3 p	=	a + (b-a) * frac;
-			buffer.push_back( Vec3ToPoint4( p ) );
-		}
-		
-		if ( lower.traceSegment( a, b, frac ) ) {
-			EVec3 p	=	a + (b-a) * frac;
-			buffer.push_back( Vec3ToPoint4( p ) );
-		}
-	}
-	
-	//	add corners :
-	for (uint i=0; i<8; i++) {
-		if ( upper.classifyPoint( corners[i], 0 )<=0 && lower.classifyPoint( corners[i], 0 )>=0 ) {
-			buffer.push_back( Vec3ToPoint4( corners[i] ) );
-		}
-	}
-	
-	EBBox bbox;
-	bbox.MakeSingular();
-	
-	if (buffer.empty()) {
-		return Matrix4Identity();
-	}
-	
-	for (uint i=0; i<buffer.size(); i++) {
-		buffer[i].z = 0;
-		buffer[i].w = 1;
-
-		rs()->GetDVScene()->DrawPoint( buffer[i], 0.1, EVec4(0,0,1,1.0) );
-		
-		EVec4 tp = Matrix4Transform( buffer[i], newVP );
-		tp /= tp.w;
-		bbox.Expand( tp );
-	}
-	
-	float xmin = bbox.Min().x;
-	float xmax = bbox.Max().x;
-	float ymin = bbox.Min().y;
-	float ymax = bbox.Max().y;
-	
-	LOGF("X:[%f %f] Y:[%f %f]", xmin, xmax, ymin, ymax);
-	
-	EMatrix4	m2 (
-			xmax - xmin,		0,				0,		0,	
-				0,			ymax - ymin,		0,		0,
-				0,				0,				1,		0,
-			(xmin+xmax)/2,	(ymin+ymax)/2,		0,		1	
-		);	//*/
-		
-	return m2;
-}
-
-
 //
 //	EWaving::Update
 //
-void EWaving::Update( float dtime, const EVec4 &view_pos, const EQuat &orient )
+void EWaving::Update( float dtime, const EVec4 &_view_pos, const EQuat &orient )
 {
 	time	+=	dtime;
 
-	uint sw, sh;
-	rs()->GetScreenSize(sw, sh);
-	float aspect = (float)sw / (float)sh;
+	r_sky->SetPose( _view_pos, QuatIdentity() );
+	r_sky->SetFlag( RSE_HIDDEN );
+	
+	EFrustum fr	=	ESciVis::self->view.frustum;
+	
+	EVec4	view_pos	=	_view_pos;
 
-	r_sky->SetPose( view_pos, QuatIdentity() );
+	float	elevation		=	sqrt(1+abs(view_pos.z));
+	float	view_area_scale	=	elevation * 100;
+	float	step			=	1.0f / 64.0f * view_area_scale;
 
-	EFrustum	Fr		=	ESciVis::self->view.frustum;
-	float		w		=	Fr.getWidth();
-	float		h		=	Fr.getHeight();
-	float		zn		=	Fr.getZNear();
-	float		zf		=	Fr.getZFar();
-
-	EMatrix4	T		=	Matrix4Translate( -ESciVis::self->view.position);
-	EMatrix4	R		=	QuatToMatrix( QuatInverse( ESciVis::self->view.orient ) );
-	EMatrix4	V		=	T * R;
-	EMatrix4	P		=	Matrix4PerspectiveRH( zn/zf*w, zn/zf*h, zn, zf );
-	EPlane		water(0,0,1,0);
-	
-	EMatrix4	VP		=	V * P;
-	EMatrix4	iVP		=	Matrix4Inverse( V * P );
-	EMatrix4	newiVP;
-	EMatrix4	newVP;
-	EMatrix4	newV;
-	EMatrix4	newP;
-	
-	
-	//
-	//	Make projector matrix :
-	//
-	do {
-	
-		EVec4	center	=	ESciVis::self->view.position;
-		float	cam_h	=	center.z;
-		center.z		=	0;
-
-		//	find view ray-water intersection point :
-		EVec4 r0	=	Matrix4Transform( EVec4(0,0, 0,1), iVP );
-		EVec4 r1	=	Matrix4Transform( EVec4(0,0, 1,1), iVP );
-		r0 /= r0.w;
-		r1 /= r1.w;
-		EVec4 p;		
-		EVec4 o		= r0;
-		//EVec4 r	= Vec4Normalize( r1 - r0 );
-		EVec4 r		= r1 - r0;
-		
-		float t		= PlaneTraceRayAgainstPlane(p, o, r, water );
-		
-		const float RANGE = 0.1f;
-		
-		if ( t < 0 ) {
-			t = RANGE;
-		}
-		if ( t > RANGE ) {
-			t = RANGE;
-		}
-		
-		p = o + r * t;
-		p.z = 0;
-		
-		rs()->GetDVScene()->DrawPoint( p, 2.0f, EVec4(1,0,0,1.0));
-		
-		//	elevate camera :
-		float c_p_dist	=	Vec3Length( EVec3(center.x, center.y, 0) - EVec3(p.x, p.y, 0) );
-		float elev		=	h * c_p_dist / 2 / zf;
-		
-		elev			=	clamp<float>( elev, cam_h, 100000 );
-		
-		newV			=	Matrix4LookAtRH( EVec3(center.x, center.y, elev), EVec3(p.x, p.y, p.z), EVec3(0,0,1) );
-		newP			=	P;
-		newVP			=	newV * newP;
-		newiVP			=	Matrix4Inverse( newV * newP );
-		
-	} while (0);
-	
-	EMatrix4	range	=	GetRangeMatrix( iVP, newVP, water, 0 );
+	view_pos.x	=	floor( view_pos.x / step ) * step;
+	view_pos.y	=	floor( view_pos.y / step ) * step;
 
 	//
 	//	Make grid :
@@ -481,38 +267,33 @@ void EWaving::Update( float dtime, const EVec4 &view_pos, const EQuat &orient )
 	for (uint i=0; i<n; i++) {
 		EVertex	v;
 		
+		float	wave_factor		=	1;
+		
 		v			=	mesh->GetVertex( i );
-		float x		=	v.position.x*1.0;
-		float y		=	v.position.y*1.0;
+		float gx	=	v.position.x;
+		float gy	=	v.position.y;
 		
-		EVec4 r0	=	Matrix4Transform( EVec4(x,y, 0,1), range * newiVP );
-		EVec4 r1	=	Matrix4Transform( EVec4(x,y, 1,1), range * newiVP );
-		r0 /= r0.w;
-		r1 /= r1.w;
+		float x		=	gx * view_area_scale + view_pos.x;
+		float y		=	gy * view_area_scale + view_pos.y;
 		
-
-		EVec4 p;		
-		EVec4 o = r0;
-		EVec4 r = r1 - r0;
-		float t = PlaneTraceRayAgainstPlane(p, o, r, water );
-		if (t>1) { t = 1; }
-		if (t<0) { t = 1; }
+		wave_factor	=	clamp<float>(1 - (gx*gx + gy*gy), 0, 1);
+		wave_factor	=	pow( wave_factor, 2 );
 		
-		p	=	o + r*t;
-		
-		//rs()->GetDVScene()->DrawPoint( p, 0.1f, EVec4(0,1,0,0.5));
-
 		//
 		//	write vertex :
 		//		
-		v.position.x	=	p.x;
-		v.position.y	=	p.y;
-		v.position.z	=	GetPosition( Vec3ToVec4(v.position) ).z;
+		v.position.x	=	x;
+		v.position.y	=	y;
+		v.position.z	=	0;
+		
+		float	dist	=	Vec3Length( v.position - Vec4ToVec3(view_pos) );
+
+		v.position.z	=	GetPosition( Vec3ToVec4(v.position) ).z * wave_factor;
+		/*if (dist < view_area_scale*0.1 || fr.IsPointInside( EVec4(x,y,0,1), 0.1 * dist )) {
+		}  */
 
 		mesh->SetVertex( i, v );
 	}
-	
-	
 	
 	//
 	//	post process mesh :
@@ -550,9 +331,9 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 	if (!sin_wave) {
 		for (uint i=0; i<WAVE_BAND_NUM; i++) {
 		
-			float x2 = x + y * (i%5)/10.0;
+			float x2 = x;// + y * (i%5)/10.0;
 
-			register float	amp		=	wave.waves[i].amplitude;
+			register float	amp		=	3*wave.waves[i].amplitude;
 			register float	freq	=	wave.waves[i].frequency;
 			register float	phase	=	wave.waves[i].phase;
 			register float	k		=	wave.waves[i].wave_num;
