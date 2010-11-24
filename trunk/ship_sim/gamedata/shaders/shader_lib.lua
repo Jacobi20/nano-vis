@@ -70,22 +70,36 @@ end
 
 function define_water_shader ( path )
 	local injection = [[
-		float2 offset		=	0.01*float2(time*2, time);
-		float2	uv0			=	sample_normal ( sampler1, input.uv0*7+offset*2 ).xy * 0.1;
-				uv0			+=	sample_normal ( sampler1, -input.uv0*7+offset*3 ).xy * 0.07;
-				uv0			+=	sample_normal ( sampler1, input.uv0*7+offset*5 ).xy * 0.2;
-		surface.diffuse 	= 	sample_color ( sampler0, input.uv0 + 0.05*normalize(uv0)).rgb;
-		surface.alpha		=	sample_color ( sampler0, input.uv0 + 0.05*normalize(uv0)).a+0.3;
 
+		float2 	ofs			=	float2(time, 0);
+		float3	color		=	0;
+				color		+=	sample_color ( sampler1, input.uv0/4  + 0.012*ofs ).rgb;
+				color		+=	sample_color ( sampler1, input.uv0/8  + 0.014*ofs ).rgb;
+				color		+=	sample_color ( sampler1, input.uv0/16 + 0.018*ofs ).rgb;
+				color		+=	sample_color ( sampler1, input.uv0/32 + 0.026*ofs ).rgb;
 		
-		surface.diffuse 	= 	sample_color ( sampler0, input.uv0 ).rgb;
-		surface.alpha		=	sample_color ( sampler0, input.uv0 ).a;
+		float	ff1			=	pow(saturate(input.color0.g - 3), 2);
+		float	ff2			=	pow(saturate(input.color0.r), 32);
+		
+		float	foam_factor	=	ff1 * ff2 ;
+				
+		float3	foam		=	0;
+				foam		+=	sample_color ( sampler2, input.uv0/1  + 0.012*ofs ).rgb;
+				foam		+=	sample_color ( sampler2, input.uv0/2  + 0.015*ofs ).rgb;
+				foam		+=	sample_color ( sampler2, input.uv0/3  + 0.022*ofs ).rgb;
+				foam		+=	sample_color ( sampler2, input.uv0/4  + 0.052*ofs ).rgb;
+				foam		*=	foam_factor;
+				foam		/=	4;
+				
+		surface.diffuse 	= 	color/4 + foam;
+		surface.alpha		=	sample_color ( sampler1, input.uv0 ).a;
 	]];
 
 	fr.define_shader {
 		name			=	path;
 		texture_path0	=	"textures/wave_grid.tga";
 		texture_path1	=	"textures/ocean.tga";
+		texture_path2	=	"textures/foam.tga";
 		injection		=	injection;
 		is_solid		=	true;
 		is_translucent	=	false;
