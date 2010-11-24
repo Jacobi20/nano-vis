@@ -20,10 +20,13 @@ input.bind ("Z",  "_ShipBW()");
 input.bind ("A",	"_ShipSL()");
 input.bind ("X",  "_ShipSR()");
 
-input.bind ("F1", "show_info()"  	);
-input.bind ("F2", "cfg.vars.ship_show_hull      = not cfg.vars.ship_show_hull"  	);
-input.bind ("F3", "cfg.vars.ship_show_voxels    = not cfg.vars.ship_show_voxels" 	);
-input.bind ("F4", "cfg.vars.ship_show_submerge  = not cfg.vars.hip_show_submerge");
+function toggle_wireframe()
+	user.fr_wireframe	=	not user.fr_wireframe;
+	print( user.fr_wireframe );
+end
+
+input.bind ("F1", "show_info()"  		);
+input.bind ("F2", "toggle_wireframe()"  );
 
 input.bind ("N", "state.submersion 		= not state.submersion" );
 input.bind ("M", "state.sunking 		= not state.sunking" );
@@ -95,7 +98,7 @@ game_time = 0;
 -------------------------------------------------------------------------------
 
 naval.remove_all_ships();
-naval.set_wind(15);
+naval.set_wind(25);
 
 function show_info()
 	local x,y,z;
@@ -333,7 +336,7 @@ function sci_frame(dtime)
 	--
 	--	view stuff
 	--
-	if uboat and false then
+	if uboat and true then
 		local yaw, pitch, roll 	= uboat:get_angles();
 		local x, y, z 			= uboat:get_position(1.5,0.5,8.8);
 		--local x, y, z 			= uboat:get_position(8.0,0.5,7.8);

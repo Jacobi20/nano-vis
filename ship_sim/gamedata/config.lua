@@ -35,6 +35,7 @@ cfg.setvar('phys_angular_damping'          , 0.01);
 cfg.setvar('phys_linear_sleep_treshold'    , 0.01);
 cfg.setvar('phys_angular_sleep_treshold'   , 0.01);
 cfg.setvar('phys_contact_proc_treshold'    , 0.01);
+cfg.setvar('fr_wireframe'                  , false);
 
 
 -- key bindings --
@@ -57,9 +58,7 @@ input.bind ("S", "_ShipFW()");
 input.bind ("X", "_ShipSR()");
 input.bind ("Z", "_ShipBW()");
 input.bind ("F1", "show_info()");
-input.bind ("F2", "cfg.vars.ship_show_hull      = not cfg.vars.ship_show_hull");
-input.bind ("F3", "cfg.vars.ship_show_voxels    = not cfg.vars.ship_show_voxels");
-input.bind ("F4", "cfg.vars.ship_show_submerge  = not cfg.vars.hip_show_submerge");
+input.bind ("F2", "toggle_wireframe()");
 input.bind ("F5", "dofile('run.lua')");
 input.bind ("F6", "rs.reload_shaders()");
 input.bind ("F7", "do_rolling()");

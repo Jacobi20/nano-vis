@@ -28,7 +28,7 @@
 	Waving :
 -----------------------------------------------------------------------------*/
 
-const uint	WAVE_BAND_NUM			=	15;
+const uint	WAVE_BAND_NUM			=	7;
 const uint	WAVE_GRID_SIZE			=	400;
 const float WAVE_GRID_OFFSET_X		=	-200.0f;
 const float WAVE_GRID_OFFSET_Y		=	-200.0f;
@@ -107,6 +107,8 @@ IWaving	*create_waving(lua_State *L, int idx) { return new EWaving(L, idx); }
 	Implementation :
 -----------------------------------------------------------------------------*/
 
+#define USE_SS_GRID
+
 //
 //
 //
@@ -115,7 +117,11 @@ EWaving::EWaving( lua_State *L, int idx )
 	u_wind	=	0;
 	time	=	0;
 
-	sea_mesh	=	ge()->LoadMeshFromFile("sea.esx|sea");
+	#ifdef USE_SS_GRID
+		sea_mesh	=	ge()->LoadMeshFromFile("sea.esx|sea_ss");
+	#else
+		sea_mesh	=	ge()->LoadMeshFromFile("sea.esx|sea");
+	#endif
 	sky_mesh	=	ge()->LoadMeshFromFile("sky.esx|sky");
 	
 	r_ent		=	sci_vis->GetFRScene()->AddEntity();
@@ -237,6 +243,7 @@ void EWaving::InitWaving( bool new_phases )
 	Spectral runtime stuff :
 -----------------------------------------------------------------------------*/
 
+#ifndef USE_SS_GRID
 //
 //	EWaving::Update
 //
@@ -308,6 +315,9 @@ void EWaving::Update( float dtime, const EVec4 &_view_pos, const EQuat &orient )
 	r_ent->SetMesh( mesh );
 	//r_ent->SetFlag( RSE_HIDDEN );  
 }
+#else
+	#include "water_grid_ss.h"
+#endif
 
 
 //
@@ -331,9 +341,9 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 	if (!sin_wave) {
 		for (uint i=0; i<WAVE_BAND_NUM; i++) {
 		
-			float x2 = x;// + y * (i%5)/10.0;
+			float x2 = x + y * wave.waves[i].phase / 8.0f;
 
-			register float	amp		=	3*wave.waves[i].amplitude;
+			register float	amp		=	wave.waves[i].amplitude;
 			register float	freq	=	wave.waves[i].frequency;
 			register float	phase	=	wave.waves[i].phase;
 			register float	k		=	wave.waves[i].wave_num;
@@ -348,6 +358,9 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 		pw.offset	=	sin_wave_a * sin(w * time + k * x);
 	}
 	
+	
+	//pw.offset	*=	pw.offset;
+	//pw.offset	/=	4.0f;
 	
 	//	compute pressure offset :	
 	pw.pressure	 +=	pw.offset * GRAVITY * WATER_DENSITY;
