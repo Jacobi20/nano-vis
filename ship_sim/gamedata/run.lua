@@ -235,7 +235,7 @@ user.ship_hsf_method	=	"hxfse";
 function DriveShip()
 	local yaw, pitch, roll = uboat:get_angles();
 
-	local force = 16000000;
+	local force = 76000000;
 	
 	if (state.ship_sl) then yaw = yaw - 10; end
 	if (state.ship_sr) then yaw = yaw + 10; end
@@ -245,7 +245,7 @@ function DriveShip()
 	local fz	=	force * 0;--math.sin(-pitch);
 	
 	--local x,y,z	=	uboat:get_position(-50,0,-1);
-	local x,y,z	=	-50, 0, -1.5;
+	local x,y,z	=	-50, 0, -2.5;
 
 	if state.ship_fw then uboat:add_force( vmath.vec4( fx, fy, fz, 0), vmath.vec4(x,y,z,1), true); end;
 	if state.ship_bw then uboat:add_force( vmath.vec4(-fx,-fy,-fz, 0), vmath.vec4(x,y,z,1), true); end;
@@ -337,7 +337,13 @@ function sci_frame(dtime)
 	--	view stuff
 	--
 	if uboat and true then
+	
 		local yaw, pitch, roll 	= uboat:get_angles();
+		
+		core.debug_string("FPS", 1 / dtime, false, true);
+		core.debug_string(yaw, pitch, roll);
+	
+		
 		local x, y, z 			= uboat:get_position(1.5,0.5,8.8);
 		--local x, y, z 			= uboat:get_position(8.0,0.5,7.8);
 		filtered_view.x = filter(filtered_view.x, x, 0.1);
