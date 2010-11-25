@@ -72,17 +72,28 @@ function define_water_shader ( path )
 	local injection = [[
 
 		float2 	ofs			=	float2(time, 0);
-		float3	color		=	0;
-				color		+=	sample_color ( sampler1, input.uv0/4  + 0.012*ofs ).rgb;
-				color		+=	sample_color ( sampler1, input.uv0/8  + 0.014*ofs ).rgb;
-				color		+=	sample_color ( sampler1, input.uv0/16 + 0.018*ofs ).rgb;
-				color		+=	sample_color ( sampler1, input.uv0/32 + 0.026*ofs ).rgb;
+		float3	normal		=	0;
+				normal		+=	sample_normal ( sampler1, input.uv0/4  + 0.012*ofs ).rgb;
+				normal		+=	sample_normal ( sampler1, input.uv0/8  + 0.014*ofs ).rgb;
+				normal		+=	sample_normal ( sampler1, input.uv0/16 + 0.018*ofs ).rgb;
+				normal		+=	sample_normal ( sampler1, input.uv0/32 + 0.026*ofs ).rgb;
+				
+				normal		=	normalize( normal );
+				
+		float3	ray			=	normalize( view_position.xyz - input.wpos.xyz );
+		float2	refl_uv		=	normalize(reflect( ray, normal )).xy;
+				refl_uv.y	=	-refl_uv.y;
+		float3	refl		=	sample_color( sampler3, 0.5*(refl_uv+1) ).rgb;
 		
 		float	ff1			=	pow(saturate(input.color0.g - 3), 2);
 		float	ff2			=	pow(saturate(input.color0.r), 32);
 		
 		float	foam_factor	=	ff1 * ff2 ;
-				
+
+		float	fresnel		=	1 - abs(dot( ray, normal ));
+				fresnel		=	0.3 + 0.7*pow( fresnel, 3 );
+		
+		
 		float3	foam		=	0;
 				foam		+=	sample_color ( sampler2, input.uv0/1  + 0.012*ofs ).rgb;
 				foam		+=	sample_color ( sampler2, input.uv0/2  + 0.015*ofs ).rgb;
@@ -91,15 +102,16 @@ function define_water_shader ( path )
 				foam		*=	foam_factor;
 				foam		/=	4;
 				
-		surface.diffuse 	= 	color/4 + foam;
+		surface.diffuse 	= 	refl * fresnel + foam;
 		surface.alpha		=	sample_color ( sampler1, input.uv0 ).a;
 	]];
 
 	fr.define_shader {
 		name			=	path;
 		texture_path0	=	"textures/wave_grid.tga";
-		texture_path1	=	"textures/ocean.tga";
+		texture_path1	=	"textures/ocean_local.tga";
 		texture_path2	=	"textures/foam.tga";
+		texture_path3	=	"textures/ocean_reflection.tga";
 		injection		=	injection;
 		is_solid		=	true;
 		is_translucent	=	false;
