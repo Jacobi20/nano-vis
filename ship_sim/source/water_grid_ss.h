@@ -91,7 +91,7 @@ EMatrix4 GetRangeMatrix( const EMatrix4 &iVP, const EMatrix4 &newVP, const EPlan
 		buffer[i].z = 0;
 		buffer[i].w = 1;
 
-		rs()->GetDVScene()->DrawPoint( buffer[i], 0.1, EVec4(0,0,1,1.0) );
+		//rs()->GetDVScene()->DrawPoint( buffer[i], 0.1, EVec4(0,0,1,1.0) );
 		
 		EVec4 tp = Matrix4Transform( buffer[i], newVP );
 		tp /= tp.w;
@@ -184,7 +184,7 @@ void EWaving::Update( float dtime, const EVec4 &view_pos, const EQuat &orient )
 		p = o + r * t;
 		p.z = 0;
 		
-		rs()->GetDVScene()->DrawPoint( p, 2.0f, EVec4(1,0,0,1.0));
+		//rs()->GetDVScene()->DrawPoint( p, 2.0f, EVec4(1,0,0,1.0));
 		
 		//	elevate camera :
 		float c_p_dist	=	Vec3Length( EVec3(center.x, center.y, 0) - EVec3(p.x, p.y, 0) );

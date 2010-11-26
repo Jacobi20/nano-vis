@@ -28,7 +28,7 @@
 	Waving :
 -----------------------------------------------------------------------------*/
 
-const uint	WAVE_BAND_NUM			=	7;
+const uint	WAVE_BAND_NUM			=	15;
 const uint	WAVE_GRID_SIZE			=	400;
 const float WAVE_GRID_OFFSET_X		=	-200.0f;
 const float WAVE_GRID_OFFSET_Y		=	-200.0f;

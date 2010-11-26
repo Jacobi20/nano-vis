@@ -70,19 +70,25 @@ end
 
 function define_water_shader ( path )
 	local injection = [[
+	
+		float3	water_color	=	0.25*float3(73.0f/256.0f, 65.0f/256.0f, 78.0f/256.0f);
 
 		float2 	ofs			=	float2(time, 0);
 		float3	normal		=	0;
-				normal		+=	sample_normal ( sampler1, input.uv0/4  + 0.012*ofs ).rgb;
-				normal		+=	sample_normal ( sampler1, input.uv0/8  + 0.014*ofs ).rgb;
-				normal		+=	sample_normal ( sampler1, input.uv0/16 + 0.018*ofs ).rgb;
-				normal		+=	sample_normal ( sampler1, input.uv0/32 + 0.026*ofs ).rgb;
+		float	scale		=	0.5;
+				normal		+=	8*sample_normal ( sampler1, scale*input.uv0/4 +  0.012*ofs ).rgb;
+				normal		+=	4*sample_normal ( sampler1, scale*input.uv0/8  + 0.014*ofs ).rgb;
+				normal		+=	2*sample_normal ( sampler1, scale*input.uv0/16 + 0.018*ofs ).rgb;
+				normal		+=	1*sample_normal ( sampler1, scale*input.uv0/32 + 0.026*ofs ).rgb;
+				
+				normal		=	getWorldNormal(normal);
 				
 				normal		=	normalize( normal );
 				
 		float3	ray			=	normalize( view_position.xyz - input.wpos.xyz );
 		float2	refl_uv		=	normalize(reflect( ray, normal )).xy;
 				refl_uv.y	=	-refl_uv.y;
+				refl_uv		*=	0.98;
 		float3	refl		=	sample_color( sampler3, 0.5*(refl_uv+1) ).rgb;
 		
 		float	ff1			=	pow(saturate(input.color0.g - 3), 2);
@@ -91,7 +97,7 @@ function define_water_shader ( path )
 		float	foam_factor	=	ff1 * ff2 ;
 
 		float	fresnel		=	1 - abs(dot( ray, normal ));
-				fresnel		=	0.3 + 0.7*pow( fresnel, 3 );
+				fresnel		=	0.05 + 0.95*pow( saturate(fresnel), 10 );
 		
 		
 		float3	foam		=	0;
@@ -102,7 +108,8 @@ function define_water_shader ( path )
 				foam		*=	foam_factor;
 				foam		/=	4;
 				
-		surface.diffuse 	= 	refl * fresnel + foam;
+		surface.diffuse 	= 	0;
+		surface.emission	=	refl * fresnel + foam + water_color * (1-fresnel);
 		surface.alpha		=	sample_color ( sampler1, input.uv0 ).a;
 	]];
 
@@ -114,6 +121,7 @@ function define_water_shader ( path )
 		texture_path3	=	"textures/ocean_reflection.tga";
 		injection		=	injection;
 		is_solid		=	true;
+		is_emissive		=	true;
 		is_translucent	=	false;
 	}
 end
