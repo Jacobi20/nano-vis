@@ -48,7 +48,7 @@ fr.define_shader {
 	is_solid		=	true;
 	
 	injection		=	[[
-		surface.diffuse = 	float3(0.35, 0.35, 0.35);
+		surface.diffuse = 	float3(0.15, 0.15, 0.15);
 	]];
 		
 }

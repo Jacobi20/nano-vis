@@ -98,7 +98,7 @@ game_time = 0;
 -------------------------------------------------------------------------------
 
 naval.remove_all_ships();
-naval.set_wind(25);
+naval.set_wind(15);
 
 function show_info()
 	local x,y,z;
@@ -219,10 +219,10 @@ local rolling_log2 = io.open("rolling2.log", "w");
 
 --uboat	=	create_ssn668();
 --uboat	=	create_cutter();
-uboat	=	create_uboat();
+uboat2	=	create_uboat();
 --uboat	=	create_box();
 
-uboat2	=	create_cutter();
+uboat	=	create_cutter();
 
 user.ship_hsf_method	=	"hxfse";
 --ship_hsf_method	=	"surface";
@@ -235,7 +235,7 @@ user.ship_hsf_method	=	"hxfse";
 function DriveShip()
 	local yaw, pitch, roll = uboat:get_angles();
 
-	local force = 76000000;
+	local force = 1600000;
 	
 	if (state.ship_sl) then yaw = yaw - 10; end
 	if (state.ship_sr) then yaw = yaw + 10; end
@@ -245,7 +245,7 @@ function DriveShip()
 	local fz	=	force * 0;--math.sin(-pitch);
 	
 	--local x,y,z	=	uboat:get_position(-50,0,-1);
-	local x,y,z	=	-50, 0, -2.5;
+	local x,y,z	=	-50, 0, -1.5;
 
 	if state.ship_fw then uboat:add_force( vmath.vec4( fx, fy, fz, 0), vmath.vec4(x,y,z,1), true); end;
 	if state.ship_bw then uboat:add_force( vmath.vec4(-fx,-fy,-fz, 0), vmath.vec4(x,y,z,1), true); end;
@@ -306,6 +306,7 @@ end
 function sci_frame(dtime)
 
 --	SCI_ShipForce( vmath.vec4(0, 0,-5000000,0), vmath.vec4(50,0,0,1));
+	core.debug_string("FPS", 1 / dtime);
 
 	local	rotation = 60;
 	game_time = game_time + dtime;
@@ -340,12 +341,11 @@ function sci_frame(dtime)
 	
 		local yaw, pitch, roll 	= uboat:get_angles();
 		
-		core.debug_string("FPS", 1 / dtime, false, true);
 		core.debug_string(yaw, pitch, roll);
 	
 		
-		local x, y, z 			= uboat:get_position(1.5,0.5,8.8);
-		--local x, y, z 			= uboat:get_position(8.0,0.5,7.8);
+		--local x, y, z 			= uboat:get_position(1.5,0.5,8.8);
+		local x, y, z 			= uboat:get_position(8.0,-3.5,7.8);
 		filtered_view.x = filter(filtered_view.x, x, 0.1);
 		filtered_view.y = filter(filtered_view.y, y, 0.1);
 		filtered_view.z = filter(filtered_view.z, z, 0.1);
