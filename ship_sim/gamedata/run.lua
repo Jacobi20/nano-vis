@@ -8,17 +8,17 @@ input.bind ("F7", 	"do_rolling()");
 input.bind ("F5", 	"dofile('run.lua')");
 input.bind ("F6", 	"rs.reload_shaders()");
 input.bind ("F10", 	"core.quit()");
-input.bind ("PGUP", 	"_DistInc()");
-input.bind ("PGDN", 	"_DistDec()");
-input.bind ("RIGHT", 	"_YawDec()");
-input.bind ("LEFT", 	"_YawInc()");
-input.bind ("UP", 		"_PitchInc()");
-input.bind ("DOWN", 	"_PitchDec()");
+input.bind ("PGUP", 	"_DistInc()"	,"DistInc()"	);
+input.bind ("PGDN", 	"_DistDec()"	,"DistDec()"	);
+input.bind ("RIGHT", 	"_YawDec()"		,"YawDec()"		);
+input.bind ("LEFT", 	"_YawInc()"		,"YawInc()"		);
+input.bind ("UP", 		"_PitchInc()"	,"PitchInc()"	);
+input.bind ("DOWN", 	"_PitchDec()"	,"PitchDec()"	);
 
-input.bind ("S",	"_ShipFW()");
-input.bind ("Z",  "_ShipBW()");
-input.bind ("A",	"_ShipSL()");
-input.bind ("X",  "_ShipSR()");
+input.bind ("S",	"_ShipFW()",	"ShipFW()");
+input.bind ("Z",  	"_ShipBW()",	"ShipBW()");
+input.bind ("A",	"_ShipSL()",	"ShipSL()");
+input.bind ("X",  	"_ShipSR()",	"ShipSR()");
 
 function toggle_wireframe()
 	user.fr_wireframe	=	not user.fr_wireframe;
@@ -127,7 +127,7 @@ function create_uboat()
 	ship:make_rigidbody	( "uboat.esx|stat", 1805000	);
 	
 	ship:set_position	( 0, 0, 0 );	
-	ship:set_angles		( 45, 0, 0 );
+	ship:set_angles		( 0, 0, 50 );
 	ship:set_cmass		( 0,0,-0.5 );
 	
 	ship:build_voxels	( "uboat.esx|flowsurf2", 1	);
@@ -337,7 +337,7 @@ function sci_frame(dtime)
 	--
 	--	view stuff
 	--
-	if uboat and true then
+	if uboat and false then
 	
 		local yaw, pitch, roll 	= uboat:get_angles();
 		

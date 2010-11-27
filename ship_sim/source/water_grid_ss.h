@@ -129,7 +129,7 @@ void EWaving::Update( float dtime, const EVec4 &view_pos, const EQuat &orient )
 	rs()->GetScreenSize(sw, sh);
 	float aspect = (float)sw / (float)sh;
 
-	r_sky->SetPose( view_pos, QuatIdentity() );
+	//r_sky->SetPose( view_pos, QuatIdentity() );
 
 	EFrustum	Fr		=	ESciVis::self->view.frustum;
 	float		w		=	Fr.getWidth();

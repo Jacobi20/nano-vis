@@ -122,13 +122,13 @@ EWaving::EWaving( lua_State *L, int idx )
 	#else
 		sea_mesh	=	ge()->LoadMeshFromFile("sea.esx|sea");
 	#endif
-	sky_mesh	=	ge()->LoadMeshFromFile("sky.esx|sky");
+	//sky_mesh	=	ge()->LoadMeshFromFile("sky.esx|sky");
 	
 	r_ent		=	sci_vis->GetFRScene()->AddEntity();
 	r_ent->SetMesh( sea_mesh );
 	
-	r_sky		=	sci_vis->GetFRScene()->AddEntity();
-	r_sky->SetMesh( sky_mesh );
+	//r_sky		=	sci_vis->GetFRScene()->AddEntity();
+	//r_sky->SetMesh( sky_mesh );
 	//r_sky->SetFlag( RSE_HIDDEN );
 	
 	InitWaving(true);
