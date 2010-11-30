@@ -119,16 +119,24 @@ EWaving::EWaving( lua_State *L, int idx )
 
 	#ifdef USE_SS_GRID
 		sea_mesh	=	ge()->LoadMeshFromFile("sea.esx|sea_ss");
+		/*sea_mesh	=	ge()->CreatePlane( 2, 2, 80, 80 );
+		EShadingGroup	sg;
+		sg.start	= 0;
+		sg.num		= sea_mesh->GetTriangleNum();
+		sg.shader	= "textures/water.tga";
+		sea_mesh->SetSGNum(1);
+		sea_mesh->SetSG(0, sg);*/
+		
 	#else
 		sea_mesh	=	ge()->LoadMeshFromFile("sea.esx|sea");
 	#endif
-	//sky_mesh	=	ge()->LoadMeshFromFile("sky.esx|sky");
+	sky_mesh	=	ge()->LoadMeshFromFile("sky.esx|sky");
 	
 	r_ent		=	sci_vis->GetFRScene()->AddEntity();
 	r_ent->SetMesh( sea_mesh );
 	
-	//r_sky		=	sci_vis->GetFRScene()->AddEntity();
-	//r_sky->SetMesh( sky_mesh );
+	r_sky		=	sci_vis->GetFRScene()->AddEntity();
+	r_sky->SetMesh( sky_mesh );
 	//r_sky->SetFlag( RSE_HIDDEN );
 	
 	InitWaving(true);
