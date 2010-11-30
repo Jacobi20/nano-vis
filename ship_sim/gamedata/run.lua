@@ -6,7 +6,7 @@
 input.unbindall()
 input.bind ("F7", 	"do_rolling()");
 input.bind ("F5", 	"dofile('run.lua')");
-input.bind ("F6", 	"rs.reload_shaders()");
+input.bind ("F6", 	"rs.reloadShaders()");
 input.bind ("F10", 	"core.quit()");
 input.bind ("PGUP", 	"_DistInc()"	,"DistInc()"	);
 input.bind ("PGDN", 	"_DistDec()"	,"DistDec()"	);
@@ -48,7 +48,7 @@ state = {
 	pitch_dec	=	false;
 	dist_inc	=	false;
 	dist_dec	=	false;
-	yaw		=	-125;
+	yaw		=	-180;
 	roll	=	0;
 	pitch	=	20;
 	dist	=	70;
@@ -127,7 +127,7 @@ function create_uboat()
 	ship:make_rigidbody	( "uboat.esx|stat", 1805000	);
 	
 	ship:set_position	( 0, 0, 0 );	
-	ship:set_angles		( 0, 0, 50 );
+	ship:set_angles		( 0, 0, 0 );
 	ship:set_cmass		( 0,0,-0.5 );
 	
 	ship:build_voxels	( "uboat.esx|flowsurf2", 1	);
@@ -337,12 +337,9 @@ function sci_frame(dtime)
 	--
 	--	view stuff
 	--
-	if uboat and false then
+	if uboat and true then
 	
 		local yaw, pitch, roll 	= uboat:get_angles();
-		
-		core.debug_string(yaw, pitch, roll);
-	
 		
 		--local x, y, z 			= uboat:get_position(1.5,0.5,8.8);
 		local x, y, z 			= uboat:get_position(8.0,-3.5,7.8);

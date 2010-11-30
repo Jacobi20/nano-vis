@@ -2,8 +2,8 @@
 -- warning: syntax errors will cause configuration resetting --
 
 cfg.setvar('d3d_wireframe'                 , nil);
-cfg.setvar('d3d_fullscr'                   , false);
-cfg.setvar('d3d_mode'                      , 2);
+cfg.setvar('d3d_fullscr'                   , true);
+cfg.setvar('d3d_mode'                      , 5);
 cfg.setvar('d3d_xpos'                      , 176);
 cfg.setvar('d3d_ypos'                      , 81);
 cfg.setvar('d3d_anisotropy_level'          , 16);
@@ -60,6 +60,6 @@ input.bind ("Z", "_ShipBW()", "ShipBW()");
 input.bind ("F1", "show_info()", "");
 input.bind ("F2", "toggle_wireframe()", "");
 input.bind ("F5", "dofile('run.lua')", "");
-input.bind ("F6", "rs.reload_shaders()", "");
+input.bind ("F6", "rs.reloadShaders()", "");
 input.bind ("F7", "do_rolling()", "");
 input.bind ("F10", "core.quit()", "");
