@@ -2,8 +2,8 @@
 -- warning: syntax errors will cause configuration resetting --
 
 cfg.setvar('d3d_wireframe'                 , nil);
-cfg.setvar('d3d_fullscr'                   , true);
-cfg.setvar('d3d_mode'                      , 5);
+cfg.setvar('d3d_fullscr'                   , false);
+cfg.setvar('d3d_mode'                      , 2);
 cfg.setvar('d3d_xpos'                      , 176);
 cfg.setvar('d3d_ypos'                      , 81);
 cfg.setvar('d3d_anisotropy_level'          , 16);
