@@ -124,6 +124,9 @@ void EWaving::Update( float dtime, const EVec4 &view_pos, const EQuat &orient )
 	time	+=	dtime;
 
 	//r_sky->SetFlag( RSE_HIDDEN );
+	r_ent->SetFlag( RSE_HIDDEN );
+	
+	return;
 
 	uint sw, sh;
 	rs()->GetScreenSize(sw, sh);

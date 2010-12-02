@@ -51,7 +51,7 @@ state = {
 	yaw		=	-180;
 	roll	=	0;
 	pitch	=	20;
-	dist	=	70;
+	dist	=	20;
 	
 	submersion	=	false;
 	sunking		=	false;
@@ -126,7 +126,7 @@ function create_uboat()
 	ship:set_hsf_mesh	( "uboat.esx|flowsurf2" 		);
 	ship:make_rigidbody	( "uboat.esx|stat", 1805000	);
 	
-	ship:set_position	( 0, 0, 0 );	
+	ship:set_position	( 20, 20, 0 );	
 	ship:set_angles		( 0, 0, 0 );
 	ship:set_cmass		( 0,0,-0.5 );
 	
@@ -337,7 +337,7 @@ function sci_frame(dtime)
 	--
 	--	view stuff
 	--
-	if uboat and true then
+	if uboat and false then
 	
 		local yaw, pitch, roll 	= uboat:get_angles();
 		
