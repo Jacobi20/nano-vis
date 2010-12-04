@@ -1,2 +1,2 @@
 cd ../engine
-launch.exe -game game_ship
+"C:\Program Files\NVIDIA Corporation\NVIDIA PerfHUD 6\NVPerfHUD.exe" launch.exe -game game_ship

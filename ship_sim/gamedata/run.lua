@@ -219,10 +219,10 @@ local rolling_log2 = io.open("rolling2.log", "w");
 
 --uboat	=	create_ssn668();
 --uboat	=	create_cutter();
-uboat2	=	create_uboat();
+uboat2	=	create_cutter();
 --uboat	=	create_box();
 
-uboat	=	create_cutter();
+uboat	=	create_uboat();
 
 user.ship_hsf_method	=	"hxfse";
 --ship_hsf_method	=	"surface";
@@ -235,7 +235,7 @@ user.ship_hsf_method	=	"hxfse";
 function DriveShip()
 	local yaw, pitch, roll = uboat:get_angles();
 
-	local force = 1600000;
+	local force = 16000000;
 	
 	if (state.ship_sl) then yaw = yaw - 10; end
 	if (state.ship_sr) then yaw = yaw + 10; end
@@ -341,8 +341,8 @@ function sci_frame(dtime)
 	
 		local yaw, pitch, roll 	= uboat:get_angles();
 		
-		--local x, y, z 			= uboat:get_position(1.5,0.5,8.8);
-		local x, y, z 			= uboat:get_position(8.0,-3.5,7.8);
+		local x, y, z 			= uboat:get_position(1.5,0.5,8.8);
+		--local x, y, z 			= uboat:get_position(8.0,-3.5,7.8);
 		filtered_view.x = filter(filtered_view.x, x, 0.1);
 		filtered_view.y = filter(filtered_view.y, y, 0.1);
 		filtered_view.z = filter(filtered_view.z, z, 0.1);
