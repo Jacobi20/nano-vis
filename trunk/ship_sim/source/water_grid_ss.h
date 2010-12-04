@@ -20,14 +20,14 @@ EMatrix4 GetRangeMatrix( const EMatrix4 &iVP, const EMatrix4 &newVP, const EPlan
 	EVec4	v6	=	Matrix4Transform( EVec4(-u,-u,-u, 1), iVP );	v6	/=	v6.w;
 	EVec4	v7	=	Matrix4Transform( EVec4( u,-u,-u, 1), iVP );	v7	/=	v7.w;
 	
-	rs()->GetDVScene()->DrawPoint( v0, 0.1f, EVec4(1,1,0,0.5) );
-	rs()->GetDVScene()->DrawPoint( v1, 0.1f, EVec4(1,1,0,0.5) );
-	rs()->GetDVScene()->DrawPoint( v2, 0.1f, EVec4(1,1,0,0.5) );
-	rs()->GetDVScene()->DrawPoint( v3, 0.1f, EVec4(1,1,0,0.5) );
-	rs()->GetDVScene()->DrawPoint( v4, 0.1f, EVec4(1,0,1,1.0) );
-	rs()->GetDVScene()->DrawPoint( v5, 0.1f, EVec4(1,0,1,1.0) );
-	rs()->GetDVScene()->DrawPoint( v6, 0.1f, EVec4(1,0,1,1.0) );
-	rs()->GetDVScene()->DrawPoint( v7, 0.1f, EVec4(1,0,1,1.0) );
+	//rs()->GetDVScene()->DrawPoint( v0, 0.1f, EVec4(1,1,0,0.5) );
+	//rs()->GetDVScene()->DrawPoint( v1, 0.1f, EVec4(1,1,0,0.5) );
+	//rs()->GetDVScene()->DrawPoint( v2, 0.1f, EVec4(1,1,0,0.5) );
+	//rs()->GetDVScene()->DrawPoint( v3, 0.1f, EVec4(1,1,0,0.5) );
+	//rs()->GetDVScene()->DrawPoint( v4, 0.1f, EVec4(1,0,1,1.0) );
+	//rs()->GetDVScene()->DrawPoint( v5, 0.1f, EVec4(1,0,1,1.0) );
+	//rs()->GetDVScene()->DrawPoint( v6, 0.1f, EVec4(1,0,1,1.0) );
+	//rs()->GetDVScene()->DrawPoint( v7, 0.1f, EVec4(1,0,1,1.0) );
 
 	struct segment_s {
 		void fromVec4( const EVec4 &a, const EVec4 &b ) {
@@ -125,6 +125,7 @@ void EWaving::Update( float dtime, const EVec4 &view_pos, const EQuat &orient )
 
 	//r_sky->SetFlag( RSE_HIDDEN );
 	r_ent->SetFlag( RSE_HIDDEN );
+	r_sky->SetPose( view_pos, QuatIdentity() );
 	
 	return;
 
@@ -132,7 +133,6 @@ void EWaving::Update( float dtime, const EVec4 &view_pos, const EQuat &orient )
 	rs()->GetScreenSize(sw, sh);
 	float aspect = (float)sw / (float)sh;
 
-	r_sky->SetPose( view_pos, QuatIdentity() );
 
 	EFrustum	Fr		=	ESciVis::self->view.frustum;
 	float		w		=	Fr.getWidth();
