@@ -121,7 +121,7 @@ EMatrix4 GetRangeMatrix( const EMatrix4 &iVP, const EMatrix4 &newVP, const EPlan
 //
 void EWaving::Update( float dtime, const EVec4 &view_pos, const EQuat &orient )
 {
-	PROFILE_FUNCTION("");
+	//PROFILE_FUNCTION("");
 	
 	time	+=	dtime;
 
