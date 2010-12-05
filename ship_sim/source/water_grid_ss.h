@@ -121,14 +121,14 @@ EMatrix4 GetRangeMatrix( const EMatrix4 &iVP, const EMatrix4 &newVP, const EPlan
 //
 void EWaving::Update( float dtime, const EVec4 &view_pos, const EQuat &orient )
 {
+	PROFILE_FUNCTION("");
+	
 	time	+=	dtime;
 
 	//r_sky->SetFlag( RSE_HIDDEN );
-	r_ent->SetFlag( RSE_HIDDEN );
+	//r_ent->SetFlag( RSE_HIDDEN );
 	r_sky->SetPose( view_pos, QuatIdentity() );
 	
-	return;
-
 	uint sw, sh;
 	rs()->GetScreenSize(sw, sh);
 	float aspect = (float)sw / (float)sh;
@@ -210,6 +210,9 @@ void EWaving::Update( float dtime, const EVec4 &view_pos, const EQuat &orient )
 	IPxTriMesh	mesh	=	sea_mesh->Clone();
 	uint n = mesh->GetVertexNum();
 	
+	EMatrix4	Tproj	=	range * newiVP;
+
+#if 1
 	for (uint i=0; i<n; i++) {
 		EVertex	v;
 		
@@ -217,8 +220,8 @@ void EWaving::Update( float dtime, const EVec4 &view_pos, const EQuat &orient )
 		float x		=	v.position.x*0.5;
 		float y		=	v.position.y*0.5;
 		
-		EVec4 r0	=	Matrix4Transform( EVec4(x,y,-1,1), range * newiVP );
-		EVec4 r1	=	Matrix4Transform( EVec4(x,y, 1,1), range * newiVP );
+		EVec4 r0	=	Matrix4Transform( EVec4(x,y,-1,1), Tproj );
+		EVec4 r1	=	Matrix4Transform( EVec4(x,y, 1,1), Tproj );
 		r0 /= r0.w;
 		r1 /= r1.w;
 		
@@ -238,7 +241,7 @@ void EWaving::Update( float dtime, const EVec4 &view_pos, const EQuat &orient )
 		//		
 		v.position.x	=	p.x;
 		v.position.y	=	p.y;
-		v.position.z	=	GetPosition( Vec3ToVec4(v.position) ).z;
+		v.position.z	=	GetWaveFast( v.position.x, v.position.y, time );
 		
 		float	dist	=	Vec3Length( EVec3(p.x, p.y, 0) - Vec4ToVec3( view_pos ) );
 				dist	=	clamp<float>( dist, 0, VIEW_FAR);
@@ -249,13 +252,14 @@ void EWaving::Update( float dtime, const EVec4 &view_pos, const EQuat &orient )
 		
 		mesh->SetVertex( i, v );
 	}
-	
+#endif	
 	
 	
 	//
 	//	post process mesh :
 	//
 	mesh->ComputeNormals();
+
 
 	for (uint i=0; i<n; i++) {
 		EVertex	v	=	mesh->GetVertex( i );
@@ -268,7 +272,9 @@ void EWaving::Update( float dtime, const EVec4 &view_pos, const EQuat &orient )
 		
 		mesh->SetVertex( i, v );
 	}
-	
+
+	uint format = mesh->GetFormat();
+	mesh->SetFormat( format | GE_MESH_BINORMAL | GE_MESH_TANGENT );
 	r_ent->SetMesh( mesh );
 	//r_ent->SetFlag( RSE_HIDDEN );  
 }
