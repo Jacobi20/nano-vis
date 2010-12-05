@@ -48,10 +48,10 @@ state = {
 	pitch_dec	=	false;
 	dist_inc	=	false;
 	dist_dec	=	false;
-	yaw		=	-180;
+	yaw		=	-180+15;
 	roll	=	0;
-	pitch	=	20;
-	dist	=	20;
+	pitch	=	5;
+	dist	=	70;
 	
 	submersion	=	false;
 	sunking		=	false;
@@ -98,7 +98,7 @@ game_time = 0;
 -------------------------------------------------------------------------------
 
 naval.remove_all_ships();
-naval.set_wind(15);
+naval.set_wind(12);
 
 function show_info()
 	local x,y,z;
@@ -114,7 +114,7 @@ function show_info()
 	print("");
 end
 
-function create_uboat()
+function create_uboat(x,y,z)
 	print("");
 	print("---- creating U-boat ----");
 	local ship = naval.create_ship();
@@ -124,9 +124,9 @@ function create_uboat()
 	ship:set_vis_mesh	( "uboat.esx|boat1"			);
 	ship:set_hdf_mesh	( "uboat.esx|flowsurf2" 		);
 	ship:set_hsf_mesh	( "uboat.esx|flowsurf2" 		);
-	ship:make_rigidbody	( "uboat.esx|stat", 1805000	);
+	ship:make_rigidbody	( "uboat.esx|stat", 2205000	);
 	
-	ship:set_position	( 20, 20, 0 );	
+	ship:set_position	( x or 0, y or 0, z or 0 );	
 	ship:set_angles		( 0, 0, 0 );
 	ship:set_cmass		( 0,0,-0.5 );
 	
@@ -180,7 +180,7 @@ function create_ssn668()
 	ship:set_cmass		( 0, 0, 0 );
 	
 	ship:build_voxels	( "ssn668.esx|hydromesh", 2	);
-	ship:build_surf_dxdy( "ssn668.esx|hydromesh", 3, 0.1	);
+	ship:build_surf_dxdy( "ssn668.esx|hydromesh", 0.1, 0.1	);
 	
 	print("---- done ----");
 	print("");
@@ -219,10 +219,10 @@ local rolling_log2 = io.open("rolling2.log", "w");
 
 --uboat	=	create_ssn668();
 --uboat	=	create_cutter();
-uboat2	=	create_cutter();
+--uboat2	=	create_uboat(-50,50,-15);
 --uboat	=	create_box();
 
-uboat	=	create_uboat();
+uboat	=	create_uboat(0,0,-10);
 
 user.ship_hsf_method	=	"hxfse";
 --ship_hsf_method	=	"surface";
@@ -251,7 +251,7 @@ function DriveShip()
 	if state.ship_bw then uboat:add_force( vmath.vec4(-fx,-fy,-fz, 0), vmath.vec4(x,y,z,1), true); end;
 	
 	if state.submersion then
-		uboat:add_force( vmath.vec4(0,0,-16537500,0), vmath.vec4(0,0,0,1), true);
+		uboat:add_force( vmath.vec4(0,0,-16537500,0), vmath.vec4(-2,0,0,1), true);
 	end
 	if state.sunking then
 		uboat:add_force( vmath.vec4(0,0,-2000000,0), vmath.vec4(0,0,0,1), true);
@@ -303,12 +303,20 @@ function filter(a, b, f)
 	return a * (1-f) + b * f;
 end	
 
+local time_time = 0;
+
 function sci_frame(dtime)
 
+	
+	time_time	=	time_time + dtime
+	
+	-- state.pitch	=	10;
+	-- state.yaw 	=	state.yaw + dtime * 30;
+	-- state.dist	=  	200 * (0.6+0.4*math.cos(time_time/1.0) + 0.5+0.5*math.cos(time_time/0.7));
 --	SCI_ShipForce( vmath.vec4(0, 0,-5000000,0), vmath.vec4(50,0,0,1));
-	core.debug_string("FPS", 1 / dtime);
+	--core.debug_string("FPS", 1 / dtime);
 
-	local	rotation = 60;
+	local	rotation = 20;
 	game_time = game_time + dtime;
 	
 	dtime = 0.03;
@@ -324,15 +332,30 @@ function sci_frame(dtime)
 	
 	--uboat:add_force( vmath.vec4(0,0,-2000000,0), vmath.vec4(0,0,0,1), true);
 	
-
+	
 	if state.yaw_inc	then	state.yaw	=	state.yaw 	+ dtime * rotation; end;
 	if state.yaw_dec	then	state.yaw	=	state.yaw 	- dtime * rotation; end;
 	if state.roll_inc	then	state.roll	=	state.roll 	+ dtime * rotation; end;
 	if state.roll_dec	then	state.roll	=	state.roll 	- dtime * rotation; end;
 	if state.pitch_inc	then	state.pitch	=	state.pitch	+ dtime * rotation; end;
 	if state.pitch_dec	then	state.pitch	=	state.pitch	- dtime * rotation; end;
-	if state.dist_inc	then	state.dist	=	state.dist	* 1.03;	end;
-	if state.dist_dec	then	state.dist	=	state.dist	/ 1.03; 	end;
+	if state.dist_inc	then	state.dist	=	state.dist	* 1.01;	end;
+	if state.dist_dec	then	state.dist	=	state.dist	/ 1.01; 	end;
+
+	-- if state.yaw_inc	then	state.yaw_t		=	rotation;	end;
+	-- if state.yaw_dec	then	state.yaw_t		=	-rotation;	end;
+	-- if state.pitch_inc	then	state.pitch_t	=	rotation;	end;
+	-- if state.pitch_dec	then	state.pitch_t   =	-rotation;	end;
+	-- if state.dist_inc	then	state.dist_t	=	10.0;		end;
+	-- if state.dist_dec	then	state.dist_t	=	-10.0;		end;
+	
+	-- state.yaw_a		=	filter( state.yaw_a, state.yaw_t, 0.5 );
+	-- state.pitch_a	=	filter( state.pitch_a, state.pitch_t, 0.5 );
+	-- state.dist_a	=	filter( state.dist_a, state.dist_t, 0.5 );
+	
+	-- state.yaw		=	state.yaw		+ dtime * state.yaw_a;
+	-- state.pitch		=	state.pitch		+ dtime * state.pitch_a;
+	-- state.dist		=	state.dist		+ dtime * state.dist_a;
 	
 	--
 	--	view stuff
@@ -351,13 +374,23 @@ function sci_frame(dtime)
 		local z2 = filtered_view.z;
 		naval.set_view(120, vmath.vec4(x2,y2,z2,1), yaw + state.yaw, pitch + state.pitch, roll + state.roll);
 	else
-		local yaw	= 	math.rad(state.yaw	);
-		local pitch	= 	math.rad(state.pitch	);
+		current_yaw		=	current_yaw		or state.yaw	;
+		current_pitch	=	current_pitch	or state.pitch	;
+		current_dist	=	current_dist	or state.dist	;
+		
+		current_yaw		=	filter( current_yaw		, state.yaw		, 0.1 );
+		current_pitch	=	filter( current_pitch	, state.pitch	, 0.1 );
+		current_dist	=	filter( current_dist	, state.dist	, 0.05 );
+	
+	
+		local yaw	= 	math.rad(current_yaw	);
+		local pitch	= 	math.rad(current_pitch);
 		local roll	= 	math.rad(state.roll	);
-		local x	 	=	-state.dist * math.cos(yaw) * math.cos(-pitch);
-		local y		=	-state.dist * math.sin(yaw) * math.cos(-pitch);
-		local z		=	-state.dist * math.sin(-pitch);
-		naval.set_view(120, vmath.vec4(x,y,z,1), state.yaw, state.pitch, state.roll);
+		local dist	=	current_dist;
+		local x	 	=	-dist * math.cos(yaw) * math.cos(-pitch);
+		local y		=	-dist * math.sin(yaw) * math.cos(-pitch);
+		local z		=	-dist * math.sin(-pitch);
+		naval.set_view(120, vmath.vec4(x,y,z,1), math.deg(yaw), math.deg(pitch), math.deg(roll));
 	end
 
 end

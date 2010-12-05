@@ -53,6 +53,47 @@ fr.define_shader {
 		
 }
 
+fr.define_shader {
+		name			=	"*color000000FF";
+		is_solid		=	true;
+	injection		=	[[
+		surface.diffuse		=	0;
+	]]
+	};
+
+fr.define_shader {
+	name			=	"textures/uboat_side.tga";
+	is_solid		=	true;
+	is_emissive		=	true;
+	texture_path0	=	"textures/uboat_side.tga";
+	texture_path1	=	"textures/uboat_side_spec.tga";
+	texture_path2	=	"textures/uboat_side_local.tga";
+	texture_path3	=	"textures/ocean_reflection.tga";
+	
+	injection		=	[[
+		surface.diffuse		=	0.1*sample_color ( sampler0, input.uv0 ) + 0.25*sample_color ( sampler0, 4*input.uv0 );
+		surface.normal		=	sample_normal( sampler2, input.uv0 );
+
+
+		float3	normal		=	getWorldNormal(surface.normal);
+				normal		=	normalize( normal );
+				
+		float3	ray			=	normalize( view_position.xyz - input.wpos.xyz );
+		float	fade		=	1 - (normalize(reflect( ray, normal )).z*0.5 + 0.5);
+		float2	refl_uv		=	normalize(reflect( ray, normal )).xy;
+				refl_uv.y	=	-refl_uv.y;
+				refl_uv		*=	0.98;
+		float3	refl		=	sample_color( sampler3, 0.5*(refl_uv+1) ).rgb;
+		float3	refl2		=	tex2Dlod( sampler3, float4(0.5*(refl_uv+1),0,8) ).rgb;
+
+		float	fresnel		=	1 - abs(dot( ray, normal ));
+		fresnel		=	0.05 + 0.95*pow( saturate(fresnel), 10 );
+
+		surface.emission	=	refl * 10*surface.diffuse * fresnel * fade + 
+								refl2 * 0.2*surface.diffuse * fade;
+	]];
+}
+
 
 fr.define_shader {
 	name			=	"textures/ocean_sky.tga";

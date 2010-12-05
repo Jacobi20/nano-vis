@@ -185,8 +185,8 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 			pr +=	pd;
 		#endif
 		
-		//float	lf		=	Clamp<float>(pr / (1), 0, 1);
-		//EVec4	color	=	Vec4Lerp( EVec4(1,0,0,1), EVec4(1,1,0,1), lf );
+		float	lf		=	clamp<float>(pr / (1), 0, 1);
+		EVec4	color	=	Vec4Lerp( EVec4(1,0,0,1), EVec4(1,1,0,1), lf );
 		//rs()->GetDVScene()->DrawPoint( se.position, 0.1, color );
 		
 		

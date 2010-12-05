@@ -239,7 +239,7 @@ void EWaving::InitWaving( bool new_phases )
 		
 		if (new_phases) {	
 			wave.frequency[i]	=	w;
-			wave.phases[i]		=	vmath::randf(0, 2 * PI);
+			wave.phases[i]		=	vmath::randf(-PI, PI);
 			wave.wave_num[i]	=	w * w / GRAVITY;
 
 			wave.waves[i].frequency	=	w;
@@ -361,12 +361,12 @@ inline float	EWaving::GetWaveFast( float x, float y, float time ) const
 	
 	for (uint i=0; i<WAVE_BAND_NUM; i++) {
 	
-		float x2 = x;
-
 		float	amp		=	wave.waves[i].amplitude;
 		float	freq	=	wave.waves[i].frequency;
 		float	phase	=	wave.waves[i].phase;
 		float	k		=	wave.waves[i].wave_num;
+
+		float x2 = x + y * wave.waves[(i*7)&0xFF].phase / 8.0;
 
 		wave_h	+=	amp * FastCos(freq * time + k * x2 + phase);
 	}
@@ -395,12 +395,12 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 	if (!sin_wave) {
 		for (uint i=0; i<WAVE_BAND_NUM; i++) {
 		
-			float x2 = x;
-
 			register float	amp		=	wave.waves[i].amplitude;
 			register float	freq	=	wave.waves[i].frequency;
 			register float	phase	=	wave.waves[i].phase;
 			register float	k		=	wave.waves[i].wave_num;
+
+			float x2 = x + y * wave.waves[(i*7)&0xFF].phase / 8.0;
 
 			float	fade	=	(depth<0) ? 1 : exp( - k * depth );
 			
