@@ -27,8 +27,8 @@
 /*-----------------------------------------------------------------------------
 	Waving :
 -----------------------------------------------------------------------------*/
-
-const uint	WAVE_BAND_NUM			=	15;
+const uint	COS_TABLE_SIZE			=	1024;
+const uint	WAVE_BAND_NUM			=	256;
 const uint	WAVE_GRID_SIZE			=	400;
 const float WAVE_GRID_OFFSET_X		=	-200.0f;
 const float WAVE_GRID_OFFSET_Y		=	-200.0f;
@@ -91,12 +91,19 @@ class EWaving : public IWaving {
 			float	wave_num[WAVE_BAND_NUM];	//	k
 		} wave;
 		
+		float	cos_table[COS_TABLE_SIZE];
+		
+		inline	float	FastCos			( float x ) const;
+		void			InitFastCos		( void );
+		
 		mutable wave_sample_s	wave_grid[WAVE_GRID_SIZE][WAVE_GRID_SIZE];
 		
 		virtual void	InitWaving			( bool new_phases );
 		point_wave_s	GetWave				( float x, float y, float depth, float time ) const;
 		
 		float			SpectrumPM			( float w );
+		
+		float			GetWaveFast			( float x, float y, float time ) const;
 
 		EVec4			GetPositionAtTime	( const EVec4 &init_pos, float time ) const;
 	};
@@ -114,18 +121,21 @@ IWaving	*create_waving(lua_State *L, int idx) { return new EWaving(L, idx); }
 //
 EWaving::EWaving( lua_State *L, int idx )
 {
+	InitFastCos();
+
 	u_wind	=	0;
 	time	=	0;
 
 	#ifdef USE_SS_GRID
-		sea_mesh	=	ge()->LoadMeshFromFile("sea.esx|sea_ss");
-		/*sea_mesh	=	ge()->CreatePlane( 2, 2, 80, 80 );
+		//sea_mesh	=	ge()->LoadMeshFromFile("sea.esx|sea_ss");
+		sea_mesh	=	ge()->CreatePlane( 2, 2, 40, 80 );
 		EShadingGroup	sg;
 		sg.start	= 0;
 		sg.num		= sea_mesh->GetTriangleNum();
 		sg.shader	= "textures/water.tga";
+		sea_mesh->ComputeTangents();
 		sea_mesh->SetSGNum(1);
-		sea_mesh->SetSG(0, sg);*/
+		sea_mesh->SetSG(0, sg);
 		
 	#else
 		sea_mesh	=	ge()->LoadMeshFromFile("sea.esx|sea");
@@ -328,6 +338,42 @@ void EWaving::Update( float dtime, const EVec4 &_view_pos, const EQuat &orient )
 #endif
 
 
+
+void EWaving::InitFastCos( void )
+{
+	for (uint i=0; i<COS_TABLE_SIZE; i++) {
+		cos_table[i] = cos( 2*PI * ((float)i)/(float)COS_TABLE_SIZE );
+	}
+}
+
+
+float EWaving::FastCos( float x )  const
+{
+	uint b = (uint)(x / 2/PI * (float)COS_TABLE_SIZE);
+	b &= (COS_TABLE_SIZE-1);
+	return cos_table[b];
+}
+
+
+inline float	EWaving::GetWaveFast( float x, float y, float time ) const
+{
+	float wave_h = 0;
+	
+	for (uint i=0; i<WAVE_BAND_NUM; i++) {
+	
+		float x2 = x;
+
+		float	amp		=	wave.waves[i].amplitude;
+		float	freq	=	wave.waves[i].frequency;
+		float	phase	=	wave.waves[i].phase;
+		float	k		=	wave.waves[i].wave_num;
+
+		wave_h	+=	amp * FastCos(freq * time + k * x2 + phase);
+	}
+	return wave_h;
+}
+
+
 //
 //	EWaving::GetWave
 //	returns wave attributes in a point
@@ -349,7 +395,7 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 	if (!sin_wave) {
 		for (uint i=0; i<WAVE_BAND_NUM; i++) {
 		
-			float x2 = x + y * wave.waves[i].phase / 8.0f;
+			float x2 = x;
 
 			register float	amp		=	wave.waves[i].amplitude;
 			register float	freq	=	wave.waves[i].frequency;
@@ -358,7 +404,7 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 
 			float	fade	=	(depth<0) ? 1 : exp( - k * depth );
 			
-			pw.offset	+=	fade * amp * cos(freq * time + k * x2 + phase);
+			pw.offset	+=	fade * amp * FastCos(freq * time + k * x2 + phase);
 		}
 	} else {
 		float	w	=	sin_wave_w;

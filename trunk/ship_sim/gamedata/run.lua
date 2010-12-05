@@ -131,7 +131,7 @@ function create_uboat()
 	ship:set_cmass		( 0,0,-0.5 );
 	
 	ship:build_voxels	( "uboat.esx|flowsurf2", 1	);
-	ship:build_surf_dxdy( "uboat.esx|flowsurf2", 3, 0.1	);
+	ship:build_surf_dxdy( "uboat.esx|flowsurf2", 0.2, 0.1	);
 	
 	print("---- done ----");
 	print("");
