@@ -37,6 +37,7 @@ const uint	WAVE_DEPTH_OF_SILENCE	=	50;			// there are no waves
 struct point_wave_s {
 		float	offset;
 		float	pressure;
+		float	horizontal_offset;
 	};
 	
 struct wave_s {
@@ -99,7 +100,7 @@ class EWaving : public IWaving {
 		mutable wave_sample_s	wave_grid[WAVE_GRID_SIZE][WAVE_GRID_SIZE];
 		
 		virtual void	InitWaving			( bool new_phases );
-		point_wave_s	GetWave				( float x, float y, float depth, float time ) const;
+		point_wave_s	GetWave				( float x, float y, float depth, float time, uint cuttoff = WAVE_BAND_NUM) const;
 		
 		float			SpectrumPM			( float w );
 		
@@ -208,7 +209,7 @@ float EWaving::SpectrumPM(float w)
 	//	Lopatuhin, (60)
 	float	U	=	u_wind;
 	float	g	=	GRAVITY;
-	return 0.0081 * (g*g) * powf(w, -5) * exp( -0.74 * pow(w*U/g, -4) );
+	return 1*0.0081 * (g*g) * powf(w, -5) * exp( -0.74 * pow(w*U/g, -4) );
 }
 
 //
@@ -378,7 +379,7 @@ inline float	EWaving::GetWaveFast( float x, float y, float time ) const
 //	EWaving::GetWave
 //	returns wave attributes in a point
 //
-point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  const
+point_wave_s EWaving::GetWave( float x, float y, float depth, float time, uint cutoff )  const
 {
 	point_wave_s	pw;
 	pw.offset	=	0;
@@ -393,7 +394,7 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 	
 	//	compute vertical offset :	
 	if (!sin_wave) {
-		for (uint i=0; i<WAVE_BAND_NUM; i++) {
+		for (uint i=0; i<cutoff; i++) {
 		
 			register float	amp		=	wave.waves[i].amplitude;
 			register float	freq	=	wave.waves[i].frequency;
@@ -403,8 +404,9 @@ point_wave_s EWaving::GetWave( float x, float y, float depth, float time )  cons
 			float x2 = x + y * wave.waves[(i*7)&0xFF].phase / 8.0;
 
 			float	fade	=	(depth<0) ? 1 : exp( - k * depth );
-			
-			pw.offset	+=	fade * amp * FastCos(freq * time + k * x2 + phase);
+
+			pw.horizontal_offset	+=	fade * amp * FastCos(freq * time + k * x2 + phase + PI/2);
+			pw.offset				+=	fade * amp * FastCos(freq * time + k * x2 + phase);
 		}
 	} else {
 		float	w	=	sin_wave_w;
@@ -517,5 +519,13 @@ EVec4 EWaving::GetPosition( const EVec4 &init_pos ) const
 EVec4 EWaving::GetVelocity( const EVec4 &init_pos ) const
 {
 	return EVec4(0,0,0,0);
+
+	point_wave_s	pw0	=	GetWave( init_pos.x, init_pos.y, -init_pos.z, time, WAVE_BAND_NUM );
+	point_wave_s	pw1	=	GetWave( init_pos.x, init_pos.y, -init_pos.z, time + 0.1, WAVE_BAND_NUM );
+	
+	EVec4	p0	=	EVec4(pw0.horizontal_offset, pw0.offset, 0, 1);
+	EVec4	p1	=	EVec4(pw1.horizontal_offset, pw1.offset, 0, 1);
+	
+	return 0.7*(p0 - p1) / 0.1;
 }
 

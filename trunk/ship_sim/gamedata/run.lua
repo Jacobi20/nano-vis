@@ -48,10 +48,10 @@ state = {
 	pitch_dec	=	false;
 	dist_inc	=	false;
 	dist_dec	=	false;
-	yaw		=	-180+15;
+	yaw		=	90;---180-45;
 	roll	=	0;
 	pitch	=	5;
-	dist	=	70;
+	dist	=	60;
 	
 	submersion	=	false;
 	sunking		=	false;
@@ -98,7 +98,7 @@ game_time = 0;
 -------------------------------------------------------------------------------
 
 naval.remove_all_ships();
-naval.set_wind(12);
+naval.set_wind(10);
 
 function show_info()
 	local x,y,z;
@@ -139,24 +139,24 @@ function create_uboat(x,y,z)
 end
 
 
-function create_cutter()
+function create_cutter(x,y,z)
 	print("");
 	print("---- creating Coast Guard Ship ----");
 	local ship = naval.create_ship();
 
-	ship:set_resistance	( 1.0 );
+	ship:set_resistance	( 0.7 );
 	
 	ship:set_vis_mesh	( "boat.esx|boat1"			);
 	ship:set_hdf_mesh	( "boat.esx|flow" 			);
 	ship:set_hsf_mesh	( "boat.esx|flow" 			);
-	ship:make_rigidbody	( "boat.esx|stat", 400000	);
+	ship:make_rigidbody	( "boat.esx|stat", 500000	);
 	
-	ship:set_position	( -100, 0, 0 );	
-	ship:set_angles		( 30, 0, 5);
-	ship:set_cmass		( 0, 0, 0 );
+	ship:set_position	( x or 0, y or 0, z or 0 );	
+	ship:set_angles		( 0, 0, 20);
+	ship:set_cmass		( 0, 0, 0.0 );
 	
 	ship:build_voxels	( "boat.esx|flow", 1	);
-	ship:build_surf_dxdy( "boat.esx|flow", 0.1, 0.1	);
+	ship:build_surf_dxdy( "boat.esx|flow", 3.1, 0.1	);
 	
 	print("---- done ----");
 	print("");
@@ -219,10 +219,11 @@ local rolling_log2 = io.open("rolling2.log", "w");
 
 --uboat	=	create_ssn668();
 --uboat	=	create_cutter();
---uboat2	=	create_uboat(-50,50,-15);
+--uboat2	=	create_uboat(30,70,-15);
 --uboat	=	create_box();
 
-uboat	=	create_uboat(0,0,-10);
+--uboat	=	create_uboat(0,0,0);
+uboat	=	create_cutter(0,0,0);
 
 user.ship_hsf_method	=	"hxfse";
 --ship_hsf_method	=	"surface";
@@ -304,11 +305,18 @@ function filter(a, b, f)
 end	
 
 local time_time = 0;
+local water_level = 0;
 
 function sci_frame(dtime)
 
+	water_level = water_level + dtime * 20000.0;
+	if water_level>500000 then
+		water_level=500000;
+	end
 	
 	time_time	=	time_time + dtime
+
+	uboat:add_force( vmath.vec4(0,0,-water_level*10,0), vmath.vec4(20,0,0,1), true);
 	
 	-- state.pitch	=	10;
 	-- state.yaw 	=	state.yaw + dtime * 30;
@@ -361,18 +369,25 @@ function sci_frame(dtime)
 	--	view stuff
 	--
 	if uboat and false then
+		current_yaw		=	current_yaw		or state.yaw	;
+		current_pitch	=	current_pitch	or state.pitch	;
+		current_dist	=	current_dist	or state.dist	;
+		
+		current_yaw		=	filter( current_yaw		, state.yaw		, 0.1 );
+		current_pitch	=	filter( current_pitch	, state.pitch	, 0.1 );
+		current_dist	=	filter( current_dist	, state.dist	, 0.05 );
 	
 		local yaw, pitch, roll 	= uboat:get_angles();
 		
-		local x, y, z 			= uboat:get_position(1.5,0.5,8.8);
-		--local x, y, z 			= uboat:get_position(8.0,-3.5,7.8);
-		filtered_view.x = filter(filtered_view.x, x, 0.1);
-		filtered_view.y = filter(filtered_view.y, y, 0.1);
-		filtered_view.z = filter(filtered_view.z, z, 0.1);
+		--local x, y, z 			= uboat:get_position(1.5,0.5,8.8);
+		local x, y, z 			= uboat:get_position(8.0,0.5,7.8);
+		filtered_view.x = filter(filtered_view.x, x, 1.1);
+		filtered_view.y = filter(filtered_view.y, y, 1.1);
+		filtered_view.z = filter(filtered_view.z, z, 1.1);
 		local x2 = filtered_view.x;
 		local y2 = filtered_view.y;
 		local z2 = filtered_view.z;
-		naval.set_view(120, vmath.vec4(x2,y2,z2,1), yaw + state.yaw, pitch + state.pitch, roll + state.roll);
+		naval.set_view(120, vmath.vec4(x2,y2,z2,1), yaw + current_yaw, pitch + current_pitch, roll + state.roll);
 	else
 		current_yaw		=	current_yaw		or state.yaw	;
 		current_pitch	=	current_pitch	or state.pitch	;

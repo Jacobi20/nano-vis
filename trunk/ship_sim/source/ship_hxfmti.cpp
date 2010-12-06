@@ -158,14 +158,15 @@ void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
 		EVec4		normal	= se.normal;
 		
 		EVec4		vse		= ship_body->GetLocalPointVelocity( se.position );	//	local point velocity
-		EVec4		vwtr	= EVec4(0,0,0,0);									//	water velocity
-		EVec4		vel		= vse - vwtr;
-		float		vel_p2	= Vec4LengthSqr( vel );								//	squared point velocity relative to water particles
-		EVec4		vdir	= Vec4Normalize( vel );
 
 		//	transform surface element to world space :		
 		se.position	=	Matrix4Transform( se.position, t );
 		se.normal	=	Matrix4Transform( se.normal,   t );
+
+		EVec4		vwtr	= waving->GetVelocity( se.position );									//	water velocity
+		EVec4		vel		= vse - vwtr;
+		float		vel_p2	= Vec4LengthSqr( vel );								//	squared point velocity relative to water particles
+		EVec4		vdir	= Vec4Normalize( vel );
 
 		//	compute pressure and force :
 		float	pr	=	waving->GetPressure( se.position );
