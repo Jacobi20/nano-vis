@@ -60,14 +60,16 @@ fr.define_shader {
 		surface.diffuse		=	0;
 	]]
 	};
+	
 
+function ship_shader (path)
 fr.define_shader {
-	name			=	"textures/uboat_side.tga";
+	name			=	path;
 	is_solid		=	true;
 	is_emissive		=	true;
-	texture_path0	=	"textures/uboat_side.tga";
-	texture_path1	=	"textures/uboat_side_spec.tga";
-	texture_path2	=	"textures/uboat_side_local.tga";
+	texture_path0	=	path;
+	texture_path1	=	postfix(path, "_spec");
+	texture_path2	=	postfix(path, "_local");
 	texture_path3	=	"textures/ocean_reflection.tga";
 	
 	injection		=	[[
@@ -93,7 +95,11 @@ fr.define_shader {
 								refl2 * 0.2*surface.diffuse * fade;
 	]];
 }
-
+end	
+	
+ship_shader("textures/uboat_side.tga");
+ship_shader("textures/uboat_waterline.tga");
+	
 
 fr.define_shader {
 	name			=	"textures/ocean_sky.tga";

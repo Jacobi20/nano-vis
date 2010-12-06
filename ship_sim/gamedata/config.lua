@@ -35,7 +35,7 @@ cfg.setvar('phys_angular_damping'          , 0.01);
 cfg.setvar('phys_linear_sleep_treshold'    , 0.01);
 cfg.setvar('phys_angular_sleep_treshold'   , 0.01);
 cfg.setvar('phys_contact_proc_treshold'    , 0.01);
-cfg.setvar('fr_wireframe'                  , true);
+cfg.setvar('fr_wireframe'                  , false);
 
 
 -- key bindings --
