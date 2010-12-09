@@ -1,0 +1,3539 @@
+= grid.cpp =
+{{{
+
+#include "sci_local.h"
+#include <queue>
+
+/*-----------------------------------------------------------------------------
+	grid for voxelization
+-----------------------------------------------------------------------------*/
+
+//
+//	EVoxelGrid::EVoxelGrid
+//
+EVoxelGrid::EVoxelGrid( void )
+{
+	Clear();
+}
+
+
+//
+//	EVoxelGrid::~EVoxelGrid
+//
+EVoxelGrid::~EVoxelGrid( void )
+{
+	
+}
+
+
+//
+//	EVoxelGrid::BuildGrid
+//
+void EVoxelGrid::BuildGrid( const IPxTriMesh mesh, EVec3 origin, float step_x, float step_y, float step_z )
+{
+	bbox	=	mesh->ComputeBBox();
+	
+	bbox.Grow(1,1,1);
+
+	float szx = step_x;
+	float szy = step_y;
+	float szz = step_z;
+	
+#if 1
+
+	int min_idx = bbox.Min().x / szx;
+	int max_idx = bbox.Max().x / szx;
+	int min_idy = bbox.Min().y / szy;
+	int max_idy = bbox.Max().y / szy;
+	int min_idz = bbox.Min().z / szz;
+	int max_idz = bbox.Max().z / szz;
+	
+	class MeshHitCB : public ITriMeshHitCB {
+		public:
+		float y, z;
+		float szx, szy, szz;
+		int min_idx, max_idx;
+		EVoxelGrid *grid;
+		
+		EVertex old_point;
+		bool	old_into;
+		bool	handled;
+		uint	odd;
+		
+		MeshHitCB ( EVoxelGrid *grid, float y, float z, float szx, float szy, float szz, int min_idx, int max_idx ) {
+			handled			=	0;
+			old_point.position	=	EVec3(0,0,0);
+			old_into		=	false;
+			this->grid		=	grid;
+			this->y			=	y;
+			this->z			=	z;
+			this->szx		=	szx;
+			this->szy		=	szy;
+			this->szz		=	szz;
+			this->min_idx	=	min_idx;
+			this->max_idx	=	max_idx;
+			odd				=	0;
+		}
+		
+		virtual void Callback( EVertex &point, float fraction, bool into_front_side ) {
+			odd++;
+			if ( into_front_side ) {
+				old_point = point;
+			} else {
+				
+				for (int idx = min_idx; idx<= max_idx; idx++) {
+					
+					float x = idx * szx;
+					
+					if ( x > old_point.position.x && x < point.position.x ) {
+						
+						EVoxel	vx;
+						float dx	=	0;//FRand(-0.2, 0.2);
+						float dy	=	0;//FRand(-0.2, 0.2);
+						float dz	=	0;//FRand(-0.2, 0.2);
+						vx.center	=	EVec3(x+dx, y+dy, z+dz);
+						vx.szx		=	szx;
+						vx.szy		=	szy;
+						vx.szz		=	szz;
+					
+						grid->AddVoxel( vx );
+					}
+					
+				}
+				
+			}
+		}
+	};
+	
+	for (int idy=min_idy; idy<=max_idy; idy++) {
+		for (int idz=min_idz; idz<=max_idz; idz++) {
+	
+			//int idy = 0;
+			//int idz = 0;
+		
+			float y = (float)idy * szy;
+			float z = (float)idz * szz;
+			EVec3	begin ( bbox.Min().x, y, z );
+			EVec3	dir	  ( bbox.Size().x, 0, 0);
+			
+			MeshHitCB	hit_cb( this, y, z, szx, szy, szz, min_idx, max_idx );
+			
+			mesh->RayIntersect( begin, dir, &hit_cb );
+			
+		}
+	}
+
+#else
+	
+	//	DFS using recursion :
+	//	Fill( mesh, origin, step_x, step_y, step_z, 0,0,0);
+
+	//	BFS using queue :	
+	
+	queue<vxind_s>	Q;
+	
+	Q.push( vxind_s(0,0,0) );
+
+	EVoxel new_vx;
+	new_vx.idx		=	0;
+	new_vx.idy		=	0;
+	new_vx.idz		=	0;
+	new_vx.szx		=	szx;
+	new_vx.szy		=	szy;
+	new_vx.szz		=	szz;
+	new_vx.center	=	origin;
+	AddVoxel( new_vx );
+
+	while ( !Q.empty() ) {
+	
+		vxind_s vxind = Q.front();
+		Q.pop();
+		
+		int idx = vxind.idx;
+		int idy = vxind.idy;
+		int idz = vxind.idz;
+		float x = origin.x + (float)idx * szx;
+		float y = origin.y + (float)idy * szy;
+		float z = origin.z + (float)idz * szz;
+
+		if (!bbox.Contains( EVec4( x, y, z, 1 ) )) {
+			RUNTIME_ERROR("mesh has holes or origin point is outside of closed mesh");
+		}
+		
+		EVec3	dir;	
+		Grow(Q, mesh, EVec3(x,y,z), szx, szy, szz,  idx, idy, idz, -1,  0,  0, dir);
+		Grow(Q, mesh, EVec3(x,y,z), szx, szy, szz,  idx, idy, idz, +1,  0,  0, dir);
+		Grow(Q, mesh, EVec3(x,y,z), szx, szy, szz,  idx, idy, idz,  0, -1,  0, dir);
+		Grow(Q, mesh, EVec3(x,y,z), szx, szy, szz,  idx, idy, idz,  0, +1,  0, dir);
+		Grow(Q, mesh, EVec3(x,y,z), szx, szy, szz,  idx, idy, idz,  0,  0, -1, dir);
+		Grow(Q, mesh, EVec3(x,y,z), szx, szy, szz,  idx, idy, idz,  0,  0, +1, dir);
+	}
+#endif		
+}
+
+
+//
+//	EVoxelGrid::Fill
+//
+void EVoxelGrid::Fill( const IPxTriMesh mesh, EVec3 origin, float szx, float szy, float szz, int idx, int idy, int idz )
+{
+	//EVoxel voxel;
+	//voxel.center	=	origin;
+	//voxel.idx		=	idx;
+	//voxel.idy		=	idy;
+	//voxel.idz		=	idz;
+	//voxel.szx		=	szx;
+	//voxel.szy		=	szy;
+	//voxel.szz		=	szz;
+	//
+	//AddVoxel( voxel );
+	//
+	//if (!bbox.Contains( EVec4( origin.x, origin.y, origin.z, 1 ) )) {
+	//	RUNTIME_ERROR("mesh has holes or origin point is outside of closed mesh");
+	//}
+
+	//EVec3	dir;	
+	//if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz, -1,  0,  0, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx-1, idy  , idz  );	}
+	//if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz, +1,  0,  0, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx+1, idy  , idz  );	}
+	//if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz,  0, -1,  0, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx  , idy-1, idz  );	}
+	//if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz,  0, +1,  0, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx  , idy+1, idz  );	}
+	//if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz,  0,  0, -1, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx  , idy  , idz-1);	}
+	//if ( Grow(mesh, origin, szx, szy, szz,  idx, idy, idz,  0,  0, +1, dir) ) {	Fill( mesh, origin + dir, szx, szy, szz,  idx  , idy  , idz+1);	}
+}
+
+
+//
+//	EVoxelGrid::Grow
+//
+bool EVoxelGrid::Grow(queue<vxind_s> &Q, const IPxTriMesh mesh, EVec3 origin, float szx, float szy, float szz, int idx, int idy, int idz, int dx, int dy, int dz, EVec3 &dir )
+{
+	EVoxel vx;
+	
+	//	neighboring voxel is already exist - no grow :
+	if (GetVoxel(idx+dx, idy+dy, idz+dz, vx)) {
+		return false;
+	}
+
+	//	ray cast against bounding mesh :
+	dir	=	EVec3( szx * dx, szy * dy, szz * dz );
+	
+	EVertex v;
+	mesh.getPointer();
+	bool r = false;
+	
+	//	do some attemtps :	
+	for (uint i=0; i<10; i++) {
+		EVec3 dd = EVec3( vmath::randf(-0.1f,0.1f), vmath::randf(-0.1f,0.1f), vmath::randf(-0.1f,0.1f) );
+		r |= mesh->RayIntersect( origin + dd, dir, v );
+	}
+
+	//	at least one hit - no grow
+	if (r) {	
+		return false;
+	}	
+	
+	//	now can grow and add voxels :
+	//	push indices to stack :
+	Q.push( vxind_s( idx + dx, idy + dy, idz + dz ) );	
+	
+	EVoxel new_vx;
+	new_vx.idx		=	idx + dx;
+	new_vx.idy		=	idy + dy;
+	new_vx.idz		=	idz + dz;
+	new_vx.szx		=	szx;
+	new_vx.szy		=	szy;
+	new_vx.szz		=	szz;
+	new_vx.center	=	origin + dir;
+	
+	AddVoxel( new_vx );
+	
+	return true;
+}
+
+
+//
+//	EVoxelGrid::Clear
+//
+void EVoxelGrid::Clear( void )
+{
+	grid.clear();
+}
+
+
+//
+//	EVoxelGrid::GetVoxel
+//
+void EVoxelGrid::GetVoxel( uint index, EVoxel &voxel ) const
+{
+	ASSERT( index < GetVoxelNum() );
+	voxel = grid[index];
+}
+
+
+//
+//	EVoxelGrid::GetVoxel
+//
+bool EVoxelGrid::GetVoxel( int idx, int idy, int idz, EVoxel &voxel )
+{
+	uint n = GetVoxelNum();
+	for (int i=n-1; i>=0; i--) {
+		GetVoxel( i, voxel );
+		
+		if (voxel.idx==idx && voxel.idy==idy && voxel.idz==idz) {
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+
+//
+//	EVoxelGrid::SetVoxel
+//
+void EVoxelGrid::SetVoxel( uint index, const EVoxel &voxel )
+{
+	ASSERT(0);
+	ASSERT( index < GetVoxelNum() );
+	grid[index] = voxel;
+}
+
+
+//
+//	EVoxelGrid::AddVoxel
+//
+void EVoxelGrid::AddVoxel( const EVoxel &voxel )
+{
+	grid.push_back( voxel );
+}
+
+}}}
+
+= grid.h =
+{{{
+
+#pragma once
+
+/*-----------------------------------------------------------------------------
+	grid for voxelization
+-----------------------------------------------------------------------------*/
+
+#include "array3d.h"
+#include <queue>
+
+typedef HardRef<class EVoxelGrid>	EPxVoxelGrid;
+
+const uint VOXEL_GRID_SIZE	=	10;
+
+
+//class EVoxelgrid : public ICoreObject {
+//	public:
+//						EVoxelGrid		( void );
+//		virtual			~EVoxelGrid		( void );
+//		virtual void	BuildGrid		( const IPxTriMesh mesh, EVec3 origin, float step_x, float step_y, float step_z );
+//
+//	};
+
+
+#if 1
+struct EVoxel {
+	public:
+		EVec3	center;
+		float	szx, szy, szz;
+		int		idx, idy, idz;
+	};
+	
+	
+
+class EVoxelGrid : public ICoreObject {								  
+	public:
+		struct vxind_s {
+			vxind_s (int x, int y, int z) : idx(x), idy(y), idz(z) {}
+			int idx, idy, idz;
+		};
+
+	public:
+						EVoxelGrid		( void );
+		virtual			~EVoxelGrid		( void );
+		
+		virtual void	BuildGrid		( const IPxTriMesh mesh, EVec3 origin, float step_x, float step_y, float step_z );
+
+		virtual void	Clear			( void );
+		virtual uint	GetVoxelNum		( void ) const { return grid.size(); }
+		virtual void	GetVoxel		( uint index, EVoxel &voxel ) const;		
+		virtual void	SetVoxel		( uint index, const EVoxel &voxel );		
+		virtual void	AddVoxel		( const EVoxel &voxel );
+		
+		virtual bool	GetVoxel		( int idx, int idy, int idz, EVoxel &voxel );
+		
+	protected:
+		void		Fill	( const IPxTriMesh mesh, EVec3 origin, float szx, float szy, float szz, int idx, int idy, int idz );
+		bool		Grow	( queue<vxind_s> &Q, const IPxTriMesh mesh, EVec3 origin, float szx, float szy, float szz, int idx, int idy, int idz, int dx, int dy, int dz, EVec3 &dir );
+
+		EBBox		bbox;	
+		vector<EVoxel> grid;
+		
+	};
+#endif	
+}}}
+
+= navy.h =
+{{{
+}}}
+
+= sci_api.cpp =
+{{{
+
+
+#include "sci_local.h"
+
+/*-----------------------------------------------------------------------------
+	Nano vis :
+-----------------------------------------------------------------------------*/
+
+//
+//	ESciVis::RegisterAPI
+//
+void ESciVis::RegisterAPI( void )
+{
+	lua_State *L = CoreLua();
+	LUA_INTERFACE(L);
+	
+	LUALIB_DECLARE	("naval")
+	LUALIB_METHOD	( remove_all_ships )
+	LUALIB_METHOD	( set_view )
+	LUALIB_METHOD	( get_wave_offset )
+	LUALIB_METHOD	( set_wind )
+	LUALIB_METHOD	( set_wave )
+	LUALIB_REGISTER	( L )
+
+	//	add 'naval.create_ship' :
+	CoreExecuteString("naval.create_ship = ELuaShip;");
+}
+
+
+//
+//	ESciVis::remove_all_ships
+//
+int ESciVis::remove_all_ships( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	ELuaShip::Unregister(L);
+	ELuaShip::Register(L);
+	self->ships.clear();
+	return 0;
+}
+
+
+//
+//	ESciVis::set_view
+//
+int ESciVis::set_view( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	
+	float	f		=	LuaRequireNumber(L, 1, "FOV");
+	EVec4	p		=	LuaRequireVec4	(L, 2, "view position");
+	float	yaw		=	LuaRequireNumber(L, 3, "yaw");
+	float	pitch	=	LuaRequireNumber(L, 4, "pitch");
+	float	roll	=	LuaRequireNumber(L, 5, "roll");
+	
+	if (f>=180) {
+		LOG_WARNING("set_view() : FOV >= 180");
+		f = 179;
+	}
+
+	EQuat	z_up		=	QuatRotationAxis( -PI/2.0f, EVec3(0,0,1)) * QuatRotationAxis(PI/2.0, EVec3(1,0,0));
+	EQuat	qrx			=	QuatRotationAxis( vmath::rad(roll),	EVec3(1,0,0) );
+	EQuat	qry			=	QuatRotationAxis( vmath::rad(pitch),	EVec3(0,1,0) );
+	EQuat	qrz			=	QuatRotationAxis( vmath::rad(yaw),		EVec3(0,0,1) );
+
+	self->view.fov		=	f;
+	self->view.position	=	p;
+	self->view.orient	=	qrz * qry * qrx * z_up;
+	
+	return 0;
+}
+
+
+//
+//	ESciVis::set_wind
+//
+int ESciVis::set_wind( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	self->waving->SetWindSpeed( lua.RequireNumber(1, "wind velocity") );
+	return 0;
+}
+
+
+//
+//	ESciVis::set_wind
+//
+int ESciVis::set_wave( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	float w = lua.RequireNumber(1, "w");
+	float a = lua.RequireNumber(2, "a");
+	self->waving->SetSinWave(w,a);
+	return 0;
+}
+
+
+//
+//	ESciVis::get_wave_offset
+//
+int ESciVis::get_wave_offset( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	float	x		=	LuaRequireNumber(L, 1, "x");
+	float	y		=	LuaRequireNumber(L, 2, "y");
+	float	z		=	LuaRequireNumber(L, 3, "z");
+	
+	EVec4 offs = self->waving->GetPosition(EVec4(x,y,z,1));
+	
+	lua_pushnumber(L, offs.z);
+	
+	lua.SetStackGrow(1);
+	
+	return 1;
+}
+
+
+
+
+
+
+}}}
+
+= sci_draw.cpp =
+{{{
+
+
+#include "sci_local.h"
+
+/*-----------------------------------------------------------------------------
+	texture stuff :
+-----------------------------------------------------------------------------*/
+
+//
+//	ESciVis::RenderQuads
+//
+void ESciVis::RenderQuads( uint quad_num, const EUIQuad *quads, EString image )
+{
+	//	TODO : 
+}
+
+
+//
+//	ESciVis::GetImageSize
+//
+void ESciVis::GetImageSize( EString image, uint &width, uint &height )
+{
+	//	TODO : 
+}
+
+}}}
+
+= sci_int.h =
+{{{
+
+
+#pragma once
+
+class ISciVis : public ICoreObject {
+	public:
+		virtual void			RenderFrame			( uint dtime ) = 0;
+		virtual void			RenderSnapshot		( const char *command ) = 0;
+		virtual void		*	GetWindowDescriptor	( void ) = 0;
+	};
+}}}
+
+= sci_interfaces.h =
+{{{
+
+
+#pragma once
+
+/*-----------------------------------------------------------------------------
+	Nano vis :
+-----------------------------------------------------------------------------*/
+
+#if 0
+class	ISciObject;
+class	ISciSpace;
+class	ISciView;
+
+typedef hard_ref<ISciObject>	IPxSciObject;
+typedef hard_ref<ISciSpace>		IPxSciSpace;
+typedef hard_ref<ISciView>		IPxSciView;
+
+
+const uint	SCI_VIS_NORMAL		=	0x00000000;
+
+
+ISciObject *(*ESciObjectCreator_f)(void);
+
+
+class	ISciObject : public ICoreObject {
+	public:
+		virtual void		Visualize		( const EMatrix4 &view, const EMatrix4 &proj, uint flags ) = 0;
+		virtual void		SetPose			( const EVec4 &pos, const EQuat &orient ) = 0;
+		virtual void		GetPose			( EVec4 &pos, EQuat &orient ) const = 0;
+	};
+	
+	
+class	ISciSpace : public ICoreObject {
+	public:
+		virtual void		Visualize		( IPxSciVis vis, uint flags ) = 0;
+		virtual void		AddObject		( IPxSciObject object ) = 0;
+		virtual void		RemoveObject	( IPxSciObject object ) = 0;
+	};
+	
+	
+class	ISciView : public ICoreObject {
+	public:
+		virtual EMatrix4	GetViewMatrix	( void ) const = 0;
+		virtual EMatrix4	GetProjMatrix	( void ) const = 0;
+	};	
+#endif 
+}}}
+
+= sci_local.h =
+{{{
+
+
+#pragma once
+
+/*-----------------------------------------------------------------------------
+	Nano vis :
+-----------------------------------------------------------------------------*/
+
+//	PhysX stuff :
+#define NOMINMAX
+#include "NxPhysics.h"
+
+//	global.h :
+#undef _malloca
+
+#include "../../engine/core/core.h"
+#include "../../engine/interfaces/int_engine.h"
+
+#ifdef _DEBUG
+#	define D3D_DEBUG_INFO
+#endif
+
+#define D3D_DEBUG_INFO
+
+
+#include "sci_int.h"
+
+
+using namespace rapidxml;
+
+
+const float GRAVITY			=	9.8f;
+const float WATER_DENSITY	=	1000;		//	kg/m^3
+
+
+class ESciVis;
+extern ESciVis	*sci_vis;
+
+//NxVec3	ToNxVec3( const EVec3 &v );
+//NxQuat	ToNxQuat( const EQuat &q );
+//EVec3	ToEVec3	( const NxVec3 &v );
+//EQuat	ToEQuat	( const NxQuat &q );
+//
+//
+//#include "nxaux/error_stream.h"
+//#include "nxaux/stream.h"
+//#include "nxaux/allocator.h"
+
+#include "sci_interfaces.h"
+#include "grid.h"
+#include "ship_int.h"
+#include "ship_api.h"
+#include "scivis.h"
+}}}
+
+= sci_main.cpp =
+{{{
+
+
+#include "sci_local.h"
+
+
+DLL_EXPORT IGame	*CreateGame	( void ) {	return new ESciVis(); }
+
+ESciVis	*sci_vis = NULL;
+ESciVis *self_ref<ESciVis>::self = NULL;
+
+/*-----------------------------------------------------------------------------
+	Nano vis :
+-----------------------------------------------------------------------------*/
+
+IWaving	*create_waving(lua_State *L, int idx);
+
+//
+//	ESciVis::ESciVis
+//
+ESciVis::ESciVis( void )
+{
+	sci_vis	=	this;
+
+	global_simulation_time	=	0;
+
+	LOG_SPLIT("SciVis initialization");
+	
+	lua_State *L = CoreLua();
+	
+	rs()->InstallForward();
+	
+	waving	=	create_waving(NULL, 0);
+	
+	//	register ship API :
+	ELuaShip::Register(L);
+	RegisterAPI();
+	
+	CoreExecuteString("dofile('run.lua')");
+	
+	LOG_SPLIT("");
+}
+
+
+//
+//	ESciVis::~ESciVis
+//
+ESciVis::~ESciVis( void )
+{
+	LOG_SPLIT("SciVis shutting down");
+	
+	waving	=	NULL;
+
+	//	unregister ship API :
+	lua_State *L = CoreLua();
+	ELuaShip::Unregister(L);
+	
+	//	ShutdownPhysX();
+	
+	LOG_SPLIT("");
+}
+
+
+//
+//	ESciVis::Frame
+//
+void ESciVis::Frame(uint dtime)
+{
+	dtime = 30;	//	~1/60
+
+	uint w, h;
+	rs()->GetScreenSize(w, h);
+	float aspect = (float)w / (float)h;
+
+	InputSystem()->SetInputMode( IN_KB_SCAN );
+	InputSystem()->ProcessInput();
+	
+	//FramePhysX( dtime / 1000.0f );
+	
+	phys()->RunSimulation(dtime);
+
+	if (rs()->BeginFrame()) {
+
+		if (GetFRScene()) {
+		
+			CoreExecuteString( va("if sci_frame then sci_frame(%f); end;", dtime/1000.0f) );
+
+		
+			
+			float zn = VIEW_NEAR;
+			float zf = VIEW_FAR;		
+			float tf = tanf(vmath::rad(view.fov/2));
+			
+			GetFRScene()->SetProjection( zn, zf, zf * tf * aspect, zf * tf );
+			GetFRScene()->SetView( view.position, view.orient );
+			
+			view.frustum.SetFrustum( zf * tf * aspect, zf * tf, zn, zf );
+			view.frustum.SetPosition( view.position );
+			view.frustum.SetOrient( view.orient );
+			
+			
+			GetFRScene()->SetDirectLight( EVec4(1,1,1,1), EVec4(0,0,0,1), 1, 1);
+			
+			rs()->GetDVScene()->SetView( view.position, view.orient );
+			rs()->GetDVScene()->SetProjection( zn, zf, zf * tf * aspect, zf * tf );
+			
+			
+			//rs()->GetDVScene()->DrawArrow( EVec4(0,0,1,1), EVec4(1,0,0,0), 1.0f, EVec4(1,0,0,1 ) );
+			//rs()->GetDVScene()->DrawArrow( EVec4(0,0,1,1), EVec4(0,1,0,0), 1.0f, EVec4(0,1,0,1 ) );
+			//rs()->GetDVScene()->DrawArrow( EVec4(0,0,1,1), EVec4(0,0,1,0), 1.0f, EVec4(0,0,1,1 ) );
+			
+			waving->Update( dtime / 1000.0f, view.position, view.orient );
+			
+			phys()->DebugRender( rs()->GetDVScene() );
+		
+			rs()->RenderFrame();
+		}
+		
+		rs()->EndFrame();
+	}
+}
+
+
+//
+//	ESciVis::AddShip
+//
+void ESciVis::AddShip( IPxShip ship )
+{
+	ships.push_back( ship );
+}
+
+
+//
+//	ESciVis::RemoveShip
+//
+void ESciVis::RemoveShip( IPxShip ship )
+{
+	vector<IPxShip>::iterator	vi;
+	vi = find( ships.begin(), ships.end(), ship );
+	
+	if (vi!=ships.end()) {
+		ships.erase( vi );
+	}
+}
+}}}
+
+= sci_phys.cpp =
+{{{
+
+
+#include "sci_local.h"
+
+#if 0
+#include <NxPhysics.h>
+#include <NxCooking.h>
+
+/*-----------------------------------------------------------------------------
+	Nano vis :
+-----------------------------------------------------------------------------*/
+
+//
+//	ESciVis::InitPhysX
+//
+void ESciVis::InitPhysX( void )
+{
+	LOG_INIT("PhysX");
+	
+	// Create the physics SDK
+    nx = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION);
+    if (!nx)  return;
+
+	// Set the physics parameters
+	nx->setParameter(NX_SKIN_WIDTH, 0.01f);
+
+	// Set the debug visualization parameters
+	nx->setParameter(NX_VISUALIZATION_SCALE, 1);
+	nx->setParameter(NX_VISUALIZE_COLLISION_SHAPES, 1);
+	nx->setParameter(NX_VISUALIZE_ACTOR_AXES, 1);
+
+    // Create the scene
+    NxSceneDesc sceneDesc;
+    sceneDesc.gravity               = NxVec3(0,0,0);
+	sceneDesc.simType				= NX_SIMULATION_SW;
+    nx_scene = nx->createScene(sceneDesc);	
+	
+	if(!nx_scene) { 
+		sceneDesc.simType				= NX_SIMULATION_SW; 
+		nx_scene = nx->createScene(sceneDesc);  
+		if(!nx_scene) return;
+	}
+	
+	//	coocking lib :
+	nx_cook	=	NxGetCookingLib(NX_PHYSICS_SDK_VERSION);
+	if (!nx_cook) {
+		RUNTIME_ERROR("NxGetCookingLib() failed");
+	}
+	nx_cook->NxInitCooking();
+	
+
+	// Create the default material
+	NxMaterial* defaultMaterial = nx_scene->getMaterialFromIndex(0); 
+	defaultMaterial->setRestitution(0.5);
+	defaultMaterial->setStaticFriction(0.5);
+	defaultMaterial->setDynamicFriction(0.5);
+}
+
+
+//
+//	ESciVis::ShutdownPhysX
+//
+void ESciVis::ShutdownPhysX( void )
+{
+	LOG_SHUTDOWN("PhysX");
+
+	if (nx_cook) {
+		nx_cook->NxCloseCooking();
+		nx_cook = NULL;
+	}
+
+    if (nx_scene) {
+		nx->releaseScene(*nx_scene);
+		nx_scene = NULL;
+	}
+	
+	if (nx)  {
+		nx->release();
+		nx = NULL;
+	}
+}
+
+
+//
+//	ESciVis::FramePhysX
+//
+void ESciVis::FramePhysX( float dtime )
+{
+    nx_scene->simulate( dtime );
+	nx_scene->flushStream();
+
+	bool r = nx_scene->fetchResults(NX_RIGID_BODY_FINISHED, true);
+}
+
+
+//
+//	ESciVis::CreatePhysBox
+//
+NxActor	* ESciVis::CreatePhysBox( float sx, float sy, float sz, const EVec4 &pos, const EQuat &orient, float mass )
+{
+	NxActorDesc actorDesc;
+	NxBodyDesc	bodyDesc;
+	
+	NxQuat	q;
+	q.x	= orient.x;
+	q.y	= orient.y;
+	q.z	= orient.z;
+	q.w	= orient.w;
+
+	//
+	NxBoxShapeDesc boxDesc;
+	boxDesc.dimensions	= NxVec3(sx/2, sy/2, sz/2);
+	actorDesc.shapes.pushBack(&boxDesc);
+
+	actorDesc.body			= &bodyDesc;
+	actorDesc.globalPose.t	= NxVec3(pos.x, pos.y, pos.z);
+	actorDesc.globalPose.M	= q;
+	
+	bodyDesc.mass			= mass;
+
+	NxActor *pActor = nx_scene->createActor(actorDesc);
+	ASSERT(pActor);
+
+	return pActor;
+}
+
+
+//
+//	ESciVis::CreatePhysMesh
+//
+NxActor *ESciVis::CreatePhysMesh( IPxTriMesh mesh, const EVec4 &pos, const EQuat &orient, float mass )
+{
+	NxVec3	p	=	ToNxVec3( EVec3(pos.x, pos.y, pos.z) );
+	NxQuat	q	=	ToNxQuat( orient );
+	
+	//	actor descriptor
+	NxActorDesc actor_desc;
+	NxBodyDesc	body_desc;
+
+	NxActor *actor = NULL;	
+
+	//	setup actor shape :
+	NxConvexShapeDesc shape_desc;
+	shape_desc.meshData		=	BuildConvexMesh( mesh );
+	shape_desc.localPose.t	=	NxVec3(0, 0, 0);
+	shape_desc.group		=	0;
+	actor_desc.shapes.pushBack(&shape_desc);
+
+	ASSERT(shape_desc.isValid());
+
+	//	setup actor :
+	actor_desc.body			= &body_desc;
+	actor_desc.density		= 0;
+	actor_desc.globalPose.t	= p;	
+	actor_desc.globalPose.M	= NxMat33(q);
+	actor_desc.group		= 0;
+	
+	//	setup body :
+	body_desc.mass			= mass;
+	
+	ASSERT(body_desc.isValid());
+	ASSERT(actor_desc.isValid());
+
+	//	create actor :
+	actor = nx_scene->createActor(actor_desc);
+	ASSERT(actor);
+	
+	return actor;	
+}	
+	
+	
+//
+//	ESciVis::CreatePhysMesh
+//
+NxActor	* ESciVis::CreatePhysMesh( vector<IPxTriMesh> meshes, vector<float> masses )
+{
+	return NULL;
+}	
+
+//
+//	EPhysXPhysEngine::BuildConvexMesh
+//
+NxConvexMesh *ESciVis::BuildConvexMesh( const IPxTriMesh input_mesh )
+{
+	//IPxTriMesh	mesh	=	input_mesh->Clone();
+	//mesh->SetFormat( GE_MESH_POSITION );
+	//mesh->MergeVertices();				//This command causes convex cook crash
+
+	NxConvexMeshDesc	convex_mesh_desc;
+
+	NxArray<NxVec3>	verts;
+	
+	for (uint i=0; i<input_mesh->GetVertexNum(); i++) {
+		EVertex v;
+		v = input_mesh->GetVertex(i);
+		verts.push_back( NxVec3(v.position.x, v.position.y, v.position.z) );
+	}
+
+    convex_mesh_desc.numVertices		= input_mesh->GetVertexNum();
+    convex_mesh_desc.pointStrideBytes	= sizeof(NxVec3);
+    convex_mesh_desc.points				= &verts[0];
+	convex_mesh_desc.flags				= NX_CF_COMPUTE_CONVEX;
+	
+	ASSERT( convex_mesh_desc.isValid() );
+
+	MemoryWriteBuffer	buf;	
+	bool r = nx_cook->NxCookConvexMesh(convex_mesh_desc, buf);
+	
+	if (!r) {
+		RUNTIME_ERROR("mesh contains to many vertices");
+	}
+
+	return nx->createConvexMesh(MemoryReadBuffer(buf.data));
+}
+
+
+//
+//	Bytes2Color
+//
+static EVec4 Bytes2Color(uint bytes) 
+{
+	EVec4 c;
+	c.x	=	((bytes >> 24) & 0xFF) / 255.0f;
+	c.y	=	((bytes >> 16) & 0xFF) / 255.0f;
+	c.z	=	((bytes >>  8) & 0xFF) / 255.0f;
+	c.w	=	((bytes >>  0) & 0xFF) / 255.0f;
+	return c;
+}
+
+/*-----------------------------------------------------------------------------
+	Vector conversion :
+-----------------------------------------------------------------------------*/
+
+NxVec3 ToNxVec3( const EVec3 &v )
+{
+	return NxVec3( v.x, v.y, v.z );
+}
+
+
+NxQuat ToNxQuat( const EQuat &q )
+{
+	NxQuat nxq;
+	nxq.x	=	q.x;
+	nxq.y	=	q.y;
+	nxq.z	=	q.z;
+	nxq.w	=	q.w;
+	return nxq;
+}
+
+
+EVec3 ToEVec3( const NxVec3 &v )
+{
+	return EVec3( v.x, v.y, v.z );
+}
+
+
+EQuat ToEQuat( const NxQuat &q )
+{
+	return EQuat( q.x, q.y, q.z, q.w );
+}
+
+#endif
+}}}
+
+= sci_ui.cpp =
+{{{
+
+#include "sci_local.h"
+
+/*-----------------------------------------------------------------------------
+	Nano vis :
+-----------------------------------------------------------------------------*/
+}}}
+
+= sci_ui.h =
+{{{
+
+#pragma once
+
+/*-----------------------------------------------------------------------------
+	Nano vis :
+-----------------------------------------------------------------------------*/
+
+class EUIDraw : public IUIDrawCB {
+	public:
+		EUIDraw	( D3D
+	}
+}}}
+
+= scivis.h =
+{{{
+
+
+#pragma once
+
+/*-----------------------------------------------------------------------------
+	Nano vis :
+-----------------------------------------------------------------------------*/
+
+const float VIEW_FAR	=	1000.0f;
+const float VIEW_NEAR	=	0.1f;
+
+const uint ROLL_HISTORY_SIZE	=	8192;
+
+#include "static_self.h"
+
+class ESciVis : public IGame, public self_ref<ESciVis>, public IUIDrawCB {
+	public:
+								ESciVis			( void );
+								~ESciVis			( void );
+
+		//	 :
+		virtual void			Frame			( uint dtime );
+
+	public:		
+		
+		//	utility physical functions :
+		//NxActor				*	CreatePhysBox		( float sx, float sy, float sz, const EVec4 &pos, const EQuat &orient, float mass );
+		//NxActor				*	CreatePhysMesh		( IPxTriMesh mesh, const EVec4 &pos, const EQuat &orient, float mass );
+		//NxActor				*	CreatePhysMesh		( vector<IPxTriMesh> meshes, vector<float> masses );
+		//NxScene				*	GetNxScene			( void ) { return nx_scene; }
+		//NxConvexMesh		*	BuildConvexMesh		( const IPxTriMesh input_mesh );
+
+		//	naval dynamic  :
+		void					Simulate			( float dtime );
+		void					AddShip				( IPxShip ship );
+		void					RemoveShip			( IPxShip ship );
+
+		vector<IPxShip>	ships;
+
+		virtual void		RenderQuads		( uint quad_num, const EUIQuad *quads, EString image );	
+		virtual void		GetImageSize	( EString image, uint &width, uint &height ) ;
+		
+		IPxFRScene			GetFRScene		( void ) { return rs()->GetFRScene(); }
+
+	public:
+		void		RegisterAPI			( void );
+		static int	remove_all_ships	( lua_State *L );
+		static int	set_view			( lua_State *L );
+		static int	get_wave_offset		( lua_State *L );
+		static int	set_wind			( lua_State *L );
+		static int	set_wave			( lua_State *L );
+				
+	public:
+		float				global_simulation_time;
+		
+		struct {
+			float		fov;
+			EVec4		position;
+			EQuat		orient;
+			EFrustum	frustum;
+		} view;
+	
+	public:	
+		IPxWaving			waving;
+		IPxTriMesh			mesh_sea;
+
+	protected:
+		//	PhysX stuff :		
+		//void				InitPhysX		( void );
+		//void				ShutdownPhysX	( void );
+		//void				FramePhysX		( float dtime );
+		//uint				rolling_history_ptr;
+		//EVec4				rolling_history[ROLL_HISTORY_SIZE];
+		
+		//ErrorStream			error_stream;
+		//EAllocator			allocator;
+		//NxPhysicsSDK		*nx;
+		//NxScene				*nx_scene;
+		//NxCookingInterface	*nx_cook;
+		//NxActor				*ship_body;
+	public:
+
+	};
+}}}
+
+= ship.cpp =
+{{{
+
+#include "sci_local.h"
+#include "ship.h"
+
+#undef fs
+
+
+IShip * create_ship( lua_State *L, int idx ) {
+	return new EShip(L, idx);
+}	
+
+/*-----------------------------------------------------------------------------
+	Naive ship simulator :
+-----------------------------------------------------------------------------*/
+
+EShip::EShip( lua_State *L, int idx )
+{
+	self_time	=	0;
+	
+	
+	CONFIG_REGISTER_VAR(ship_show_hull,		true		);
+	CONFIG_REGISTER_VAR(ship_show_voxels,	false		);
+	CONFIG_REGISTER_VAR(ship_show_submerge, false		);
+	CONFIG_REGISTER_VAR(ship_hsf_method,	"surface"	);
+	
+	SetCMass( 0, 0, 0 );
+	
+	SetResistance( 0 );
+}
+
+
+//
+//	EShip::~EShip
+//
+EShip::~EShip( void )
+{
+	ship_body = NULL;
+
+	sci_vis->GetFRScene()->RemoveEntity( r_ent );
+	sci_vis->GetFRScene()->RemoveEntity( r_ent2 );
+}
+
+
+//
+//	EShip::Simulate
+//
+void EShip::Simulate( float dtime, IPxWaving waving )
+{
+	self_time += dtime;
+	UpdateForces( dtime, waving );
+
+	EVec4 p;
+	EQuat q;	
+	GetPose(p, q);
+	
+	r_ent->SetPose(0.5*(p + old_position), q);
+
+	old_position = p;
+}
+
+
+//
+//	EShip::GetPose
+//
+void EShip::GetPose( EVec4 &position, EQuat &orient )
+{
+	ship_body->GetPose( position, orient );
+}
+
+
+//
+//	EShip::SetPose
+//
+void EShip::SetPose( EVec4 &position, EQuat &orient )
+{
+	old_position	=	position;											
+	ship_body->SetPose( position, orient );
+	
+	//	update last pose to avoid big velocities :
+	lastpose.x		=	position.x;
+	lastpose.y		=	position.y;
+	lastpose.z		=	position.z;
+	QuatToAnglesRad( orient, lastpose.yaw, lastpose.pitch, lastpose.roll );
+}
+
+
+
+/*-----------------------------------------------------------------------------
+	Forces :
+-----------------------------------------------------------------------------*/
+
+//
+//	EShip::UpdateForces
+//
+void EShip::UpdateForces( float dtime, IPxWaving waving )
+{
+	if (!mesh_hdf)	{	RUNTIME_ERROR("HDF mesh not created");		}
+	if (!mesh_hsf)	{	RUNTIME_ERROR("HSF mesh not created");		}
+	if (!ship_body)	{	RUNTIME_ERROR("ship rigid body not created");	}
+
+	float  weight	=	GRAVITY * ship_mass;
+	EVec4 gravity	=	EVec4(0, 0, -weight,0);
+	
+	EQuat	q;
+	EVec4	p;
+	GetPose(p, q);
+	
+	EMatrix4 world		=	QuatToMatrix(q) * Matrix4Translate(p);
+	mesh_submerged_hsf	=	GetSubmergedMesh( world, EPlane(0,0,1,0) );	
+
+	ship_body->AddForceAtLocalPos( gravity, cmass );
+
+	if (!waving) {
+		waving	=	sci_vis->waving;
+	}	
+	
+	UpdateHSF( dtime, waving );
+	UpdateHDF( dtime, waving );
+	
+	
+	lastpose.x		=	p.x;
+	lastpose.y		=	p.y;
+	lastpose.z		=	p.z;
+	QuatToAnglesRad( q, lastpose.yaw, lastpose.pitch, lastpose.roll );
+}
+
+
+//
+//	EShip::AddForce
+//
+void EShip::AddForce( EVec3 force, EVec3 point, bool local_point )
+{
+	EVec4 p = Vec3ToVec4( point );
+	EVec4 f = Vec3ToVec4( force );
+	
+	if (local_point) {
+		ship_body->AddForceAtLocalPos( f, p );
+	} else {
+		ship_body->AddForceAtPos( f, p );
+	}
+}
+
+
+//
+//	EShip::AddMomentum
+//
+void EShip::AddMomentum( EVec3 momentum, bool local_momentum )
+{
+	//if (local_momentum) {
+	//	ship_body->addLocalTorque( ToNxVec3( momentum ) );
+	//} else {
+	//	ship_body->addTorque( ToNxVec3( momentum ) );
+	//}
+}
+
+
+EVec3 EShip::GetCenterMass( void )
+{
+	return Vec4ToVec3( ship_body->GetCMOffset() );
+}
+
+
+EVec3 EShip::GetInertiaMomentum( EVec3 axis )
+{
+	return EVec3( 0, 0, 0 );
+}
+
+
+//
+//	EShip::SetCMass
+//
+void EShip::SetCMass( float x, float y, float z )
+{
+	cmass.x	=	x;
+	cmass.y	=	y;
+	cmass.z	=	z;
+	cmass.w	=	0;
+}
+}}}
+
+= ship.h =
+{{{
+
+#pragma once
+
+/*-----------------------------------------------------------------------------
+	Naive ship simulator :
+-----------------------------------------------------------------------------*/
+
+#include "mersenne.h"
+
+struct ESurfElem {
+		EVec4	position;
+		EVec4	normal;
+		float	area;
+		bool	submerged;
+	};
+
+
+class EShip : public IShip {
+	public:
+							EShip				( lua_State *L, int idx );
+							~EShip				( void );
+			
+		//	general :		
+		virtual EString		Name				( void ) const { return name; }
+		virtual void		Simulate			( float dtime, IPxWaving waving );
+
+		//	ship properties :
+		virtual void		GetPose				( EVec4 &position, EQuat &orient );
+		virtual void		SetPose				( EVec4 &position, EQuat &orient );
+		
+		virtual void		BuildVoxels			( const EString path, float cube_size );
+		virtual void		BuildSurfaceDXDY	( const EString path, float density, float gathering_radius );
+		
+		virtual void		SetVisMesh			( const EString path );
+		virtual void		SetHSFMesh			( const EString path );
+		virtual void		SetHDFMesh			( const EString path );
+		virtual void		SetResistance		( float cx ) { water_resistance_cx = cx; }
+		virtual void		MakeRigidBody		( const EString path, float mass );
+		virtual void		AddForce			( EVec3 force, EVec3 point, bool local_point );
+		virtual void		AddMomentum			( EVec3 momentum, bool local_momentum );
+		virtual void		SetCMass			( float x, float y, float z );
+		
+		virtual EVec3		GetHSFMomentum		( void ) { return total_hsf_momentum; }
+		virtual float		GetHSFForce			( void ) { return total_hsf_force; }
+		virtual float		GetRightArm			( void ) { return right_arm; }
+		virtual float		GetMCH				( void ) { return mch; }
+
+		virtual EVec3		GetCenterMass		( void );
+		virtual EVec3		GetInertiaMomentum	( EVec3 axis );
+
+	protected:
+		IPxFREntity			r_ent, r_ent2;
+	
+		EPlane				GetShipXOZPlane		( void );
+	
+		EString				name;
+		
+		float				total_hsf_force;
+		float				right_arm;
+		EVec3				total_hsf_momentum;
+		EVec3				center_of_hsf_force;
+		float				mch;
+		
+		EVec4				old_position;
+		
+		float				water_resistance_cx;
+	
+		IPxTriMesh			GetSubmergedMesh		( const EMatrix4 &world, const EPlane &plane );
+	
+		void				UpdateForces	( float dtime, IPxWaving waving );
+		void				UpdateHSF		( float dtime, IPxWaving waving );
+		void				UpdateHDF		( float dtime, IPxWaving waving );
+		
+		void				UpdateHSFBox	( float dtime, IPxWaving waving );
+		void				UpdateHSFVoxel	( float dtime, IPxWaving waving );
+		void				UpdateHSFSurface( float dtime, IPxWaving waving );
+
+		void				UpdateHXFSEGrid	( void );		
+		void				UpdateHXFSE		( float dtime, IPxWaving waving );
+		void				BalanceHXFSE	( void );
+		void				BalanceHXFSEAxis( const EBBox &box, uint axis_id, float step );
+		struct {
+			RandMT				mtrand;
+			EString				path;
+			float				density;
+			float				radius;
+			vector<ESurfElem>	grid;
+		} hxfgrid;
+		
+		struct {
+			float	yaw, pitch, roll;
+			float	x,y,z;
+		} lastpose;
+		
+
+		EPxVoxelGrid	voxel_grid;
+		
+		
+		float			ship_length;
+		float			ship_width;
+		float			ship_height;
+		float			ship_mass;
+		float			self_time;
+		EVec4			cmass;
+	
+		IPxTriMesh		mesh_vis;
+		IPxTriMesh		mesh_hsf;
+		IPxTriMesh		mesh_hdf;
+		IPxTriMesh		mesh_submerged_hsf;
+		IPxTriMesh		mesh_submerged_hdf;
+		
+		IPxPhysEntity	ship_body;
+
+
+		//NxActor			*ship_body;
+		
+		IPxVar			ship_show_voxels;
+		IPxVar			ship_show_hull;
+		IPxVar			ship_show_submerge;
+		IPxVar			ship_hsf_method;
+	};
+	
+}}}
+
+= ship_api.cpp =
+{{{
+
+#include "sci_local.h"
+#include "ship.h"
+
+/*-----------------------------------------------------------------------------
+	Ship Lua API :
+-----------------------------------------------------------------------------*/
+
+IShip	*create_ship	(lua_State *L, int idx);
+
+
+ELuaShip::ELuaShip( lua_State *L )
+{
+	ship	=	create_ship(L, 1);
+	ESciVis::self->AddShip( ship );
+}
+
+
+ELuaShip::~ELuaShip( void )
+{
+	ESciVis::self->RemoveShip( ship );
+	ship	=	NULL;
+}
+
+
+LUNA_IMP_BEGIN	(ELuaShip					)
+LUNA_IMP_METHOD	(ELuaShip,	set_vis_mesh	)
+LUNA_IMP_METHOD	(ELuaShip,	set_hsf_mesh	)
+LUNA_IMP_METHOD	(ELuaShip,	set_hdf_mesh	)
+LUNA_IMP_METHOD	(ELuaShip,	set_resistance	)
+LUNA_IMP_METHOD	(ELuaShip,	make_rigidbody	)
+LUNA_IMP_METHOD	(ELuaShip,	build_voxels	)
+LUNA_IMP_METHOD	(ELuaShip,	build_surf_dxdy	)
+LUNA_IMP_METHOD	(ELuaShip,	add_force		)
+LUNA_IMP_METHOD	(ELuaShip,	add_momentum	)
+LUNA_IMP_METHOD	(ELuaShip,	get_angles		)
+LUNA_IMP_METHOD	(ELuaShip,	get_position	)
+LUNA_IMP_METHOD	(ELuaShip,	set_angles		)
+LUNA_IMP_METHOD	(ELuaShip,	set_position	)
+LUNA_IMP_METHOD	(ELuaShip,	get_hsf_momentum)
+LUNA_IMP_METHOD	(ELuaShip,	get_hsf_force	)
+LUNA_IMP_METHOD	(ELuaShip,	get_center_mass	)
+LUNA_IMP_METHOD	(ELuaShip,	get_right_arm	)
+LUNA_IMP_METHOD	(ELuaShip,	simulate		)
+LUNA_IMP_METHOD	(ELuaShip,	set_cmass		)
+LUNA_IMP_END	(ELuaShip					)
+
+/*-----------------------------------------------------------------------------
+	API itself :
+-----------------------------------------------------------------------------*/
+
+int ELuaShip::set_vis_mesh( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	ship->SetVisMesh( lua.RequireString( 1, "vis mesh path") );
+	return 0;
+}
+
+
+int ELuaShip::set_hsf_mesh( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	ship->SetHSFMesh( lua.RequireString( 1, "HSF mesh path") );
+	return 0;
+}
+
+
+int ELuaShip::set_hdf_mesh( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	ship->SetHDFMesh( lua.RequireString( 1, "HDF mesh path") );
+	return 0;
+}
+
+
+int ELuaShip::set_resistance( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	ship->SetResistance( lua.RequireNumber( 1, "water resistance coefficient") );
+	return 0;
+}
+
+
+int ELuaShip::make_rigidbody( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	ship->MakeRigidBody( lua.RequireString( 1, "RB mesh path"), lua.RequireNumber( 2, "ship mass" ) );
+	return 0;
+}
+
+
+int ELuaShip::build_voxels( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	ship->BuildVoxels( lua.RequireString( 1, "mesh path"), lua.RequireNumber( 2, "voxel size" ) );
+	return 0;
+}
+
+
+int ELuaShip::build_surf_dxdy( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	ship->BuildSurfaceDXDY( lua.RequireString( 1, "mesh path"), lua.RequireNumber( 2, "density" ), lua.RequireNumber(3, "radius") );
+	return 0;
+}
+
+
+int ELuaShip::add_force( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	
+	int n = lua_gettop(L);
+
+	EVec4	f		=	LuaRequireVec4( L, 1, "force vector" );
+	EVec4	p		=	LuaRequireVec4( L, 2, "point of force addition" );
+	bool	local	=	LuaRequireBoolean( L, 3, "is point local");
+	
+	ship->AddForce( EVec3(f.x, f.y, f.z), EVec3(p.x, p.y, p.z), local);
+	
+	return 0;
+}
+
+
+int ELuaShip::add_momentum( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	
+	int n = lua_gettop(L);
+
+	EVec4	m		=	LuaRequireVec4( L, 1, "momentum vector" );
+	bool	local	=	LuaRequireBoolean( L, 2, "is local space momentum");
+	
+	ship->AddMomentum( EVec3(m.x, m.y, m.z), local);
+	
+	return 0;
+}
+
+
+int ELuaShip::get_angles( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	EQuat q;
+	EVec4 p;
+	ship->GetPose( p, q );
+	float yaw, pitch, roll;
+	
+	QuatToAngles( q, yaw, pitch, roll );
+	
+	lua_pushnumber( L, yaw );
+	lua_pushnumber( L, pitch );
+	lua_pushnumber( L, roll );
+	lua.SetStackGrow(3);
+	return 3;
+}
+
+
+int ELuaShip::get_position( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	EQuat q;
+	EVec4 p;
+	ship->GetPose( p, q );
+
+	float dx = 0, dy = 0, dz = 0;
+	
+	int n = lua_gettop(L);
+	if (n==4) {		//	keep in mind: 3 + 1 (self)
+		dx	=	lua.RequireNumber(1, "x offset");
+		dy	=	lua.RequireNumber(2, "y offset");
+		dz	=	lua.RequireNumber(3, "z offset");
+	}
+	
+	EVec4	offset	=	EVec4(dx, dy, dz, 0);
+	offset	=	QuatRotateVector( offset, q );
+	
+	p = p + offset;
+	
+	lua_pushnumber( L, p.x );
+	lua_pushnumber( L, p.y );
+	lua_pushnumber( L, p.z );
+	lua.SetStackGrow(3);
+	return 3;
+}
+
+
+int ELuaShip::set_angles( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	EQuat q;
+	EVec4 p;
+	ship->GetPose( p, q );
+
+	float yaw	=	lua.RequireNumber( 1, "yaw"		);
+	float pitch	=	lua.RequireNumber( 2, "pitch"	);
+	float roll	=	lua.RequireNumber( 3, "roll"	);
+	q			=	QuatRotationAxis( vmath::rad( yaw   ),	EVec3(0,0,1))
+				*	QuatRotationAxis( vmath::rad( pitch ),	EVec3(0,1,0))
+				*	QuatRotationAxis( vmath::rad( roll  ),	EVec3(1,0,0));
+
+	
+	ship->SetPose( p, q );	
+	return 0;
+}
+
+
+int ELuaShip::set_position( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	EQuat q;
+	EVec4 p;
+	ship->GetPose( p, q );
+
+	float x		=	lua.RequireNumber( 1, "x position"		);
+	float y		=	lua.RequireNumber( 2, "y position"	);
+	float z		=	lua.RequireNumber( 3, "z position"	);
+
+	p	=	EVec4(x,y,z,1);
+	
+	ship->SetPose( p, q );	
+	return 0;
+}
+
+
+int ELuaShip::get_hsf_momentum( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	EVec3 m = ship->GetHSFMomentum();
+
+	LuaPushVec4( L, EVec4(m.x, m.y, m.z, 0) );
+	
+	lua.SetStackGrow(1);
+	return 1;
+}
+
+
+int ELuaShip::get_hsf_force( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	float f = ship->GetHSFForce();
+
+	lua_pushnumber(L, f);
+
+	lua.SetStackGrow(1);
+	return 1;
+}
+
+
+int ELuaShip::get_center_mass( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	EVec3 cm = ship->GetCenterMass();
+
+	LuaPushVec4( L, EVec4(cm.x, cm.y, cm.z, 0) );
+
+	lua.SetStackGrow(1);
+	return 1;
+}
+
+
+int ELuaShip::get_right_arm( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	float ra = ship->GetRightArm();
+
+	lua_pushnumber(L, ra);
+
+	lua.SetStackGrow(1);
+	return 1;
+}
+
+
+int ELuaShip::simulate( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	float dt = lua.RequireNumber(1, "dtime");
+	
+	ship->Simulate( dt, NULL );
+	
+	return 0;
+}
+
+
+int ELuaShip::set_cmass( lua_State *L )
+{
+	LUA_INTERFACE(L);
+	float x		=	lua.RequireNumber( 1, "cmass X position"		);
+	float y		=	lua.RequireNumber( 2, "cmass Y position"	);
+	float z		=	lua.RequireNumber( 3, "cmass Z position"	);
+	
+	ship->SetCMass(x,y,z);
+	
+	return 0;
+}
+}}}
+
+= ship_api.h =
+{{{
+
+#include "sci_local.h"
+#include "ship.h"
+#include "../../engine/core/luna.h"
+
+/*-----------------------------------------------------------------------------
+	Ship Lua API :
+-----------------------------------------------------------------------------*/
+
+class ELuaShip : public Luna<ELuaShip> {
+	public:
+					ELuaShip	( lua_State *L );
+					~ELuaShip	( void );
+					
+		LUNA_DECLARE_CLASS(ELuaShip);
+
+		int set_vis_mesh	( lua_State *L );		//	sets visible mesh
+		int	set_hsf_mesh	( lua_State *L );		//	sets mesh for HSF applying
+		int	set_hdf_mesh	( lua_State *L );		//	sets mesh for HDF applying
+		
+		int	set_resistance	( lua_State *L );		//	sets water resistance
+		
+		int make_rigidbody	( lua_State *L );		//	makes RB form list of shapes
+		int build_voxels	( lua_State *L );		//	fill hull with voxels
+		int build_surf_dxdy	( lua_State *L );		//	build small surface elements
+
+		int	add_force		( lua_State *L );		//	adds force
+		int add_momentum	( lua_State *L );		//	adds momentum
+			
+		int	get_angles		( lua_State *L );		//	gets yaw, pitch, roll
+		int get_position	( lua_State *L );		//	gets x,y,z
+
+		int	set_angles		( lua_State *L );		//	sets yaw, pitch, roll
+		int set_position	( lua_State *L );		//	sets x,y,z
+		
+		int	get_hsf_momentum( lua_State *L );		//	
+		int	get_hsf_force	( lua_State *L );		//
+		int get_right_arm	( lua_State *L );		//
+		
+		int	get_center_mass	( lua_State *L );		//
+		int set_cmass		( lua_State *L );		//
+		
+		int	simulate		( lua_State *L );		//
+		
+	protected:
+		IPxShip	ship;
+	};
+}}}
+
+= ship_dynamic.cpp =
+{{{
+
+#include "sci_local.h"
+#include "ship.h"
+ 
+/*-----------------------------------------------------------------------------
+	Ship dynamic stuff :
+-----------------------------------------------------------------------------*/
+	
+//
+//	EShip::UpdateHDF
+//		- updates HDFs using 'antiscientific' method
+//
+void EShip::UpdateHDF( float dtime, IPxWaving waving )
+{
+	if (ship_hsf_method->String()=="hxfse")	{
+		return;
+	}
+	
+
+	EVec4	position;
+	EQuat	orient;
+	GetPose(position, orient);
+
+	for (uint i=0; i<mesh_hdf->GetTriangleNum(); i++) {
+		
+		EVec3 fe_pos		=	QuatRotateVector( mesh_hdf->TriangleCenter(i), orient ) + EVec3(position.Ptr());
+		EVec3 fe_normal		=	QuatRotateVector( mesh_hdf->TriangleNormal(i), orient );
+		float fe_area		=	mesh_hdf->TriangleArea(i);
+		EVec3 fe_vel_global	=	Vec4ToVec3( ship_body->GetLocalPointVelocity( Vec3ToVec4(mesh_hdf->TriangleCenter(i)) ) );
+		
+		/*
+		rs()->GetDVScene()->DrawArrow( Vec3ToVec4(fe_pos), Vec3ToVec4(fe_vel_global), 1, EVec4(0.5, 0.5, 1.0, 1.0));
+		*/
+		
+		EVec4	p = EVec4(fe_pos.x, fe_pos.y, 0, 1);
+		
+		EVec3 flow_vel		=	Vec4ToVec3( waving->GetVelocity( p ) );
+		float wave_h		=				waving->GetPosition( p ).z;		  
+		
+		if (wave_h < fe_pos.z) {	
+			continue;
+		}
+		
+		//	element velocity relative to flow :
+		EVec3 fe_vel		=	fe_vel_global - flow_vel;
+		
+		//	cosine angle between velocity and normal :
+		float cos_vel_norm		=	Vec3Dot( Vec3Normalize( fe_vel ), fe_normal );
+		float cos_2_vel_norm	=	2 * (cos_vel_norm * cos_vel_norm) - 1;
+		float cos_sign			=	1 ? -1 : cos_vel_norm > 0;
+
+		//	0.1 - stupid viscosity addition		
+		//	0.5 - just front or back pressure 
+		//  sqrt(0.5) - because lifting force is maximum at PI/4
+		const float	Cxx		=	water_resistance_cx;
+		const float Cyy		=	0.0;
+		float Cx			=	Cxx * 0.5 * (0.9 * abs(cos_vel_norm) + 0.1);	
+		float Cy			=	Cyy * 0.5 * sqrt(0.5) * cos_2_vel_norm;
+		
+		float hd_force_x	=	Cx * Vec3LengthSqr( fe_vel ) * fe_area * WATER_DENSITY / 2;
+		float hd_force_y	=	Cy * Vec3LengthSqr( fe_vel ) * fe_area * WATER_DENSITY / 2;
+		
+		//	compute vectors of force applying :
+		EVec3 force_x_dir	=	Vec3Normalize( fe_vel ) * cos_sign;
+		EVec3 force_y_dir	=	- Vec3Normalize( Vec3Cross( fe_vel, Vec3Cross( fe_normal, fe_vel ) ) ) * cos_sign;
+		
+		EVec3 vhd_force_x	=	force_x_dir * hd_force_x;
+		EVec3 vhd_force_y	=	force_y_dir * hd_force_y;
+		
+		//	add force :
+		EVec4	vhd_force	=	Vec3ToVec4( vhd_force_x + vhd_force_y );
+		ship_body->AddForceAtPos( vhd_force, Vec3ToVec4(fe_pos) );
+	}
+}
+
+
+}}}
+
+= ship_hxfmti.cpp =
+{{{
+
+#include "sci_local.h"
+#include "ship.h"
+#include <omp.h>
+
+/*-----------------------------------------------------------------------------
+	Ship hydrodynamic and hydrostatic microtriangle hull integration
+	HXFMTI
+-----------------------------------------------------------------------------*/
+
+
+static uint GetNumPoints( float num ) {
+	if (num<=1) {
+		return 1;
+	} else {
+		return num;
+	}
+	//	POT numbers :
+	if ( num>512)	return 512	;
+	if ( num>256)	return 256	;
+	if ( num>128)	return 128	;
+	if ( num>64	)	return 64	;
+	if ( num>32	)	return 32	;
+	if ( num>16	)	return 16	;
+	if ( num>8	)	return 8	;
+	if ( num>4	)	return 4	;
+	if ( num>2	)	return 2	;
+	if ( num>1	)	return 1	;
+	return 1;
+}
+
+
+
+
+//
+//	EShip::BuildSurfaceElements
+//
+void EShip::BuildSurfaceDXDY( const EString path, float density, float gathering_radius )
+{
+	hxfgrid.path		=	path;
+	hxfgrid.density		=	density;
+	hxfgrid.radius		=	gathering_radius;
+}
+
+
+//
+//	EShip::UpdateHXFSEGrid
+//
+void EShip::UpdateHXFSEGrid( void )
+{
+	hxfgrid.grid.reserve( hxfgrid.grid.size() + 1 );
+	hxfgrid.grid.clear();
+
+	if (hxfgrid.density <= 0) {
+		LOG_WARNING("EShip::BuildSurfaceDXDY(): density < 0");
+		hxfgrid.density = 0;
+	}
+
+	double	total_surface_area = 0;	
+	double	total_surface_area2 = 0;	
+	
+	IPxTriMesh	mesh	=	ge()->LoadMeshFromFile( hxfgrid.path.CStr() );
+
+	for (uint i=0; i<mesh->GetTriangleNum(); i++) {
+	
+		uint i0, i1, i2;
+		mesh->GetTriangle(i, i0, i1, i2);
+		
+		EVec3	v0	=	mesh->GetVertex(i0).position;
+		EVec3	v1	=	mesh->GetVertex(i1).position;
+		EVec3	v2	=	mesh->GetVertex(i2).position;
+		EVec3	v01	=	v1 - v0;	//	u
+		EVec3	v02	=	v2 - v0;	//	v
+		
+
+		EVec3	n	=	mesh->TriangleNormal(i);
+		double	s	=	mesh->TriangleArea(i);
+		total_surface_area += s;
+		
+		uint elem_num = GetNumPoints(s * hxfgrid.density);
+		if (elem_num<1) {
+			elem_num = 1;
+		}
+		
+		double	ds = s / elem_num;
+		
+		for (uint j=0; j<elem_num; j++) {
+			ESurfElem	se;
+			
+			float u=0, v=0;
+			do {
+				u	=	vmath::randf();
+				v	=	vmath::randf();
+				u	=	hxfgrid.mtrand.randomMTf();
+				v	=	hxfgrid.mtrand.randomMTf();
+			} while (u+v>1);
+			
+			total_surface_area2 += ds;
+			
+			se.position	=	Vec3ToPoint4( v0 + v01 * u + v02 * v );
+			se.normal	=	Vec3ToVec4  ( n );
+			se.area		=	ds;
+			hxfgrid.grid.push_back(se);
+		} 
+	}
+
+	uint n = hxfgrid.grid.size();
+	for (uint i=0; i<n; i++) {
+		swap(hxfgrid.grid[i], hxfgrid.grid[rand()%n]);
+	}
+}
+
+
+//
+//	EShip::UpdateHXFSE
+//
+void EShip::UpdateHXFSE( float dtime, IPxWaving waving )
+{
+	UpdateHXFSEGrid();
+	
+	EVec4 p;
+	EQuat q;
+	EMatrix4 t;
+	
+	GetPose(p, q);
+	t = Matrix4FromPose( p, q );
+	
+	float num_pnts[3] = {0,0,0};
+	
+	waving->MakeDirty();
+
+	for (uint i=0; i<hxfgrid.grid.size(); i++) {
+		
+		ESurfElem	se		= hxfgrid.grid[i];
+		EVec4		normal	= se.normal;
+		
+		EVec4		vse		= ship_body->GetLocalPointVelocity( se.position );	//	local point velocity
+
+		//	transform surface element to world space :		
+		se.position	=	Matrix4Transform( se.position, t );
+		se.normal	=	Matrix4Transform( se.normal,   t );
+
+		EVec4		vwtr	= waving->GetVelocity( se.position );									//	water velocity
+		EVec4		vel		= vse - vwtr;
+		float		vel_p2	= Vec4LengthSqr( vel );								//	squared point velocity relative to water particles
+		EVec4		vdir	= Vec4Normalize( vel );
+
+		//	compute pressure and force :
+		float	pr	=	waving->GetPressure( se.position );
+		float	s	=	se.area;
+
+		float	factor	=	pr > 0 ? 1 : 0;
+		
+		//	compute dynamic pressure :
+		#if 1
+			float	v_dot_n	=	Vec4Dot( vdir, se.normal );
+			//float	fds		=	water_resistance_cx * vel_p2 / 2 * abs(v_dot_n) * se.area * WATER_DENSITY * factor;
+			float	fds		=	water_resistance_cx * /*sqrt*/(vel_p2) * abs(v_dot_n) * se.area * WATER_DENSITY * factor;
+			EVec4	fd		=	- (vdir * fds);
+		#else
+			float	v_dot_n	=	Vec4Dot( vdir, se.normal );
+			float	pd		=	water_resistance_cx * sqrt(vel_p2) * (v_dot_n) * se.area * WATER_DENSITY * factor;
+			pr +=	pd;
+		#endif
+		
+		float	lf		=	clamp<float>(pr / (1), 0, 1);
+		EVec4	color	=	Vec4Lerp( EVec4(1,0,0,1), EVec4(1,1,0,1), lf );
+		//rs()->GetDVScene()->DrawPoint( se.position, 0.1, color );
+		
+		
+		if (factor<0.5) {
+			hxfgrid.grid[i].submerged = false;
+		} else {
+			hxfgrid.grid[i].submerged = true;
+		}
+
+		EVec4	f	=	- (se.normal * (pr * s));
+
+		ship_body->AddForceAtPos( f + fd, se.position );
+	}
+	
+
+	//
+	//	dump computing info :
+	//	
+	do {
+		lua_State *L = CoreLua();
+		LUA_INTERFACE(L);
+	
+		uint n = hxfgrid.grid.size();
+		
+		
+		lua_pushnumber(L, n);
+		lua_setglobal(L, "grid_size");
+		
+		lua_newtable(L);
+		
+		for (uint i=0; i<n; i++) {
+			lua_pushnumber( L, i );
+			int op = 1;
+			if (hxfgrid.grid[i].submerged) { op = 2; }
+			lua_pushnumber( L, op );
+			lua_settable(L, -3);
+		}
+		
+		lua_setglobal(L, "grid_submerging");
+	} while (0);	
+	
+	//
+	//	damp wrong
+	//
+	EVec4	force, torque;	
+	ship_body->GetTotalForces( force, torque );
+}
+
+}}}
+
+= ship_int.h =
+{{{
+
+#pragma once
+
+/*-----------------------------------------------------------------------------
+	Nano vis :
+-----------------------------------------------------------------------------*/
+
+class	IWaving;
+class	IShip;
+typedef HardRef<IWaving>	IPxWaving;
+typedef HardRef<IShip>		IPxShip;
+
+typedef IWaving	*	(*CreateWaving_f)	( lua_State *L, int idx );
+typedef IShip	*	(*CreateShip_f)		( lua_State *L, int idx );
+
+struct ERendEnv_s {
+		EMatrix4	matrix_view;
+		EMatrix4	matrix_proj;
+		EVec4		view_pos;
+	};
+
+
+class IWaving : public ICoreObject {
+	public:
+		virtual void		Update			( float dtime, const EVec4 &view_pos, const EQuat &orient ) = 0;
+		virtual EVec4		GetVelocity		( const EVec4 &init_pos ) const = 0;
+		virtual EVec4		GetPosition		( const EVec4 &init_pos ) const = 0;
+		virtual float		GetPressure		( const EVec4 &init_pos ) const = 0;
+		virtual float		GetWaveSlopeX	( const EVec4 &init_pos ) const = 0;
+		virtual void		MakeDirty		( void ) = 0;
+		virtual void		SetWindSpeed	( float u ) = 0;
+		virtual void		SetSinWave		( float w, float a ) = 0;
+	};
+	
+	
+class IShip : public ICoreObject {
+	public:
+		virtual EString		Name				( void ) const = 0;
+		
+		virtual void		Simulate			( float dtime, IPxWaving waving ) = 0;
+		
+		virtual void		GetPose				( EVec4 &position, EQuat &orient ) = 0;
+		virtual void		SetPose				( EVec4 &position, EQuat &orient ) = 0;
+		
+		virtual void		BuildVoxels			( const EString path, float cube_size ) = 0;
+		virtual void		BuildSurfaceDXDY	( const EString path, float density, float gathering_radius ) = 0;
+		
+		virtual void		SetVisMesh			( const EString path ) = 0;
+		virtual void		SetHSFMesh			( const EString path ) = 0;
+		virtual void		SetHDFMesh			( const EString path ) = 0;
+		virtual void		SetResistance		( float cx ) = 0;
+		virtual void		MakeRigidBody		( const EString path, float mass ) = 0;
+		virtual void		AddForce			( EVec3 force, EVec3 point, bool local_point ) = 0;
+		virtual void		AddMomentum			( EVec3 momentum, bool local_momentum ) = 0;
+		virtual void		SetCMass			( float x, float y, float z ) = 0;
+
+		virtual EVec3		GetHSFMomentum		( void ) = 0;
+		virtual float		GetHSFForce			( void ) = 0;
+		virtual float		GetRightArm			( void ) = 0;
+		virtual float		GetMCH				( void ) = 0;
+		
+		virtual EVec3		GetCenterMass		( void ) = 0;
+		virtual EVec3		GetInertiaMomentum	( EVec3 axis ) = 0;
+	};
+}}}
+
+= ship_mesh.cpp =
+{{{
+
+#include "sci_local.h"
+#include "ship.h"
+
+/*-----------------------------------------------------------------------------
+	Ship mesh stuff :
+-----------------------------------------------------------------------------*/
+
+//
+//	EShip::SetVisMesh
+//
+void EShip::SetVisMesh( const EString path )
+{
+	LOGF("view mesh : %s", path.CStr());
+	mesh_vis		=	ge()->LoadMeshFromFile( path.CStr() );
+	r_ent			=	sci_vis->GetFRScene()->AddEntity();
+	
+	r_ent->SetMesh( mesh_vis );
+	//r_ent->SetFlag( RSE_HIDDEN );
+}
+
+
+//
+//	EShip::SetHSFMesh
+//
+void EShip::SetHSFMesh( const EString path )
+{
+	LOGF("HSF mesh  : %s", path.CStr());
+	mesh_hsf	=	ge()->LoadMeshFromFile( path.CStr() );
+	
+	EBBox	bbox	=	mesh_hsf->ComputeBBox();
+	ship_length		=	bbox.Size().x;
+	ship_width		=	bbox.Size().y;
+	ship_height		=	bbox.Size().z;
+}
+
+
+//
+//	EShip::SetHDFMesh
+//
+void EShip::SetHDFMesh( const EString path )
+{
+	LOGF("HDF mesh  : %s", path.CStr());
+	mesh_hdf	=	ge()->LoadMeshFromFile( path.CStr() );
+}
+
+
+//
+//	EShip::MakeRigidBody
+//
+void EShip::MakeRigidBody( const EString path, float mass )
+{
+	LOGF("RB mesh   : %s", path.CStr());
+	IPxTriMesh phys_mesh	=	ge()->LoadMeshFromFile( path.CStr() );
+	
+	//if (ship_body) {
+	//	sci_vis->GetNxScene()->releaseActor( *ship_body );
+	//}
+	//
+	//ship_body	=	sci_vis->CreatePhysMesh( phys_mesh, EVec4(0,0,0,1), EQuat(0,0,0,1), mass );
+	//ship_mass	=	ship_body->getMass();
+	ship_body	=	phys()->AddEntity();
+	
+	ship_body->SetMesh( phys_mesh );
+	ship_body->SetMass( mass );
+	ship_body->SetPose( EVec4(0,0,0,1), EQuat(0,0,0,1) );
+	ship_body->SetDynamic();
+	
+	ship_body->Spawn();
+	
+	ship_mass	=	mass;
+}
+
+
+//
+//	EShip::BuildVoxels
+//	
+void EShip::BuildVoxels( const EString path, float cube_size )
+{
+	LOGF("building voxels for : %s", path.CStr());
+	LOGF("voxel size : %g", cube_size);
+	voxel_grid	=	new EVoxelGrid();
+	
+	IPxTriMesh	mesh	=	ge()->LoadMeshFromFile( path.CStr() );
+
+	try {	
+		voxel_grid->BuildGrid( mesh, EVec3(0,0,0), cube_size, cube_size, cube_size );
+	} catch (exception &e) {
+		LOG_WARNING("%s", e.what());
+	}
+	
+	LOGF("done : %d voxels", voxel_grid->GetVoxelNum());
+}
+
+}}}
+
+= ship_numeric.cpp =
+{{{
+
+#include "sci_local.h"
+#include "ship.h"
+ 
+/*-----------------------------------------------------------------------------
+	Ship numeric simulation :
+-----------------------------------------------------------------------------*/
+
+#if 0
+//
+//	EShip::UpdateNumeric
+//
+//	Equation :
+//	M * zeta''  + N1 * zeta'  + lamda * S * zeta = 0	//	Hanovich	(formula 41)
+//	M * zeta_d'	+ N1 * zeta_d + lamba * S * zeta = 0
+//
+//	zeta_d'		=	- 1 / M  *  ( lamda * S * zeta  +  N1 * zeta_d )
+//	zeta'		=	
+//
+class expr_zeta_dd {
+	public:
+		float	N1;
+		float	M;
+		float	lamda;
+		float	S;
+		float operator () ( float zeta, float zeta_d, float zeta_w ) {
+			//LOGF("Fnum = %g (KN)", (S * zeta * 1000 * GRAVITY) / 1000.0);
+			return - ( GRAVITY * lamda * S * (zeta - zeta_w)  +  N1 * zeta_d ) / M;	
+		}
+	};
+	
+
+class expr_roll_dd {
+	public:
+		float	N2;
+		float	M;
+		float	MCH;
+		float	I;
+		float operator () ( float roll, float roll_d, float roll_w ) {
+			return - ( N2 * roll_d * abs(roll_d) + M * GRAVITY * MCH * (roll + roll_w) ) / I; 
+		}
+	};
+
+
+template<typename Func> void Euler2( Func func, float dt, float &x, float &dx, float a )
+{
+	float next_dx	=	dx + dt * ( func (x, dx, a) );
+	float next_x	=	x  + dt * dx;
+	x	=	next_x;
+	dx	=	next_dx;
+}
+
+
+template<typename Func> void RungeKutta2( Func func, float dt, float &x, float &dx, float a )
+{
+	float k1	=	func( x,			dx,					a );
+	float k2	=	func( x + 0.5*dt,	dx + 0.5*dt * k1,	a );
+	float k3	=	func( x + 0.5*dt,	dx + 0.5*dt * k2,	a );
+	float k4	=	func( x + dt,		dx + dt * k2,		a );
+
+	float next_dx	=	dx + dt/6 * (k1 + 2*k2 + 2*k3 + k4);
+	float next_x	=	x  + dt * dx;
+	x	=	next_x;
+	dx	=	next_dx;
+}
+
+
+void EShip::EulerStep( float dt, IPxWaving waving )
+{
+	const float N1		= 0*(0.1 * ship_length	* ship_width);	//	Hanovich (formula 56)
+	const float N2		= (0.086 * ship_length * (ship_width * ship_width * ship_width * ship_width));	// devided by 'roll_d'
+	const float M		= (ship_mass);
+	const float S		= (ship_length * ship_width);
+	const float lamda	= (0.7	* WATER_DENSITY);
+	const float I		= ship_param.Ix;
+
+	float zeta_w = waving->GetPosition  ( EVec4(0,0,0,1) ).z;
+	float delta  = waving->GetWaveSlopeX ( EVec4(0,0,0,1) );
+	
+	expr_zeta_dd	_expr_zeta_dd;
+	_expr_zeta_dd.lamda	=	lamda;
+	_expr_zeta_dd.N1	=	N1;
+	_expr_zeta_dd.M		=	M;
+	_expr_zeta_dd.S		=	S;
+	
+	expr_roll_dd	_expr_roll_dd;
+	_expr_roll_dd.N2	=	N2;
+	_expr_roll_dd.M		=	M;
+	_expr_roll_dd.MCH	=	ship_param.gmt;
+	_expr_roll_dd.I		=	I;
+
+	Euler2( _expr_zeta_dd, dt, num_zeta, num_zeta_d, zeta_w );
+	Euler2( _expr_roll_dd, dt, num_roll, num_roll_d, delta );
+
+	//RungeKutta2	( _expr_zeta_dd, dt, num_zeta, num_zeta_d, zeta_w );
+	//RungeKutta2	( _expr_roll_dd, dt, num_roll, num_roll_d, delta );
+}
+
+
+void EShip::UpdateNumeric( float dtime, IPxWaving waving )
+{
+	for (uint i=0; i<30; i++) {
+		EulerStep( dtime / 30.0f, waving );
+	}
+}
+#endif
+}}}
+
+= ship_rend.cpp =
+{{{
+
+#include "sci_local.h"
+#include "ship.h"
+
+/*-----------------------------------------------------------------------------
+	Ship rendering stuff :
+-----------------------------------------------------------------------------*/
+
+}}}
+
+= ship_split.cpp =
+{{{
+
+#include "sci_local.h"
+#include "ship.h"
+ 
+/*-----------------------------------------------------------------------------
+	Naive ship simulator :
+-----------------------------------------------------------------------------*/
+
+EVec3 GetCenterOfBuyoancy( const IPxTriMesh mesh ) 
+{
+	EVec3	center			=	EVec3(0,0,0);
+	float	total_weight	=	0;
+	
+	for (uint i=0; i<mesh->GetTriangleNum(); i++) {
+		uint i0, i1, i2;
+		mesh->GetTriangle( i, i0, i1, i2 );
+		
+		//	vertices :		
+		EVec3	v0	=	mesh->GetVertex( i0 ).position;
+		EVec3	v1	=	mesh->GetVertex( i1 ).position;
+		EVec3	v2	=	mesh->GetVertex( i2 ).position;
+
+		//	area unit weights :
+		float	w0	=	GRAVITY * WATER_DENSITY * (-v0.z);
+		float	w1	=	GRAVITY * WATER_DENSITY * (-v1.z);
+		float	w2	=	GRAVITY * WATER_DENSITY * (-v2.z);
+		float	w	=	(w0 + w1 + w2) / 3.0f;
+		
+		float	cu	=	(w0 + 2*w1 + w2) / 4 / (w0 + w1 + w2);
+		float	cv	=	(w0 + w1 + 2*w2) / 4 / (w0 + w1 + w2);
+		EVec3	cm	=	(v1 - v0) * cu + (v2 - v0) * cv + v0;
+				cm.z/=	2;
+
+		//	section area :
+		float	s		=	mesh->TriangleArea( i );
+		EVec3	n		=	mesh->TriangleNormal( i );
+		float	sa		=	mesh->TriangleArea( i ) * abs(n.z);
+		float	weight	=	w * sa;
+		
+		if (n.z>0) {
+			weight *= (-1);
+		}
+		
+		center			+=	(cm * weight);
+		total_weight	+=	weight;
+	}	
+	
+	center /= total_weight;
+
+	return center;	
+}
+
+
+IPxTriMesh EShip::GetSubmergedMesh( const EMatrix4 &world, const EPlane &plane )
+{
+	IPxTriMesh bottom, top, full;
+	bottom	= Geometry()->CreateTriMesh(GE_MESH_POSITION);
+	top		= Geometry()->CreateTriMesh(GE_MESH_POSITION);
+	
+	full	= this->mesh_hsf->Clone();
+	
+	full->Transform( world );
+	
+	full->Split( plane, bottom, top );
+	
+	return bottom;
+}
+
+}}}
+
+= ship_static.cpp =
+{{{
+
+#include "sci_local.h"
+#include "ship.h"
+
+#undef fs
+ 
+/*-----------------------------------------------------------------------------
+	Ship static stuff :
+-----------------------------------------------------------------------------*/
+
+//
+//	EShip::GetShipXOZPlane
+//
+EPlane EShip::GetShipXOZPlane( void )
+{
+	float	yaw, pitch, roll;
+	EQuat	orient;
+	EVec4	position;
+	
+	GetPose(position, orient);
+	QuatToAnglesRad( orient, yaw, pitch, roll );
+
+	//	TODO : Fix, CM is not coincide with center of the local coordibates	
+	EVec4	cmofs	=	ship_body->GetCMOffset();
+	EVec4	cm		=	position + cmofs;	
+	return 	PlaneFromPointNormal( cm, Vec3Cross( EVec3(cos(yaw), sin(yaw), 0), EVec3(0,0,1) ) );
+}
+
+
+static float StaticWaveForce( EVec4 pos, float szx, float szy, float szz, float wave_height ) {
+	float wh = wave_height;		//	wave height
+
+	float frac = (wh - (pos.z - 0.5f*szz)) / szz;
+	frac = clamp<float>(frac, 0,1);
+	
+	return frac * szx * szy * szz * WATER_DENSITY * GRAVITY;
+}
+
+
+
+//
+//	EShip::UpdateHSF
+//
+void EShip::UpdateHSF( float dtime, IPxWaving waving )
+{
+	if (ship_hsf_method->String()=="box")		UpdateHSFBox	( dtime, waving ); else
+	if (ship_hsf_method->String()=="voxel")		UpdateHSFVoxel	( dtime, waving ); else
+	if (ship_hsf_method->String()=="surface")	UpdateHSFSurface( dtime, waving ); else 
+	if (ship_hsf_method->String()=="hxfse")		UpdateHXFSE		( dtime, waving ); else 
+	{
+		LOG_WARNING("'%s' unknown HSF method", ship_hsf_method->String().CStr());
+	}
+}
+
+
+//
+//	EShip::UpdateHSFBox
+//		- computes HSFs using block LxWxH 
+//
+void EShip::UpdateHSFBox(float dtime, IPxWaving waving)
+{
+	EVec4	position;
+	EQuat	orient;
+	GetPose(position, orient);
+
+	uint FEM_X	=	20;
+	uint FEM_Y	=	4;
+	uint FEM_Z	=	4;
+	
+	float dx = ship_length / FEM_X;
+	float dy = ship_width  / FEM_Y;
+	float dz = ship_height / FEM_Z;
+	float dm = 1.0f / FEM_X / FEM_Y / FEM_Z;
+
+	NxVec3 fem_weight	=	NxVec3( 0, 0, -GRAVITY) * ship_mass * dm;
+	
+	EVec3	M = EVec3(0,0,0);
+	
+	for (uint i=0; i<FEM_X; i++) {
+		for (uint j=0; j<FEM_Y; j++) {
+			for (uint k=0; k<FEM_Z; k++) {
+
+				float x = -(0.5 * ship_length) + 0.5*dx + dx * (float)i;
+				float y = -(0.5 * ship_width ) + 0.5*dy + dy * (float)j;
+				float z = -(0.5 * ship_height) + 0.5*dz + dz * (float)k;
+
+				EVec4  pos(x,y,z,0);
+				
+				pos =  QuatRotateVector(pos, orient);
+				pos += position;			
+				
+				float	wh = waving->GetPosition(EVec4(pos.x, pos.y, pos.z, 1)).z;
+				float	fs = StaticWaveForce(pos, dx, dy, dz, wh);					//	static force
+				
+				ship_body->AddForceAtPos( EVec4(0,0,fs,0), pos );
+			}
+		}
+	}
+}
+
+
+//
+//	EShip::UpdateHSFVoxel
+//		- computes HSFs using voxels
+//
+void EShip::UpdateHSFVoxel( float dtime, IPxWaving waving )
+{
+	EVec3	center_of_buyoancy	 =	EVec3(0,0,0);
+	total_hsf_force	=	0;
+
+	EVec4	position;
+	EQuat	orient;
+	GetPose(position, orient);
+	
+	EPlane	ship_plane	=	GetShipXOZPlane();
+	
+
+	for (uint i=0; i<voxel_grid->GetVoxelNum(); i++) {
+		
+		EVoxel vx;
+		voxel_grid->GetVoxel(i, vx);
+	
+		EVec4  pos(vx.center.x, vx.center.y, vx.center.z, 0);
+		EVec3  pos3(vx.center.x, vx.center.y, vx.center.z);
+		float dx = vx.szx;
+		float dy = vx.szy;
+		float dz = vx.szz;
+		
+		pos =  QuatRotateVector(pos, orient);
+		pos += position;			
+		
+		float	wh = waving->GetPosition(EVec4(pos.x, pos.y, pos.z, 1)).z;
+		float	fs = StaticWaveForce(pos, dx, dy, dz, wh);					//	static force
+		
+		ship_body->AddForceAtPos( EVec4(0,0,fs,0), pos );
+
+		//	compute total forces :
+		total_hsf_force		+=	fs;
+		center_of_buyoancy	+=	(fs * EVec3(pos.x, pos.y, pos.z));
+	}
+
+	center_of_buyoancy	/=	total_hsf_force;
+
+	EVec3 b		=	center_of_buyoancy;
+	right_arm	=	PlaneDistance(ship_plane, EVec4(b.x, b.y, b.z, 1));
+}
+
+
+EVec3 GetCenterOfBuyoancy( const IPxTriMesh mesh ) ;
+
+
+//
+//	EShip::UpdateHSFSurface
+//		- computes HSFs using hull surface pressure integration
+//
+void EShip::UpdateHSFSurface( float dtime, IPxWaving waving )
+{
+	EVec3	center_of_buyoancy	 =	EVec3(0,0,0);
+	total_hsf_force	=	0;
+	
+
+	EVec4	position;
+	EQuat	orient;
+	
+	GetPose(position, orient);
+
+	//	computing ship plane :	
+	EPlane	ship_plane	=	GetShipXOZPlane();
+	
+
+	for (uint i=0; i<mesh_submerged_hsf->GetTriangleNum(); i++) {
+		uint i0, i1, i2;
+		mesh_submerged_hsf->GetTriangle( i, i0, i1, i2 );
+
+		//	vertices :		
+		EVec3	v0	=	mesh_submerged_hsf->GetVertex( i0 ).position;
+		EVec3	v1	=	mesh_submerged_hsf->GetVertex( i1 ).position;
+		EVec3	v2	=	mesh_submerged_hsf->GetVertex( i2 ).position;
+
+		//	pressure :		
+		float	p0	=	GRAVITY * WATER_DENSITY * (-v0.z);
+		float	p1	=	GRAVITY * WATER_DENSITY * (-v1.z);
+		float	p2	=	GRAVITY * WATER_DENSITY * (-v2.z);
+		
+		//	average pressure :
+		float	pa	=	( p0 + p1 + p2 ) / 3;	
+		
+		//if (pa<0.001) { 
+		//	continue;
+		//}
+		
+		//	point of force application :
+		float	cu	=	(p0 + 2*p1 + p2) / 4 / (p0 + p1 + p2);
+		float	cv	=	(p0 + p1 + 2*p2) / 4 / (p0 + p1 + p2);
+		
+		EVec3	c	=	(v1 - v0) * cu + (v2 - v0) * cv + v0;
+		float	s	=	mesh_submerged_hsf->TriangleArea(i);
+		EVec3	n	=	mesh_submerged_hsf->TriangleNormal(i);
+		
+		//	absolute HSF 
+		float	f	=	s * pa;
+
+		//	force vector :		
+		EVec3	fv	=	EVec3( -f*n.x, -f*n.y, -f*n.z );
+		
+		ship_body->AddForceAtPos( Vec3ToVec4(fv), Vec3ToPoint4(c) );
+
+		/*
+		rs()->GetDVScene()->DrawArrow( Vec3ToPoint4(c), Vec3ToVec4(fv), 0.000003, EVec4(1,0,0,1) );	 
+		*/
+
+		//	computing right arm :
+		center_of_buyoancy	+=	(fv.z * c);
+		total_hsf_force		+=	fv.z;
+		
+	}
+	
+	center_of_buyoancy	/=	total_hsf_force;
+
+	EVec3 b		=	center_of_buyoancy;
+	right_arm	=	PlaneDistance(ship_plane, EVec4(b.x, b.y, b.z, 1));
+
+	//rs()->GetDVScene()->DrawArrow( Vec3ToPoint4(b), EVec4(0,0,total_hsf_force,0), 0.0000003, EVec4(1,0,0,1) );	 
+}
+
+}}}
+
+= static_self.h =
+{{{
+
+template <typename T> class self_ref {
+	public:
+		self_ref	( void ) {
+			self	=	(T*)this;
+		}
+		~self_ref	( void ) {
+			self	=	NULL;
+		}
+	
+	public:
+		static T*	self;
+	};
+}}}
+
+= water_grid_ss.h =
+{{{
+EMatrix4 GetRangeMatrix( const EMatrix4 &iVP, const EMatrix4 &newVP, const EPlane &water, float wave_h )
+{
+	//	make bound planes :
+	EPlane upper = water.normalize();
+	EPlane lower = water.normalize();
+
+	upper.d -= wave_h;
+	lower.d += wave_h;
+	
+	vector<EVec4>	buffer;
+
+	//	transform frustum conrners to world space :
+	float	u	=	1;
+	EVec4	v0	=	Matrix4Transform( EVec4( u, u, u, 1), iVP );	v0	/=	v0.w;
+	EVec4	v1	=	Matrix4Transform( EVec4(-u, u, u, 1), iVP );	v1	/=	v1.w;
+	EVec4	v2	=	Matrix4Transform( EVec4(-u,-u, u, 1), iVP );	v2	/=	v2.w;
+	EVec4	v3	=	Matrix4Transform( EVec4( u,-u, u, 1), iVP );	v3	/=	v3.w;
+	EVec4	v4	=	Matrix4Transform( EVec4( u, u,-u, 1), iVP );	v4	/=	v4.w;
+	EVec4	v5	=	Matrix4Transform( EVec4(-u, u,-u, 1), iVP );	v5	/=	v5.w;
+	EVec4	v6	=	Matrix4Transform( EVec4(-u,-u,-u, 1), iVP );	v6	/=	v6.w;
+	EVec4	v7	=	Matrix4Transform( EVec4( u,-u,-u, 1), iVP );	v7	/=	v7.w;
+	
+	//rs()->GetDVScene()->DrawPoint( v0, 0.1f, EVec4(1,1,0,0.5) );
+	//rs()->GetDVScene()->DrawPoint( v1, 0.1f, EVec4(1,1,0,0.5) );
+	//rs()->GetDVScene()->DrawPoint( v2, 0.1f, EVec4(1,1,0,0.5) );
+	//rs()->GetDVScene()->DrawPoint( v3, 0.1f, EVec4(1,1,0,0.5) );
+	//rs()->GetDVScene()->DrawPoint( v4, 0.1f, EVec4(1,0,1,1.0) );
+	//rs()->GetDVScene()->DrawPoint( v5, 0.1f, EVec4(1,0,1,1.0) );
+	//rs()->GetDVScene()->DrawPoint( v6, 0.1f, EVec4(1,0,1,1.0) );
+	//rs()->GetDVScene()->DrawPoint( v7, 0.1f, EVec4(1,0,1,1.0) );
+
+	struct segment_s {
+		void fromVec4( const EVec4 &a, const EVec4 &b ) {
+			this->a	=	Vec4ToVec3( a );
+			this->b	=	Vec4ToVec3( b );
+		}
+		EVec3 a, b;
+	};
+	
+	segment_s s[12];
+	
+	s[ 0].fromVec4(	v0,	v1 );	s[ 1].fromVec4(	v1,	v2 );
+	s[ 2].fromVec4(	v2,	v3 );	s[ 3].fromVec4(	v3,	v0 );
+	
+	s[ 4].fromVec4(	v4,	v5 );	s[ 5].fromVec4(	v5,	v6 );
+	s[ 6].fromVec4(	v6,	v7 );	s[ 7].fromVec4(	v7,	v4 );
+	
+	s[ 8].fromVec4(	v0,	v4 );	s[ 9].fromVec4(	v1,	v5 );
+	s[10].fromVec4(	v2,	v6 );	s[11].fromVec4(	v3,	v7 );
+	
+	EVec3	corners[8] = { 
+		Vec4ToVec3( v0 ), 	Vec4ToVec3( v1 ), 	Vec4ToVec3( v2 ), 
+		Vec4ToVec3( v3 ), 	Vec4ToVec3( v4 ), 	Vec4ToVec3( v5 ), 
+		Vec4ToVec3( v6 ), 	Vec4ToVec3( v7 )
+	};
+	
+	
+	//	add intersections :
+	for (uint i=0; i<12; i++) {
+		EVec3 a = s[i].a;
+		EVec3 b = s[i].b;
+		
+		float frac;
+		
+		if ( upper.traceSegment( a, b, frac ) ) {
+			EVec3 p	=	a + (b-a) * frac;
+			buffer.push_back( Vec3ToPoint4( p ) );
+		}
+		
+		if ( lower.traceSegment( a, b, frac ) ) {
+			EVec3 p	=	a + (b-a) * frac;
+			buffer.push_back( Vec3ToPoint4( p ) );
+		}
+	}
+	
+	//	add corners :
+	for (uint i=0; i<8; i++) {
+		if ( upper.classifyPoint( corners[i], 0 )<=0 && lower.classifyPoint( corners[i], 0 )>=0 ) {
+			buffer.push_back( Vec3ToPoint4( corners[i] ) );
+		}
+	}
+	
+	EBBox bbox;
+	bbox.MakeSingular();
+	
+	if (buffer.empty()) {
+		return Matrix4Identity();
+	}
+	
+	for (uint i=0; i<buffer.size(); i++) {
+		buffer[i].z = 0;
+		buffer[i].w = 1;
+
+		//rs()->GetDVScene()->DrawPoint( buffer[i], 0.1, EVec4(0,0,1,1.0) );
+		
+		EVec4 tp = Matrix4Transform( buffer[i], newVP );
+		tp /= tp.w;
+		bbox.Expand( tp );
+	}
+	
+	float xmin = bbox.Min().x;
+	float xmax = bbox.Max().x;
+	float ymin = bbox.Min().y;
+	float ymax = bbox.Max().y;
+	
+	//LOGF("X:[%f %f] Y:[%f %f]", xmin, xmax, ymin, ymax);
+	
+	EMatrix4	m2 (
+			xmax - xmin,		0,				0,		0,	
+				0,			ymax - ymin,		0,		0,
+				0,				0,				1,		0,
+			(xmin+xmax)/2,	(ymin+ymax)/2,		0,		1	
+		);	//*/
+		
+	return m2;
+}
+
+
+//
+//	EWaving::Update
+//
+void EWaving::Update( float dtime, const EVec4 &view_pos, const EQuat &orient )
+{
+	//PROFILE_FUNCTION("");
+	
+	time	+=	dtime;
+
+	//r_sky->SetFlag( RSE_HIDDEN );
+	//r_ent->SetFlag( RSE_HIDDEN );
+	r_sky->SetPose( view_pos, QuatIdentity() );
+	
+	uint sw, sh;
+	rs()->GetScreenSize(sw, sh);
+	float aspect = (float)sw / (float)sh;
+
+
+	EFrustum	Fr		=	ESciVis::self->view.frustum;
+	float		w		=	Fr.getWidth();
+	float		h		=	Fr.getHeight();
+	float		zn		=	Fr.getZNear();
+	float		zf		=	Fr.getZFar();
+
+	EMatrix4	T		=	Matrix4Translate( -ESciVis::self->view.position);
+	EMatrix4	R		=	QuatToMatrix( QuatInverse( ESciVis::self->view.orient ) );
+	EMatrix4	V		=	T * R;
+	EMatrix4	P		=	Matrix4PerspectiveRH( zn/zf*w, zn/zf*h, zn, zf );
+	EPlane		water(0,0,1,0);
+	
+	EMatrix4	VP		=	V * P;
+	EMatrix4	iVP		=	Matrix4Inverse( V * P );
+	EMatrix4	newiVP;
+	EMatrix4	newVP;
+	EMatrix4	newV;
+	EMatrix4	newP;
+	
+	
+	//
+	//	Make projector matrix :
+	//
+	do {
+	
+		EVec4	center	=	ESciVis::self->view.position;
+		float	cam_h	=	center.z;
+		center.z		=	0;
+
+		//	find view ray-water intersection point :
+		EVec4 r0	=	Matrix4Transform( EVec4(0,0, 0,1), iVP );
+		EVec4 r1	=	Matrix4Transform( EVec4(0,0, 1,1), iVP );
+		r0 /= r0.w;
+		r1 /= r1.w;
+		EVec4 p;		
+		EVec4 o		= r0;
+		//EVec4 r	= Vec4Normalize( r1 - r0 );
+		EVec4 r		= r1 - r0;
+		
+		float t		= PlaneTraceRayAgainstPlane(p, o, r, water );
+		
+		const float RANGE = 0.1f;
+		
+		if ( t < 0 ) {
+			t = RANGE;
+		}
+		if ( t > RANGE ) {
+			t = RANGE;
+		}
+		
+		p = o + r * t;
+		p.z = 0;
+		
+		//rs()->GetDVScene()->DrawPoint( p, 2.0f, EVec4(1,0,0,1.0));
+		
+		//	elevate camera :
+		float c_p_dist	=	Vec3Length( EVec3(center.x, center.y, 0) - EVec3(p.x, p.y, 0) );
+		float elev		=	h * c_p_dist / 2 / zf;
+		
+		elev			=	clamp<float>( elev, cam_h, 100000 );
+		
+		newV			=	Matrix4LookAtRH( EVec3(center.x, center.y, elev), EVec3(p.x, p.y, p.z), EVec3(0,0,1) );
+		newP			=	P;
+		newVP			=	newV * newP;
+		newiVP			=	Matrix4Inverse( newV * newP );
+		
+	} while (0);
+	
+	EMatrix4	range	=	GetRangeMatrix( iVP, newVP, water, 10 );
+
+	//
+	//	Make grid :
+	//
+	IPxTriMesh	mesh	=	sea_mesh->Clone();
+	uint n = mesh->GetVertexNum();
+	
+	EMatrix4	Tproj	=	range * newiVP;
+
+#if 1
+	for (uint i=0; i<n; i++) {
+		EVertex	v;
+		
+		v			=	mesh->GetVertex( i );
+		float x		=	v.position.x*0.5;
+		float y		=	v.position.y*0.5;
+		
+		EVec4 r0	=	Matrix4Transform( EVec4(x,y,-1,1), Tproj );
+		EVec4 r1	=	Matrix4Transform( EVec4(x,y, 1,1), Tproj );
+		r0 /= r0.w;
+		r1 /= r1.w;
+		
+
+		EVec4 p;		
+		EVec4 o = r0;
+		EVec4 r = r1 - r0;
+		float t = PlaneTraceRayAgainstPlane(p, o, r, water );
+		if (t>1) { t = 1; }
+		if (t<0) { t = 1; }
+		
+		p	=	o + r*t;
+		
+		
+		//
+		//	write vertex :
+		//		
+		v.position.x	=	p.x;
+		v.position.y	=	p.y;
+		v.position.z	=	GetWaveFast( v.position.x, v.position.y, time );
+		
+		float	dist	=	Vec3Length( EVec3(p.x, p.y, 0) - Vec4ToVec3( view_pos ) );
+				dist	=	clamp<float>( dist, 0, VIEW_FAR);
+		
+		float	wave_factor	=	pow(1 - abs(dist/VIEW_FAR), 0.25f);
+
+		v.position.z *=	wave_factor;
+		
+		mesh->SetVertex( i, v );
+	}
+#endif	
+	
+	
+	//
+	//	post process mesh :
+	//
+	mesh->ComputeNormals();
+
+
+	for (uint i=0; i<n; i++) {
+		EVertex	v	=	mesh->GetVertex( i );
+		v.uv0.x		=	v.position.x/4;
+		v.uv0.y		=	v.position.y/4;
+		
+		float	r	=	v.normal.z;
+		float	g	=	v.position.z;
+		v.color0	=	EVec4(r,g,0,1);
+		
+		mesh->SetVertex( i, v );
+	}
+
+	uint format = mesh->GetFormat();
+	mesh->SetFormat( format | GE_MESH_BINORMAL | GE_MESH_TANGENT );
+	r_ent->SetMesh( mesh );
+	//r_ent->SetFlag( RSE_HIDDEN );  
+}
+}}}
+
+= waving.cpp =
+{{{
+
+#include "sci_local.h"
+
+/*-----------------------------------------------------------------------------
+	Waving :
+-----------------------------------------------------------------------------*/
+const uint	COS_TABLE_SIZE			=	1024;
+const uint	WAVE_BAND_NUM			=	256;
+const uint	WAVE_GRID_SIZE			=	400;
+const float WAVE_GRID_OFFSET_X		=	-200.0f;
+const float WAVE_GRID_OFFSET_Y		=	-200.0f;
+const uint	WAVE_DEPTH_OF_SILENCE	=	50;			// there are no waves
+
+struct point_wave_s {
+		float	offset;
+		float	pressure;
+		float	horizontal_offset;
+	};
+	
+struct wave_s {
+		float	amplitude;
+		float	frequency;
+		float	phase;
+		float	wave_num;
+	};
+	
+struct wave_sample_s {
+		bool	dirty;							//	is sample dirty
+		float	zoffset;						//	vertical offset
+	};	
+
+
+class EWaving : public IWaving {
+	public:
+							EWaving		( lua_State *L, int idx );
+							~EWaving		( void );
+											
+		virtual void		Update				( float dtime, const EVec4 &view_pos, const EQuat &orient );
+		virtual	EVec4		GetVelocity			( const EVec4 &init_pos ) const;
+		virtual	EVec4		GetPosition			( const EVec4 &init_pos ) const;
+		virtual float		GetPressure			( const EVec4 &init_pos ) const;
+		virtual float		GetWaveSlopeX		( const EVec4 &init_pos ) const;
+		virtual void		MakeDirty			( void );
+		virtual void		SetWindSpeed		( float u );
+		virtual void		SetSinWave			( float w, float a );
+		
+	protected:
+		bool			still;
+		
+		float			u_wind;
+
+		bool			sin_wave;
+		float			sin_wave_w;
+		float			sin_wave_a;		
+		float			time;
+
+		IPxFREntity		r_ent;
+		IPxTriMesh		sea_mesh;
+		
+		IPxFREntity		r_sky;
+		IPxTriMesh		sky_mesh;
+
+		struct {		
+			float	max_freq;					//	angular, 'omega'
+			wave_s	waves[WAVE_BAND_NUM];
+			float	amplitudes[WAVE_BAND_NUM];	//	amplitudes
+			float	frequency[WAVE_BAND_NUM];	//	i * max_freq / BAND_NUM
+			float	phases[WAVE_BAND_NUM];		//	rand(2*Pi)
+			float	wave_num[WAVE_BAND_NUM];	//	k
+		} wave;
+		
+		float	cos_table[COS_TABLE_SIZE];
+		
+		inline	float	FastCos			( float x ) const;
+		void			InitFastCos		( void );
+		
+		mutable wave_sample_s	wave_grid[WAVE_GRID_SIZE][WAVE_GRID_SIZE];
+		
+		virtual void	InitWaving			( bool new_phases );
+		point_wave_s	GetWave				( float x, float y, float depth, float time, uint cuttoff = WAVE_BAND_NUM) const;
+		
+		float			SpectrumPM			( float w );
+		
+		float			GetWaveFast			( float x, float y, float time ) const;
+
+		EVec4			GetPositionAtTime	( const EVec4 &init_pos, float time ) const;
+	};
+
+IWaving	*create_waving(lua_State *L, int idx) { return new EWaving(L, idx); }
+
+/*-----------------------------------------------------------------------------
+	Implementation :
+-----------------------------------------------------------------------------*/
+
+#define USE_SS_GRID
+
+//
+//
+//
+EWaving::EWaving( lua_State *L, int idx )
+{
+	InitFastCos();
+
+	u_wind	=	0;
+	time	=	0;
+
+	#ifdef USE_SS_GRID
+		//sea_mesh	=	ge()->LoadMeshFromFile("sea.esx|sea_ss");
+		sea_mesh	=	ge()->CreatePlane( 2, 2, 40, 80 );
+		EShadingGroup	sg;
+		sg.start	= 0;
+		sg.num		= sea_mesh->GetTriangleNum();
+		sg.shader	= "textures/water.tga";
+		sea_mesh->ComputeTangents();
+		sea_mesh->SetSGNum(1);
+		sea_mesh->SetSG(0, sg);
+		
+	#else
+		sea_mesh	=	ge()->LoadMeshFromFile("sea.esx|sea");
+	#endif
+	sky_mesh	=	ge()->LoadMeshFromFile("sky.esx|sky");
+	
+	r_ent		=	sci_vis->GetFRScene()->AddEntity();
+	r_ent->SetMesh( sea_mesh );
+	
+	r_sky		=	sci_vis->GetFRScene()->AddEntity();
+	r_sky->SetMesh( sky_mesh );
+	//r_sky->SetFlag( RSE_HIDDEN );
+	
+	InitWaving(true);
+}
+
+
+//
+//	EWaving::~EWaving
+//
+EWaving::~EWaving( void )
+{
+	sci_vis->GetFRScene()->RemoveEntity( r_ent );
+}
+
+
+
+void EWaving::MakeDirty( void )
+{
+	for (uint i=0; i<WAVE_GRID_SIZE; i++) {
+		for (uint j=0; j<WAVE_GRID_SIZE; j++) {
+			wave_grid[i][j].dirty	=	true;
+		}
+	}
+}
+
+/*-----------------------------------------------------------------------------
+	Spectral stuff :
+-----------------------------------------------------------------------------*/
+
+
+void EWaving::SetWindSpeed( float u )
+{
+	time		=	0;
+	sin_wave	=	false;
+	u_wind		=	u;
+	
+	InitWaving(false);
+}
+
+
+void EWaving::SetSinWave( float w, float a )
+{
+	time		=	0;
+	sin_wave	=	true;
+	sin_wave_w	=	w;
+	sin_wave_a	=	a;
+	
+	still = false;
+}
+
+
+float EWaving::SpectrumPM(float w)
+{
+	//	Pierson-Moskowitz :
+	//float	Asp	=	10.0f;
+	//float	Bsp	=	1.30f;
+	//return	Asp * expf(-Bsp / (w*w*w*w)) / (w*w*w*w*w);
+	
+	//	Lopatuhin, (60)
+	float	U	=	u_wind;
+	float	g	=	GRAVITY;
+	return 1*0.0081 * (g*g) * powf(w, -5) * exp( -0.74 * pow(w*U/g, -4) );
+}
+
+//
+//	EWaving::SetupWaving
+//
+void EWaving::InitWaving( bool new_phases )
+{
+	wave.max_freq	=	 4.0;
+	
+	float	dw		=	wave.max_freq / (float)WAVE_BAND_NUM;
+
+	wave.frequency[0]	=	0;
+	wave.amplitudes[0]	=	0;
+	wave.phases[0]		=	0;
+	wave.wave_num[0]	=	0;
+
+	wave.waves[0].frequency	=	0;
+	wave.waves[0].amplitude	=	0;
+	wave.waves[0].phase		=	0;
+	wave.waves[0].wave_num	=	0;
+	
+	for (uint i=1; i<WAVE_BAND_NUM; i++) {
+	
+		float	w	=	dw * i;
+
+		wave.amplitudes[i]		=	sqrt(2* SpectrumPM(w) * dw);
+		wave.waves[i].amplitude	=	sqrt(2 * SpectrumPM(w) * dw);
+		
+		if (new_phases) {	
+			wave.frequency[i]	=	w;
+			wave.phases[i]		=	vmath::randf(-PI, PI);
+			wave.wave_num[i]	=	w * w / GRAVITY;
+
+			wave.waves[i].frequency	=	w;
+			wave.waves[i].phase		=	wave.phases[i];
+			wave.waves[i].wave_num	=	w * w / GRAVITY;
+		}
+	}
+	
+	still = true;
+	for (uint i=1; i<WAVE_BAND_NUM; i++) {
+		if (abs(wave.waves[i].amplitude) > 0.00001f ) {
+			still = false;
+		}
+	}
+}
+
+
+/*-----------------------------------------------------------------------------
+	Spectral runtime stuff :
+-----------------------------------------------------------------------------*/
+
+#ifndef USE_SS_GRID
+//
+//	EWaving::Update
+//
+void EWaving::Update( float dtime, const EVec4 &_view_pos, const EQuat &orient )
+{
+	time	+=	dtime;
+
+	r_sky->SetPose( _view_pos, QuatIdentity() );
+	r_sky->SetFlag( RSE_HIDDEN );
+	
+	EFrustum fr	=	ESciVis::self->view.frustum;
+	
+	EVec4	view_pos	=	_view_pos;
+
+	float	elevation		=	sqrt(1+abs(view_pos.z));
+	float	view_area_scale	=	elevation * 100;
+	float	step			=	1.0f / 64.0f * view_area_scale;
+
+	view_pos.x	=	floor( view_pos.x / step ) * step;
+	view_pos.y	=	floor( view_pos.y / step ) * step;
+
+	//
+	//	Make grid :
+	//
+	IPxTriMesh	mesh	=	sea_mesh->Clone();
+	uint n = mesh->GetVertexNum();
+	
+	for (uint i=0; i<n; i++) {
+		EVertex	v;
+		
+		float	wave_factor		=	1;
+		
+		v			=	mesh->GetVertex( i );
+		float gx	=	v.position.x;
+		float gy	=	v.position.y;
+		
+		float x		=	gx * view_area_scale + view_pos.x;
+		float y		=	gy * view_area_scale + view_pos.y;
+		
+		wave_factor	=	clamp<float>(1 - (gx*gx + gy*gy), 0, 1);
+		wave_factor	=	pow( wave_factor, 2 );
+		
+		//
+		//	write vertex :
+		//		
+		v.position.x	=	x;
+		v.position.y	=	y;
+		v.position.z	=	0;
+		
+		float	dist	=	Vec3Length( v.position - Vec4ToVec3(view_pos) );
+
+		v.position.z	=	GetPosition( Vec3ToVec4(v.position) ).z * wave_factor;
+		/*if (dist < view_area_scale*0.1 || fr.IsPointInside( EVec4(x,y,0,1), 0.1 * dist )) {
+		}  */
+
+		mesh->SetVertex( i, v );
+	}
+	
+	//
+	//	post process mesh :
+	//
+	for (uint i=0; i<n; i++) {
+		EVertex	v	=	mesh->GetVertex( i );
+		v.uv0.x		=	v.position.x/4;
+		v.uv0.y		=	v.position.y/4;
+		mesh->SetVertex( i, v );
+	}
+	
+	r_ent->SetMesh( mesh );
+	//r_ent->SetFlag( RSE_HIDDEN );  
+}
+#else
+	#include "water_grid_ss.h"
+#endif
+
+
+
+void EWaving::InitFastCos( void )
+{
+	for (uint i=0; i<COS_TABLE_SIZE; i++) {
+		cos_table[i] = cos( 2*PI * ((float)i)/(float)COS_TABLE_SIZE );
+	}
+}
+
+
+float EWaving::FastCos( float x )  const
+{
+	uint b = (uint)(x / 2/PI * (float)COS_TABLE_SIZE);
+	b &= (COS_TABLE_SIZE-1);
+	return cos_table[b];
+}
+
+
+inline float	EWaving::GetWaveFast( float x, float y, float time ) const
+{
+	float wave_h = 0;
+	
+	for (uint i=0; i<WAVE_BAND_NUM; i++) {
+	
+		float	amp		=	wave.waves[i].amplitude;
+		float	freq	=	wave.waves[i].frequency;
+		float	phase	=	wave.waves[i].phase;
+		float	k		=	wave.waves[i].wave_num;
+
+		float x2 = x + y * wave.waves[(i*7)&0xFF].phase / 8.0;
+
+		wave_h	+=	amp * FastCos(freq * time + k * x2 + phase);
+	}
+	return wave_h;
+}
+
+
+//
+//	EWaving::GetWave
+//	returns wave attributes in a point
+//
+point_wave_s EWaving::GetWave( float x, float y, float depth, float time, uint cutoff )  const
+{
+	point_wave_s	pw;
+	pw.offset	=	0;
+	pw.pressure	=	depth * WATER_DENSITY * GRAVITY;
+
+	if (still) {
+		if (depth<0) { 
+			pw.pressure = 0;
+		}
+		return pw;
+	}
+	
+	//	compute vertical offset :	
+	if (!sin_wave) {
+		for (uint i=0; i<cutoff; i++) {
+		
+			register float	amp		=	wave.waves[i].amplitude;
+			register float	freq	=	wave.waves[i].frequency;
+			register float	phase	=	wave.waves[i].phase;
+			register float	k		=	wave.waves[i].wave_num;
+
+			float x2 = x + y * wave.waves[(i*7)&0xFF].phase / 8.0;
+
+			float	fade	=	(depth<0) ? 1 : exp( - k * depth );
+
+			pw.horizontal_offset	+=	fade * amp * FastCos(freq * time + k * x2 + phase + PI/2);
+			pw.offset				+=	fade * amp * FastCos(freq * time + k * x2 + phase);
+		}
+	} else {
+		float	w	=	sin_wave_w;
+		float	k	=	w * w / GRAVITY;
+		pw.offset	=	sin_wave_a * sin(w * time + k * x);
+	}
+	
+	
+	//pw.offset	*=	pw.offset;
+	//pw.offset	/=	4.0f;
+	
+	//	compute pressure offset :	
+	pw.pressure	 +=	pw.offset * GRAVITY * WATER_DENSITY;
+	
+	if ((-depth) > pw.offset) {
+		pw.pressure = 0;
+	}
+	
+	return pw;
+}
+
+
+//
+//	EWaving::GetPressure
+//
+float EWaving::GetPressure( const EVec4 &pos ) const
+{
+	float gx	=	pos.x - WAVE_GRID_OFFSET_X;
+	float gy	=	pos.y - WAVE_GRID_OFFSET_Y;
+	int ix		=	(int)floor(gx);	//	integer part
+	int iy		=	(int)floor(gy);	//	integer part
+	float fx	=	gx - floor(gx);	//	fractional part
+	float fy	=	gy - floor(gy);	//	fractional part
+	float cx	=	floor(pos.x) + 0.5;
+	float cy	=	floor(pos.y) + 0.5;
+	
+	ix	=	clamp<int>(ix, 0, WAVE_GRID_SIZE-1);	
+	iy	=	clamp<int>(iy, 0, WAVE_GRID_SIZE-1);	
+
+	point_wave_s	pw	=	GetWave( pos.x, pos.y, -pos.z, time );
+	return pw.pressure;
+	
+#if 0	
+	if (wave_grid[ix][iy].dirty) {
+		wave_sample_s	*ws =	&wave_grid[ix][iy];
+	
+		point_wave_s	pw	=	GetWave( cx, cy, 0, time );
+		ws->zoffset			=	pw.offset;
+		ws->dirty			=	false;
+		
+		rs()->GetDVScene()->DrawPoint( EVec4(cx, cy, pw.offset, 1), 0.33f, EVec4(0,0,1,1) );
+	}
+
+	float zoffset	= wave_grid[ix][iy].zoffset;
+	float depth		= -pos.z;
+	
+	if (pos.z>zoffset) {
+		return 0;
+	} else {
+		float	ps		=	(depth) * WATER_DENSITY * GRAVITY;
+		float	fade	=	(depth<0) ? 1 : exp( - 0.5f * depth );	//	'great' approximation
+		float	pd		=	fade * zoffset * WATER_DENSITY * GRAVITY;
+		return	ps + pd;
+	}
+#endif	
+
+	return 0;
+}
+
+
+//
+//	EWaving::GetPositionAtTime
+//
+EVec4 EWaving::GetPositionAtTime( const EVec4 &init_pos, float time ) const
+{
+	point_wave_s	pw	=	GetWave(init_pos.x, init_pos.y, -init_pos.z, time);
+	
+	return EVec4( init_pos.x, init_pos.y, init_pos.z + pw.offset, 1 );
+}
+
+
+//
+//	EWaving::GetWaveSlopeX
+//
+float EWaving::GetWaveSlopeX( const EVec4 &init_pos ) const
+{
+	EVec4	p	=	init_pos;
+	float	dx	=	0.1f;
+	EVec4	p0	=	GetPosition( EVec4( p.x,		p.y, p.z, 1 ) );
+	EVec4	p1	=	GetPosition( EVec4( p.x + dx,	p.y, p.z, 1 ) );
+	//if (p1.x <= p0.x) {
+	//	LOG_WARNING("wave slope is to large!");
+	//}
+	return atan2( p1.z - p0.z, dx );
+}
+
+
+//
+//	EWaving::GetPosition
+//
+EVec4 EWaving::GetPosition( const EVec4 &init_pos ) const
+{
+	return GetPositionAtTime( init_pos, time );
+}
+
+
+//
+//	EWaving::GetVelocity
+//
+EVec4 EWaving::GetVelocity( const EVec4 &init_pos ) const
+{
+	return EVec4(0,0,0,0);
+
+	point_wave_s	pw0	=	GetWave( init_pos.x, init_pos.y, -init_pos.z, time, WAVE_BAND_NUM );
+	point_wave_s	pw1	=	GetWave( init_pos.x, init_pos.y, -init_pos.z, time + 0.1, WAVE_BAND_NUM );
+	
+	EVec4	p0	=	EVec4(pw0.horizontal_offset, pw0.offset, 0, 1);
+	EVec4	p1	=	EVec4(pw1.horizontal_offset, pw1.offset, 0, 1);
+	
+	return 0.7*(p0 - p1) / 0.1;
+}
+
+}}}
