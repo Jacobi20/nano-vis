@@ -53,7 +53,7 @@ local function defineDiffuseShader ( path )
 	local surface = [[
 		surface.diffuse 	= 	sampleColor ( sampler0, input.uv0 );	
 	]];
-	
+
 	render.defineShader {
 		name			=	path;
 		texture_path0	=	path;

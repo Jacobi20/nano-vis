@@ -39,10 +39,11 @@ module	("cgame");
 --	CGAME
 -------------------------------------------------------------------------------
 
-local	ship	=	nil;
+local	ship		=	nil;
+local 	game_time	=	0;
 
 local function createShip()
-	
+
 	local	id	=	game.spawnEntity();
 	
 	local desc = {
@@ -51,7 +52,7 @@ local function createShip()
 		phys_mesh	=	"scenes/ssn668.esx|physmesh";
 		mass		=	6000000;
 		
-		integral_density	=	1;
+		integral_density	=	0.1;
 		water_resistance	=	1;
 	}
 	
@@ -63,6 +64,11 @@ end
 --	init()
 --
 function init()
+	game.setGravity(9.8);
+
+	game.setWaving( true );
+	game.setAmbient( 0.1, 0.1, 0.1 );
+
 	ship	=	createShip();
 end
 
@@ -71,13 +77,13 @@ end
 --	frame()
 --
 function frame(dtime)
-	game_time = (0 or game_time) + dtime;
+	game_time = game_time + dtime;
 	
 	local x,y,z,t;
 	t = game_time * 10;
-	x = -30 * math.cos(math.rad(t));
-	y = -30 * math.sin(math.rad(t));
-	z = 15;
+	x = -60 * math.cos(math.rad(t));
+	y = -60 * math.sin(math.rad(t));
+	z = 30;
 	game.setView(x,y, z, t,40,0);
 	game.setProj(120, 1.1, 500, 1);
 end

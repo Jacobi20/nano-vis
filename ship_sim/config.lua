@@ -33,6 +33,12 @@ cfg.setvar('phys_contact_proc_treshold'    , 0.01);
 cfg.setvar('fr_wireframe'                  , false);
 cfg.setvar('ship_show_grid'                , false);
 cfg.setvar('ship_disable_simulation'       , false);
+cfg.setvar('rs_gl_driver'                  , false);
+cfg.setvar('rs_show_gbuffer'               , false);
+cfg.setvar('gl_fullscr'                    , false);
+cfg.setvar('gl_mode'                       , 0);
+cfg.setvar('gl_xpos'                       , 0);
+cfg.setvar('gl_ypos'                       , 0);
 
 
 -- key bindings --
@@ -52,6 +58,6 @@ input.bind ("S", "cgame.forward	(true)", "cgame.forward		(false)");
 input.bind ("X", "cgame.stepRight(true)", "cgame.stepRight	(false)");
 input.bind ("Z", "cgame.backward	(true)", "cgame.backward	(false)");
 input.bind ("F1", "cfg.load()", "");
-input.bind ("F5", "if reloadPackages then reloadPackages() end; game.runGame('scenes/dm1.esx')", "");
+input.bind ("F5", "if reloadPackages then reloadPackages() end; game.runGame('scenes/base.esx')", "");
 input.bind ("F6", "render.reloadShaders()", "");
 input.bind ("F10", "", "core.quit()");
