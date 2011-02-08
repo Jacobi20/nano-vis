@@ -4,6 +4,8 @@
 local package_list = {}
 table.insert( package_list, "cgame");
 table.insert( package_list, "shaders");
+table.insert( package_list, "ships");
+table.insert( package_list, "control");
 
 function reloadPackages()
 	for i=1, #package_list do	package.loaded[ package_list[i] ] = nil;	end
