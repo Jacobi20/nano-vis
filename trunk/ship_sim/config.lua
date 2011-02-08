@@ -45,18 +45,18 @@ cfg.setvar('gl_ypos'                       , 0);
 
 input.unbindAll()
 input.bind ("RBUTTON", "cgame.jump		(true)", "cgame.jump		(false)");
-input.bind ("SPACE", "cgame.moveUp	(true)", "cgame.moveUp		(false)");
-input.bind ("LEFT", "cgame.turnLeft	(true)", "cgame.turnLeft	(false)");
-input.bind ("UP", "cgame.turnUp	(true)", "cgame.turnUp		(false)");
-input.bind ("RIGHT", "cgame.turnRight(true)", "cgame.turnRight	(false)");
-input.bind ("DOWN", "cgame.turnDown	(true)", "cgame.turnDown	(false)");
-input.bind ("A", "cgame.stepLeft	(true)", "cgame.stepLeft	(false)");
-input.bind ("C", "cgame.moveDown	(true)", "cgame.moveDown	(false)");
+input.bind ("SPACE", "control.state.up = true", "control.state.up = false");
+input.bind ("LEFT", "control.state.tl = true", "control.state.tl = false");
+input.bind ("UP", "control.state.tu = true", "control.state.tu = false");
+input.bind ("RIGHT", "control.state.tr = true", "control.state.tr = false");
+input.bind ("DOWN", "control.state.td = true", "control.state.td = false");
+input.bind ("A", "control.state.sl = true", "control.state.sl = false");
+input.bind ("C", "control.state.dn = true", "control.state.dn = false");
 input.bind ("M", "cgame.orbit_angle = cgame.orbit_angle - 15", "");
 input.bind ("N", "cgame.orbit_angle = cgame.orbit_angle + 15", "");
-input.bind ("S", "cgame.forward	(true)", "cgame.forward		(false)");
-input.bind ("X", "cgame.stepRight(true)", "cgame.stepRight	(false)");
-input.bind ("Z", "cgame.backward	(true)", "cgame.backward	(false)");
+input.bind ("S", "control.state.fw = true", "control.state.fw = false");
+input.bind ("X", "control.state.sr = true", "control.state.sr = false");
+input.bind ("Z", "control.state.bw = true", "control.state.bw = false");
 input.bind ("F1", "cfg.load()", "");
 input.bind ("F5", "if reloadPackages then reloadPackages() end; game.runGame('scenes/base.esx')", "");
 input.bind ("F6", "render.reloadShaders()", "");

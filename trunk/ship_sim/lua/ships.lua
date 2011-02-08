@@ -32,67 +32,26 @@ local	game		=	require("game");
 local	entity		=	require("entity");
 local	character	=	require("character");
 local	ui			=	require("ui");
-local 	control		=	require("control");
-local 	ships		=	require("ships");
 	
-module	("cgame");
+module	("ships");
 
 -------------------------------------------------------------------------------
---	CGAME
+--	CONTROL
 -------------------------------------------------------------------------------
 
-local	ship		=	nil;
-
---
---	init()
---
-function init()
-	game.setGravity(9.8);
-
-	game.setWaving( true );
-	game.setAmbient( 0.7, 0.7, 0.7 );
-
-	ship	=	ships.createSSN668(0,0,10, 40,0,0);
+function createSSN668( x, y, z, yaw, pitch, roll )
+	local	id	=	game.spawnEntity();
+	
+	local desc = {
+		hxf_mesh	=	"scenes/ssn668.esx|hydromesh";
+		vis_mesh	=	"scenes/ssn668.esx|vismesh";
+		phys_mesh	=	"scenes/ssn668.esx|physmesh";
+		mass		=	6000000;
+		
+		integral_density	=	0.1;
+		water_resistance	=	1;
+	}
+	
+	entity.setupShip( id, desc );
+	entity.setPose( id, x, y, z, yaw, pitch, roll );
 end
-
-
---
---	frame()
---
-function frame( dtime )
-	control.update( dtime );
-end
-
-
---
---	entityFrame
---
-function entityFrame(id, dtime)	
-end
-
-
---
---	shutdown()
---
-function shutdown()
-end
-
-
---
---	drawUI()
---
-function drawUI()
-end
-
-
---
---	levelLoader()
---
-function levelLoader ( node )
-end
-
-
-
-
-
-
