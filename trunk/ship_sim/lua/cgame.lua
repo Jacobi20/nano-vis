@@ -52,7 +52,7 @@ function init()
 	game.setWaving( true );
 	game.setAmbient( 0.7, 0.7, 0.7 );
 
-	ship	=	ships.createSSN668(0,0,10, 40,0,0);
+	ship	=	ships.createSSN668(10,0,10, 40,0,0);
 end
 
 
