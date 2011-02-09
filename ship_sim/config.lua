@@ -34,11 +34,12 @@ cfg.setvar('fr_wireframe'                  , false);
 cfg.setvar('ship_show_grid'                , false);
 cfg.setvar('ship_disable_simulation'       , false);
 cfg.setvar('rs_gl_driver'                  , false);
-cfg.setvar('rs_show_gbuffer'               , false);
+cfg.setvar('rs_show_gbuffer'               , true);
 cfg.setvar('gl_fullscr'                    , false);
 cfg.setvar('gl_mode'                       , 0);
 cfg.setvar('gl_xpos'                       , 0);
 cfg.setvar('gl_ypos'                       , 0);
+cfg.setvar('fr_skip_mlaa'                  , true);
 
 
 -- key bindings --
