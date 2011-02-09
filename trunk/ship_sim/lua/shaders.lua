@@ -89,6 +89,19 @@ local function defineDsnShader ( path )
 end
 
 
+local function defineWaterShader()
+	render.defineShader {
+		name			=	"textures/water.tga";
+		texture_path0	=	"textures/water.tga";
+		is_solid		=	true;
+		is_emissive		=	true;
+		
+		injection		=	[[
+			surface.diffuse 	= 	float3( 0, 0, 0 );	
+			surface.emission	=	sampleColor ( sampler0, input.uv0 / 7 );	
+		]];
+	}
+end
 
 -------------------------------------------------------------------------------
 --	shader list itself :
@@ -106,7 +119,10 @@ end
 --	createShaders
 --
 function defineShaders()
+	print ("defineShaders() ENTER");
 	defineDsnShader("textures/test/floor01.tga");
+	defineWaterShader();
+	print ("defineShaders() LEAVE");
 end
 
 

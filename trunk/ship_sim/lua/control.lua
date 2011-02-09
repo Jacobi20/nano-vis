@@ -89,21 +89,21 @@ function update(dtime)
 	if pitch < -85 then pitch = -85; end
 	
 	if state.fw then
-		dx	=	LINEAR_VELOCITY * math.cos( math.rad( yaw ) );
-		dy	=	LINEAR_VELOCITY * math.sin( math.rad( yaw ) );
+		dx	=	dx + LINEAR_VELOCITY * math.cos( math.rad( yaw ) );
+		dy	=	dy + LINEAR_VELOCITY * math.sin( math.rad( yaw ) );
 	end
 	if state.bw then
-		dx	=	- LINEAR_VELOCITY * math.cos( math.rad( yaw ) );
-		dy	=	- LINEAR_VELOCITY * math.sin( math.rad( yaw ) );
+		dx	=	dx - LINEAR_VELOCITY * math.cos( math.rad( yaw ) );
+		dy	=	dy - LINEAR_VELOCITY * math.sin( math.rad( yaw ) );
 	end
 
 	if state.sl then
-		dx	=	LINEAR_VELOCITY * math.cos( math.rad( yaw + 90 ) );
-		dy	=	LINEAR_VELOCITY * math.sin( math.rad( yaw + 90 ) );
+		dx	=	dx + LINEAR_VELOCITY * math.cos( math.rad( yaw + 90 ) );
+		dy	=	dy + LINEAR_VELOCITY * math.sin( math.rad( yaw + 90 ) );
 	end
 	if state.sr then
-		dx	=	- LINEAR_VELOCITY * math.cos( math.rad( yaw + 90 ) );
-		dy	=	- LINEAR_VELOCITY * math.sin( math.rad( yaw + 90 ) );
+		dx	=	dx - LINEAR_VELOCITY * math.cos( math.rad( yaw + 90 ) );
+		dy	=	dy - LINEAR_VELOCITY * math.sin( math.rad( yaw + 90 ) );
 	end
 	
 	if state.dn then 
