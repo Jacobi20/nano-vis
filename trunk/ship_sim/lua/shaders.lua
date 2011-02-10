@@ -92,13 +92,30 @@ end
 local function defineWaterShader()
 	render.defineShader {
 		name			=	"textures/water.tga";
-		texture_path0	=	"textures/water.tga";
+		texture_path0	=	"textures/wave_grid.tga";
+		texture_path1	=	"textures/ocean_local.tga";
+		texture_path2	=	"textures/foam.tga";
+		texture_path3	=	"textures/ocean_reflection.tga";
+		injection		=	injection;
+		is_solid		=	true;
+		is_emissive		=	true;
+		
+		injection		=	[[
+			Water( surface, input );
+		]];
+	}
+end
+
+local function defineSkyShader()
+	render.defineShader {
+		name			=	"textures/ocean_sky.tga";
+		texture_path0	=	"textures/ocean_sky.tga";
 		is_solid		=	true;
 		is_emissive		=	true;
 		
 		injection		=	[[
 			surface.diffuse 	= 	float3( 0, 0, 0 );	
-			surface.emission	=	sampleColor ( sampler0, input.uv0 / 7 );	
+			surface.emission	=	sampleColor ( sampler0, input.uv0 );	
 		]];
 	}
 end
@@ -122,6 +139,7 @@ function defineShaders()
 	print ("defineShaders() ENTER");
 	defineDsnShader("textures/test/floor01.tga");
 	defineWaterShader();
+	defineSkyShader();
 	print ("defineShaders() LEAVE");
 end
 

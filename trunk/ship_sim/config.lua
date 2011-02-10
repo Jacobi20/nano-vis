@@ -2,7 +2,7 @@
 -- warning: syntax errors will cause configuration resetting --
 
 cfg.setvar('d3d_fullscr'                   , false);
-cfg.setvar('d3d_mode'                      , 0);
+cfg.setvar('d3d_mode'                      , 5);
 cfg.setvar('d3d_xpos'                      , 224);
 cfg.setvar('d3d_ypos'                      , 68);
 cfg.setvar('d3d_antialiasing'              , 0);
@@ -36,7 +36,7 @@ cfg.setvar('ship_disable_simulation'       , false);
 cfg.setvar('rs_gl_driver'                  , false);
 cfg.setvar('rs_show_gbuffer'               , true);
 cfg.setvar('gl_fullscr'                    , false);
-cfg.setvar('gl_mode'                       , 0);
+cfg.setvar('gl_mode'                       , 2);
 cfg.setvar('gl_xpos'                       , 0);
 cfg.setvar('gl_ypos'                       , 0);
 cfg.setvar('fr_skip_mlaa'                  , true);
