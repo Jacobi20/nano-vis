@@ -60,6 +60,8 @@ end
 --	frame()
 --
 function frame( dtime )
+	core.debugString("FPS : "..1/dtime);
+
 	control.update( dtime );
 end
 
