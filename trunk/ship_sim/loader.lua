@@ -19,3 +19,4 @@ input.setKeyboardScan	( true );
 input.setMouseClip		( true );
 input.setMouseRelative	( true );
 input.setMouseHide		( true );
+

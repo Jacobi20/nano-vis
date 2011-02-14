@@ -11264,39 +11264,7 @@
 					<triangle inds="5687 5686 5688"/>
 				</triangles>
 				<shading_groups>
-					<shading_group start="0" num="1902" shader="*color7F7F7FFF"/>
-					<shading_group start="1902" num="6" shader="*color181818FF"/>
-					<shading_group start="1908" num="6" shader="*color7F7F7FFF"/>
-					<shading_group start="1914" num="6" shader="*color181818FF"/>
-					<shading_group start="1920" num="37" shader="*color7F7F7FFF"/>
-					<shading_group start="1957" num="2" shader="*color181818FF"/>
-					<shading_group start="1959" num="50" shader="*color7F7F7FFF"/>
-					<shading_group start="2009" num="2" shader="*color181818FF"/>
-					<shading_group start="2011" num="50" shader="*color7F7F7FFF"/>
-					<shading_group start="2061" num="2" shader="*color181818FF"/>
-					<shading_group start="2063" num="2" shader="*color7F7F7FFF"/>
-					<shading_group start="2065" num="2" shader="*color181818FF"/>
-					<shading_group start="2067" num="644" shader="*color7F7F7FFF"/>
-					<shading_group start="2711" num="2" shader="*color181818FF"/>
-					<shading_group start="2713" num="2" shader="*color7F7F7FFF"/>
-					<shading_group start="2715" num="2" shader="*color181818FF"/>
-					<shading_group start="2717" num="1099" shader="*color7F7F7FFF"/>
-					<shading_group start="3816" num="6" shader="*color181818FF"/>
-					<shading_group start="3822" num="6" shader="*color7F7F7FFF"/>
-					<shading_group start="3828" num="6" shader="*color181818FF"/>
-					<shading_group start="3834" num="37" shader="*color7F7F7FFF"/>
-					<shading_group start="3871" num="2" shader="*color181818FF"/>
-					<shading_group start="3873" num="50" shader="*color7F7F7FFF"/>
-					<shading_group start="3923" num="2" shader="*color181818FF"/>
-					<shading_group start="3925" num="50" shader="*color7F7F7FFF"/>
-					<shading_group start="3975" num="2" shader="*color181818FF"/>
-					<shading_group start="3977" num="2" shader="*color7F7F7FFF"/>
-					<shading_group start="3979" num="2" shader="*color181818FF"/>
-					<shading_group start="3981" num="644" shader="*color7F7F7FFF"/>
-					<shading_group start="4625" num="2" shader="*color181818FF"/>
-					<shading_group start="4627" num="2" shader="*color7F7F7FFF"/>
-					<shading_group start="4629" num="2" shader="*color181818FF"/>
-					<shading_group start="4631" num="937" shader="*color7F7F7FFF"/>
+					<shading_group start="0" num="5568" shader="*color7F7F7FFF"/>
 				</shading_groups>
 				<joints/>
 			</mesh>
