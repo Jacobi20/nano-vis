@@ -37,8 +37,8 @@ cfg.setvar('rs_gl_driver'                  , false);
 cfg.setvar('rs_show_gbuffer'               , false);
 cfg.setvar('gl_fullscr'                    , false);
 cfg.setvar('gl_mode'                       , 2);
-cfg.setvar('gl_xpos'                       , 221);
-cfg.setvar('gl_ypos'                       , 63);
+cfg.setvar('gl_xpos'                       , 152);
+cfg.setvar('gl_ypos'                       , 2);
 cfg.setvar('fr_skip_mlaa'                  , false);
 
 
