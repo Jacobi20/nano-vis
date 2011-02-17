@@ -118,7 +118,7 @@ function update(dtime)
 	posz = posz + dz * dtime;
 
 	game.setView(posx, posy, posz, yaw, pitch, roll);
-	game.setProj(120, 1.1, 500, 1);
+	game.setProj(120, 1.1, 4000, 1);
 end
 
 
