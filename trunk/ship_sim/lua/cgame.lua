@@ -34,6 +34,7 @@ local	character	=	require("character");
 local	ui			=	require("ui");
 local 	control		=	require("control");
 local 	ships		=	require("ships");
+local	shipmodel	=	require("shipmodel");
 	
 module	("cgame");
 
@@ -42,6 +43,9 @@ module	("cgame");
 -------------------------------------------------------------------------------
 
 local	ship		=	nil;
+local	ship2		=	nil;
+local	ship3		=	nil;
+local	ship4		=	nil;
 
 --
 --	init()
@@ -52,7 +56,46 @@ function init()
 	game.setWaving( true );
 	game.setAmbient( 0.7, 0.7, 0.7 );
 
-	ship	=	ships.createSSN668(10,0,10, 0,0,0);
+	ship	=	ships.createUBoat(10,  0,-10, 0,0,0);
+	ship2	=	ships.createUBoat(10, 40,-20, 0,0,0);
+	ship3	=	ships.createUBoat(10,-40,-30, 0,0,0);
+	ship4	=	ships.createUBoat(10, 80,-40, 0,0,0);
+end
+
+
+--
+--	driveShip
+--
+local function driveShip( dtime, ship )
+	local	tx	=	input.s3dm.tx;
+	local	ty	=	input.s3dm.ty;
+	local	tz	=	input.s3dm.tz;
+	local	rx	=	input.s3dm.rx;
+	local	ry	=	input.s3dm.ry;
+	local	rz	=	input.s3dm.rz;
+	
+	local	x,y,z,yaw, pitch, roll = entity.getPose(ship);
+	
+	core.debugString( yaw );
+	
+	--	TZ :
+	if tz<0 then tz=0; end;
+	shipmodel.addForce( ship, 0,0, -tz * 100000, 0,0,0 );
+	
+	
+	--	TY :
+	local fx = -math.cos( math.rad( yaw + rz/18 ) ) * ty * 1000000;
+	local fy = -math.sin( math.rad( yaw + rz/18 ) ) * ty * 1000000;
+	shipmodel.addForce( ship, fx, fy, 0, -50,0,0 );
+	
+	--	RX :
+	shipmodel.addForce( ship, 0,0,  rx*10000,  30,0,0 );
+	shipmodel.addForce( ship, 0,0, -rx*10000, -30,0,0 );
+	
+	--	RY :
+	shipmodel.addForce( ship, 0,0, -ry*1000,  0,  10, 0 );
+	shipmodel.addForce( ship, 0,0,  ry*1000,  0, -10, 0 );
+	
 end
 
 
@@ -60,9 +103,15 @@ end
 --	frame()
 --
 function frame( dtime )
-	core.debugString("FPS : "..1/dtime);
+	core.debugString("FPS  : "..1/dtime);
+	
+	core.debugString("S3DM [T]:", input.s3dm.tx, input.s3dm.ty, input.s3dm.tz );
+	core.debugString("S3DM [R]:", input.s3dm.rx, input.s3dm.ry, input.s3dm.rz );
 
 	control.update( dtime );
+
+	driveShip( dtime, ship );
+	
 end
 
 
