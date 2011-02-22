@@ -40,6 +40,9 @@ cfg.setvar('gl_mode'                       , 2);
 cfg.setvar('gl_xpos'                       , 146);
 cfg.setvar('gl_ypos'                       , 152);
 cfg.setvar('fr_skip_mlaa'                  , false);
+cfg.setvar('fr_skip_hdr'                   , false);
+cfg.setvar('fr_skip_fog'                   , false);
+cfg.setvar('fr_skip_noise'                 , false);
 
 
 -- key bindings --

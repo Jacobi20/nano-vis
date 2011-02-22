@@ -56,10 +56,10 @@ function init()
 	game.setWaving( true );
 	game.setAmbient( 0.7, 0.7, 0.7 );
 
-	ship	=	ships.createUBoat(10,  0,-10, 0,0,0);
-	ship2	=	ships.createUBoat(10, 40,-20, 0,0,0);
-	ship3	=	ships.createUBoat(10,-40,-30, 0,0,0);
-	ship4	=	ships.createUBoat(10, 80,-40, 0,0,0);
+	ship	=	ships.createUBoat(10,  0, 20, 0,0,0);
+	-- ship2	=	ships.createUBoat(10, 40,-20, 0,0,0);
+	-- ship3	=	ships.createUBoat(10,-40,-30, 0,0,0);
+	-- ship4	=	ships.createUBoat(10, 80,-40, 0,0,0);
 end
 
 
@@ -84,13 +84,15 @@ local function driveShip( dtime, ship )
 	
 	
 	--	TY :
-	local fx = -math.cos( math.rad( yaw + rz/18 ) ) * ty * 1000000;
-	local fy = -math.sin( math.rad( yaw + rz/18 ) ) * ty * 1000000;
-	shipmodel.addForce( ship, fx, fy, 0, -50,0,0 );
+	local fmag = 100000;
+	local fx = -math.cos( math.rad( yaw + rz/18 ) ) * math.cos( math.rad( pitch ) ) * ty * fmag;
+	local fy = -math.sin( math.rad( yaw + rz/18 ) ) * math.cos( math.rad( pitch ) ) * ty * fmag;
+	local fz = -math.sin( math.rad( pitch ) ) * ty * fmag;
+	shipmodel.addForce( ship, fx, fy, 0, -50,0,-1 );
 	
 	--	RX :
-	shipmodel.addForce( ship, 0,0,  rx*10000,  30,0,0 );
-	shipmodel.addForce( ship, 0,0, -rx*10000, -30,0,0 );
+	shipmodel.addForce( ship, 0,0,  rx*3000,  30,0,0 );
+	shipmodel.addForce( ship, 0,0, -rx*3000, -30,0,0 );
 	
 	--	RY :
 	shipmodel.addForce( ship, 0,0, -ry*1000,  0,  10, 0 );
