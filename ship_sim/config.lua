@@ -36,13 +36,20 @@ cfg.setvar('ship_disable_simulation'       , false);
 cfg.setvar('rs_gl_driver'                  , false);
 cfg.setvar('rs_show_gbuffer'               , false);
 cfg.setvar('gl_fullscr'                    , false);
-cfg.setvar('gl_mode'                       , 2);
-cfg.setvar('gl_xpos'                       , 146);
-cfg.setvar('gl_ypos'                       , 152);
-cfg.setvar('fr_skip_mlaa'                  , false);
+cfg.setvar('gl_mode'                       , 0);
+cfg.setvar('gl_xpos'                       , 547);
+cfg.setvar('gl_ypos'                       , 174);
+cfg.setvar('fr_skip_mlaa'                  , true);
 cfg.setvar('fr_skip_hdr'                   , false);
 cfg.setvar('fr_skip_fog'                   , false);
 cfg.setvar('fr_skip_noise'                 , false);
+cfg.setvar('gl_stereo'                     , false);
+cfg.setvar('fmod_prof'                     , false);
+cfg.setvar('fmod_show_stats'               , false);
+cfg.setvar('sound_spread'                  , 0);
+cfg.setvar('sound_dopler_level'            , 1);
+cfg.setvar('sound_max_distance'            , 10000);
+cfg.setvar('sound_min_distance'            , 1);
 
 
 -- key bindings --
