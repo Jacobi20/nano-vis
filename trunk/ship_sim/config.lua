@@ -37,8 +37,8 @@ cfg.setvar('rs_gl_driver'                  , false);
 cfg.setvar('rs_show_gbuffer'               , false);
 cfg.setvar('gl_fullscr'                    , false);
 cfg.setvar('gl_mode'                       , 0);
-cfg.setvar('gl_xpos'                       , 195);
-cfg.setvar('gl_ypos'                       , 161);
+cfg.setvar('gl_xpos'                       , 804);
+cfg.setvar('gl_ypos'                       , 175);
 cfg.setvar('fr_skip_mlaa'                  , false);
 cfg.setvar('fr_skip_hdr'                   , false);
 cfg.setvar('fr_skip_fog'                   , false);
@@ -50,6 +50,7 @@ cfg.setvar('sound_spread'                  , 0);
 cfg.setvar('sound_dopler_level'            , 1);
 cfg.setvar('sound_max_distance'            , 10000);
 cfg.setvar('sound_min_distance'            , 1);
+cfg.setvar('fr_gamma'                      , 1);
 
 
 -- key bindings --
