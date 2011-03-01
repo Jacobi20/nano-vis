@@ -79,14 +79,23 @@ function createUBoat( x, y, z, yaw, pitch, roll )
 end
 
 
-
-
-
-
-
-
-
-
-
+function createUBoatXXI( x, y, z, yaw, pitch, roll )
+	local	id	=	game.spawnEntity();
+	
+	local desc = {
+		hxf_mesh	=	"scenes/uboat_xxi.esx|hydromesh";
+		vis_mesh	=	"scenes/uboat_xxi.esx|vismesh";
+		phys_mesh	=	"scenes/uboat_xxi.esx|physmesh";
+		mass		=	2000000;
+		
+		integral_density	=	0.3;
+		water_resistance	=	2;
+	}
+	
+	entity.setupShip( id, desc );
+	entity.setPose( id, x, y, z, yaw, pitch, roll );
+	
+	return id;
+end
 
 
