@@ -66,6 +66,7 @@ function createUBoat( x, y, z, yaw, pitch, roll )
 		hxf_mesh	=	"scenes/uboat.esx|hydromesh";
 		vis_mesh	=	"scenes/uboat.esx|vismesh";
 		phys_mesh	=	"scenes/uboat.esx|physmesh";
+		engine_snd  =	"sound/submarine.mp3";
 		mass		=	2000000;
 		
 		integral_density	=	0.1;
@@ -86,6 +87,7 @@ function createUBoatXXI( x, y, z, yaw, pitch, roll )
 		hxf_mesh	=	"scenes/uboat_xxi.esx|hydromesh";
 		vis_mesh	=	"scenes/uboat_xxi.esx|vismesh";
 		phys_mesh	=	"scenes/uboat_xxi.esx|physmesh";
+		engine_snd  =	"sound/submarine.mp3";
 		mass		=	1500000;
 		
 		integral_density	=	0.1;
