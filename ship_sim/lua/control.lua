@@ -153,15 +153,9 @@ function update(dtime, ship)
 	result_view_y = posy + (l_y - posy)*current_interp;
 	result_view_z = posz + (l_z - posz)*current_interp;
 	
-	if target_interp == 1 then
-		result_yaw		=	l_yaw;
-		result_pitch	=	l_pitch;
-		result_roll		=	l_roll;
-	else
-		result_yaw		=	yaw;
-		result_pitch	=	pitch;
-		result_roll		=	roll;
-	end
+	result_yaw		=	yaw   + (l_yaw   - yaw)*current_interp;
+	result_pitch	=	pitch + (l_pitch - pitch)*current_interp;
+	result_roll		=	roll  + (l_roll  - roll)*current_interp;
 	
 	game.setView(result_view_x, result_view_y, result_view_z, result_yaw, result_pitch, result_roll);
 
