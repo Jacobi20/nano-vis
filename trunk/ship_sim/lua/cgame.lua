@@ -47,13 +47,6 @@ local	ship2		=	nil;
 local	ship3		=	nil;
 local	ship4		=	nil;
 
-local	l_camera_posx  = 18;
-local	l_camera_posy  = 0;
-local	l_camera_posz  = 8;
-local	l_camera_yaw   = -90;
-local	l_camera_pitch = 0;
-local	l_camera_roll  = 90;
-
 
 --
 --	init()
@@ -106,8 +99,6 @@ local function driveShip( dtime, ship )
 	shipmodel.addForce( ship, 0,0, -ry*1000,  0,  10, 0 );
 	shipmodel.addForce( ship, 0,0,  ry*1000,  0, -10, 0 );
 	
-	shipmodel.getLocalCamera(ship, l_camera_posx, l_camera_posy, l_camera_posz, l_camera_yaw, l_camera_pitch, l_camera_roll);
-	
 end
 
 
@@ -120,7 +111,7 @@ function frame( dtime )
 	core.debugString("S3DM [T]:", input.s3dm.tx, input.s3dm.ty, input.s3dm.tz );
 	core.debugString("S3DM [R]:", input.s3dm.rx, input.s3dm.ry, input.s3dm.rz );
 
-	control.update( dtime );
+	control.update( dtime, ship );
 
 	driveShip( dtime, ship );
 	

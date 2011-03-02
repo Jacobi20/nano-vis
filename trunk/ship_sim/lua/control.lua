@@ -46,6 +46,16 @@ local posx 	= 0;
 local posy 	= 0;
 local posz 	= 10;
 
+local	l_camera_posx  = 2;
+local	l_camera_posy  = 0;
+local	l_camera_posz  = 12;
+local	l_camera_yaw   = -90;
+local	l_camera_pitch = 0;
+local	l_camera_roll  = 90;
+
+local	target_interp  = 0.0;
+local	current_interp = 0.0;
+
 state = {
 		fw	=	false;	--	forward
 		bw	=	false;	--	backward
@@ -57,6 +67,8 @@ state = {
 		td	=	false;	--	turn down
 		up	=	false;	--	up
 		dn	=	false;	--	down
+		iu	=	false;	--	interp on
+		id	=	false;	--	interp off
 	};
 
 input.bind ( "S",	 	"control.state.fw = true", "control.state.fw = false" );
@@ -69,12 +81,14 @@ input.bind ( "UP", 		"control.state.tu = true", "control.state.tu = false" );
 input.bind ( "DOWN",	"control.state.td = true", "control.state.td = false" );
 input.bind ( "SPACE", 	"control.state.up = true", "control.state.up = false" );
 input.bind ( "C", 		"control.state.dn = true", "control.state.dn = false" );
+input.bind ( "P",		"control.state.iu = true", "control.state.iu = false" );
+input.bind ( "O",		"control.state.id = true", "control.state.id = false" );
 
 local ANGULAR_VELOCITY	=	90;
 local LINEAR_VELOCITY	=	20;
 local SENSITIVITY		=	0.07;
 	
-function update(dtime)
+function update(dtime, ship)
 
 	local dx, dy, dz = 0,0,0;
 	
@@ -112,12 +126,45 @@ function update(dtime)
 	if state.up then 
 		dz	=	0.5 * LINEAR_VELOCITY;
 	end
+	
+	if state.iu then
+		target_interp = 1;
+	end
+	if state.id then
+		target_interp = 0;
+	end
+	
+	current_interp = 0.9*current_interp + 0.1*target_interp;
+	if current_interp > 1.0 then 
+		current_interp = 1.0; 
+	end
 
-	posx = posx + dx * dtime;
-	posy = posy + dy * dtime;
-	posz = posz + dz * dtime;
+	local result_view_x, result_view_y, result_view_z, result_yaw, result_pitch, result_roll;
 
-	game.setView(posx, posy, posz, yaw, pitch, roll);
+	local l_x, l_y, l_z, l_yaw, l_pitch, l_roll = game.getLocalCamera(ship, l_camera_posx, l_camera_posy, l_camera_posz, yaw, pitch, roll);
+	
+	if target_interp == 0 then
+		posx = posx + dx * dtime;
+		posy = posy + dy * dtime;
+		posz = posz + dz * dtime;
+	end
+	
+	result_view_x = posx + (l_x - posx)*current_interp;
+	result_view_y = posy + (l_y - posy)*current_interp;
+	result_view_z = posz + (l_z - posz)*current_interp;
+	
+	if target_interp == 1 then
+		result_yaw		=	l_yaw;
+		result_pitch	=	l_pitch;
+		result_roll		=	l_roll;
+	else
+		result_yaw		=	yaw;
+		result_pitch	=	pitch;
+		result_roll		=	roll;
+	end
+	
+	game.setView(result_view_x, result_view_y, result_view_z, result_yaw, result_pitch, result_roll);
+
 	game.setProj(120, 1.1, 4000, 1);
 end
 
