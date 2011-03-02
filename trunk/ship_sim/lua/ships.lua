@@ -68,7 +68,7 @@ function createUBoat( x, y, z, yaw, pitch, roll )
 		phys_mesh	=	"scenes/uboat.esx|physmesh";
 		mass		=	2000000;
 		
-		integral_density	=	0.3;
+		integral_density	=	0.1;
 		water_resistance	=	2;
 	}
 	
@@ -86,9 +86,9 @@ function createUBoatXXI( x, y, z, yaw, pitch, roll )
 		hxf_mesh	=	"scenes/uboat_xxi.esx|hydromesh";
 		vis_mesh	=	"scenes/uboat_xxi.esx|vismesh";
 		phys_mesh	=	"scenes/uboat_xxi.esx|physmesh";
-		mass		=	2000000;
+		mass		=	1500000;
 		
-		integral_density	=	0.3;
+		integral_density	=	0.1;
 		water_resistance	=	2;
 	}
 	
