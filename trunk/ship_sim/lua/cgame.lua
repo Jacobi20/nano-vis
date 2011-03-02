@@ -47,10 +47,10 @@ local	ship2		=	nil;
 local	ship3		=	nil;
 local	ship4		=	nil;
 
-local	l_camera_posx  = 2;
-local	l_camera_posy  = 2;
-local	l_camera_posz  = 6;
-local	l_camera_yaw   = 0;
+local	l_camera_posx  = 18;
+local	l_camera_posy  = 0;
+local	l_camera_posz  = 8;
+local	l_camera_yaw   = -90;
 local	l_camera_pitch = 0;
 local	l_camera_roll  = 90;
 
