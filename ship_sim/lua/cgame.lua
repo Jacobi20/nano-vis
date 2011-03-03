@@ -55,9 +55,9 @@ function init()
 	game.setGravity(9.8);
 
 	game.setWaving( true );
-	game.setAmbient( 0.7, 0.7, 0.7 );
+	game.setAmbient( 0.0, 0.0, 0.0 );
 
-	ship	=	ships.createUBoat(10,  0, 20, 0,0,0);
+	ship	=	ships.createUBoat(50,  0, 0, 45,0,0);
 	-- ship2	=	ships.createUBoat(10, 40,-20, 0,0,0);
 	-- ship3	=	ships.createUBoat(10,-40,-30, 0,0,0);
 	-- ship4	=	ships.createUBoat(10, 80,-40, 0,0,0);
