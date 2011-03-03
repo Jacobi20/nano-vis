@@ -58,6 +58,7 @@ cfg.setvar('fr_waving_num_dirs'            , 12);
 cfg.setvar('fr_waving_num_linear_samples'  , 1024);
 cfg.setvar('fr_waving_num_time_samples'    , 64);
 cfg.setvar('fr_gamma'                      , 0.9);
+cfg.setvar('fr_stereo_factor'              , 1);
 
 
 -- key bindings --
