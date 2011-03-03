@@ -138,6 +138,7 @@ end
 function defineShaders()
 	print ("defineShaders() ENTER");
 	defineDsnShader("textures/test/floor01.tga");
+	defineDsnShader("scenes/submarine_TM.bmp");
 	defineWaterShader();
 	defineSkyShader();
 	print ("defineShaders() LEAVE");

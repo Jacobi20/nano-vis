@@ -134,7 +134,7 @@ function update(dtime, ship)
 		target_interp = 0;
 	end
 	
-	current_interp = 0.9*current_interp + 0.1*target_interp;
+	current_interp = 0.99*current_interp + 0.01*target_interp;
 	if current_interp > 1.0 then 
 		current_interp = 1.0; 
 	end
