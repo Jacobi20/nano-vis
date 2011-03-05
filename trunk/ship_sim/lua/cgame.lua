@@ -58,6 +58,8 @@ function init()
 	game.setAmbient( 0.0, 0.0, 0.0 );
 
 	ship	=	ships.createUBoat(50,  0, 0, 45,0,0);
+
+	ship2	=	ships.createUBoat(-50,  0, 0, 45,0,0);
 	-- ship2	=	ships.createUBoat(10, 40,-20, 0,0,0);
 	-- ship3	=	ships.createUBoat(10,-40,-30, 0,0,0);
 	-- ship4	=	ships.createUBoat(10, 80,-40, 0,0,0);
@@ -77,7 +79,7 @@ local function driveShip( dtime, ship )
 	
 	local	x,y,z,yaw, pitch, roll = entity.getPose(ship);
 	
-	core.debugString( yaw );
+	-- core.debugString( yaw );
 	
 	--	TZ :
 	if tz<0 then tz=0; end;
@@ -108,8 +110,8 @@ end
 function frame( dtime )
 	core.debugString("FPS  : "..1/dtime);
 	
-	core.debugString("S3DM [T]:", input.s3dm.tx, input.s3dm.ty, input.s3dm.tz );
-	core.debugString("S3DM [R]:", input.s3dm.rx, input.s3dm.ry, input.s3dm.rz );
+	-- core.debugString("S3DM [T]:", input.s3dm.tx, input.s3dm.ty, input.s3dm.tz );
+	-- core.debugString("S3DM [R]:", input.s3dm.rx, input.s3dm.ry, input.s3dm.rz );
 
 	control.update( dtime, ship );
 
