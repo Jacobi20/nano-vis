@@ -32,6 +32,7 @@ local	game		=	require("game");
 local	entity		=	require("entity");
 local	character	=	require("character");
 local	ui			=	require("ui");
+local	shipmodel	=	require("shipmodel");
 	
 module	("control");
 
@@ -46,7 +47,7 @@ local posx 	= 0;
 local posy 	= 0;
 local posz 	= 10;
 
-local	l_camera_posx  = 2;
+local	l_camera_posx  = 5;
 local	l_camera_posy  = 0;
 local	l_camera_posz  = 12;
 local	l_camera_yaw   = -90;
@@ -69,8 +70,16 @@ state = {
 		dn	=	false;	--	down
 		iu	=	false;	--	interp on
 		id	=	false;	--	interp off
+		ship_fw	=	false;
+		ship_bw	=	false;
+		ship_l	=	false;
+		ship_r	=	false;
 	};
 
+input.bind ( "HOME",	 	"control.state.ship_fw = true", "control.state.ship_fw = false" );
+input.bind ( "END", 		"control.state.ship_bw = true", "control.state.ship_bw = false" );
+input.bind ( "DEL",	 		"control.state.ship_l = true", "control.state.ship_l = false" );
+input.bind ( "PGDN", 		"control.state.ship_r = true", "control.state.ship_r = false" );
 input.bind ( "S",	 	"control.state.fw = true", "control.state.fw = false" );
 input.bind ( "Z", 		"control.state.bw = true", "control.state.bw = false" );
 input.bind ( "A", 		"control.state.sl = true", "control.state.sl = false" );
@@ -160,6 +169,44 @@ function update(dtime, ship)
 	game.setView(result_view_x, result_view_y, result_view_z, result_yaw, result_pitch, result_roll);
 
 	game.setProj(120, 1.1, 4000, 1);
+	
+	
+	---------------------
+	
+	local	x,y,z,yaw, pitch, roll = entity.getPose(ship);
+	
+	core.debugString( "YAW      = ", 0.01*math.floor(100*yaw+0.5) );
+	core.debugString( "PITCH    = ", 0.01*math.floor(100*pitch+0.5) );
+	core.debugString( "ROLL     = ", 0.01*math.floor(100*roll+0.5) );
+	core.debugString( "HEAVING  = ", 0.01*math.floor(100*z+0.5) );
+	
+	--	TZ :
+	--if tz<0 then tz=0; end;
+	--shipmodel.addForce( ship, 0,0, -tz * 100000, 0,0,0 );
+	
+	--	TY :
+	local fmag = 0;
+	local pos  = 0;
+	local rz   = 0;
+	if state.ship_fw then fmag = -140000000; pos = 20; end
+	if state.ship_bw then fmag =  140000000; pos = -20; end
+	if state.ship_r then rz = -15; end
+	if state.ship_l then rz =  15; end
+	local fx = -math.cos( math.rad( yaw + rz ) ) * math.cos( math.rad( pitch ) ) * fmag;
+	local fy = -math.sin( math.rad( yaw + rz ) ) * math.cos( math.rad( pitch ) ) * fmag;
+	local fz = -math.sin( math.rad( pitch ) ) * fmag;
+	shipmodel.addForce( ship, fx, fy, 0, pos,0,-0 );
+	
+	---core.debugString(fmag, yaw, fx, fy, fz);
+	
+	-- --	RX :
+	-- shipmodel.addForce( ship, 0,0,  rx*3000,  30,0,0 );
+	-- shipmodel.addForce( ship, 0,0, -rx*3000, -30,0,0 );
+	
+	-- --	RY :
+	-- shipmodel.addForce( ship, 0,0, -ry*1000,  0,  10, 0 );
+	-- shipmodel.addForce( ship, 0,0,  ry*1000,  0, -10, 0 );
+	
 end
 
 

@@ -67,7 +67,7 @@ function createUBoat( x, y, z, yaw, pitch, roll )
 		vis_mesh	=	"scenes/uboat.esx|vismesh";
 		phys_mesh	=	"scenes/uboat.esx|physmesh";
 		engine_snd  =	"sound/submarine.mp3";
-		mass		=	2000000;
+		mass		=	1800000;
 		
 		integral_density	=	0.1;
 		water_resistance	=	2;
