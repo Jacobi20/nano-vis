@@ -94,7 +94,7 @@ input.bind ( "P",		"control.state.iu = true", "control.state.iu = false" );
 input.bind ( "O",		"control.state.id = true", "control.state.id = false" );
 
 local ANGULAR_VELOCITY	=	90;
-local LINEAR_VELOCITY	=	20;
+local LINEAR_VELOCITY	=	30;
 local SENSITIVITY		=	0.07;
 	
 function update(dtime, ship)

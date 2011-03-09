@@ -50,7 +50,7 @@ cfg.setvar('sound_spread'                  , 45);
 cfg.setvar('sound_dopler_level'            , 1);
 cfg.setvar('sound_max_distance'            , 10000);
 cfg.setvar('sound_min_distance'            , 1);
-cfg.setvar('fr_waving_wind'                , 5);
+cfg.setvar('fr_waving_wind'                , 25);
 cfg.setvar('fr_waving_max_frequency'       , 5);
 cfg.setvar('fr_waving_narrowness'          , 8);
 cfg.setvar('fr_waving_num_harmonics'       , 20);
