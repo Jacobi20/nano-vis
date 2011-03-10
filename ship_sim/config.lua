@@ -77,7 +77,7 @@ input.bind ("DEL", "control.state.ship_l = true", "control.state.ship_l = false"
 input.bind ("A", "control.state.sl = true", "control.state.sl = false");
 input.bind ("C", "control.state.dn = true", "control.state.dn = false");
 input.bind ("K", "game.stopCameraAnim()", "");
-input.bind ("L", "game.playCameraAnim('scenes/camera_anim.eax', 30)", "");
+input.bind ("L", "game.playCameraAnim('scenes/uboat_xxi.eax', 30)", "");
 input.bind ("M", "cgame.orbit_angle = cgame.orbit_angle - 15", "");
 input.bind ("N", "cgame.orbit_angle = cgame.orbit_angle + 15", "");
 input.bind ("O", "control.state.id = true", "control.state.id = false");
