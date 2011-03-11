@@ -93,7 +93,7 @@ input.bind ( "SPACE", 	"control.state.up = true", "control.state.up = false" );
 input.bind ( "C", 		"control.state.dn = true", "control.state.dn = false" );
 input.bind ( "P",		"control.state.iu = true", "control.state.iu = false" );
 input.bind ( "O",		"control.state.id = true", "control.state.id = false" );
-input.bind ( "L",		"game.playCameraAnim('scenes/uboat_xxi.eax', 30)", "");
+input.bind ( "L",		"game.playCameraAnim('scenes/uboat_xxi.eax', 30); control.state.ship_fw = true", "");
 input.bind ( "K",		"game.stopCameraAnim()", "");
 
 local ANGULAR_VELOCITY	=	90;
