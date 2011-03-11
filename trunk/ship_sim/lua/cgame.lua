@@ -56,6 +56,8 @@ function init()
 
 	game.setWaving( true );
 	game.setAmbient( 0.0, 0.0, 0.0 );
+	
+	--game.playCameraAnim('scenes/uboat_xxi.eax', 30);
 
 	ship	=	ships.createUBoat(50, 0, 0, 45,0,0);
 
