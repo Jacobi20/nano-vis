@@ -93,7 +93,7 @@ input.bind ( "SPACE", 	"control.state.up = true", "control.state.up = false" );
 input.bind ( "C", 		"control.state.dn = true", "control.state.dn = false" );
 input.bind ( "P",		"control.state.iu = true", "control.state.iu = false" );
 input.bind ( "O",		"control.state.id = true", "control.state.id = false" );
-input.bind ( "L",		"game.playCameraAnim('scenes/uboat_xxi.eax', 30); control.state.ship_fw = true", "");
+input.bind ( "L",		"game.playCameraAnim('scenes/uboat_xxi.eax', 30, false); control.state.ship_fw = true", "");
 input.bind ( "K",		"game.stopCameraAnim(); control.state.ship_fw = false", "");
 
 local ANGULAR_VELOCITY	=	90;
@@ -191,8 +191,8 @@ function update(dtime, ship)
 	local fmag = 0;
 	local pos  = 0;
 	local rz   = 0;
-	if state.ship_fw then fmag = -140000000; pos = 20; end
-	if state.ship_bw then fmag =  140000000; pos = -20; end
+	if state.ship_fw then fmag = -120000000; pos = 20; end
+	if state.ship_bw then fmag =  120000000; pos = -20; end
 	if state.ship_r then rz = -15; end
 	if state.ship_l then rz =  15; end
 	local fx = -math.cos( math.rad( yaw + rz ) ) * math.cos( math.rad( pitch ) ) * fmag;
