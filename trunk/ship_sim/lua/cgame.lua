@@ -59,7 +59,7 @@ function init()
 	
 	--game.playCameraAnim('scenes/uboat_xxi.eax', 30);
 
-	ship	=	ships.createUBoat(20, 20, 0, 45,0,0);
+	ship	=	ships.createUBoat(70, -0, -4, 90,0,0);
 
 	--	ship2	=	ships.createUBoat(-50,  0, 0, 45,0,0);
 	-- ship2	=	ships.createUBoat(10, 40,-20, 0,0,0);
