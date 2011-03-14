@@ -69,7 +69,7 @@ function createUBoat( x, y, z, yaw, pitch, roll )
 		engine_snd  =	"sound/submarine.mp3";
 		mass		=	2000000;
 		
-		integral_density	=	0.4;
+		integral_density	=	1;
 		water_resistance	=	2;
 	}
 	
