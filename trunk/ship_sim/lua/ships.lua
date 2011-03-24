@@ -89,9 +89,11 @@ function createCutter( x, y, z, yaw, pitch, roll )
 		phys_mesh	=	"scenes/boat.esx|physmesh";
 		engine_snd  =	"sound/submarine.mp3";
 		mass		=	400000;
+		cm_offset_x	=	21;
+		cm_offset_z	=	-3.5;
 		
 		integral_density	=	2;
-		water_resistance	=	1;
+		water_resistance	=	0.1;
 	}
 	
 	entity.setupShip( id, desc );

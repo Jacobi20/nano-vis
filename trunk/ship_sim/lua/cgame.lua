@@ -61,7 +61,7 @@ function init()
 	
 	--game.playCameraAnim('scenes/uboat_xxi.eax', 30);
 
-	ship	=	ships.createCutter(70, -0, 0, 90,0,0);
+	ship	=	ships.createCutter(0, 0, 0, 90,0,0);
 
 	--	ship2	=	ships.createUBoat(-50,  0, 0, 45,0,0);
 	-- ship2	=	ships.createUBoat(10, 40,-20, 0,0,0);
@@ -87,7 +87,7 @@ local function driveShip( dtime, ship )
 	
 	--	TZ :
 	if tz<0 then tz=0; end;
-	shipmodel.addForce( ship, 0,0, -tz * 100000, 0,0,0 );
+	shipmodel.addForce( ship, 0,0, -tz * 100000, 0,0,00 );
 	
 	
 	--	TY :
@@ -109,6 +109,8 @@ end
 
 
 local	ship_data = {};
+local	record_counter = 0;
+local	degree	= 0;
 
 --
 --	frame()
@@ -116,27 +118,46 @@ local	ship_data = {};
 function frame( dtime )
 	core.debugString("FPS  : "..1/dtime);
 	
-	-- core.debugString("S3DM [T]:", input.s3dm.tx, input.s3dm.ty, input.s3dm.tz );
-	-- core.debugString("S3DM [R]:", input.s3dm.rx, input.s3dm.ry, input.s3dm.rz );
-
 	control.update( dtime, ship );
 
 	driveShip( dtime, ship );
 	
-	dv.setColor(1,1,1,1);
-	dv.drawPoint(0,0,0, 2);
-	dv.drawArrow(0,0,0, 1,0,0, 100);
-	dv.setColor(1,0,0);
-	dv.drawBox(-10,-10,-10, 10,10,10);
+	--
+	--	diagram :
+	--
+	-- if degree <= 120 then
+		-- degree = degree + 1;
+		
+		-- local x,y,z,a,b,c = shipmodel.getPose(ship);
+		-- shipmodel.setPose(ship, x,y,z,a,b,degree);
+		-- local sd = shipmodel.getDynamics(ship);
+		
+		
+	-- end
 	
-	dv.setColor(0,1,0);
-	dv.drawLine(-10,-10,-10, 10,10,10);
+	local x,y,z,a,b,c = shipmodel.getPose(ship);
+	shipmodel.setPose(ship, 0,0,z,90,b,c);
+
+	
+	--
+	--	drawing :
+	--
+	dv.setColor(1,1,1,1);
 	
 	local sd = shipmodel.getDynamics(ship);
 	
-	table.insert( ship_data, sd );
+	dv.drawPoint( sd.position_x, sd.position_y, sd.position_z, 1 );
+	
+	if record_counter==0 then
+		table.insert( ship_data, sd );
+	end
+	record_counter = record_counter + 1;
+	if record_counter>10 then
+		record_counter = 0;
+	end
 	
 	for i=2, #ship_data, 1 do
+		dv.setColor(1,1,0,0.5);
 		local x0	=	ship_data[i-1].position_x;
 		local y0	=	ship_data[i-1].position_y;
 		local z0	=	ship_data[i-1].position_z;
@@ -144,7 +165,28 @@ function frame( dtime )
 		local y1	=	ship_data[i].position_y;
 		local z1	=	ship_data[i].position_z;
 		dv.drawLine( x0,y0,z0, x1,y1,z1 );
+		
+		dv.setColor(1,1,0,0.5);
+		dv.drawLine(	0, ship_data[i-1].time, 0.1 * ship_data[i-1].roll,	
+						0, ship_data[i].time, 	0.1 * ship_data[i].roll 	);
+						
+		dv.setColor(0,0.5,1,0.5);
+		dv.drawLine(	0, ship_data[i-1].time, 1 * ship_data[i-1].wave_height,	
+						0, ship_data[i].time, 	1 * ship_data[i].wave_height 	);
+						
+						
+		-- dv.drawLine(	5, ship_data[i-1].pitch, ship_data[i-1].roll,	
+						-- 5, ship_data[i].pitch,   ship_data[i].roll );
 	end
+	
+	dv.setColor(1,1,0,0.9);
+	for x=0, ship_data[#ship_data].time, 1 do
+		dv.drawPoint(0,x,0, 0.2);
+	end
+	for x=0, ship_data[#ship_data].time, 10 do
+		dv.drawPoint(0,x,0, 1.0);
+	end
+	dv.drawLine(0,0,0, 0, ship_data[#ship_data].time+1, 0,0);
 	--core.debugString("FORCE ", sd.position_z);
 	
 end
