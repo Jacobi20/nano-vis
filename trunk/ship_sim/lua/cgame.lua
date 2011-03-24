@@ -23,8 +23,10 @@
 -------------------------------------------------------------------------------
 
 local	math		=	require("math");
+local	table		=	require("table");
 local	print		=	_G["print"];
 local	core		=	require("core");
+local	dv			=	require("dv");
 local	user		=	user;
 local	cfg			=	require("cfg");
 local	input		=	require("input");
@@ -59,7 +61,7 @@ function init()
 	
 	--game.playCameraAnim('scenes/uboat_xxi.eax', 30);
 
-	ship	=	ships.createUBoat(70, -0, -4, 90,0,0);
+	ship	=	ships.createCutter(70, -0, 0, 90,0,0);
 
 	--	ship2	=	ships.createUBoat(-50,  0, 0, 45,0,0);
 	-- ship2	=	ships.createUBoat(10, 40,-20, 0,0,0);
@@ -106,6 +108,8 @@ local function driveShip( dtime, ship )
 end
 
 
+local	ship_data = {};
+
 --
 --	frame()
 --
@@ -118,6 +122,30 @@ function frame( dtime )
 	control.update( dtime, ship );
 
 	driveShip( dtime, ship );
+	
+	dv.setColor(1,1,1,1);
+	dv.drawPoint(0,0,0, 2);
+	dv.drawArrow(0,0,0, 1,0,0, 100);
+	dv.setColor(1,0,0);
+	dv.drawBox(-10,-10,-10, 10,10,10);
+	
+	dv.setColor(0,1,0);
+	dv.drawLine(-10,-10,-10, 10,10,10);
+	
+	local sd = shipmodel.getDynamics(ship);
+	
+	table.insert( ship_data, sd );
+	
+	for i=2, #ship_data, 1 do
+		local x0	=	ship_data[i-1].position_x;
+		local y0	=	ship_data[i-1].position_y;
+		local z0	=	ship_data[i-1].position_z;
+		local x1	=	ship_data[i].position_x;
+		local y1	=	ship_data[i].position_y;
+		local z1	=	ship_data[i].position_z;
+		dv.drawLine( x0,y0,z0, x1,y1,z1 );
+	end
+	--core.debugString("FORCE ", sd.position_z);
 	
 end
 
