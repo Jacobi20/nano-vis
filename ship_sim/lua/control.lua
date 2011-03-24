@@ -178,10 +178,10 @@ function update(dtime, ship)
 	
 	local	x,y,z,yaw, pitch, roll = entity.getPose(ship);
 	
-	core.debugString( "YAW      = ", 0.01*math.floor(100*yaw+0.5) );
-	core.debugString( "PITCH    = ", 0.01*math.floor(100*pitch+0.5) );
-	core.debugString( "ROLL     = ", 0.01*math.floor(100*roll+0.5) );
-	core.debugString( "HEAVING  = ", 0.01*math.floor(100*z+0.5) );
+	-- core.debugString( "YAW      = ", 0.01*math.floor(100*yaw+0.5) );
+	-- core.debugString( "PITCH    = ", 0.01*math.floor(100*pitch+0.5) );
+	-- core.debugString( "ROLL     = ", 0.01*math.floor(100*roll+0.5) );
+	-- core.debugString( "HEAVING  = ", 0.01*math.floor(100*z+0.5) );
 	
 	--	TZ :
 	--if tz<0 then tz=0; end;
@@ -198,7 +198,7 @@ function update(dtime, ship)
 	local fx = -math.cos( math.rad( yaw + rz ) ) * math.cos( math.rad( pitch ) ) * fmag;
 	local fy = -math.sin( math.rad( yaw + rz ) ) * math.cos( math.rad( pitch ) ) * fmag;
 	local fz = -math.sin( math.rad( pitch ) ) * fmag;
-	shipmodel.addForce( ship, fx, fy, 0, pos,0,-0 );
+	shipmodel.addForce( ship, fx, fy, 0, pos,0,-1 );
 	
 	---core.debugString(fmag, yaw, fx, fy, fz);
 	
