@@ -37,6 +37,7 @@ local	ui			=	require("ui");
 local 	control		=	require("control");
 local 	ships		=	require("ships");
 local	shipmodel	=	require("shipmodel");
+local	plotter		=	require("plotter");
 	
 module	("cgame");
 
@@ -152,9 +153,11 @@ function frame( dtime )
 		table.insert( ship_data, sd );
 	end
 	record_counter = record_counter + 1;
-	if record_counter>10 then
+	if record_counter>0 then
 		record_counter = 0;
 	end
+	
+	if #ship_data > 100 then table.remove(ship_data, 1); end
 	
 	for i=2, #ship_data, 1 do
 		dv.setColor(1,1,0,0.5);
@@ -165,6 +168,10 @@ function frame( dtime )
 		local y1	=	ship_data[i].position_y;
 		local z1	=	ship_data[i].position_z;
 		dv.drawLine( x0,y0,z0, x1,y1,z1 );
+		
+		plotter.makePlot3D( ship_data,  0.1,0.1,0.1,  "yaw", "pitch", "roll", 0,5,5 );
+		--plotter.makePlot2D( ship_data,  1,1, "time", "position_z", 10,10,10 );
+		--plotter.makePlot2D( ship_data,  1,1, "time", "wave_height", 2,0,0 );
 		
 		dv.setColor(1,1,0,0.5);
 		dv.drawLine(	0, ship_data[i-1].time, 0.1 * ship_data[i-1].roll,	
@@ -187,7 +194,7 @@ function frame( dtime )
 		dv.drawPoint(0,x,0, 1.0);
 	end
 	dv.drawLine(0,0,0, 0, ship_data[#ship_data].time+1, 0,0);
-	--core.debugString("FORCE ", sd.position_z);
+	core.debugString("Time ", sd.time);
 	
 end
 
