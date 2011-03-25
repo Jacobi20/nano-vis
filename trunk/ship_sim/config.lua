@@ -50,16 +50,16 @@ cfg.setvar('sound_spread'                  , 45);
 cfg.setvar('sound_dopler_level'            , 1);
 cfg.setvar('sound_max_distance'            , 10000);
 cfg.setvar('sound_min_distance'            , 1);
-cfg.setvar('fr_waving_wind'                , 0);
+cfg.setvar('fr_waving_wind'                , 15);
 cfg.setvar('fr_waving_max_frequency'       , 8);
-cfg.setvar('fr_waving_narrowness'          , 256);
+cfg.setvar('fr_waving_narrowness'          , 800);
 cfg.setvar('fr_waving_num_harmonics'       , 20);
 cfg.setvar('fr_waving_num_dirs'            , 12);
 cfg.setvar('fr_waving_num_linear_samples'  , 1024);
 cfg.setvar('fr_waving_num_time_samples'    , 64);
 cfg.setvar('fr_gamma'                      , 0.9);
 cfg.setvar('fr_stereo_factor'              , -0.3);
-cfg.setvar('fr_waving_omega'               , 1.05);
+cfg.setvar('fr_waving_omega'               , 0.285);
 
 
 -- key bindings --
