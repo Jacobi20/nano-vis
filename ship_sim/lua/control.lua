@@ -191,8 +191,8 @@ function update(dtime, ship)
 	local fmag = 0;
 	local pos  = 0;
 	local rz   = 0;
-	if state.ship_fw then fmag = -120000000; pos = 20; end
-	if state.ship_bw then fmag =  120000000; pos = -20; end
+	if state.ship_fw then fmag = -12000000; pos = 20; end
+	if state.ship_bw then fmag =  12000000; pos = -20; end
 	if state.ship_r then rz = -15; end
 	if state.ship_l then rz =  15; end
 	local fx = -math.cos( math.rad( yaw + rz ) ) * math.cos( math.rad( pitch ) ) * fmag;
