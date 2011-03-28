@@ -37,8 +37,8 @@ cfg.setvar('rs_gl_driver'                  , false);
 cfg.setvar('rs_show_gbuffer'               , false);
 cfg.setvar('gl_fullscr'                    , false);
 cfg.setvar('gl_mode'                       , 0);
-cfg.setvar('gl_xpos'                       , 710);
-cfg.setvar('gl_ypos'                       , 218);
+cfg.setvar('gl_xpos'                       , 169);
+cfg.setvar('gl_ypos'                       , 131);
 cfg.setvar('fr_skip_mlaa'                  , false);
 cfg.setvar('fr_skip_hdr'                   , false);
 cfg.setvar('fr_skip_fog'                   , false);
@@ -50,16 +50,16 @@ cfg.setvar('sound_spread'                  , 45);
 cfg.setvar('sound_dopler_level'            , 1);
 cfg.setvar('sound_max_distance'            , 10000);
 cfg.setvar('sound_min_distance'            , 1);
-cfg.setvar('fr_waving_wind'                , 15);
+cfg.setvar('fr_waving_wind'                , 0);
 cfg.setvar('fr_waving_max_frequency'       , 8);
-cfg.setvar('fr_waving_narrowness'          , 800);
+cfg.setvar('fr_waving_narrowness'          , 500);
 cfg.setvar('fr_waving_num_harmonics'       , 20);
 cfg.setvar('fr_waving_num_dirs'            , 12);
 cfg.setvar('fr_waving_num_linear_samples'  , 1024);
 cfg.setvar('fr_waving_num_time_samples'    , 64);
 cfg.setvar('fr_gamma'                      , 0.9);
 cfg.setvar('fr_stereo_factor'              , -0.3);
-cfg.setvar('fr_waving_omega'               , 0.285);
+cfg.setvar('fr_waving_omega'               , 0);
 
 
 -- key bindings --
@@ -91,4 +91,5 @@ input.bind ("Z", "control.state.bw = true", "control.state.bw = false");
 input.bind ("F1", "cfg.load()", "");
 input.bind ("F5", "if reloadPackages then reloadPackages() end; game.runGame('scenes/base.esx')", "");
 input.bind ("F6", "render.reloadShaders()", "");
+input.bind ("F7", "cgame.do_rolling()", "");
 input.bind ("F10", "", "core.quit()");

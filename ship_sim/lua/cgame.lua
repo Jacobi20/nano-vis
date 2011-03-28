@@ -25,6 +25,7 @@
 local	math		=	require("math");
 local	table		=	require("table");
 local	print		=	_G["print"];
+local	string		=	require("string");
 local	core		=	require("core");
 local	dv			=	require("dv");
 local	user		=	user;
@@ -38,6 +39,7 @@ local 	control		=	require("control");
 local 	ships		=	require("ships");
 local	shipmodel	=	require("shipmodel");
 local	plotter		=	require("plotter");
+local	io			=	require("io");
 	
 module	("cgame");
 
@@ -113,10 +115,55 @@ local	ship_data = {};
 local	record_counter = 0;
 local	degree	= 0;
 
+input.bind ( "F7",	 	"cgame.do_rolling()", "" );
+
+-------------------------------------------------------------------------------
+-- rolling stuff :
+-------------------------------------------------------------------------------
+function do_rolling()	
+
+	print("Virtual rolling started");
+
+	local roll_log 		= io.open("roll.log", "w");
+	local x,y,z, a,b,c	= shipmodel.getPose(ship);
+	
+	for roll=0, 180, 5 do 
+		shipmodel.setPose(ship, x,y,z, 0,0,roll);
+		
+		print("...roll = "..roll);
+
+		local tx = 0;
+		local ty = 0;
+		local tz = 0;
+		
+		for n=1, 20 do
+			shipmodel.updateForces(ship);
+			local sd 	= shipmodel.getDynamics(ship);
+			tx = tx + sd.torque_x / 10;
+			ty = ty + sd.torque_y / 10;
+			tz = tz + sd.torque_z / 10;
+		end
+		
+		local out	= string.format("%f %f %f %f", roll, tx, ty, tz);
+		
+		roll_log:write(out.."\n");
+		roll_log:flush();
+	end
+	
+	roll_log:close();
+
+	shipmodel.setPose(ship, x,y,z, a,b,c);
+
+	print("Done!");
+end
+
+-------------------------------------------------------------------------------
+
 --
 --	frame()
 --
 function frame( dtime )
+
 	core.debugString("FPS  : "..1/dtime);
 	
 	control.update( dtime, ship );
@@ -136,8 +183,8 @@ function frame( dtime )
 		
 	-- end
 	
-	local x,y,z,a,b,c = shipmodel.getPose(ship);
-	shipmodel.setPose(ship, 0,0,z,90,b,c);
+	-- local x,y,z,a,b,c = shipmodel.getPose(ship);
+	-- shipmodel.setPose(ship, 0,0,z,90,b,c);
 
 	
 	--
@@ -153,12 +200,12 @@ function frame( dtime )
 		table.insert( ship_data, sd );
 	end
 	record_counter = record_counter + 1;
-	if record_counter>0 then
+	if record_counter>10 then
 		record_counter = 0;
 	end
 	
 	if #ship_data > 100 then table.remove(ship_data, 1); end
-	
+
 	for i=2, #ship_data, 1 do
 		dv.setColor(1,1,0,0.5);
 		local x0	=	ship_data[i-1].position_x;
@@ -169,21 +216,22 @@ function frame( dtime )
 		local z1	=	ship_data[i].position_z;
 		dv.drawLine( x0,y0,z0, x1,y1,z1 );
 		
-		plotter.makePlot3D( ship_data,  0.1,0.1,0.1,  "yaw", "pitch", "roll", 0,5,5 );
 		--plotter.makePlot2D( ship_data,  1,1, "time", "position_z", 10,10,10 );
 		--plotter.makePlot2D( ship_data,  1,1, "time", "wave_height", 2,0,0 );
+		local offset = ship_data[1].time;
 		
 		dv.setColor(1,1,0,0.5);
-		dv.drawLine(	0, ship_data[i-1].time, 0.1 * ship_data[i-1].roll,	
-						0, ship_data[i].time, 	0.1 * ship_data[i].roll 	);
+		dv.drawLine(	0, ship_data[i-1].time 	- offset,	0.1 * ship_data[i-1].roll,	
+						0, ship_data[i].time	- offset, 	0.1 * ship_data[i].roll 	);
+						
+		dv.setColor(1,0.5,0.5,0.5);
+		dv.drawLine(	0, ship_data[i-1].time 	- offset,	0.1 * ship_data[i-1].pitch,	
+						0, ship_data[i].time	- offset, 	0.1 * ship_data[i].pitch 	);
 						
 		dv.setColor(0,0.5,1,0.5);
-		dv.drawLine(	0, ship_data[i-1].time, 1 * ship_data[i-1].wave_height,	
-						0, ship_data[i].time, 	1 * ship_data[i].wave_height 	);
+		dv.drawLine(	0, ship_data[i-1].time 	- offset, 	1 * ship_data[i-1].wave_height,	
+						0, ship_data[i].time 	- offset, 	1 * ship_data[i].wave_height 	);
 						
-						
-		-- dv.drawLine(	5, ship_data[i-1].pitch, ship_data[i-1].roll,	
-						-- 5, ship_data[i].pitch,   ship_data[i].roll );
 	end
 	
 	dv.setColor(1,1,0,0.9);
@@ -193,6 +241,7 @@ function frame( dtime )
 	for x=0, ship_data[#ship_data].time, 10 do
 		dv.drawPoint(0,x,0, 1.0);
 	end
+
 	dv.drawLine(0,0,0, 0, ship_data[#ship_data].time+1, 0,0);
 	core.debugString("Time ", sd.time);
 	

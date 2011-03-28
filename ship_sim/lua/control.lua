@@ -48,8 +48,8 @@ local posy 	= 0;
 local posz 	= 10;
 
 local	l_camera_posx  = 5;
-local	l_camera_posy  = 0;
-local	l_camera_posz  = 12;
+local	l_camera_posy  = 10;
+local	l_camera_posz  = 2;
 local	l_camera_yaw   = -90;
 local	l_camera_pitch = 0;
 local	l_camera_roll  = 90;
