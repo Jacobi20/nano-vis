@@ -64,7 +64,7 @@ function init()
 	
 	--game.playCameraAnim('scenes/uboat_xxi.eax', 30);
 
-	ship	=	ships.createCutter(0, 0, 0, 90,0,0);
+	ship	=	ships.createCutter(40, 0, 0.2, 90,0,0);
 
 	--	ship2	=	ships.createUBoat(-50,  0, 0, 45,0,0);
 	-- ship2	=	ships.createUBoat(10, 40,-20, 0,0,0);
@@ -135,13 +135,14 @@ function do_rolling()
 		local tx = 0;
 		local ty = 0;
 		local tz = 0;
+		local num = 20
 		
-		for n=1, 20 do
+		for n=1, num do
 			shipmodel.updateForces(ship);
 			local sd 	= shipmodel.getDynamics(ship);
-			tx = tx + sd.torque_x / 10;
-			ty = ty + sd.torque_y / 10;
-			tz = tz + sd.torque_z / 10;
+			tx = tx + sd.torque_x / num;
+			ty = ty + sd.torque_y / num;
+			tz = tz + sd.torque_z / num;
 		end
 		
 		local out	= string.format("%f %f %f %f", roll, tx, ty, tz);
@@ -159,10 +160,16 @@ end
 
 -------------------------------------------------------------------------------
 
+local ship_log = nil;
+
 --
 --	frame()
 --
 function frame( dtime )
+
+	if not ship_log then
+		ship_log = io.open("ship.log", "w");
+	end
 
 	core.debugString("FPS  : "..1/dtime);
 	
@@ -183,8 +190,8 @@ function frame( dtime )
 		
 	-- end
 	
-	-- local x,y,z,a,b,c = shipmodel.getPose(ship);
-	-- shipmodel.setPose(ship, 0,0,z,90,b,c);
+	local x,y,z,a,b,c = shipmodel.getPose(ship);
+	shipmodel.setPose(ship, 40,0,z,90,b,c);
 
 	
 	--
@@ -193,6 +200,11 @@ function frame( dtime )
 	dv.setColor(1,1,1,1);
 	
 	local sd = shipmodel.getDynamics(ship);
+	
+	local out	= string.format("%f %f %f %f %f %f %f", sd.time, sd.yaw, sd.pitch, sd.roll, sd.position_x, sd.position_y, sd.position_z);
+	ship_log:write(out.."\n");
+	ship_log:flush();
+
 	
 	dv.drawPoint( sd.position_x, sd.position_y, sd.position_z, 1 );
 	

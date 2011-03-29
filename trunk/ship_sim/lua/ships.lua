@@ -31,6 +31,7 @@ local	input		=	require("input");
 local	game		=	require("game");
 local	entity		=	require("entity");
 local	character	=	require("character");
+local	shipmodel	=	require("shipmodel");
 local	ui			=	require("ui");
 	
 module	("ships");
@@ -101,15 +102,20 @@ function createCutter( x, y, z, yaw, pitch, roll )
 		phys_mesh	=	"scenes/boat.esx|physmesh";
 		engine_snd  =	"sound/submarine.mp3";
 		mass		=	500000;
-		cm_offset_x	=	21;
+		cm_offset_x	=	20.5;
 		cm_offset_z	=	-3.5;
 		
 		integral_density	=	1;
-		water_resistance	=	0.5;
+		water_resistance	=	0.2;
 	}
 	
 	entity.setupShip( id, desc );
 	entity.setPose( id, x, y, z, yaw, pitch, roll );
+
+	local sd = shipmodel.getDynamics(id);
+	
+	print("L = "..sd.ship_length);
+	print("B = "..sd.ship_width);
 	
 	return id;
 end
