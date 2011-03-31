@@ -94,7 +94,7 @@ function createCutter( x, y, z, yaw, pitch, roll )
 		engine_snd  =	"sound/submarine.mp3";
 		mass		=	1500000;
 		cm_offset_x	=	51.5;
-		cm_offset_z	=	-2.7;
+		cm_offset_z	=	-3.5;
 		
 		integral_density	=	0.6;
 		water_resistance	=	1.3;
