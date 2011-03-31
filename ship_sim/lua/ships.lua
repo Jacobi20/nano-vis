@@ -97,7 +97,7 @@ function createCutter( x, y, z, yaw, pitch, roll )
 		cm_offset_z	=	-3.5;
 		
 		integral_density	=	0.6;
-		water_resistance	=	1.3;
+		water_resistance	=	0.1;
 		
 		
 		-- hxf_mesh	=	"scenes/boat.esx|hydromesh";

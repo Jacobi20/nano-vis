@@ -59,7 +59,7 @@ cfg.setvar('fr_waving_num_linear_samples'  , 1024);
 cfg.setvar('fr_waving_num_time_samples'    , 64);
 cfg.setvar('fr_gamma'                      , 0.9);
 cfg.setvar('fr_stereo_factor'              , -0.3);
-cfg.setvar('fr_waving_omega'               , 0);
+cfg.setvar('fr_waving_omega'               , 0.96);
 
 
 -- key bindings --
@@ -85,7 +85,10 @@ input.bind ("M", "control.state.ship_fw = true", "");
 input.bind ("N", "control.state.ship_fw = false", "");
 input.bind ("O", "control.state.id = true", "control.state.id = false");
 input.bind ("P", "control.state.iu = true", "control.state.iu = false");
+input.bind ("R", "cgame.restart_log()", "");
 input.bind ("S", "control.state.fw = true", "control.state.fw = false");
+input.bind ("T", "cgame.touch_ship()", "");
+input.bind ("W", "cgame.setup_waving()", "");
 input.bind ("X", "control.state.sr = true", "control.state.sr = false");
 input.bind ("Z", "control.state.bw = true", "control.state.bw = false");
 input.bind ("F1", "cfg.load()", "");
