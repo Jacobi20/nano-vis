@@ -62,14 +62,8 @@ function init()
 	game.setWaving( true );
 	game.setAmbient( 0.0, 0.0, 0.0 );
 	
-	--game.playCameraAnim('scenes/uboat_xxi.eax', 30);
-
-	ship	=	ships.createCutter(40, 0, 0.2, 90,0,0);
-
-	--	ship2	=	ships.createUBoat(-50,  0, 0, 45,0,0);
-	-- ship2	=	ships.createUBoat(10, 40,-20, 0,0,0);
-	-- ship3	=	ships.createUBoat(10,-40,-30, 0,0,0);
-	-- ship4	=	ships.createUBoat(10, 80,-40, 0,0,0);
+	ship	=	ships.createCutter(5, 0, 0.2-1, 90,0,0);
+	-- ship	=	ships.createUBoat(-50,  0, -5, 45,0,0);
 end
 
 
@@ -111,11 +105,25 @@ local function driveShip( dtime, ship )
 end
 
 
-local	ship_data = {};
-local	record_counter = 0;
-local	degree	= 0;
+local	ship_data 		= 	{};
+local	record_counter 	= 	0;
+local	degree			=	0;
+local 	ship_log 		=	nil;
+local 	shipwreck 		=	false;
+
 
 input.bind ( "F7",	 	"cgame.do_rolling()", "" );
+input.bind ( "T",	 	"cgame.touch_ship()", "" );
+input.bind ( "R",	 	"cgame.restart_log()", "" );
+
+function touch_ship()
+	local x,y,z,a,b,c = shipmodel.getPose(ship);
+	shipmodel.setPose(ship, x,y,z,a,0,15);
+end
+
+function restart_log()
+	ship_log = io.open("ship.log", "w");
+end
 
 -------------------------------------------------------------------------------
 -- rolling stuff :
@@ -123,7 +131,13 @@ input.bind ( "F7",	 	"cgame.do_rolling()", "" );
 function do_rolling()	
 
 	print("Virtual rolling started");
-
+	
+	user.fr_waving_wind		=	0;
+	user.fr_waving_omega	=	0;
+	game.setWaving( false );
+	game.setWaving( true );
+	
+	
 	local roll_log 		= io.open("roll.log", "w");
 	local x,y,z, a,b,c	= shipmodel.getPose(ship);
 	
@@ -160,15 +174,13 @@ end
 
 -------------------------------------------------------------------------------
 
-local ship_log = nil;
-
 --
 --	frame()
 --
 function frame( dtime )
 
 	if not ship_log then
-		ship_log = io.open("ship.log", "w");
+		restart_log();
 	end
 
 	core.debugString("FPS  : "..1/dtime);
@@ -177,22 +189,8 @@ function frame( dtime )
 
 	driveShip( dtime, ship );
 	
-	--
-	--	diagram :
-	--
-	-- if degree <= 120 then
-		-- degree = degree + 1;
-		
-		-- local x,y,z,a,b,c = shipmodel.getPose(ship);
-		-- shipmodel.setPose(ship, x,y,z,a,b,degree);
-		-- local sd = shipmodel.getDynamics(ship);
-		
-		
-	-- end
-	
 	local x,y,z,a,b,c = shipmodel.getPose(ship);
-	shipmodel.setPose(ship, 40,0,z,90,b,c);
-
+	--shipmodel.setPose(ship, 20,0,z,90,b,c);
 	
 	--
 	--	drawing :
@@ -201,60 +199,15 @@ function frame( dtime )
 	
 	local sd = shipmodel.getDynamics(ship);
 	
-	local out	= string.format("%f %f %f %f %f %f %f", sd.time, sd.yaw, sd.pitch, sd.roll, sd.position_x, sd.position_y, sd.position_z);
-	ship_log:write(out.."\n");
-	ship_log:flush();
+	if sd.roll > 120  then shipwreck = true end
+	if sd.roll < -120 then shipwreck = true end
 
-	
-	dv.drawPoint( sd.position_x, sd.position_y, sd.position_z, 1 );
-	
-	if record_counter==0 then
-		table.insert( ship_data, sd );
-	end
-	record_counter = record_counter + 1;
-	if record_counter>10 then
-		record_counter = 0;
-	end
-	
-	if #ship_data > 100 then table.remove(ship_data, 1); end
-
-	for i=2, #ship_data, 1 do
-		dv.setColor(1,1,0,0.5);
-		local x0	=	ship_data[i-1].position_x;
-		local y0	=	ship_data[i-1].position_y;
-		local z0	=	ship_data[i-1].position_z;
-		local x1	=	ship_data[i].position_x;
-		local y1	=	ship_data[i].position_y;
-		local z1	=	ship_data[i].position_z;
-		dv.drawLine( x0,y0,z0, x1,y1,z1 );
-		
-		--plotter.makePlot2D( ship_data,  1,1, "time", "position_z", 10,10,10 );
-		--plotter.makePlot2D( ship_data,  1,1, "time", "wave_height", 2,0,0 );
-		local offset = ship_data[1].time;
-		
-		dv.setColor(1,1,0,0.5);
-		dv.drawLine(	0, ship_data[i-1].time 	- offset,	0.1 * ship_data[i-1].roll,	
-						0, ship_data[i].time	- offset, 	0.1 * ship_data[i].roll 	);
-						
-		dv.setColor(1,0.5,0.5,0.5);
-		dv.drawLine(	0, ship_data[i-1].time 	- offset,	0.1 * ship_data[i-1].pitch,	
-						0, ship_data[i].time	- offset, 	0.1 * ship_data[i].pitch 	);
-						
-		dv.setColor(0,0.5,1,0.5);
-		dv.drawLine(	0, ship_data[i-1].time 	- offset, 	1 * ship_data[i-1].wave_height,	
-						0, ship_data[i].time 	- offset, 	1 * ship_data[i].wave_height 	);
-						
-	end
-	
-	dv.setColor(1,1,0,0.9);
-	for x=0, ship_data[#ship_data].time, 1 do
-		dv.drawPoint(0,x,0, 0.2);
-	end
-	for x=0, ship_data[#ship_data].time, 10 do
-		dv.drawPoint(0,x,0, 1.0);
+	if not shipwreck then
+		local out	= string.format("%f %f %f %f %f %f %f", sd.time, sd.yaw, sd.pitch, sd.roll, sd.position_x, sd.position_y, sd.position_z);
+		ship_log:write(out.."\n");
+		ship_log:flush();
 	end
 
-	dv.drawLine(0,0,0, 0, ship_data[#ship_data].time+1, 0,0);
 	core.debugString("Time ", sd.time);
 	
 end

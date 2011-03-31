@@ -69,6 +69,8 @@ function createUBoat( x, y, z, yaw, pitch, roll )
 		phys_mesh	=	"scenes/uboat.esx|physmesh";
 		engine_snd  =	"sound/submarine.mp3";
 		mass		=	2000000;
+		cm_offset_x	=	0;
+		cm_offset_z	=	0;
 		
 		integral_density	=	1;
 		water_resistance	=	2;
@@ -81,32 +83,33 @@ function createUBoat( x, y, z, yaw, pitch, roll )
 end
 
 
+
 function createCutter( x, y, z, yaw, pitch, roll )
 	local	id	=	game.spawnEntity();
 	
 	local desc = {
-		-- hxf_mesh	=	"scenes/stealth.esx|hydromesh";
-		-- vis_mesh	=	"scenes/stealth.esx|vismesh";
-		-- phys_mesh	=	"scenes/stealth.esx|physmesh";
-		-- engine_snd  =	"sound/submarine.mp3";
-		-- mass		=	700000;
-		-- cm_offset_x	=	42;
-		-- cm_offset_z	=	-3.2;
-		
-		-- integral_density	=	0.5;
-		-- water_resistance	=	1.3;
-		
-		
-		hxf_mesh	=	"scenes/boat.esx|hydromesh";
-		vis_mesh	=	"scenes/boat.esx|vismesh";
-		phys_mesh	=	"scenes/boat.esx|physmesh";
+		hxf_mesh	=	"scenes/stealth.esx|hydromesh";
+		vis_mesh	=	"scenes/stealth.esx|vismesh";
+		phys_mesh	=	"scenes/stealth.esx|physmesh";
 		engine_snd  =	"sound/submarine.mp3";
-		mass		=	500000;
-		cm_offset_x	=	20.5;
-		cm_offset_z	=	-3.5;
+		mass		=	1500000;
+		cm_offset_x	=	51.5;
+		cm_offset_z	=	-2.7;
 		
-		integral_density	=	1;
-		water_resistance	=	0.2;
+		integral_density	=	0.6;
+		water_resistance	=	1.3;
+		
+		
+		-- hxf_mesh	=	"scenes/boat.esx|hydromesh";
+		-- vis_mesh	=	"scenes/boat.esx|vismesh";
+		-- phys_mesh	=	"scenes/boat.esx|physmesh";
+		-- engine_snd  =	"sound/submarine.mp3";
+		-- mass		=	500000;
+		-- cm_offset_x	=	20.5;
+		-- cm_offset_z	=	-2.5;
+		
+		-- integral_density	=	1;
+		-- water_resistance	=	0.2;
 	}
 	
 	entity.setupShip( id, desc );

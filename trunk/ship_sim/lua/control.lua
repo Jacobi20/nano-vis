@@ -47,9 +47,9 @@ local posx 	= 0;
 local posy 	= 0;
 local posz 	= 10;
 
-local	l_camera_posx  = 5;
-local	l_camera_posy  = 10;
-local	l_camera_posz  = 2;
+local	l_camera_posx  = 60;
+local	l_camera_posy  = 20;
+local	l_camera_posz  = 12;
 local	l_camera_yaw   = -90;
 local	l_camera_pitch = 0;
 local	l_camera_roll  = 90;
@@ -146,7 +146,7 @@ function update(dtime, ship)
 		target_interp = 0;
 	end
 	
-	current_interp = 0.99*current_interp + 0.01*target_interp;
+	current_interp = 0.9*current_interp + 0.1*target_interp;
 	if current_interp > 1.0 then 
 		current_interp = 1.0; 
 	end
@@ -191,8 +191,8 @@ function update(dtime, ship)
 	local fmag = 0;
 	local pos  = 0;
 	local rz   = 0;
-	if state.ship_fw then fmag = -12000000; pos = 20; end
-	if state.ship_bw then fmag =  12000000; pos = -20; end
+	if state.ship_fw then fmag = -120000000; pos = 20; end
+	if state.ship_bw then fmag =  120000000; pos = -20; end
 	if state.ship_r then rz = -15; end
 	if state.ship_l then rz =  15; end
 	local fx = -math.cos( math.rad( yaw + rz ) ) * math.cos( math.rad( pitch ) ) * fmag;
