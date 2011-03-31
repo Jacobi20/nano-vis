@@ -62,8 +62,10 @@ function init()
 	game.setWaving( true );
 	game.setAmbient( 0.0, 0.0, 0.0 );
 	
-	ship	=	ships.createCutter(5, 0, 0.2-1, 90,0,0);
+	ship	=	ships.createCutter(5, 0, 0.2-1+0.06, 90,0,0);
 	-- ship	=	ships.createUBoat(-50,  0, -5, 45,0,0);
+	
+	setup_waving();
 end
 
 
@@ -115,6 +117,7 @@ local 	shipwreck 		=	false;
 input.bind ( "F7",	 	"cgame.do_rolling()", "" );
 input.bind ( "T",	 	"cgame.touch_ship()", "" );
 input.bind ( "R",	 	"cgame.restart_log()", "" );
+input.bind ( "W",	 	"cgame.setup_waving()", "" );
 
 function touch_ship()
 	local x,y,z,a,b,c = shipmodel.getPose(ship);
@@ -123,6 +126,14 @@ end
 
 function restart_log()
 	ship_log = io.open("ship.log", "w");
+end
+
+function setup_waving()
+	user.fr_waving_wind			=	0;
+	user.fr_waving_omega		=	1*0.96;	--0.98;
+	user.fr_waving_narrowness	=	8;
+	game.setWaving( false );
+	game.setWaving( true );
 end
 
 -------------------------------------------------------------------------------
@@ -140,6 +151,8 @@ function do_rolling()
 	
 	local roll_log 		= io.open("roll.log", "w");
 	local x,y,z, a,b,c	= shipmodel.getPose(ship);
+	
+	record_counter = record_counter + 1;
 	
 	for roll=0, 180, 5 do 
 		shipmodel.setPose(ship, x,y,z, 0,0,roll);
@@ -190,7 +203,7 @@ function frame( dtime )
 	driveShip( dtime, ship );
 	
 	local x,y,z,a,b,c = shipmodel.getPose(ship);
-	--shipmodel.setPose(ship, 20,0,z,90,b,c);
+	shipmodel.setPose(ship, 50,50,z,90,b,c);
 	
 	--
 	--	drawing :
@@ -202,10 +215,14 @@ function frame( dtime )
 	if sd.roll > 120  then shipwreck = true end
 	if sd.roll < -120 then shipwreck = true end
 
-	if not shipwreck then
-		local out	= string.format("%f %f %f %f %f %f %f", sd.time, sd.yaw, sd.pitch, sd.roll, sd.position_x, sd.position_y, sd.position_z);
-		ship_log:write(out.."\n");
-		ship_log:flush();
+	record_counter = record_counter + 1;
+	if record_counter > 5 then
+		if not shipwreck then
+			local out	= string.format("%f %f %f %f %f %f %f %f", sd.time, sd.yaw, sd.pitch, sd.roll, sd.position_x, sd.position_y, sd.position_z, sd.wave_height);
+			ship_log:write(out.."\n");
+			ship_log:flush();
+		end
+		record_counter = 0;
 	end
 
 	core.debugString("Time ", sd.time);
