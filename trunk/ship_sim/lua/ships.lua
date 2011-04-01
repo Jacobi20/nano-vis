@@ -94,22 +94,25 @@ function createCutter( x, y, z, yaw, pitch, roll )
 		engine_snd  =	"sound/submarine.mp3";
 		mass		=	1500000;
 		cm_offset_x	=	51.5;
-		cm_offset_z	=	-3.5;
+		cm_offset_z	=	-3.0;
+		--	lower: increase roll period
 		
-		integral_density	=	0.6;
-		water_resistance	=	0.1;
+		integral_density	=	4.0;
+		water_resistance	=	0.0;
+		water_resistance2	=	0.3;
+		water_viscosity		=	0.0;
 		
 		
 		-- hxf_mesh	=	"scenes/boat.esx|hydromesh";
 		-- vis_mesh	=	"scenes/boat.esx|vismesh";
 		-- phys_mesh	=	"scenes/boat.esx|physmesh";
 		-- engine_snd  =	"sound/submarine.mp3";
-		-- mass		=	500000;
+		-- mass		=	600000;
 		-- cm_offset_x	=	20.5;
 		-- cm_offset_z	=	-2.5;
 		
-		-- integral_density	=	1;
-		-- water_resistance	=	0.2;
+		-- integral_density	=	3;
+		-- water_resistance	=	1.0;
 	}
 	
 	entity.setupShip( id, desc );

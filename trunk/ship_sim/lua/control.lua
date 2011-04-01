@@ -47,9 +47,9 @@ local posx 	= 0;
 local posy 	= 0;
 local posz 	= 10;
 
-local	l_camera_posx  = 60;
-local	l_camera_posy  = 20;
-local	l_camera_posz  = 12;
+local	l_camera_posx  = -10;
+local	l_camera_posy  = 30;
+local	l_camera_posz  = 30;
 local	l_camera_yaw   = -90;
 local	l_camera_pitch = 0;
 local	l_camera_roll  = 90;
@@ -191,14 +191,14 @@ function update(dtime, ship)
 	local fmag = 0;
 	local pos  = 0;
 	local rz   = 0;
-	if state.ship_fw then fmag = -120000000; pos = 20; end
-	if state.ship_bw then fmag =  120000000; pos = -20; end
+	if state.ship_fw then fmag = -12000000; pos = 20; end
+	if state.ship_bw then fmag =  12000000; pos = -20; end
 	if state.ship_r then rz = -15; end
 	if state.ship_l then rz =  15; end
 	local fx = -math.cos( math.rad( yaw + rz ) ) * math.cos( math.rad( pitch ) ) * fmag;
 	local fy = -math.sin( math.rad( yaw + rz ) ) * math.cos( math.rad( pitch ) ) * fmag;
 	local fz = -math.sin( math.rad( pitch ) ) * fmag;
-	shipmodel.addForce( ship, fx, fy, 0, pos,0,-1 );
+	shipmodel.addForce( ship, fx, fy, 0, pos,0,-0.5 );
 	
 	---core.debugString(fmag, yaw, fx, fy, fz);
 	
