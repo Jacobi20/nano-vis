@@ -130,8 +130,8 @@ end
 
 function setup_waving()
 	user.fr_waving_wind			=	0;
-	user.fr_waving_omega		=	1*0.96;	--0.98;
-	user.fr_waving_narrowness	=	8;
+	user.fr_waving_omega		=	2*0.96;	--0.98;
+	user.fr_waving_narrowness	=	800;
 	game.setWaving( false );
 	game.setWaving( true );
 end
