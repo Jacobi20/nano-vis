@@ -24,7 +24,7 @@ cfg.setvar('phys_draw_constraints'         , false);
 cfg.setvar('phys_draw_constraint_limits'   , false);
 cfg.setvar('phys_fast_wireframe'           , false);
 cfg.setvar('phys_max_substeps'             , 10);
-cfg.setvar('phys_fixed_timestep'           , 0.0166667);
+cfg.setvar('phys_fixed_timestep'           , 0.01);
 cfg.setvar('phys_linear_damping'           , 0.01);
 cfg.setvar('phys_angular_damping'          , 0.01);
 cfg.setvar('phys_linear_sleep_treshold'    , 0.01);
@@ -52,14 +52,14 @@ cfg.setvar('sound_max_distance'            , 10000);
 cfg.setvar('sound_min_distance'            , 1);
 cfg.setvar('fr_waving_wind'                , 0);
 cfg.setvar('fr_waving_max_frequency'       , 6);
-cfg.setvar('fr_waving_narrowness'          , 800);
+cfg.setvar('fr_waving_narrowness'          , 8);
 cfg.setvar('fr_waving_num_harmonics'       , 20);
 cfg.setvar('fr_waving_num_dirs'            , 12);
 cfg.setvar('fr_waving_num_linear_samples'  , 1024);
 cfg.setvar('fr_waving_num_time_samples'    , 64);
 cfg.setvar('fr_gamma'                      , 0.9);
 cfg.setvar('fr_stereo_factor'              , -0.3);
-cfg.setvar('fr_waving_omega'               , 1.92);
+cfg.setvar('fr_waving_omega'               , 0);
 
 
 -- key bindings --
@@ -85,9 +85,10 @@ input.bind ("M", "control.state.ship_fw = true", "");
 input.bind ("N", "control.state.ship_fw = false", "");
 input.bind ("O", "control.state.id = true", "control.state.id = false");
 input.bind ("P", "control.state.iu = true", "control.state.iu = false");
-input.bind ("R", "cgame.restart_log()", "");
+input.bind ("Q", "cgame.restart_log()", "");
+input.bind ("R", "cgame.touch_ship_roll()", "");
 input.bind ("S", "control.state.fw = true", "control.state.fw = false");
-input.bind ("T", "cgame.touch_ship()", "");
+input.bind ("T", "cgame.touch_ship_heave()", "");
 input.bind ("W", "cgame.setup_waving()", "");
 input.bind ("X", "control.state.sr = true", "control.state.sr = false");
 input.bind ("Z", "control.state.bw = true", "control.state.bw = false");

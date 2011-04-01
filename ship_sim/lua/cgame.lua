@@ -115,13 +115,19 @@ local 	shipwreck 		=	false;
 
 
 input.bind ( "F7",	 	"cgame.do_rolling()", "" );
-input.bind ( "T",	 	"cgame.touch_ship()", "" );
-input.bind ( "R",	 	"cgame.restart_log()", "" );
+input.bind ( "T",	 	"cgame.touch_ship_heave()", "" );
+input.bind ( "R",	 	"cgame.touch_ship_roll()", "" );
+input.bind ( "Q",	 	"cgame.restart_log()", "" );
 input.bind ( "W",	 	"cgame.setup_waving()", "" );
 
-function touch_ship()
+function touch_ship_roll()
 	local x,y,z,a,b,c = shipmodel.getPose(ship);
 	shipmodel.setPose(ship, x,y,z,a,0,15);
+end
+
+function touch_ship_heave()
+	local x,y,z,a,b,c = shipmodel.getPose(ship);
+	shipmodel.setPose(ship, x,y,z-0.5,a,0,0);
 end
 
 function restart_log()
@@ -130,8 +136,8 @@ end
 
 function setup_waving()
 	user.fr_waving_wind			=	0;
-	user.fr_waving_omega		=	2*0.96;	--0.98;
-	user.fr_waving_narrowness	=	800;
+	user.fr_waving_omega		=	0;
+	user.fr_waving_narrowness	=	8;
 	game.setWaving( false );
 	game.setWaving( true );
 end
