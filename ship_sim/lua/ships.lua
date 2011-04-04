@@ -94,7 +94,7 @@ function createCutter( x, y, z, yaw, pitch, roll )
 		engine_snd  =	"sound/submarine.mp3";
 		mass		=	1500000;
 		cm_offset_x	=	51.5;
-		cm_offset_z	=	-3.0;
+		cm_offset_z	=	-3.35;
 		--	lower: increase roll period
 		
 		integral_density	=	4.0;

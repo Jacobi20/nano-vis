@@ -62,7 +62,7 @@ function init()
 	game.setWaving( true );
 	game.setAmbient( 0.0, 0.0, 0.0 );
 	
-	ship	=	ships.createCutter(5, 0, 0.2-1+0.06, 90,0,0);
+	ship	=	ships.createCutter(5, 0, -0.86, 90,0,0);
 	-- ship	=	ships.createUBoat(-50,  0, -5, 45,0,0);
 	
 	setup_waving();
@@ -115,8 +115,8 @@ local 	shipwreck 		=	false;
 
 
 input.bind ( "F7",	 	"cgame.do_rolling()", "" );
-input.bind ( "T",	 	"cgame.touch_ship_heave()", "" );
-input.bind ( "R",	 	"cgame.touch_ship_roll()", "" );
+input.bind ( "T",	 	"cgame.touch_ship_heave();	cgame.restart_log()", "" );
+input.bind ( "R",	 	"cgame.touch_ship_roll();	cgame.restart_log()", "" );
 input.bind ( "Q",	 	"cgame.restart_log()", "" );
 input.bind ( "W",	 	"cgame.setup_waving()", "" );
 
