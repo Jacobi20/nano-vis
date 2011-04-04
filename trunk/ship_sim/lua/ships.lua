@@ -97,7 +97,7 @@ function createCutter( x, y, z, yaw, pitch, roll )
 		cm_offset_z	=	-3.35;
 		--	lower: increase roll period
 		
-		integral_density	=	4.0;
+		integral_density	=	1.0;
 		water_resistance	=	0.0;
 		water_resistance2	=	0.3;
 		water_viscosity		=	0.0;
