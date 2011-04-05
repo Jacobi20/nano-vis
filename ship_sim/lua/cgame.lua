@@ -248,7 +248,7 @@ function setup_exp03()
 
 	game.killEntity( ship );
 	ship	=	ships.createCutter(5, 0, -0.86, 90,0,0);
-	ship_log = io.open(string.format("ship_pr_%02d_%02d_%03d.log", a,b, n), "w");
+	ship_log = io.open(string.format("ship_pr_%03d_%02d_%02d.log", n, a,b), "w");
 end
 
 
@@ -292,6 +292,7 @@ function frame( dtime )
 	end
 
 	if exp03_running then
+		core.debugString("* EXPERIMENT IS RUNNING *");
 		if sd.time > EXP03_TIME then
 			setup_exp03()
 		end
