@@ -98,3 +98,4 @@ input.bind ("F5", "if reloadPackages then reloadPackages() end; game.runGame('sc
 input.bind ("F6", "render.reloadShaders()", "");
 input.bind ("F7", "cgame.do_rolling()", "");
 input.bind ("F10", "", "core.quit()");
+input.bind ("TILDE", "engine.openConsole()", "");
