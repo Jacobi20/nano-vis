@@ -1,7 +1,7 @@
 /*
 	The MIT License
 
-	Copyright (c) 2011 Escience Research Institute
+	Copyright (c) 2009 IFMO/GameDev Studio
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -22,34 +22,56 @@
 	THE SOFTWARE.
 */
 
-#pragma once
 
 /*-----------------------------------------------------------------------------
-	MAGNET
+	ISOMETRICAL SHOT :
 -----------------------------------------------------------------------------*/
 
-class MagnetGame : public IGame {
-	public:
-						MagnetGame	( void );
-						~MagnetGame	( void );
-		virtual void	Frame		( uint dtime );
-		
-	protected:
-		uint time;
+proc string NumToString(float $num)
+{
+	if ( $num < 10 )  return  "00" + $num;
+	if ( $num < 100 ) return  "0" + $num;
+	if ( $num < 1000 ) return "" + $num;
+	return $num;
+}
+
+//
+//	entityLockAttribute
+//	- makes attribute read-only
+//	
+global proc isoShot(float $dist, float $angle)
+{
+	string $path[] = `camera -orthographic true -orthographicWidth 20` ;
 	
-		void			SetupCamera		( void );
-		void			UpdateMagnets	( void );
-		
-		IPxFRLight		light;
+	float $x =  sin ($angle / 57.29) * 2 * $dist;
+	float $y = cos ($angle / 57.29) * 2 * $dist;
+	move -r $x $y $dist;
 	
-		IPxFREntity		base_rend;
-		IPxPhysEntity	base_phys;
-		
-		class Magnet {
-		public:
-			IPxFREntity		rend_obj;
-			IPxPhysEntity	phys_obj;
-		};
-		
-		vector<Magnet>	magnets;
-	};
+	string $attr;
+	$attr = $path[0] + ".shearYZ";
+	setAttr $attr -2;
+
+	$attr = $path[0] + ".rotateZ";
+	$a    = 180 - $angle;
+	setAttr $attr $a;
+	
+	string $iffimage    = `render -x 128 -y 128 $path[1]` ;
+	int     $strlen      = size ( $iffimage ) - 4;
+	string $numfix      = NumToString( $angle );
+	string $psdimage    = `substring $iffimage 1 $strlen` + $numfix + ".psd";
+	string $pngimage    = `substring $iffimage 1 $strlen` + $numfix + ".png";
+	
+	convertIffToPsd -iffFileName $iffimage -psdFileName $psdimage;
+	
+	psdExport -ifn $psdimage -ofn $pngimage -layerName "RGB Layer" -for "png" -bpc 1;
+
+	
+	delete $path[0] $path[1];
+}
+
+
+for ($a=0; $a < 360; $a+=5) {
+	isoShot(20, $a);
+}
+
+

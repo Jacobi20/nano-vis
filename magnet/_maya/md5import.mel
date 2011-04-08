@@ -1,0 +1,1479 @@
+// =========================================================================================
+// md5toMaya / md5import - import doom 3 models in maya - by seith (this is a BETA version)
+// =========================================================================================
+// --> whith a HUGE help from "nobdhy" to get the baseframe in, and the equations right! <--
+// --> with all my thanks to the people from doom3world.org !!!
+// --> some small changes for commandline usage by MrHTFord.
+// ----------------------------------------------------------------------------------------
+
+global string $md5toMayaVersion = "1.9b";
+global string $gDoomBasePath = "d:/"; //print ("\n$gDoomBasePath="+$gDoomBasePath);
+global string $gDoomModelPath;
+$gDoomModelPath = $gDoomBasePath; //print ("\n$gDoomModelPath="+$gDoomModelPath);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////// Legacy procs required for Maya 5.X support ///////////////////////////////////
+
+global proc string basename( string $path, string $suffix )
+{
+	if ( `about -nt`  || `about -mac`)
+		$path = convert( $path );
+
+	// Check to make sure we're not chopping off slash if
+	// it's the only path delimiter!
+	if ( (match( "^/$", $path ) == "") && // Root dir 
+		(match( "^[A-Za-z]:/$", $path ) == "" ) ) // X:/ on NT
+	{
+		// Strip off last '/', if it exists
+		$path = substitute("/$", $path, "");
+	}
+
+	string $basename;
+	// Is this a UNC path?
+	if ( match( "^//", $path ) != "" )
+	{
+		// If so, we check if there is anything after the first 
+		// component of the path. If not, we return nothing.
+		if ( match( "^//.*/.*", $path ) != "" )
+			$basename = match( "[^/]*$", $path );
+		else
+			return "";
+	}
+	else // We get everything after the last "/"
+		$basename = match("[^/]*$", $path);
+
+	// if $suffix is given, replace it (if it's at the end) with ""
+	if ( size( $suffix ) != 0 )
+	{
+		$suffix = $suffix + "$";
+		$basename = substitute( $suffix, $basename, "" );		
+	}
+
+	return $basename;
+}
+
+global proc string basenameEx(string $path)
+{
+	string $extension = fileExtension($path);
+
+	if ("" != $extension)
+		$extension = "." + $extension;
+
+	return basename($path, $extension);
+}
+
+global proc string fileExtension(string $file)
+{
+	string $result = "";
+
+	if ("" == $file) return $result;
+
+	string $buffer[];
+	int $count;
+	$count = `tokenize $file "." $buffer`;
+		if ($count > 1)
+			$result = ($buffer[$count - 1]);
+
+	return $result;
+}
+
+global proc int endsWith(string $s, string $suffix)
+{
+	int $endsWith = false;
+	int $sLength = size($s);
+	int $suffixLength = size($suffix);
+
+	if ($sLength >= $suffixLength)
+	{
+		if (endString($s, $suffixLength) == $suffix)
+			$endsWith = true;
+	}
+	return $endsWith;
+}
+
+global proc string endString(string $s, int $count)
+{
+	string $out;
+
+	int $sLength = size($s);
+	if (($count > 0) && ($sLength > 0))
+	{
+		if ($count > $sLength)
+			$count = $sLength;
+
+		$out = substring($s, $sLength - $count + 1, $sLength);
+	}
+	return $out;
+}
+
+//////////////////////// End of legacy procs required for Maya 5.X support ////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// ========================================================================================
+// Multiply two quaternions together to get a third and normalize it
+// ========================================================================================
+
+global proc float[] quatMultiply(float $Q1[], float $Q2[])
+{
+	float $result[];
+
+	vector $v1 = << $Q1[0], $Q1[1], $Q1[2] >>;
+	vector $v2 = << $Q2[0], $Q2[1], $Q2[2] >>;
+	float $s1 = $Q1[3];
+	float $s2 = $Q2[3];
+
+	//Expanded out the cross product just to make sure it was right
+	//vector $v3 = $s1 * $v2 + $s2 * $v1 + cross($v1,$v2);
+	float $v3x = $s1 * $v2.x + $s2 * $v1.x + ($v1.y * $v2.z - $v1.z * $v2.y);
+	float $v3y = $s1 * $v2.y + $s2 * $v1.y + ($v1.z * $v2.x - $v1.x * $v2.z);
+	float $v3z = $s1 * $v2.z + $s2 * $v1.z + ($v1.x * $v2.y - $v1.y * $v2.x);
+	//float $s3 = $s1*$s2 - dot($v1,$v2);
+	float $s3 = $s1 * $s2 - ( ($v1.x * $v2.x) + ($v1.y * $v2.y) + ($v1.z * $v2.z) );
+
+	// Normalize Quaternion
+	//float $mag = sqrt( ($v3.x*$v3.x) + ($v3.y*$v3.y) + ($v3.z*$v3.z) + ($s3 * $s3) );
+	float $mag = sqrt( ($v3x*$v3x) + ($v3y*$v3y) + ($v3z*$v3z) + ($s3 * $s3) );
+
+	$result[0] = $v3x / $mag;
+	$result[1] = $v3y / $mag;
+	$result[2] = $v3z / $mag;
+	$result[3] = $s3 / $mag;
+	return $result;
+}
+
+// ========================================================================================
+// calculate quaternion X, Y, Z, W from euler rot X, Y, Z
+// ========================================================================================
+
+global proc float[] quatRot ( float $x, float $y, float $z )
+{
+	float $quatRot[] = {};
+
+	$x = deg_to_rad( $x );
+	$y = deg_to_rad( $y );
+	$z = deg_to_rad( $z );
+
+	float $chr;
+	float $chp;
+	float $chd;
+	float $shr;
+	float $shr;
+	float $shr;
+
+	$chr = cos($x/2);  $shr = sin($x/2); // Radians of course 
+	$chp = cos($y/2);  $shp = sin($y/2);
+	$chd = cos($z/2);  $shd = sin($z/2);
+
+	$quatRot[0]=-($chd*$chp*$shr-$shd*$shp*$chr);
+	$quatRot[1]=-($chd*$shp*$chr+$shd*$chp*$shr);
+	$quatRot[2]=-($shd*$chp*$chr-$chd*$shp*$shr);
+	$quatRot[3]=-($chd*$chp*$chr+$shd*$shp*$shr);
+	return $quatRot;
+}
+
+// ========================================================================================
+// Transform a point by a quaternion
+// ========================================================================================
+
+global proc vector transformPoint(vector $point, float $Quat[])
+{
+	float $quatx = $Quat[0];
+	float $quaty = $Quat[1];
+	float $quatz = $Quat[2];
+	float $quatw = $Quat[3];
+	float $pointx = $point.x;
+	float $pointy = $point.y;
+	float $pointz = $point.z;
+
+	float $quatw2 = $quatw*2;
+	float $tempX, $tempY, $tempZ;
+
+	float $s2minusv2 = ($quatw*$quatw) - ($quatx*$quatx) - ($quaty*$quaty) - ($quatz*$quatz);
+	float $vDotPtimes2 = 2 * (($quatx*$pointx) + ($quaty*$pointy) + ($quatz*$pointz));
+
+	$tempX = ($s2minusv2 * $pointx) + ($vDotPtimes2 * $quatx);
+	$tempY = ($s2minusv2 * $pointy) + ($vDotPtimes2 * $quaty);
+	$tempZ = ($s2minusv2 * $pointz) + ($vDotPtimes2 * $quatz);
+
+	$tempX = ($tempX + $quatw2*($quaty*$pointz - $quatz*$pointy));
+	$tempY = ($tempY + $quatw2*($quatz*$pointx - $quatx*$pointz));
+	$tempZ = ($tempZ + $quatw2*($quatx*$pointy - $quaty*$pointx));
+
+	vector $result = << $tempX, $tempY, $tempZ >>;
+	return $result;
+}
+
+// ========================================================================================
+// calculate euler rot X, Y, Z from quaternion X, Y, Z, W
+// ========================================================================================
+
+global proc float[] eulerRot ( float $qx, float $qy, float $qz, float $qw )
+{
+	float $rotation[] = {};
+	float $matrix[] = {};
+
+	float $x = $qx;
+	float $y = $qy;
+	float $z = $qz;
+	float $w = $qw;
+
+	float $ww = $w*$w;
+	float $xx = $x*$x;
+	float $yy = $y*$y;
+	float $zz = $z*$z;
+	float $s = 2.0 / ($ww + $xx + $yy + $zz);
+	float $xy = $x*$y;
+	float $xz = $x*$z;
+	float $yz = $y*$z;
+	float $wx = $w*$x;
+	float $wy = $w*$y;
+	float $wz = $w*$z;
+
+	$matrix[0] = 1.0 - $s * ($yy + $zz);
+	$matrix[1] = $s * ($xy + $wz);
+	$matrix[2] = $s * ($xz - $wy);
+	$matrix[5] = 1.0 - $s * ($xx + $zz);
+	$matrix[6] = $s * ($yz + $wx);
+	$matrix[9] = $s * ($yz - $wx);
+	$matrix[10] = 1.0 - $s * ($xx + $yy);
+
+	// ----------------------------------
+	// 5- get x,y,z values for rotation
+	// ----------------------------------
+
+	float $solution1[];
+	float $solution2[];
+	float $cosB = sqrt( $matrix[0]*$matrix[0] + $matrix[1]*$matrix[1] );
+
+	if ( $cosB > 1.0e-10 )
+	{
+		float $a, $b, $c;
+		float $pi = 3.14159265;
+
+		$solution1[0] = $a = atan2( $matrix[6], $matrix[10]);
+		$solution1[1] = $b = atan2(-$matrix[2], $cosB);
+		$solution1[2] = $c = atan2( $matrix[1], $matrix[0]);
+
+		$solution2[0] = $a + (($a < $pi) ? $pi : -$pi);
+		$solution2[1] = (($b > -$pi) ? $pi : -$pi) - $b;
+		$solution2[2] = $c + (($c < $pi) ? $pi : -$pi);    
+
+		if ( abs($solution2[0]) + abs($solution2[1]) + abs($solution2[2]) < 
+			abs($solution1[0]) + abs($solution1[1]) + abs($solution1[2]) )
+			$rotation = $solution2;
+		else 
+			$rotation = $solution1;
+	}
+	else
+	{
+		$rotation[0] = atan2(-$matrix[9], $matrix[5]);
+		$rotation[1] = atan2(-$matrix[2], $cosB);
+		$rotation[2] = 0.0;
+	}
+
+	$rotation[0] = rad_to_deg( $rotation[0] );
+	$rotation[1] = rad_to_deg( $rotation[1] );
+	$rotation[2] = rad_to_deg( $rotation[2] );
+	return $rotation;
+}
+
+// ==============================================================
+// build meshes
+// ==============================================================
+
+global proc buildMeshes ( string $meshFile, string $md5BasePath )
+{
+	global string $currentJointName[];
+	global int $numberOfJoints ;
+	global int $numberOfMeshes;
+
+	global vector $vertexPos[];
+
+	global float $u[];
+	global float $v[];
+	global int $startWeights[];
+	global int $numberOfWeights[];
+
+	global vector $tri[];
+
+	global int $weightJoint[];
+	global float $weightAmount[];
+	global vector $weightPos[];
+
+	global float $jointAbsOrientX[];
+	global float $jointAbsOrientY[];
+	global float $jointAbsOrientZ[];
+	global float $jointAbsOrientW[];
+	global float $jointAbsPosX[];
+	global float $jointAbsPosY[];
+	global float $jointAbsPosZ[];
+
+	global int $newStartWeights[];
+	global int $newNumberOfWeights[];
+
+	global int $newForOld[];
+
+	int $batchMode = `about -batch`;
+
+		// ------------------------------------------
+		// 1- get mesh components info
+		// ------------------------------------------
+
+		if ( !`filetest -r $meshFile` )
+			error "md5toMaya ===> Couldn't open the specified mesh file!";
+
+	$fileId = `fopen $meshFile "r"`;
+
+		string $tmp = `fgetword $fileId`;
+
+		while ( $tmp != "numMeshes" )
+		{
+			$tmp = `fgetword $fileId`;
+		}
+
+		int $numberOfMeshes = `fgetword $fileId`;
+
+			for ($n=0;$n<$numberOfMeshes;$n++)
+			{
+				clear $vertexPos;
+				clear $u; clear $v;
+				clear $startWeights;
+				clear $numberOfWeights;
+				clear $newNumberOfWeights;
+				clear $tri;
+				clear $weightJoint;
+				clear $weightAmount;
+				clear $weightPos;
+
+				string $tmp = `fgetword $fileId`;
+
+					while ( `fgetword $fileId` != "meshes:" )
+					{
+						string $tmp = `fgetword $fileId`;
+							if ( $tmp == "meshes:" ) break;
+					}
+
+					string $meshName = `fgetword $fileId`; print ( "$meshName = " + $meshName + "\n" );
+
+					if ( endsWith( $meshName, "," ) ) // <-- in case of a "," at the end of the string
+					{
+						string $buffer[] = {};
+						$numTokens = `tokenize $meshName "," $buffer`;
+							$meshName = $buffer[0];
+					}
+
+					while ( $tmp != "shader" )
+					{
+						string $tmp = `fgetword $fileId`;
+							if ( $tmp == "shader" ) break;
+					}
+
+					string $shaderName = `fgetword $fileId`; //print ( "$shaderName = " + $shaderName + "\n" );
+
+						while ( $tmp != "numverts" )
+						{
+							string $tmp = `fgetword $fileId`;
+								if ( $tmp == "numverts" ) break;
+						}
+
+						int $numVerts = `fgetword $fileId`; //print ( "$numVerts = " + $numVerts + "\n" );
+
+							// first the verts
+							for ($i=0;$i<$numVerts;$i++)
+							{
+								string $tmp = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" ); // vert
+									string $tmp = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" ); // [$i]
+									string $tmp = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" ); // (
+
+									$u[$i] = `fgetword $fileId`; //print ( "$u[" + $i + "] = " + $u[$i] + "\n" );
+									$v[$i] = `fgetword $fileId`; //print ( "$v[" + $i + "] = " + $v[$i] + "\n" );
+
+									string $tmp = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" ); // )
+
+									$startWeights[$i] = `fgetword $fileId`; //print ( "$startWeights[" + $i + "] = " + $startWeights[$i] + "\n" );
+									$numberOfWeights[$i] = `fgetword $fileId`; //print ( "$numberOfWeights[" + $i + "] = " + $numberOfWeights[$i] + "\n\n" );
+							}
+
+							// second the tris
+							string $tmp = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" ); // numtris
+								int $numTris = `fgetword $fileId`; //print ( "$numTris = " + $numTris + "\n" );
+
+								for ($i=0;$i<$numTris;$i++)
+								{
+									string $tmp = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" ); // tri
+										string $tmp = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" ); // numtri
+
+										int $tri1 = `fgetword $fileId`; //print ( "$numTris = " + $numTris + "\n" );
+										int $tri2 = `fgetword $fileId`; //print ( "$numTris = " + $numTris + "\n" );
+										int $tri3 = `fgetword $fileId`; //print ( "$numTris = " + $numTris + "\n" );
+
+										$tri[$i] = << $tri1, $tri2, $tri3 >>; //print $tri[$i]; print "\n\n";
+								}
+
+								// and last the weights
+								string $tmp = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" ); // numweights
+									int $numWeights = `fgetword $fileId`; //print ( "$numWeights = " + $numWeights + "\n" );
+
+									for ($i=0;$i<$numWeights;$i++)
+									{
+										string $tmp = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" ); // weight
+											string $tmp = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" ); // numweight
+
+											$weightJoint[$i] = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" ); // numweight
+											$weightAmount[$i] = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" ); // numweight
+
+											string $tmp = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" ); // (
+
+											float $wp1 = `fgetword $fileId`; //print ( "$numTris = " + $numTris + "\n" );
+											float $wp2 = `fgetword $fileId`; //print ( "$numTris = " + $numTris + "\n" );
+											float $wp3 = `fgetword $fileId`; //print ( "$numTris = " + $numTris + "\n" );
+
+											$weightPos[$i] = << $wp1, $wp2, $wp3 >>; //print $weightPos[$i]; print "\n";
+
+										string $tmp = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" ); // )
+									}
+
+									// ------------------------------------------------------
+									// 2- calculate vertex positions, based on the weights
+									// ------------------------------------------------------
+
+									for ($i=0;$i<$numVerts;$i++)
+									{
+										vector $weightAbsPos = << 0, 0, 0 >>;
+
+										for ($j=0;$j<$numberOfWeights[$i];$j++)
+										{
+											int $jointNumTmp = $weightJoint[$j+$startWeights[$i]];
+											string $jointNameTmp = $currentJointName[$jointNumTmp]; //print ( "$jointNameTmp " + $i + " = " + $jointNameTmp + "\n" );
+
+											float $absParentTranslationTmp[] = `xform -q -ws -rp $jointNameTmp`; // joint pos
+												vector $absParentTranslation = << $absParentTranslationTmp[0], $absParentTranslationTmp[1], $absParentTranslationTmp[2] >>;
+											float $absParentRotation[] = { $jointAbsOrientX[$jointNumTmp], $jointAbsOrientY[$jointNumTmp], $jointAbsOrientZ[$jointNumTmp], $jointAbsOrientW[$jointNumTmp] };
+
+											vector $relTranslation = $weightPos[$j+$startWeights[$i]]; //print ( "$relTranslation = " + $relTranslation + "\n" );
+											vector $absTrans = $absParentTranslation + transformPoint( $relTranslation, $absParentRotation ); //print ( "$absTrans = " + $absTrans + "\n" );
+
+											if ( $numberOfJoints == 1 )
+												$weightAbsPos = $relTranslation;
+											else
+												$weightAbsPos = $weightAbsPos + $absTrans;
+										}
+
+										$vertexPos[$i] = $weightAbsPos / $numberOfWeights[$i]; //print ( "$vertexPos[" + $i + "] = " + $vertexPos[$i] + "\n" );
+									}
+
+									// ------------------------------------------------------
+									// 3- output mesh to an .obj file
+									// ------------------------------------------------------
+
+									string $objFile = $md5BasePath + "md5toMaya.obj";
+									$objId = `fopen $objFile "w"`;
+										fwrite $objId ( "g " + $meshName );
+
+									for ($i=0;$i<$numVerts;$i++)
+									{
+										vector $vertex = $vertexPos[$i];
+										fwrite $objId ( "\nv " + $vertex.x + " " + $vertex.y + " " + $vertex.z );
+									}
+
+									for ($i=0;$i<$numVerts;$i++)
+										fwrite $objId ( "\nvt " + $u[$i] + " " + $v[$i] );
+
+									for ($i=0;$i<$numTris;$i++)
+									{
+										vector $face = $tri[$i];
+										fwrite $objId ( "\nf " + ($face.x+1) + "/" + ($face.x+1) + " " + ($face.y+1) + "/" + ($face.y+1) + " " + ($face.z+1) + "/" + ($face.z+1) );
+									}
+
+									fclose $objId;
+
+									// ------------------------------------------------------
+									// 3- import the .obj file
+									// ------------------------------------------------------
+
+									file -import -type "OBJ" -rpr $meshName -options "mo=1" $objFile;
+
+									// ------------------------------------------------------
+									// 4- swap weight's vertices index to account for new vertex # after combine
+									// ------------------------------------------------------
+
+									string $adjustedNumVerts[] = {};
+
+									for ($i=0;$i<$numVerts;$i++)
+									{
+										$adjustedNumVerts[$i] = $i;
+									}
+
+									int $amount = 0;
+									float $trueAmount = 1;
+									float $percent = 100.0 / $numVerts;
+
+									if ( !$batchMode )
+									{
+										progressWindow
+											-title ( "Mesh: " + $meshName )
+											-progress $amount
+											-status ( $amount + " %" )
+											-isInterruptable true;
+									}
+
+									// swap vertices index to comply with new mesh topology
+									for ($i=0;$i<$numVerts;$i++)
+									{
+										// -----------------------------------------
+										if ( !$batchMode )
+										{
+											$trueAmount = $trueAmount + $percent;
+											$amount = `clamp 1 100 $trueAmount`;
+												progressWindow -edit
+												-progress $amount
+												-status ( "Swapping Weights (" + ($n+1) + " of " + $numberOfMeshes + ") -> " + $amount + " %" );
+										}
+										// -----------------------------------------
+
+										vector $originalVertex = $vertexPos[$i];
+
+										for ($j=0;$j<`size $adjustedNumVerts`;$j++)
+										{
+											float $newVertexTmp[] = `xform -q -ws -t ($meshName + ".vtx[" + $adjustedNumVerts[$j] + "]")`;
+												vector $newVertex = << $newVertexTmp[0], $newVertexTmp[1], $newVertexTmp[2] >>;
+
+											if ( ( $newVertex.x >= $originalVertex.x - 0.01 &&
+												$newVertex.x <= $originalVertex.x + 0.01 ) &&
+												( $newVertex.y >= $originalVertex.y - 0.01 &&
+												$newVertex.y <= $originalVertex.y + 0.01 ) &&
+												( $newVertex.z >= $originalVertex.z - 0.01 &&
+												$newVertex.z <= $originalVertex.z + 0.01 ) )
+											{
+												//print ( "vertex original pos [" + $i + "] = " + $originalVertex + "\n" );
+												//print ( "vertex new pos      [" + $adjustedNumVerts[$j] + "] = " + $newVertex + "\n" );
+												int $jnum = $adjustedNumVerts[$j];
+												$newForOld[$jnum] = $i; //print ( "$newForOld[" + $jnum + "] = " + $i + "\n" );
+												$newStartWeights[$jnum] = $startWeights[$i]; //print ( "$newStartWeights[" + $j + "] = " + $newStartWeights[$j] + "\n" );
+												$newNumberOfWeights[$jnum] = $numberOfWeights[$i]; //print ( "$newNumberOfWeights[" + $j + "] = " + $newNumberOfWeights[$j] + "\n\n" );
+												$adjTmp[0] = $adjustedNumVerts[$j];
+												$adjustedNumVerts = stringArrayRemove( $adjTmp, $adjustedNumVerts ); //print "$adjTmp = "; print $adjTmp; print "\n";
+											}
+										}
+									}
+
+									// ------------------------------------------------------
+									// 5- bind mesh to skeleton
+									// ------------------------------------------------------
+
+									if ( !$batchMode )
+										progressWindow -edit -status ( "Smooth Binding Mesh " + ($n+1) + " of " + $numberOfMeshes + "..." );
+									select -r $meshName;
+									select -add $currentJointName[0];
+									skinCluster -mi 0 -n ("skinCluster" + ($n+1));
+
+									polyNormal -normalMode 0 -ch 1 $meshName;
+
+									// ------------------------------------------------------
+									// 6- apply weights to vertices
+									// ------------------------------------------------------
+
+									// first zero-out all the weights
+									skinPercent -prw 100 -normalize off ( "skinCluster" + ($n+1) ) $meshName;
+
+									int $amount = 0;
+									float $trueAmount = 1;
+									float $percent = 100.0 / $numVerts;
+
+									// then load the weights
+									for ($i=0;$i<$numVerts;$i++) // for all vertices
+									{
+										// -----------------------------------------
+										if ( !$batchMode )
+										{
+											$trueAmount = $trueAmount + $percent;
+											$amount = `clamp 1 100 $trueAmount`;
+												progressWindow -edit
+												-progress $amount
+												-status ( "Applying Weights (" + ($n+1) + " of " + $numberOfMeshes + ") -> " + $amount + " %" );
+										}
+										// -----------------------------------------
+
+										string $cmd = "";
+										float $totalWeight = 0;
+
+										for ($j=0;$j<$newNumberOfWeights[$i];$j++) // for all vertex'weights
+										{
+											int $jointNumTmp = $weightJoint[$j+$newStartWeights[$i]];
+											string $jointNameTmp = $currentJointName[$jointNumTmp]; //print ( "$jointNameTmp = " + $jointNameTmp + "\n" );
+											$totalWeight = $totalWeight + $weightAmount[$j+$newStartWeights[$i]];
+
+											if ( $totalWeight > 1 )
+												$weightAmount[$j+$newStartWeights[$i]] = $weightAmount[$j+$newStartWeights[$i]] - ( $totalWeight - 1 );
+
+											$cmd = $cmd + " -tv " + $jointNameTmp + " " + $weightAmount[$j+$newStartWeights[$i]]; //print ( "$cmd [" + $i + "] = " + $cmd + "\n" );
+										}
+
+										$cmd = ( "skinPercent" + $cmd + ( " skinCluster" + ($n+1) ) + " " + ( $meshName + ".vtx[" + $i + "]; " ) ); //print ( "$cmd [" + $i + "] = " + $cmd + "\n" );
+										eval ( $cmd ); //print ( "$realCmd = " + $realCmd + "\n" );
+									}
+
+									// ------------------------------------------------------
+									// 7- load and apply textures
+									// ------------------------------------------------------
+
+									string $buffer[] = {};
+									$numTokens = `tokenize $shaderName "\"" $buffer`;
+										$shaderName = $buffer[0];
+									string $picture = $md5BasePath + $shaderName + ".tga";
+
+									if ( !`filetest -r $picture` )
+										$picture = $md5BasePath + $shaderName + "_d.tga";
+
+									//	polySoftEdge -a 180 -ch 1 $meshName;
+									shadingNode -asShader lambert -n ( "lambert" + ($n+1) );
+									sets -renderable true -noSurfaceShader true -empty -name ( "lambert" + ($n+1) + "SG" );
+									connectAttr -f ( "lambert" + ($n+1) + ".outColor" ) ( "lambert" + ($n+1) + "SG.surfaceShader" );
+									shadingNode -asTexture file;
+									shadingNode -asUtility place2dTexture -n ( "place2dTexture" + ($n+1) );
+									connectAttr -f ( "place2dTexture" + ($n+1) + ".coverage" ) ( "file" + ($n+1) + ".coverage" );
+									connectAttr -f ( "place2dTexture" + ($n+1) + ".translateFrame" ) ( "file" + ($n+1) + ".translateFrame" );
+									connectAttr -f ( "place2dTexture" + ($n+1) + ".rotateFrame" ) ( "file" + ($n+1) + ".rotateFrame" );
+									connectAttr -f ( "place2dTexture" + ($n+1) + ".mirrorU" ) ( "file" + ($n+1) + ".mirrorU" );
+									connectAttr -f ( "place2dTexture" + ($n+1) + ".mirrorV" ) ( "file" + ($n+1) + ".mirrorV" );
+									connectAttr -f ( "place2dTexture" + ($n+1) + ".stagger" ) ( "file" + ($n+1) + ".stagger" );
+									connectAttr -f ( "place2dTexture" + ($n+1) + ".wrapU" ) ( "file" + ($n+1) + ".wrapU" );
+									connectAttr -f ( "place2dTexture" + ($n+1) + ".wrapV" ) ( "file" + ($n+1) + ".wrapV" );
+									connectAttr -f ( "place2dTexture" + ($n+1) + ".repeatUV" ) ( "file" + ($n+1) + ".repeatUV" );
+									connectAttr -f ( "place2dTexture" + ($n+1) + ".offset" ) ( "file" + ($n+1) + ".offset" );
+									connectAttr -f ( "place2dTexture" + ($n+1) + ".rotateUV" ) ( "file" + ($n+1) + ".rotateUV" );
+									connectAttr -f ( "place2dTexture" + ($n+1) + ".noiseUV" ) ( "file" + ($n+1) + ".noiseUV" );
+									connectAttr -f ( "place2dTexture" + ($n+1) + ".vertexUvOne" ) ( "file" + ($n+1) + ".vertexUvOne" );
+									connectAttr -f ( "place2dTexture" + ($n+1) + ".vertexUvTwo" ) ( "file" + ($n+1) + ".vertexUvTwo" );
+									connectAttr -f ( "place2dTexture" + ($n+1) + ".vertexUvThree" ) ( "file" + ($n+1) + ".vertexUvThree" );
+									connectAttr -f ( "place2dTexture" + ($n+1) + ".vertexCameraOne" ) ( "file" + ($n+1) + ".vertexCameraOne" );
+									connectAttr ( "place2dTexture" + ($n+1) + ".outUV" ) ( "file" + ($n+1) + ".uv" );
+									connectAttr ( "place2dTexture" + ($n+1) + ".outUvFilterSize" ) ( "file" + ($n+1) + ".uvFilterSize" );
+									connectAttr -force ( "file" + ($n+1) + ".outColor" ) ( "lambert" + ($n+1) + ".color" );
+									setAttr -type "string" ( "file" + ($n+1) + ".fileTextureName" ) $picture "image";
+									select -r $meshName;
+									string $shapeName[] = `ls -sl -dag -s -l`;
+										sets -edit -forceElement ( "lambert" + ($n+1) + "SG" ) $shapeName[0];
+									setAttr ( "place2dTexture" + ($n+1) + ".repeatV" ) -1;
+									setAttr ( "lambert" + ($n+1) + ".incandescence" ) -type double3 0.20512 0.20512 0.20512;
+
+									// finally parent the mesh to the meshes group
+									select -cl; parent $meshName meshes;
+			}
+
+			if( !$batchMode )
+				progressWindow -endProgress;
+			fclose $fileId;
+			select -cl;
+}
+
+// ========================================================================================
+// import md5mesh file (mesh/bindpose)
+// ========================================================================================
+
+global proc md5ImportMesh( string $meshFile, string $md5BasePath, int $skeletonOnly )
+{
+	global string $md5toMayaVersion;
+	global string $currentJointName[]; clear $currentJointName;
+	global string $parentJointName[]; clear $parentJointName;
+	global int $parentJointNumber[]; clear $parentJointNumber;
+	global int $numberOfJoints;
+	global int $numberOfMeshes;
+
+	global float $tx[];
+	global float $ty[];
+	global float $tz[];
+
+	global float $qx[];
+	global float $qy[];
+	global float $qz[];
+	global float $qw[];
+
+	global float $jointAbsOrientX[]; clear $jointAbsOrientX;
+	global float $jointAbsOrientY[]; clear $jointAbsOrientY;
+	global float $jointAbsOrientZ[]; clear $jointAbsOrientZ;
+	global float $jointAbsOrientW[]; clear $jointAbsOrientW;
+
+	// ---------------------------
+	// 1- determine model
+	// ---------------------------
+
+	$startTime = `timerX`;
+		$modelName = `basenameEx( $meshFile )`;
+		print( $meshFile );
+	if ( !`filetest -r $meshFile` )
+		error "dtm ===> Couldn't find the mesh file!";
+
+	//waitCursor -state on;
+	print ( "===> md5toMaya v" + $md5toMayaVersion + " => Loading Process Started...\n" );
+	group -empty -n "meshes";
+	xform -os -piv 0 0 0;
+
+	// ---------------------------
+	// 2- store the variables
+	// ---------------------------
+
+	$fileId=`fopen $meshFile "r"`;
+
+		string $tmp = `fgetword $fileId`;
+
+		while ( $tmp != "numJoints" )
+		{
+			$tmp = `fgetword $fileId`;
+		}
+
+		$numberOfJoints = `fgetword $fileId`; //print ("$numberOfJoints = " + $numberOfJoints + "\n");
+
+			string $tmp = `fgetword $fileId`;
+
+			$numberOfMeshes = `fgetword $fileId`; //print ("$numberOfMeshes = " + $numberOfMeshes + "\n");
+
+			string $tmp = `fgetword $fileId`;
+
+			while ( ($tmp == "joints")
+				|| ($tmp == "(")
+				|| ($tmp == ")")
+				|| ($tmp == "") )
+			{
+				$tmp = `fgetword $fileId`;
+			}
+
+			for ($i=0;$i<$numberOfJoints;$i++)
+			{
+				string $jointNameTmp = `fgetword $fileId`; //print ("$jointNameTmp = " + $currentJointName[$i] + "\n");
+
+					string $buffer[];
+				$numTokens = `tokenize $jointNameTmp "\"" $buffer`;
+					$currentJointName[$i] = $modelName + "_" + $buffer[0]; //print ("$currentJointName[" + $i + "] = " + $currentJointName[$i] + "\n");
+				$parentJointNumber[$i] = `fgetword $fileId`; //print ("$currentJointName[$i] = " + $currentJointName[$i] + "\n");
+
+					if ( $i>0 )
+						$parentJointName[$i] = $currentJointName[$parentJointNumber[$i]]; //print ( $currentJointName[$i] + " is parented to " +  $parentJointName[$i] + "\n\n");
+
+				fgetword $fileId;
+
+				// first the translations...
+				$tx[$i] = `fgetword $fileId`; //print ("$tx[$i] = " + $tx[$i] + "\n");
+					$ty[$i] = `fgetword $fileId`; //print ("$ty[$i] = " + $ty[$i] + "\n");
+					$tz[$i] = `fgetword $fileId`; //print ("$tz[$i] = " + $tz[$i] + "\n");
+
+					fgetword $fileId;
+				fgetword $fileId;
+
+				// ... then the rotations
+				$qx[$i] = `fgetword $fileId`; //print ("$qx[$i] = " + $qx[$i] + "\n");
+					$qy[$i] = `fgetword $fileId`; //print ("$qy[$i] = " + $qy[$i] + "\n");
+					$qz[$i] = `fgetword $fileId`; //print ("$qz[$i] = " + $qz[$i] + "\n");
+
+					float $tmp = 1 - ( ($qx[$i]*$qx[$i]) + ($qy[$i]*$qy[$i]) + ($qz[$i]*$qz[$i]));
+
+				if ( $tmp > 0 )
+					$qw[$i] = - sqrt( $tmp );
+				else
+					$qw[$i] = 0;
+
+				// ------------------------------------------
+				// 3- build the joint and set rotation axii
+				// ------------------------------------------
+
+				joint -p $tx[$i] $ty[$i] $tz[$i] -n $currentJointName[$i]; // print ("$qw[$i] = " + $qw[$i] + "\n\n");
+
+				if ( $i>0 ) // if it's not the origin, set it's parent
+				{
+					float $rotation[] = eulerRot ( $qx[$i], $qy[$i], $qz[$i], $qw[$i] );
+					setAttr -type float3 ($currentJointName[$i] + ".rotate") $rotation[0] $rotation[1] $rotation[2];
+					parent $currentJointName[$i] $parentJointName[$i];
+
+					// remember this for later use in "buildMeshes" proc
+					$jointAbsOrientX[$i] = $qx[$i];
+					$jointAbsOrientY[$i] = $qy[$i];
+					$jointAbsOrientZ[$i] = $qz[$i];
+					$jointAbsOrientW[$i] = $qw[$i];
+				}
+
+				fgetline $fileId;
+				select -cl;
+			}
+
+			fclose $fileId;
+
+			// ------------------------------------------
+			// 4- build all the meshes
+			// ------------------------------------------
+
+			if ( !$skeletonOnly )
+				buildMeshes ( $meshFile, $md5BasePath );
+
+			// -------------------------------------------------------
+			// 5- reorient the skeleton in correct space (Z axis up)
+			// -------------------------------------------------------
+
+			select -cl;
+			group -n $modelName ($modelName + "_" + "origin");
+			xform -os -piv 0 0 0;
+			rotate -r -os -90 0 0;
+			parent -world $modelName;
+			select -cl ;
+
+			// -------------------------------------------------------
+			// 6- output results (time) and tidy things up
+			// -------------------------------------------------------
+
+			//waitCursor -state off;
+			float $totalTime = `timerX -startTime $startTime`; //print ( "$totalTime = " + $totalTime + "\n" );
+				float $minTmp = $totalTime/60.0; //print ( "$minTmp = " + $minTmp + "\n" );
+			int $min = trunc( $minTmp ); //print ( "$min = " + $min + "\n" );
+			float $secTmp = $minTmp - $min; //print ( "$secTmp = " + $secTmp + "\n" );
+			int $sec = $secTmp*60; //print ( "$sec = " + $sec + "\n" );
+			string $timeMessage;
+
+			if ( $totalTime > 0 )
+				$timeMessage = "(Total Time: " + $min + " mn " + $sec + " s)\n";
+			else
+				$timeMessage = "(Total Time: " + $sec + " seconds)\n";
+
+			parent -r meshes $modelName;
+			setAttr "meshes.inheritsTransform" 0;
+			select -r meshes; fitPanel -select;
+			select -cl;
+			// show textures
+			DisplayShadedAndTextured;
+			// set persp clipping plane high enough so we see something when the model is HUGE
+			setAttr "perspShape.farClipPlane" 20000;
+			print ("md5toMaya ==> import mesh for \"" + $modelName + "\" done!   " + $timeMessage );
+}
+
+// ========================================================================================
+// import md5anim file
+// ========================================================================================
+
+global proc md5ImportAnim( string $animFile, string $meshFile, string $md5BasePath )
+{
+	global string $md5toMayaVersion;
+	global string $modelName;
+	global string $currentJointName[]; clear $currentJointName;
+	global string $parentJointName[]; clear $parentJointName;
+	global int $parentJointNumber[]; clear $parentJointNumber;
+	global string $attrList[]; clear $attrList;
+
+	global int $numberOfJoints = 0;
+	global int $numberOfMeshes = 0;
+	global int $numberOfFrames = 0;
+
+	global float $tx[]; clear $tx; // <-- the Tx, Ty and Tz from the anim file
+	global float $ty[]; clear $ty;
+	global float $tz[]; clear $tz;
+
+	global float $qx[]; clear $qx; // <-- the Qx, Qy and Qz from the anim file (without Qw)
+	global float $qy[]; clear $qy;
+	global float $qz[]; clear $qz;
+	global float $qw[]; clear $qw;
+
+	global matrix $animAttr[200][6]; // <- to store which attributes are animated (200 is Because it can't be dynamicaly determined!)
+
+	global float $jointAbsOrientX[]; clear $jointAbsOrientX;
+	global float $jointAbsOrientY[]; clear $jointAbsOrientY;
+	global float $jointAbsOrientZ[]; clear $jointAbsOrientZ;
+	global float $jointAbsOrientW[]; clear $jointAbsOrientW;
+	global float $jointAbsPosX[]; clear $jointAbsPosX;
+	global float $jointAbsPosY[]; clear $jointAbsPosY;
+	global float $jointAbsPosZ[]; clear $jointAbsPosZ;
+
+	int $batchMode = `about -batch`;
+
+		// set maya preferences to insure a correct playback (no screwy interpolations)
+		playbackOptions -playbackSpeed 1;
+	currentUnit -time film;
+	print ( "===> md5toMaya v" + $md5toMayaVersion + " => Loading Process Started...\n" );
+
+	// ---------------------------------------------------
+	// 1- get header info
+	// ---------------------------------------------------
+
+	if ( $animFile == "" )
+		error "md5ImportAnim aborted by user!";
+
+	$fileId=`fopen $animFile "r"`;
+
+		if ( !$fileId )
+			error "File doesn't exist or is unreadable!";
+
+	//waitCursor -state on;
+	// start time counter
+	$startTime = `timerX`;
+		$modelName = `basenameEx( $animFile )`;
+
+		// create a group for our meshes
+		group -empty -n "meshes";
+	xform -os -piv 0 0 0;
+
+	string $tmp = `fgetword $fileId`;
+
+		while ( $tmp != "numFrames" )
+		{
+			$tmp = `fgetword $fileId`;
+		}
+
+		$numberOfFrames = `fgetword $fileId`; //print ("$numberOfJoints = " + $numberOfJoints + "\n");
+			fgetword $fileId;
+		$numberOfJoints = `fgetword $fileId`; //print ("$numberOfJoints = " + $numberOfJoints + "\n");
+			fgetword $fileId;
+		$frameRate = `fgetword $fileId`; //print ("$numberOfJoints = " + $numberOfJoints + "\n");
+			fgetword $fileId;
+		$numAnimatedComponents = `fgetword $fileId`; //print ("$numberOfMeshes = " + $numberOfMeshes + "\n");
+
+			// set the timeline range to reflect animation length
+			playbackOptions -min 0 -max ($numberOfFrames-1);
+
+		string $tmp = `fgetword $fileId`;
+
+			// ---------------------------------------------------
+			// 2- get the hierarchy
+			// ---------------------------------------------------
+
+			for ($i=0;$i<$numberOfJoints;$i++) // for each row
+			{
+				for ($j=0;$j<6;$j++) // and each column
+				{
+					$animAttr[$i][$j] = 0; // clear the value
+				}
+			}
+
+			while ( ($tmp == "hierarchy")
+				|| ($tmp == "(")
+				|| ($tmp == ")")
+				|| ($tmp == "") )
+			{
+				$tmp = `fgetword $fileId`;
+			}
+
+			for ($i=0;$i<$numberOfJoints;$i++)
+			{
+				$jointNameTmp = `fgetword $fileId`; //print ("$jointNameTmp = " + $currentJointName[$i] + "\n");
+
+					string $buffer[];
+				$numTokens = `tokenize $jointNameTmp "\"" $buffer`;
+					$currentJointName[$i] = $modelName + "_" + $buffer[0]; //print ("$currentJointName[" + $i + "] = " + $currentJointName[$i] + "\n");
+				$parentJointNumber[$i] = `fgetword $fileId`; //print ("$parentJointNumber[$i] = " + $parentJointNumber[$i] + "\n");
+
+					int $bit = `fgetword $fileId`; //print ( "$bit = " + $bit + "\n" );
+					int $indexStart = `fgetword $fileId`; //print ( "$indexStart = " + $indexStart + "\n" );
+					string $tmp = `fgetword $fileId`;  //print ( "$tmp = " + $tmp + "\n" );
+
+					if ( $i > 0 )
+					{
+						$parentJointName[$i] = $currentJointName[$parentJointNumber[$i]]; //print ( $currentJointName[$i] + " is parented to " +  $parentJointName[$i] + "\n\n");
+						fgetword $fileId; // parent name
+					}
+
+					// if there is animation on this joint, get the animated attributes into a list
+					if ( $bit > 0 )
+					{
+						string $tmp = `fgetword $fileId`; //print ( "tmp = " + $tmp + "\n" );
+
+							while ( $tmp != ")" )
+							{
+								string $attrTmp = `fgetword $fileId`;
+
+									if ( $attrTmp == ")" )
+										break; //print ( "\n\n" );
+
+								// store all animated attributes in a list
+								$attrList = stringArrayCatenate( $attrList, { $attrTmp } ); //print ( "$attrTmp = " + $attrTmp + "\n" );
+							}
+					}
+
+					// ---------------------------------------------------
+					// 3- store which attributes are animated in a matrix
+					// (the poor man's binary switch)
+					// ---------------------------------------------------
+
+					for ($j=0;$j<`size $attrList`;$j++)
+					{
+						if ( $attrList[0] == "Tx" )
+						{
+							$animAttr[$i][0] = 1; // set the matrix corresponding flag
+							string $tmp[];
+							$tmp[0] = $attrList[0];
+							$attrList = stringArrayRemove($tmp, $attrList);
+						}
+
+						if ( $attrList[0] == "Ty" )
+						{
+							$animAttr[$i][1] = 1;
+							string $tmp[];
+							$tmp[0] = $attrList[0];
+							$attrList = stringArrayRemove($tmp, $attrList);
+						}
+
+						if ( $attrList[0] == "Tz" )
+						{
+							$animAttr[$i][2] = 1;
+							string $tmp[];
+							$tmp[0] = $attrList[0];
+							$attrList = stringArrayRemove($tmp, $attrList);
+						}
+
+						if ( $attrList[0] == "Qx" )
+						{
+							$animAttr[$i][3] = 1;
+							string $tmp[];
+							$tmp[0] = $attrList[0];
+							$attrList = stringArrayRemove($tmp, $attrList);
+						}
+
+						if ( $attrList[0] == "Qy" )
+						{
+							$animAttr[$i][4] = 1;
+							string $tmp[];
+							$tmp[0] = $attrList[0];
+							$attrList = stringArrayRemove($tmp, $attrList);
+						}
+
+						if ( $attrList[0] == "Qz" )
+						{
+							$animAttr[$i][5] = 1;
+							string $tmp[];
+							$tmp[0] = $attrList[0];
+							$attrList = stringArrayRemove($tmp, $attrList);
+						}
+					}
+
+					clear $attrList;
+			}
+
+			// ---------------------------------------------------
+			// 4- get the baseframe and build the joints
+			// ---------------------------------------------------
+
+			string $tmp = `fgetword $fileId`;
+
+				while ( ($tmp != "baseframe")
+					|| ($tmp == "(")
+					|| ($tmp == ")")
+					|| ($tmp == "") )
+				{
+					$tmp = `fgetword $fileId`;
+				}
+
+				fgetword $fileId;
+				fgetword $fileId;
+
+				int $amount = 0;
+				float $trueAmount = 0;
+				float $percent = 100.0 / $numberOfJoints;
+
+				if( !$batchMode )
+				{
+					progressWindow
+						-title "Building Baseframe"
+						-progress $amount
+						-status ( $amount + " %" )
+						-isInterruptable true;
+				}
+
+				for ($i=0;$i<$numberOfJoints;$i++)
+				{
+					// -----------------------------------------
+					if( !$batchMode )
+					{
+						$trueAmount = $trueAmount + $percent;
+						$amount = `clamp 1 100 $trueAmount`;
+							progressWindow -edit
+							-progress $amount
+							-status ( $amount + " %" );
+					}
+					// -----------------------------------------
+
+					if ( !$batchMode )
+					{
+						if ( `progressWindow -query -isCancelled` ) break;
+					}
+
+					// get the translations...
+					$tx[$i] = `fgetword $fileId`; //print ("$tx[$i] = " + $tx[$i] + "\n"); //print ( "$currentJointName[" + $i + "] = " + $currentJointName[$i] + " -> $parentJointName[$i] = " + $parentJointName[$i] + "\n"  );
+						$ty[$i] = `fgetword $fileId`; //print ("$ty[$i] = " + $ty[$i] + "\n");
+						$tz[$i] = `fgetword $fileId`; //print ("$tz[$i] = " + $tz[$i] + "\n");
+
+						fgetword $fileId;
+					fgetword $fileId;
+
+					// ... and the rotations
+					$qx[$i] = `fgetword $fileId`; //print ("$qx[$i] = " + $qx[$i] + "\n");
+						$qy[$i] = `fgetword $fileId`; //print ("$qy[$i] = " + $qy[$i] + "\n");
+						$qz[$i] = `fgetword $fileId`; //print ("$qz[$i] = " + $qz[$i] + "\n");
+
+						float $tmp2 = 1 - ( ($qx[$i]*$qx[$i]) + ($qy[$i]*$qy[$i]) + ($qz[$i]*$qz[$i]));
+
+					if ( $tmp2 > 0 )
+						$qw[$i] = - sqrt( $tmp2 );
+					else
+						$qw[$i] = 0;
+
+					fgetword $fileId; //print ("$qw[$i] = " + $qw[$i] + "\n\n");
+					fgetword $fileId;
+
+					// ---------------------------------------------------
+					// 5- build the baseframe joints
+					// ---------------------------------------------------
+
+					vector $absOrient;
+					vector $absTrans; //print ( "$currentJointName[" + $i + "] = " + $currentJointName[$i] + " -> $parentJointName[$i] = " + $parentJointName[$i] + "\n"  );
+
+					if ( $i == 0 ) // <-- it's the origin
+					{
+						//	Bone.absOrient = Bone.relOrient; 
+						//	Bone.absTrans = Bone.relTrans;
+						float $absOrientTmp[] = eulerRot ( $qx[$i], $qy[$i], $qz[$i], $qw[$i] );
+						$absOrient = << $absOrientTmp[0], $absOrientTmp[1], $absOrientTmp[2] >>;
+						$absTrans = << $tx[$i], $ty[$i], $tz[$i] >>;
+
+						//Save for later use
+						$jointAbsOrientX[0] = $qx[0];
+						$jointAbsOrientY[0] = $qy[0];
+						$jointAbsOrientZ[0] = $qz[0];
+						$jointAbsOrientW[0] = $qw[0];
+						$jointAbsPosX[0] = $tx[0];
+						$jointAbsPosY[0] = $ty[0];
+						$jointAbsPosZ[0] = $tz[0];
+
+						//Print out debug information
+						//print ("$absOrient (Quat)  = (" + $jointAbsOrientX[0] + ", " + $jointAbsOrientY[0] + ", " + $jointAbsOrientZ[0] + ", " + $jointAbsOrientW[0] + ")\n");
+						//print ("$absOrient (Euler) = (" + $absOrient.x + ", " + $absOrient.y + ", " + $absOrient.z + ")\n");
+						//print ("$absTrans = (" + $jointAbsPosX[0] + ", " + $jointAbsPosY[0] + ", " + $jointAbsPosX[0] + ")\n\n");
+					}
+
+					else
+					{
+						//Get our parent's absolute orientation/translation and our relative orientation/translation
+						int $parentJointNum = $parentJointNumber[$i];
+						float $absParentRotation[] = { $jointAbsOrientX[$parentJointNum], $jointAbsOrientY[$parentJointNum], $jointAbsOrientZ[$parentJointNum], $jointAbsOrientW[$parentJointNum] };
+						vector $absParentTranslation = << $jointAbsPosX[$parentJointNum], $jointAbsPosY[$parentJointNum], $jointAbsPosZ[$parentJointNum] >>;
+						float $relRotation[] = { $qx[$i], $qy[$i], $qz[$i], $qw[$i] };
+						vector $relTranslation = << $tx[$i], $ty[$i], $tz[$i] >>;
+
+						// Calculate our absolute rotation (normalization is included in quatMultiply proc)
+						// Bone.absOrient = Normalize(Bone.relOrient * Bone.Parent.absOrient);
+						float $absRotation[] = quatMultiply( $absParentRotation, $relRotation);
+						float $absOrientTmp[] = eulerRot ( $absRotation[0], $absRotation[1], $absRotation[2], $absRotation[3] );
+						$absOrient = << $absOrientTmp[0], $absOrientTmp[1], $absOrientTmp[2] >>;
+
+						// Calculate our absolute translation
+						// Bone.absTrans = Bone.Parent.absTrans + Bone.relTrans * Bone.Parent.absOrient;
+						$absTrans = $absParentTranslation + transformPoint( $relTranslation, $absParentRotation );
+
+						// Save the bone data for later
+						$jointAbsOrientX[$i] = $absRotation[0];
+						$jointAbsOrientY[$i] = $absRotation[1];
+						$jointAbsOrientZ[$i] = $absRotation[2];
+						$jointAbsOrientW[$i] = $absRotation[3];
+						$jointAbsPosX[$i] = $absTrans.x;
+						$jointAbsPosY[$i] = $absTrans.y;
+						$jointAbsPosZ[$i] = $absTrans.z;
+
+						// Print debug information
+						////print ("$absOrient (Quat)  = (" + $absRotation[0] + ", " + $absRotation[1] + ", " + $absRotation[2] + ", " + $absRotation[3] + ")\n");
+						//print ("$absOrient (Euler) = (" + $absOrient.x + ", " + $absOrient.y + ", " + $absOrient.z + ")\n");
+						//print ("$absTrans = (" + $jointAbsPosX[$i] + ", " + $jointAbsPosY[$i] + ", " + $jointAbsPosZ[$i] + ")\n\n");
+						//print ("$relOrient = (" + $relRotation[0] + ", " + $relRotation[1] + ", " + $relRotation[2] + ", " + $relRotation[3] + ")\n");
+						//print ("$relTrans = (" + $relTranslation.x + ", " + $relTranslation.y + ", " + $relTranslation.z + ")\n");
+					}
+
+					joint -p ($absTrans.x) ($absTrans.y) ($absTrans.z) -n $currentJointName[$i];
+
+					setAttr -type float3 ($currentJointName[$i] + ".rotate") ($absOrient.x) ($absOrient.y) ($absOrient.z);
+
+					// If the bone has a parent then parent it
+					if ( $i > 0 )
+						parent $currentJointName[$i] $parentJointName[$i];
+
+					select -cl;
+				}
+
+				// ---------------------------------------------------
+				// 6- build all the meshes
+				// ---------------------------------------------------
+
+				if ( $meshFile != "" )
+				{
+					buildMeshes ( $meshFile, $md5BasePath );
+				}
+
+				$meshFile = `basenameEx( $meshFile )`;
+
+					float $totalTime = `timerX -startTime $startTime`; //print ( "$totalTime = " + $totalTime + "\n" );
+					float $minTmp = $totalTime/60.0; //print ( "$minTmp = " + $minTmp + "\n" );
+				int $min = trunc( $minTmp ); //print ( "$min = " + $min + "\n" );
+				float $secTmp = $minTmp - $min; //print ( "$secTmp = " + $secTmp + "\n" );
+				int $sec = $secTmp*60; //print ( "$sec = " + $sec + "\n" );
+				string $timeMessage;
+
+				if ( $totalTime > 0 )
+					$timeMessage = "(Total Time: " + $min + " mn " + $sec + " s)\n";
+				else
+					$timeMessage = "(Total Time: " + $sec + " seconds)\n";
+
+				print ("md5toMaya ==> import mesh for \"" + $meshFile + "\" done!    " + $timeMessage + "\n" );
+
+				// ---------------------------------------------------
+				// 7- build animation frames
+				// ---------------------------------------------------
+
+				$tmp = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" );
+					$frameNumber = `fgetword $fileId`; //print ( "$frameNumber = " + $frameNumber + "\n" );
+					$tmp = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" );
+
+					float $newTx[]; clear $newTx;
+				float $newTy[]; clear $newTy;
+				float $newTz[]; clear $newTz;
+
+				float $newQx[]; clear $newQx;
+				float $newQy[]; clear $newQy;
+				float $newQz[]; clear $newQz;
+				float $newQw[]; clear $newQw;
+
+				$newTx = $tx; // <-- everything is based on the baseframe, so start from there
+				$newTy = $ty;
+				$newTz = $tz;
+
+				$newQx = $qx;
+				$newQy = $qy;
+				$newQz = $qz;
+				$newQw = $qw;
+
+				// set a key on all the joints
+				for ($i=0;$i<$numberOfJoints;$i++)
+				{
+					select -add $currentJointName[$i];
+					setKeyframe -breakdown 0 -hierarchy none -controlPoints 0 -shape 1 -at "translateX" -at "translateY" -at "translateZ" -at "rotateX" -at "rotateY" -at "rotateZ" $currentJointName[$i];
+				}
+
+				// toggle-off the autokey, to go faster
+				int $autoKeyState = `autoKeyframe -q -state`;
+					if ( $autoKeyState)
+						autoKeyframe -state false;
+
+				select -cl;
+
+				// ---------------------------------------------------
+				// 8- for each frame, determine the animated values
+				// ---------------------------------------------------
+
+				vector $absOrient;
+				vector $absTrans;
+
+				int $amount = 0;
+				float $trueAmount = 1;
+				float $percent = 100.0 / $numberOfFrames;
+
+				if( !$batchMode )
+				{
+					progressWindow
+						-title ( "Building Anim: " + $modelName )
+						-progress $amount
+						-status ( $amount + " %" )
+						-isInterruptable true;
+				}
+
+				for ($f=0;$f<$numberOfFrames;$f++) // for each frame
+				{
+					// -----------------------------------------
+					if( !$batchMode )
+					{
+						$trueAmount = $trueAmount + $percent;
+						$amount = `clamp 1 100 $trueAmount`;
+							progressWindow -edit
+							-progress $amount
+							-status ( "Animation Frame " + ($f+1) + " of " + $numberOfFrames );
+					}
+					// -----------------------------------------
+
+					// go to current frame # in timeline
+					currentTime $f -update no;
+
+					for ($i=0;$i<$numberOfJoints;$i++) // for each joint
+					{
+						for ($j=0;$j<6;$j++) // check the animated attributes to see which ones have changed
+						{
+							if ( $animAttr[$i][$j] == 1 ) // if it has changed, update the matrix
+							{
+								if ( $j == 0 ) // it means Tx
+									$newTx[$i] = `fgetword $fileId`;
+
+								else if ( $j == 1 ) // it means Ty
+								$newTy[$i] = `fgetword $fileId`;
+
+								else if ( $j == 2 ) // it means Tz
+								$newTz[$i] = `fgetword $fileId`;
+
+								else if ( $j == 3 ) // it means Qx
+								$newQx[$i] = `fgetword $fileId`;
+
+								else if ( $j == 4 ) // it means Qy
+								$newQy[$i] = `fgetword $fileId`;
+
+								else if ( $j == 5 ) // it means Qz
+								$newQz[$i] = `fgetword $fileId`;
+							}
+						}
+
+						if ( ( $newQx[$i] != $qx[$i] ) || // if rotation hasn't changed, don't bother calculating $newQw
+							( $newQy[$i] != $qy[$i] ) ||
+							( $newQz[$i] != $qz[$i] ) )
+						{
+							float $newTmp2 = 1 - ( ($newQx[$i]*$newQx[$i]) + ($newQy[$i]*$newQy[$i]) + ($newQz[$i]*$newQz[$i]) );
+
+							if ( $newTmp2 > 0 )
+								$newQw[$i] =  - sqrt( $newTmp2 );
+							else
+								$newQw[$i] = 0;
+						}
+
+						// ---------------------------------------------------
+						// 9- move and rotate the joints, based on baseframe
+						// ---------------------------------------------------
+
+						int $parentJointNum = $parentJointNumber[$i];
+						float $absParentRotation[]; clear $absParentRotation;
+						vector $relTranslation;
+						float $absRotation[]; clear $absRotation;
+
+						if ( $i>0 )
+						{
+							$absParentRotation = { $jointAbsOrientX[$parentJointNum], $jointAbsOrientY[$parentJointNum], $jointAbsOrientZ[$parentJointNum], $jointAbsOrientW[$parentJointNum] };
+							float $relRotation[] = { $newQx[$i], $newQy[$i], $newQz[$i], $newQw[$i] };
+							$absRotation = quatMultiply( $absParentRotation, $relRotation);
+							float $absOrientTmp[] = eulerRot ( $absRotation[0], $absRotation[1], $absRotation[2], $absRotation[3] );
+							$absOrient = << $absOrientTmp[0], $absOrientTmp[1], $absOrientTmp[2] >>;
+							$relTranslation = << $newTx[$i], $newTy[$i], $newTz[$i] >>;
+						}
+
+						else
+						{
+							$absParentRotation = { $newQx[$i], $newQy[$i], $newQz[$i], $newQw[$i] };
+							float $absOrientTmp[] = eulerRot ( $absParentRotation[0], $absParentRotation[1], $absParentRotation[2], $absParentRotation[3] );
+							$absOrient = << $absOrientTmp[0], $absOrientTmp[1], $absOrientTmp[2] >>;
+							$relTranslation = << $newTx[$i], $newTy[$i], $newTz[$i] >>;
+						}
+
+						move -ls ($relTranslation.x) ($relTranslation.y) ($relTranslation.z) $currentJointName[$i]; // print ( $currentJointName[$i]+ "-> " + "$animAttr[" + $i + "][" + $j+ "]\n" );
+
+						setAttr -type float3 ($currentJointName[$i] + ".rotate") ($absOrient.x) ($absOrient.y) ($absOrient.z);
+
+						setKeyframe -breakdown 0 -hierarchy none -controlPoints 0 -shape 1 -at "translateX" -at "translateY" -at "translateZ" -at "rotateX" -at "rotateY" -at "rotateZ" $currentJointName[$i];
+					}
+
+					$tmp = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" );
+						$frameNumber = `fgetword $fileId`; //print ( "$frameNumber = " + $frameNumber + "\n" );
+						$tmp = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" );
+						$tmp = `fgetword $fileId`; //print ( "$tmp = " + $tmp + "\n" );
+				}
+
+				if( !$batchMode )
+					progressWindow -endProgress;
+				fclose $fileId;
+				currentTime 0;
+
+				// -------------------------------------------------------
+				// 7- reorient the skeleton in correct space (Z axis up)
+				// -------------------------------------------------------
+
+				select -cl;
+				group -n $modelName ($modelName + "_" + "origin");
+				xform -os -piv 0 0 0;
+				rotate -r -os -90 0 0;
+				parent -world $modelName;
+				select -cl ;
+				//waitCursor -state off;
+				parent meshes $modelName;
+				select -r meshes; fitPanel -select;
+				select -cl;
+				DisplayShadedAndTextured;
+				print ("md5toMaya ==> Import animation \"" + (`basenameEx( $animFile )`) + "\" done!\n");
+}	
+
+// ===============================
+// md5toMaya UI
+// ===============================
+
+global proc md5ImportAnimCB()
+{
+	global string $gDoomModelPath;
+	global string $gDoomBasePath;
+
+	string $cmd = "fileDialog -directoryMask \""  + $gDoomModelPath + "*.md5anim\"";
+	string $animFname = `eval $cmd`;
+		string $meshFname = "";
+	if ( `radioCollection -q -sl animChoiceRB` != "skeletonOnly" )
+	{
+		string $lastPath = dirname( $animFname );
+		$cmd = "fileDialog  -directoryMask \""  + $lastPath + "/*.md5mesh\"";
+		$meshFname = `eval $cmd`;
+	}
+	md5ImportAnim( $animFname, $meshFname, $gDoomBasePath );
+}
+
+global proc md5ImportMeshCB()
+{
+	global string $gDoomModelPath;
+	global string $gDoomBasePath;
+
+	string $cmd = "fileDialog -directoryMask \""  + $gDoomModelPath + "*.md5mesh\"";
+	string $meshFname = `eval $cmd`;
+		int $skeletonOnly = 1;
+	if ( `radioCollection -q -sl animChoiceRB` != "skeletonOnly" )
+		$skeletonOnly = 0;
+	md5ImportMesh( $meshFname, $gDoomBasePath, $skeletonOnly );
+}
+
+global proc md5import()
+{
+	global string $md5toMayaVersion;
+	global string $gDoomModelPath;
+
+	// --------------------------
+	// build UI
+	// --------------------------
+
+	if (`window -exists dtmWindow` )
+		deleteUI dtmWindow;
+
+	window -tlb off -sizeable true -width 450 -height 368  -title ("md5Import " + $md5toMayaVersion) dtmWindow; 
+
+	columnLayout -adjustableColumn false -w 172 -p dtmWindow mainColumn;
+
+	catchQuiet ( `picture -image "doom3ui.bmp" -p mainColumn` );
+
+	separator -st none -h 4 -p mainColumn;
+
+	frameLayout -mw 5 -bv on -lv off -collapsable false -borderStyle "etchedOut" -w 210 -h 80 -p mainColumn meshFrame;
+	columnLayout -adjustableColumn false -w 200 -p meshFrame firstColumn;
+
+	radioCollection meshChoiceRB;
+	radioButton -label "Skeleton Only" skeletonOnly;
+	radioButton -label "Mesh + Skeleton" meshPlusSkeleton;
+	radioCollection -e -sl meshPlusSkeleton meshChoiceRB;
+
+	button -label "Import Mesh" -h 32 -w 195 -ann "Open md5mesh file" -c ("md5ImportMeshCB()");
+	setParent ..;
+
+	separator -st none -h 4 -p mainColumn;
+
+	frameLayout -mw 5 -bv on -lv off -collapsable false -borderStyle "etchedOut" -w 210 -h 112 -p mainColumn animFrame;
+	columnLayout -adjustableColumn false -w 200 -p animFrame secondColumn;
+
+	radioCollection animChoiceRB;
+	radioButton -label "Skeleton Only" skeletonOnly;
+	radioButton -label "Mesh + Skeleton" meshPlusSkeleton;
+	radioCollection -e -sl meshPlusSkeleton animChoiceRB;
+
+	button -label "Import Animation" -h 32 -w 195 -ann "Open md5anim file" -c ("md5ImportAnimCB()");
+	separator -st none -h 4;
+	text -en on -h 50 -w 195 -al "center" -fn "smallFixedWidthFont" "(You will be prompted next\nfor the md5mesh file)";
+
+	setParent ..;
+	setParent ..;
+	setParent ..;
+
+	showWindow dtmWindow;
+}
