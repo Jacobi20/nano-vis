@@ -28,11 +28,14 @@
 	MAGNET
 -----------------------------------------------------------------------------*/
 
-class MagnetGame : public IGame {
+class MagnetGame : public IGame, public IFRVolume::DataProvider {
 	public:
 						MagnetGame	( void );
 						~MagnetGame	( void );
 		virtual void	Frame		( uint dtime );
+
+		// IFRVolume::DataProvider 
+		virtual float Value( const EPoint &local_point ) const;
 		
 	protected:
 		uint time;
@@ -44,6 +47,7 @@ class MagnetGame : public IGame {
 	
 		IPxFREntity		base_rend;
 		IPxPhysEntity	base_phys;
+		IPxFRVolume		volume;
 		
 		class Magnet {
 		public:
