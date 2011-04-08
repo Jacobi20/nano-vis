@@ -69,8 +69,10 @@ MagnetGame::MagnetGame( void )
 	//light->SetType( RS_LIGHT_OMNI );
 
 	//	create magnets :	
-	for ( float x=-9; x<9; x+=3 ) {
-		for ( float y=-9; y<9; y+=3 ) {
+	//for ( float x=-9; x<9; x+=3 ) {
+	//	for ( float y=-9; y<9; y+=3 ) {
+	for ( float x=0; x<1; x+=3 ) {
+		for ( float y=-3; y<=+7; y+=6 ) {
 		
 			Magnet magnet;
 			IPxTriMesh	vis_mesh	=	ge()->LoadMeshFromFile("scene.esx|vis_magnet");
@@ -94,7 +96,16 @@ MagnetGame::MagnetGame( void )
 		
 		}
 	}
-	
+
+	volume = rs()->GetFRScene()->AddVolume();
+	//volume->LoadFromCube("volume/9960.cube"); // 9960
+	volume->LoadColormap("volume/blue-red.png");
+
+	volume->SetBounds(EBBox(EPoint(), 20, 20, 20));
+	volume->SetResolution(32, 32, 32);
+	volume->SetInterestRange(-0.2, 0.2);
+
+
 	//phys()->SetGravity( EVector::kNegZ );
 }
 
@@ -176,6 +187,8 @@ void MagnetGame::Frame( uint dtime )
 			b->AddForceAtPos( fpn, pn_b );
 		}
 	}
+
+	volume->UpdateData(this);
 }
 
 
@@ -203,4 +216,20 @@ void MagnetGame::SetupCamera( void )
 	
 	rs()->GetDVScene()->SetProjection( 0.1f, 1000.0f, 2000.0f, 2000.0f / w * h );
 	rs()->GetDVScene()->SetView( p, q );
+}
+
+float MagnetGame::Value( const EPoint &local_point ) const
+{
+	EPoint p;
+	EQuaternion q;
+	
+	magnets[0].phys_obj->GetPose(p, q);
+	float d1 = p.Distance(local_point);
+
+	magnets[1].phys_obj->GetPose(p, q);
+	float d2 = p.Distance(local_point);
+
+	return 1 / (d1*d1) - 1 / (d2*d2);
+
+
 }
