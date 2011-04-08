@@ -1,3 +1,7 @@
 //Maya 2008 Project Definition
 
-workspace -fr "particles" "particles";
+workspace -fr "mel" "_maya";
+workspace -fr "particles" "_maya/particles";
+workspace -fr "image" "_maya/image";
+workspace -rt "mel" "_maya";
+workspace -rt "textures" "textures";
