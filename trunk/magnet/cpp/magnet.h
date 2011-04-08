@@ -53,6 +53,8 @@ class MagnetGame : public IGame, public IFRVolume::DataProvider {
 		public:
 			IPxFREntity		rend_obj;
 			IPxPhysEntity	phys_obj;
+			EPoint			pp;
+			EPoint			pn;
 		};
 		
 		vector<Magnet>	magnets;

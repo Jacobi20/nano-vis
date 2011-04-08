@@ -68,10 +68,13 @@ MagnetGame::MagnetGame( void )
 	light->SetMask("mask.tga");
 	//light->SetType( RS_LIGHT_OMNI );
 
+	EMath::Randf();
+	
+
 	//	create magnets :	
 	//for ( float x=-9; x<9; x+=3 ) {
 	//	for ( float y=-9; y<9; y+=3 ) {
-	for ( float x=0; x<1; x+=3 ) {
+	for ( float x=-3; x<15; x+=5 ) {
 		for ( float y=-3; y<=+7; y+=6 ) {
 		
 			Magnet magnet;
@@ -99,7 +102,7 @@ MagnetGame::MagnetGame( void )
 
 	volume = rs()->GetFRScene()->AddVolume();
 	//volume->LoadFromCube("volume/9960.cube"); // 9960
-	volume->LoadColormap("volume/blue-red.png");
+	volume->LoadColormap("volume/iso.png");
 
 	volume->SetBounds(EBBox(EPoint(), 20, 20, 20));
 	volume->SetResolution(32, 32, 32);
@@ -162,6 +165,8 @@ void MagnetGame::Frame( uint dtime )
 		
 		EPoint pp_a	=	EPoint( 0.5,0,0).Transform( EMatrix::FromPose(p,q) );
 		EPoint pn_a	=	EPoint(-0.5,0,0).Transform( EMatrix::FromPose(p,q) );
+		magnets[i].pp = pp_a;
+		magnets[i].pn = pn_a;
 		//rs()->GetDVScene()->DrawPoint( pp_a, 0.25, EColor::kRed );
 		//rs()->GetDVScene()->DrawPoint( pn_a, 0.25, EColor::kBlue );
 
@@ -220,16 +225,12 @@ void MagnetGame::SetupCamera( void )
 
 float MagnetGame::Value( const EPoint &local_point ) const
 {
-	EPoint p;
-	EQuaternion q;
-	
-	magnets[0].phys_obj->GetPose(p, q);
-	float d1 = p.Distance(local_point);
-
-	magnets[1].phys_obj->GetPose(p, q);
-	float d2 = p.Distance(local_point);
-
-	return 1 / (d1*d1) - 1 / (d2*d2);
-
-
+	float val = 0.0;
+	for (int i = 0; i < magnets.size(); ++i)
+	{
+		float dn = magnets[i].pn.Distance(local_point);
+		float dp = magnets[i].pp.Distance(local_point);
+		val += ( 1.0 / dp - 1.0 / dn );
+	}
+	return val;
 }
