@@ -1,0 +1,132 @@
+/*
+	The MIT License
+
+	Copyright (c) 2009 IFMO/GameDev Studio
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
+*/
+
+
+/*-----------------------------------------------------------------------------
+	ENTITY STUFF 
+-----------------------------------------------------------------------------*/
+
+//
+//	createEntityNode
+//	- creates Entity and Tranform nodes with appropriate names
+//
+global proc string createEntityNode(string $class_name)
+{
+	string $node_name = $class_name + "_node";
+	string $transform = `createNode -name $class_name transform`;
+	string $new_name = `createNode -parent $transform -name $node_name eclipseEntity`;
+	return $new_name;
+}
+
+
+//
+//	entityAddVector
+//	- adds vector attribute
+//
+global proc entityAddVector(string $obj_name, string $key, string $nice_key, float $x, float $y, float $z)
+{
+	string $keyx = $key + "X";
+	string $keyy = $key + "Y";
+	string $keyz = $key + "Z";
+	string $attr_name  = $obj_name + "." + $key;
+	string $attr_namex = $obj_name + "." + $keyx;
+	string $attr_namey = $obj_name + "." + $keyy;
+	string $attr_namez = $obj_name + "." + $keyz;
+	
+	addAttr -ln $key -nn $nice_key  -at "double3"	$obj_name;
+	addAttr -ln $keyx -at "double" -p $key $obj_name;
+	addAttr -ln $keyy -at "double" -p $key $obj_name;
+	addAttr -ln $keyz -at "double" -p $key $obj_name;
+	
+	setAttr -type "double3"  $attr_name $x $y $z;
+	setAttr -e -keyable true $attr_name;
+	setAttr -e -keyable true $attr_namex;
+	setAttr -e -keyable true $attr_namey;
+	setAttr -e -keyable true $attr_namez;
+}
+
+
+//
+//	entityAddString
+//	- adds string attribute
+//
+global proc entityAddString(string $obj_name, string $key, string $nice_key, string $string_value)
+{
+	string $attr_name  = $obj_name + "." + $key;
+	addAttr -ln $key -nn $nice_key  -dt "string"	$obj_name;
+	setAttr -type "string"  $attr_name $string_value;
+	setAttr -e -keyable true $attr_name;
+}
+
+
+//
+//	entityLockAttribute
+//	- makes attribute read-only
+//	
+global proc entityLockAttribute(string $obj_name, string $attr)
+{
+	string $attr_name  = $obj_name + "." + $attr;
+	setAttr -lock on $attr_name;
+}
+
+
+//
+//	entitySetClass
+//	- sets entity class
+//
+global proc entitySetClass(string $obj_name, string $classname)
+{
+	entityAddString($obj_name, "elv_classname", "Class name", $classname);
+	entityLockAttribute($obj_name, "elv_classname");
+}
+
+
+
+/*-----------------------------------------------------------------------------
+	PLUG-IN STUFF 
+-----------------------------------------------------------------------------*/
+
+global proc string GetProjectDir() 
+{
+	return `workspace -fullName`;
+}
+
+global proc LoadEclipsePlugin()
+{
+	string $plugin_path = GetProjectDir() + "/../engine/maya_tools.mll";
+	loadPlugin $plugin_path;
+}
+
+global proc UnloadEclipsePlugin() 
+{
+	// file -f -new;
+	unloadPlugin "maya_tools.mll";
+}
+
+
+
+
+
+
+

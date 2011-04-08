@@ -36,8 +36,16 @@ cfg.setvar('phys_angular_damping'          , 0.01);
 cfg.setvar('phys_linear_sleep_treshold'    , 0.01);
 cfg.setvar('phys_angular_sleep_treshold'   , 0.01);
 cfg.setvar('phys_contact_proc_treshold'    , 0.01);
+cfg.setvar('fr_wireframe'                  , false);
+cfg.setvar('fr_skip_mlaa'                  , false);
+cfg.setvar('fr_skip_hdr'                   , false);
+cfg.setvar('fr_skip_fog'                   , false);
+cfg.setvar('fr_skip_noise'                 , false);
+cfg.setvar('fr_gamma'                      , 1);
+cfg.setvar('fr_stereo_factor'              , 1);
 
 
 -- key bindings --
 
 input.unbindAll()
+input.bind ("F5", "engine.setGame(nil)", "");

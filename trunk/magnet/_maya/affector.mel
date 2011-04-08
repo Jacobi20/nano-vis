@@ -1,7 +1,7 @@
 /*
 	The MIT License
 
-	Copyright (c) 2011 Escience Research Institute
+	Copyright (c) 2009 IFMO/GameDev Studio
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -22,34 +22,39 @@
 	THE SOFTWARE.
 */
 
-#pragma once
 
 /*-----------------------------------------------------------------------------
-	MAGNET
+	Affector :
 -----------------------------------------------------------------------------*/
 
-class MagnetGame : public IGame {
-	public:
-						MagnetGame	( void );
-						~MagnetGame	( void );
-		virtual void	Frame		( uint dtime );
+global proc addAffector(string $obj_name, string $aff)
+{
+	string $attr_name  = $obj_name + "." + "affector";
+
+	if (`attributeExists "affector" $obj_name`) {
+		string $prev = `getAttr -asString $attr_name`;
+		print $prev;
+
+		string $prev = `getAttr -asString $attr_name`;
+		string $newv = $prev + " " + $aff;
 		
-	protected:
-		uint time;
+		setAttr -type "string"  $attr_name $newv;
+	} else {
+		addAttr -ln "affector" -nn "Object Affector"  -dt "string"	$obj_name;
+		setAttr -type "string"  $attr_name $aff;
+	}
+}
+
+
+global proc addAffectorToSelection(string $aff)
+{
+	string $list[] = `selectedNodes`;
+	int    $num     = size($list);
 	
-		void			SetupCamera		( void );
-		void			UpdateMagnets	( void );
-		
-		IPxFRLight		light;
-	
-		IPxFREntity		base_rend;
-		IPxPhysEntity	base_phys;
-		
-		class Magnet {
-		public:
-			IPxFREntity		rend_obj;
-			IPxPhysEntity	phys_obj;
-		};
-		
-		vector<Magnet>	magnets;
-	};
+	int $i;
+	for ($i=0; $i<($num); $i++) {
+		addAffector($list[$i], $aff); 
+	}
+}
+
+// addAffectorToSelection("q");
