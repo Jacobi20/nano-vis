@@ -37,6 +37,10 @@ DLL_EXPORT	IGame *CreateGame() { return new MagnetGame(); }
 MagnetGame::MagnetGame( void )
 {
 	time	=	0;
+	
+	view.center	=	EPoint(-15,-15, 5);
+	view.yaw	=	45;
+	view.pitch	=	15;
 
 	rs()->Install();
 	
@@ -101,14 +105,13 @@ MagnetGame::MagnetGame( void )
 	}
 
 	volume = rs()->GetFRScene()->AddVolume();
-	//volume->LoadFromCube("volume/9960.cube"); // 9960
 	volume->LoadColormap("volume/iso.png");
 
 	volume->SetBounds(EBBox(EPoint(), 20, 20, 20));
 	volume->SetResolution(32, 32, 32);
 	volume->SetInterestRange(-0.2, 0.2);
 
-
+	//	INFO : uncomment this to add gravity :
 	//phys()->SetGravity( EVector::kNegZ );
 }
 
@@ -122,6 +125,7 @@ MagnetGame::~MagnetGame( void )
 }
 
 
+//	INFO : change this value  :
 const float MAGNETIC_CONST	=	200.0f;
 
 EVector	MagneticForce( const EPoint &a, const EPoint &b ) 
@@ -142,6 +146,15 @@ void MagnetGame::Frame( uint dtime )
 	time += dtime;
 	
 	DEBUG_STRING("fps : %f", 1000.0f / dtime );
+	
+	IInputSystem::S3DMouseInput	s3dmin;
+	InputSystem()->GetS3DMouseInput( &s3dmin );
+
+	view.yaw	+=	0.01f * s3dmin.rotate[2];
+	view.pitch	+=	0.01f * s3dmin.rotate[0];
+	view.roll	+=	0.01f * s3dmin.rotate[1];
+	view.pitch	=	clamp<float>( view.pitch, 5, 90 );
+	
 	
 	SetupCamera();
 	
@@ -207,14 +220,15 @@ void MagnetGame::SetupCamera( void )
 	rs()->GetScreenSize(w, h);
 	
 	float	t	=	time / 1000.0f;
-	float	a	=	5.0f * t;
-	float	x	=	15 * cos(EMath::Rad(a));
-	float	y	=	15 * sin(EMath::Rad(a));
-	float	z	=	8;
+	float	a	=	view.yaw;
+	float	b	=	view.pitch;
+	float	x	=	15 * cos(EMath::Rad(a)) * cos(EMath::Rad(b));
+	float	y	=	15 * sin(EMath::Rad(a)) * cos(EMath::Rad(b));
+	float	z	=	15 * sin(EMath::Rad(b));
 	
 	EQuaternion	z_up	=	EQuaternion::RotateAroundAxis( -PI/2.0f, EVector(0,0,1)) * EQuaternion::RotateAroundAxis(PI/2.0, EVector(1,0,0));
-	EPoint			p	=	EPoint(x,y,z);
-	EQuaternion		q	=	EQuaternion::FromAngles(180+a,25,0) * z_up;
+	EPoint			p	=	EPoint( x,y,z );
+	EQuaternion		q	=	EQuaternion::FromAngles( 180+a, b, 0) * z_up;
 	
 	rs()->GetFRScene()->SetProjection( 0.1f, 1000.0f, 2000.0f, 2000.0f / w * h );
 	rs()->GetFRScene()->SetView( p, q );
@@ -222,6 +236,11 @@ void MagnetGame::SetupCamera( void )
 	rs()->GetDVScene()->SetProjection( 0.1f, 1000.0f, 2000.0f, 2000.0f / w * h );
 	rs()->GetDVScene()->SetView( p, q );
 }
+
+
+/*-----------------------------------------------------------------------------
+	FRVolume::DataProvider :
+-----------------------------------------------------------------------------*/
 
 float MagnetGame::Value( const EPoint &local_point ) const
 {
