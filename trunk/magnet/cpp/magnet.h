@@ -48,6 +48,12 @@ class MagnetGame : public IGame, public IFRVolume::DataProvider {
 		IPxFREntity		base_rend;
 		IPxPhysEntity	base_phys;
 		IPxFRVolume		volume;
+
+		struct view_t {		
+			view_t () : yaw(0), pitch(0), roll(0) {}
+			EPoint	center;
+			float	yaw, pitch, roll;
+		} view;
 		
 		class Magnet {
 		public:
