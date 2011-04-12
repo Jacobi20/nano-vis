@@ -151,6 +151,7 @@ EVector	MagneticForce( const EPoint &a, const EPoint &b )
 void MagnetGame::Frame( uint dtime )
 {
 	time += dtime;
+	float ftime = dtime / 1000.0f;
 	
 	DEBUG_STRING("fps : %f", 1000.0f / dtime );
 	
@@ -187,11 +188,11 @@ void MagnetGame::Frame( uint dtime )
 		EQuaternion	q;	
 		magnets[current_item].phys_obj->GetPose(p, q);
 
-		float yaw	=	0.01f * s3dmin.rotate[2];
-		float pitch	=	0.01f * s3dmin.rotate[0];
-		float roll	=	0.01f * s3dmin.rotate[1];
+		float yaw	=	-0.1f * s3dmin.rotate[2] * ftime;
+		float pitch	=	-0.1f * s3dmin.rotate[0] * ftime;
+		float roll	=	-0.1f * s3dmin.rotate[1] * ftime;
 		
-		p += move_direction * 0.005f;
+		p -= move_direction * 0.05f * ftime;
 		q = EQuaternion::FromAngles(yaw, pitch, roll) * q;
 		magnets[current_item].phys_obj->SetPose(p, q);
 
