@@ -39,8 +39,9 @@ class MagnetGame : public IGame, public IFRVolume::DataProvider {
 		
 	protected:
 		uint time;
+		int current_item;
 	
-		void			SetupCamera		( void );
+		void			SetupCamera		( EPoint & p, EQuaternion & q );
 		void			UpdateMagnets	( void );
 		
 		IPxFRLight		light;
