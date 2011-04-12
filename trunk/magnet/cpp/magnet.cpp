@@ -160,6 +160,7 @@ void MagnetGame::Frame( uint dtime )
 
 	if (current_item < 0)
 	{
+		// update camera direction, if no dipole chosen
 		view.yaw	+=	0.01f * s3dmin.rotate[2];
 		view.pitch	+=	0.01f * s3dmin.rotate[0];
 		view.roll	+=	0.01f * s3dmin.rotate[1];
@@ -170,6 +171,7 @@ void MagnetGame::Frame( uint dtime )
 	EQuaternion cam_q;
 	SetupCamera(cam_p, cam_q);
 
+	// calculate 3d mouse motion vector in camera space
 	EVector move_direction = EVector(s3dmin.translate[0], -s3dmin.translate[2],s3dmin.translate[1]).Rotate(cam_q);
 
 	char ch = InputSystem()->GetKbChar();
@@ -180,22 +182,28 @@ void MagnetGame::Frame( uint dtime )
 	if (ch == ' ')
 		current_item = -1;
 
-	if (current_item < 0)
-		view.center -= move_direction * 0.003f;
-	else
+	if (current_item >= 0)
 	{
-		EPoint		p;	
-		EQuaternion	q;	
-		magnets[current_item].phys_obj->GetPose(p, q);
+		IPxPhysEntity phys_obj = magnets[current_item].phys_obj;
+		// add force
+		phys_obj->AddForce(move_direction * 0.1f);
 
-		float yaw	=	-0.1f * s3dmin.rotate[2] * ftime;
-		float pitch	=	-0.1f * s3dmin.rotate[0] * ftime;
-		float roll	=	-0.1f * s3dmin.rotate[1] * ftime;
+		float yaw	=	s3dmin.rotate[2] * ftime;
+		float pitch	=	s3dmin.rotate[0] * ftime;
+		float roll	=	s3dmin.rotate[1] * ftime;
+
+		// compute torque
+		EQuaternion q = EQuaternion::FromAngles(yaw, pitch, roll);
+		EVector vn(q.x, q.y, q.z);
+		if (vn.Length() > 1e-4)
+		{
+			vn.NormalizeSelf();
+			vn = vn * acos(q.w)*2.0 * 50.0;
+			phys_obj->AddTorque(vn);
+		}
 		
-		p -= move_direction * 0.05f * ftime;
-		q = EQuaternion::FromAngles(yaw, pitch, roll) * q;
-		magnets[current_item].phys_obj->SetPose(p, q);
-
+		EPoint p;
+		phys_obj->GetPose(p, q);
 		rs()->GetDVScene()->DrawBox(EBBox(p, 2, 2, 2), EColor(1, 1, 1, 1));
 	}
 	
