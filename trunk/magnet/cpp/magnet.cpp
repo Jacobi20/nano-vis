@@ -37,14 +37,16 @@ DLL_EXPORT	IGame *CreateGame() { return new MagnetGame(); }
 MagnetGame::MagnetGame( void )
 {
 	time	=	0;
+	current_item = -1;
 	
-	view.center	=	EPoint(-15,-15, 5);
+	//view.center	=	EPoint(-15,-15, 5);
 	view.yaw	=	45;
 	view.pitch	=	15;
 
 	rs()->Install();
 	
-	InputSystem()->SetInputMode( IN_KB_SCAN );
+	//InputSystem()->SetInputMode( IN_KB_SCAN );
+	InputSystem()->SetInputMode( 0 );
 
 	CoreExecuteString("require('shaders')");
 
@@ -111,7 +113,12 @@ MagnetGame::MagnetGame( void )
 	volume->SetResolution(32, 32, 32);
 	volume->SetInterestRange(-0.2, 0.2);
 
-	//	INFO : uncomment this to add gravity :
+	//volume->LoadColormap("volume/iso.png");
+	//volume->LoadFromCube("volume/test01.cube");
+	//volume->LoadFromRAW("volume/bonsai_turn.raw", 256, 256, 256);
+	//volume->SetPose(EPoint(0, 0, 2), EQuaternion::FromAngles(0, 90, 0));
+
+
 	//phys()->SetGravity( EVector::kNegZ );
 }
 
@@ -150,13 +157,46 @@ void MagnetGame::Frame( uint dtime )
 	IInputSystem::S3DMouseInput	s3dmin;
 	InputSystem()->GetS3DMouseInput( &s3dmin );
 
-	view.yaw	+=	0.01f * s3dmin.rotate[2];
-	view.pitch	+=	0.01f * s3dmin.rotate[0];
-	view.roll	+=	0.01f * s3dmin.rotate[1];
-	view.pitch	=	clamp<float>( view.pitch, 5, 90 );
-	
-	
-	SetupCamera();
+	if (current_item < 0)
+	{
+		view.yaw	+=	0.01f * s3dmin.rotate[2];
+		view.pitch	+=	0.01f * s3dmin.rotate[0];
+		view.roll	+=	0.01f * s3dmin.rotate[1];
+		view.pitch	=	clamp<float>( view.pitch, 5, 90 );
+	}
+
+	EPoint cam_p;
+	EQuaternion cam_q;
+	SetupCamera(cam_p, cam_q);
+
+	EVector move_direction = EVector(s3dmin.translate[0], -s3dmin.translate[2],s3dmin.translate[1]).Rotate(cam_q);
+
+	char ch = InputSystem()->GetKbChar();
+	if (ch == '.')
+		current_item = (current_item + 1) % magnets.size();
+	if (ch == ',')
+		current_item = (current_item - 1) % magnets.size();
+	if (ch == ' ')
+		current_item = -1;
+
+	if (current_item < 0)
+		view.center -= move_direction * 0.003f;
+	else
+	{
+		EPoint		p;	
+		EQuaternion	q;	
+		magnets[current_item].phys_obj->GetPose(p, q);
+
+		float yaw	=	0.01f * s3dmin.rotate[2];
+		float pitch	=	0.01f * s3dmin.rotate[0];
+		float roll	=	0.01f * s3dmin.rotate[1];
+		
+		p += move_direction * 0.005f;
+		q = EQuaternion::FromAngles(yaw, pitch, roll) * q;
+		magnets[current_item].phys_obj->SetPose(p, q);
+
+		rs()->GetDVScene()->DrawBox(EBBox(p, 2, 2, 2), EColor(1, 1, 1, 1));
+	}
 	
 	for (uint i=0; i<magnets.size(); i++) {
 		
@@ -166,7 +206,7 @@ void MagnetGame::Frame( uint dtime )
 		magnets[i].phys_obj->GetPose(p, q);
 		magnets[i].rend_obj->SetPose(p, q);
 	}
-	
+
 	for (uint i=0; i<magnets.size(); i++) {
 
 		IPxPhysEntity	a	=	magnets[i].phys_obj;
@@ -205,7 +245,7 @@ void MagnetGame::Frame( uint dtime )
 			b->AddForceAtPos( fpn, pn_b );
 		}
 	}
-
+	
 	volume->UpdateData(this);
 }
 
@@ -214,7 +254,7 @@ void MagnetGame::Frame( uint dtime )
 	Internal stuff :
 -----------------------------------------------------------------------------*/
 
-void MagnetGame::SetupCamera( void )
+void MagnetGame::SetupCamera( EPoint & p, EQuaternion & q )
 {
 	uint w, h;
 	rs()->GetScreenSize(w, h);
@@ -227,8 +267,8 @@ void MagnetGame::SetupCamera( void )
 	float	z	=	15 * sin(EMath::Rad(b));
 	
 	EQuaternion	z_up	=	EQuaternion::RotateAroundAxis( -PI/2.0f, EVector(0,0,1)) * EQuaternion::RotateAroundAxis(PI/2.0, EVector(1,0,0));
-	EPoint			p	=	EPoint( x,y,z );
-	EQuaternion		q	=	EQuaternion::FromAngles( 180+a, b, 0) * z_up;
+	p	=	EPoint( x,y,z ) + EVector(view.center);
+	q	=	EQuaternion::FromAngles( 180+a, b, 0) * z_up;
 	
 	rs()->GetFRScene()->SetProjection( 0.1f, 1000.0f, 2000.0f, 2000.0f / w * h );
 	rs()->GetFRScene()->SetView( p, q );
