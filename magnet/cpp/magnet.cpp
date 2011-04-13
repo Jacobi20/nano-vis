@@ -108,11 +108,11 @@ MagnetGame::MagnetGame( void )
 	}
 
 	volume = rs()->GetFRScene()->AddVolume();
-	volume->LoadColormap("volume/iso.tga");
+	volume->LoadColormap("volume/green.tga");
 
 	volume->SetBounds(EBBox(EPoint(), 20, 20, 20));
 	volume->SetResolution(32, 32, 32);
-	volume->SetInterestRange(-0.2f, 0.2f);
+	volume->SetInterestRange(0, 10.0f);
 
 	//volume->LoadColormap("volume/iso.png");
 	//volume->LoadFromCube("volume/test01.cube");
@@ -300,11 +300,13 @@ void MagnetGame::SetupCamera( EPoint & p, EQuaternion & q )
 
 float MagnetGame::Value( const EPoint &local_point ) const
 {
-	float val = 0.0;
+	//return 0.5;
+	return local_point.Distance( EPoint(0,0,0) );
+	/*float val = 0.0;
 	for (int i = 0; i < (int)magnets.size(); ++i) {
 		float dn = magnets[i].pn.Distance(local_point);
 		float dp = magnets[i].pp.Distance(local_point);
-		val += ( 1.0 / dp - 1.0 / dn );
+		val += ( 1.0 / dp + 1.0 / dn );
 	}
-	return val;
+	return val;*/
 }
