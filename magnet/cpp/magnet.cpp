@@ -23,6 +23,7 @@
 */
 
 #include "../../engine/engine.h"
+#include "../../engine/core/windows/win_key_list.h"
 #include "magnet.h"
 
 DLL_EXPORT	IGame *CreateGame() { return new MagnetGame(); }
@@ -38,6 +39,8 @@ MagnetGame::MagnetGame( void )
 {
 	time	=	0;
 	current_item = -1;
+	
+	srand( sys()->Milliseconds() );
 	
 	//view.center	=	EPoint(-15,-15, 5);
 	view.yaw	=	45;
@@ -78,10 +81,8 @@ MagnetGame::MagnetGame( void )
 	
 
 	//	create magnets :	
-	//for ( float x=-9; x<9; x+=3 ) {
-	//	for ( float y=-9; y<9; y+=3 ) {
-	for ( float x=-3; x<15; x+=5 ) {
-		for ( float y=-3; y<=+7; y+=6 ) {
+	for ( float x=-5; x<=5; x+=10 ) {
+		for ( float y=-5; y<=5; y+=11 ) {
 		
 			Magnet magnet;
 			IPxTriMesh	vis_mesh	=	ge()->LoadMeshFromFile("scene.esx|vis_magnet");
@@ -111,7 +112,7 @@ MagnetGame::MagnetGame( void )
 
 	volume->SetBounds(EBBox(EPoint(), 20, 20, 20));
 	volume->SetResolution(32, 32, 32);
-	volume->SetInterestRange(-0.2, 0.2);
+	volume->SetInterestRange(-0.2f, 0.2f);
 
 	//volume->LoadColormap("volume/iso.png");
 	//volume->LoadFromCube("volume/test01.cube");
@@ -154,18 +155,25 @@ void MagnetGame::Frame( uint dtime )
 	float ftime = dtime / 1000.0f;
 	
 	DEBUG_STRING("fps : %f", 1000.0f / dtime );
+	DEBUG_STRING("View mode      : [Space]");
+	DEBUG_STRING("Switch dipoles : [<] [>]");
 	
 	IInputSystem::S3DMouseInput	s3dmin;
 	InputSystem()->GetS3DMouseInput( &s3dmin );
 
-	if (current_item < 0)
-	{
+	if (current_item < 0) {
 		// update camera direction, if no dipole chosen
 		view.yaw	+=	0.01f * s3dmin.rotate[2];
 		view.pitch	+=	0.01f * s3dmin.rotate[0];
 		view.roll	+=	0.01f * s3dmin.rotate[1];
-		view.pitch	=	clamp<float>( view.pitch, 5, 90 );
 	}
+	
+	if (InputSystem()->IsKeyPressed( KEY_LEFT ))	view.yaw	+=	(90 * ftime);
+	if (InputSystem()->IsKeyPressed( KEY_RIGHT ))	view.yaw	-=	(90 * ftime);
+	if (InputSystem()->IsKeyPressed( KEY_UP ))		view.pitch	+=	(45 * ftime);
+	if (InputSystem()->IsKeyPressed( KEY_DOWN ))	view.pitch	-=	(45 * ftime);
+	view.pitch	=	clamp<float>( view.pitch, 5, 90 );
+
 
 	EPoint cam_p;
 	EQuaternion cam_q;
@@ -175,15 +183,11 @@ void MagnetGame::Frame( uint dtime )
 	EVector move_direction = EVector(s3dmin.translate[0], -s3dmin.translate[2],s3dmin.translate[1]).Rotate(cam_q);
 
 	char ch = InputSystem()->GetKbChar();
-	if (ch == '.')
-		current_item = (current_item + 1) % magnets.size();
-	if (ch == ',')
-		current_item = (current_item - 1) % magnets.size();
-	if (ch == ' ')
-		current_item = -1;
+	if (ch == '.')	current_item = (current_item + 1) % magnets.size();
+	if (ch == ',')	current_item = (current_item - 1) % magnets.size();
+	if (ch == ' ')	current_item = -1;
 
-	if (current_item >= 0)
-	{
+	if (current_item >= 0) {
 		IPxPhysEntity phys_obj = magnets[current_item].phys_obj;
 		// add force
 		phys_obj->AddForce(move_direction * 0.1f);
@@ -207,6 +211,7 @@ void MagnetGame::Frame( uint dtime )
 		rs()->GetDVScene()->DrawBox(EBBox(p, 2, 2, 2), EColor(1, 1, 1, 1));
 	}
 	
+	//	update dipole positions :
 	for (uint i=0; i<magnets.size(); i++) {
 		
 		EPoint		p;	
@@ -216,6 +221,7 @@ void MagnetGame::Frame( uint dtime )
 		magnets[i].rend_obj->SetPose(p, q);
 	}
 
+	//	update dipole forces :
 	for (uint i=0; i<magnets.size(); i++) {
 
 		IPxPhysEntity	a	=	magnets[i].phys_obj;
@@ -254,7 +260,8 @@ void MagnetGame::Frame( uint dtime )
 			b->AddForceAtPos( fpn, pn_b );
 		}
 	}
-	
+
+	//	update volume data :	
 	volume->UpdateData(this);
 }
 
@@ -271,9 +278,9 @@ void MagnetGame::SetupCamera( EPoint & p, EQuaternion & q )
 	float	t	=	time / 1000.0f;
 	float	a	=	view.yaw;
 	float	b	=	view.pitch;
-	float	x	=	15 * cos(EMath::Rad(a)) * cos(EMath::Rad(b));
-	float	y	=	15 * sin(EMath::Rad(a)) * cos(EMath::Rad(b));
-	float	z	=	15 * sin(EMath::Rad(b));
+	float	x	=	18 * cos(EMath::Rad(a)) * cos(EMath::Rad(b));
+	float	y	=	18 * sin(EMath::Rad(a)) * cos(EMath::Rad(b));
+	float	z	=	18 * sin(EMath::Rad(b));
 	
 	EQuaternion	z_up	=	EQuaternion::RotateAroundAxis( -PI/2.0f, EVector(0,0,1)) * EQuaternion::RotateAroundAxis(PI/2.0, EVector(1,0,0));
 	p	=	EPoint( x,y,z ) + EVector(view.center);
@@ -294,8 +301,7 @@ void MagnetGame::SetupCamera( EPoint & p, EQuaternion & q )
 float MagnetGame::Value( const EPoint &local_point ) const
 {
 	float val = 0.0;
-	for (int i = 0; i < magnets.size(); ++i)
-	{
+	for (int i = 0; i < (int)magnets.size(); ++i) {
 		float dn = magnets[i].pn.Distance(local_point);
 		float dp = magnets[i].pp.Distance(local_point);
 		val += ( 1.0 / dp - 1.0 / dn );
