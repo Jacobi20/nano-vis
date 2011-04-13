@@ -108,7 +108,7 @@ MagnetGame::MagnetGame( void )
 	}
 
 	volume = rs()->GetFRScene()->AddVolume();
-	volume->LoadColormap("volume/iso.png");
+	volume->LoadColormap("volume/iso.tga");
 
 	volume->SetBounds(EBBox(EPoint(), 20, 20, 20));
 	volume->SetResolution(32, 32, 32);
