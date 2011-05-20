@@ -39,7 +39,7 @@ $q=\alpha \mathbf{i}+\beta \mathbf{j}+\gamma \mathbf{k}$,
 \begin{center}
 \includegraphics[width=110mm]{boat_forces}
 \end{center}
-\caption{Локальная система координат и углы вращения судна}
+\caption{Силы, действующие на судно}
 \label{boat_forces}
 \end{figure}
 
@@ -48,13 +48,90 @@ $q=\alpha \mathbf{i}+\beta \mathbf{j}+\gamma \mathbf{k}$,
 \begin{equation}
 	\mathbf{F} = 
 		-\left[ \iint_{S} p \mathbf{n} dS ) 		\right]_{pressure}
-		-\left[ \iint_{S} \mathbf{x} dS ) 	\right]_{damping}
+		-\left[ \iint_{S} \boldsymbol{\eta} dS ) 	\right]_{damping}
 		+ \mathbf{D}
 	\label{F=integral}
 \end{equation}
 
-%\begin{equation}
-%	\mathbf{M} = 
-%	-\left[ \iint_{}
-%	\label{M=integral}
-%\end{equation}
+\begin{equation}
+	\mathbf{M} = 
+	-\left[ \iint_{S} 
+		\left( p \mathbf{n} \right) \times 
+		\left( \mathbf{r} - \mathbf{p} \right) dS	
+	\right]_{pressure}
+	-\left[ \iint_{S} 
+		\left( \boldsymbol{\eta} \right) \times 
+		\left( \mathbf{r} - \mathbf{p} \right) dS	
+	\right]_{damping}
+	\label{M=integral}
+\end{equation}
+
+где $S$ – погруженная поверхность корпуса судна, $D$ – водоизмещение судна, $p$ – давление воды в точке, $\mathbf{n}$ – нормаль к поверхности, $r$ – радиус-вектор точки поверхности в глобальных координатах, $\mathbf{p}$ – положение судна в пространстве, $\boldsymbol{\eta}$ --- демпфирующая сила, действующая на единицу поверхности корпуса.
+
+Аналитическое вычисление выражений \eqref{F=integral} и \eqref{M=integral} возможно только для модельной формы корпуса. Как следствие, необходимо на каждом шаге выполнять численное интегрирование. Поверхность корпуса судна разбивается на $N$ малых элементов (размер которых настолько мал, что изменением давления или демпфирующей силы вдоль элемента можно пренебречь), и общая сила и момент рассматривается как сумма сил приложенных к каждому элементу. Таким образом, выражения \eqref{F=integral} и \eqref{M=integral} можно переписать следующим образом:
+
+% Суммирование сил:
+\begin{equation}
+	\mathbf{F} = 
+		-\sum_{i=1}^{N} \left[
+			\sigma (\mathbf{r}_i) p_i \mathbf{n}_i \Delta S_i
+		\right]
+		-\sum_{i=1}^{N} \left[
+			\sigma (\mathbf{r}_i) \boldsymbol{\eta}_i \Delta S_i
+		\right]
+\end{equation}
+
+% Суммирование моментов:
+\begin{equation}
+	\mathbf{M} = 
+		-\sum_{i=1}^{N} \left[
+			\sigma (\mathbf{r}_i) p_i \mathbf{n}_i \Delta S_i \times (\mathbf{r_i} - \mathbf{p})
+		\right]
+		-\sum_{i=1}^{N} \left[
+			\sigma (\mathbf{r}_i) \boldsymbol{\eta}_i \Delta S_i \times (\mathbf{r_i} - \mathbf{p})
+		\right]
+\end{equation}
+
+где:
+
+\begin{equation}
+  \sigma(n) = \left\{
+  \begin{array}{l l}
+    1 & r_z		< 		\Delta z (t, r_x, r_y, 0) \\
+    0 & r_z		\geq 	\Delta z (t, r_x, r_y, 0) \\
+  \end{array} \right.
+\end{equation}
+
+Площадь элемента вычисляется:
+\begin{equation}
+	\Delta S_i = \frac{S}{N}
+\end{equation}
+
+а давление на элемент:
+\begin{equation}
+	p_i = p(t, r_x, r_y, r_z)
+\end{equation}
+
+Использование регулярной сетки разбиения корпуса на элементы нецелесообразно, т.к. малые перемещения корабля, могут привести к тому, что целый ряд узлов сетки одновременно погрузится в воду. Как следствие, незначительное изменение осадки или крена может привести к значительному возрастанию гидростатических сил, см. рис. \ref{regular_grid}.
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=110mm]{regular_grid}
+\end{center}
+\caption{Иллюстрация вычислительных артефактов за счет скачкообразного изменения гидродинамических сил при использовании регулярных сеток}
+\label{regular_grid}
+\end{figure}
+
+Для устранения эффектов, указанных на \ref{regular_grid}, для интегрирования \eqref{F=integral} и \eqref{M=integral} используются квадратурные формулы типа Маркова с локально распределенными случайными узлами. Использование статичной или регулярной случайной сетки приводит к появлению нескомпенсированных сил, и, как следствие, самопроизвольному перемещению моделируемого судна. Для избавления от этого эффекта случайная сетка перестраивается на каждом шаге имитационного моделирования. Пример случайной сетки приведен на рис. \ref{monte_carlo}.
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=110mm]{monte_carlo}
+\end{center}
+\caption{Пример сетки с локально-распределенными случайными узлами}
+\label{monte_carlo}
+\end{figure}
+
+В силу того, что случайное перестроение узлов может вносить в выражения \eqref{F=integral} и \eqref{M=integral} дополнительную вычислительную погрешность, были проведены эксперименты по оценке чувствительности расчетных характеристик к количеству узлов сетки. На рис. 13 представлены фазовые портреты «численного дрейфа» (в плоскости $XY$) центра тяжести судна вокруг исходного положения (расчеты на тихой воде).
+
+Из рис. видно, что даже для достаточно грубых сеток погрешность не превышает 0,20 м., что является относительно небольшой величиной по сравнению с масштабами дрейфа под воздействием морского волнения.
