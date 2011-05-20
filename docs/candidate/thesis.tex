@@ -10,6 +10,9 @@
 \lstset{language=C++, texcl=true, frame=lines, basicstyle=\ttfamily}  % latex в комментариях 
 \usepackage{natbib}
 %-----------------------------------------------
+\providecommand{\abs}[1]{\lvert#1\rvert}
+\providecommand{\norm}[1]{\lVert#1\rVert}
+%-----------------------------------------------
 
 %- additional tuning ---------------------------
 \graphicspath{{images/}} % путь к рисункам
@@ -26,10 +29,10 @@
 %-----------------------------------------------
 
 
-%\include{title}
-%
-%\tableofcontents
-%
+\include{title}
+
+\tableofcontents
+
 %\include{intro}
 %
 %\include{ch1}
@@ -42,7 +45,7 @@
 \include{ch2}
 \include{ch2_00_math_env}
 \include{ch2_01_math_ship}
-%\include{ch2_02_math_ship_identity}
+\include{ch2_02_math_ship_identity}
 %\include{ch2_03_math_ship_verify}
 %
 %\include{ch3}
