@@ -3,14 +3,15 @@
 Используемая модель волнения аппроксимирует морскую поверхность суперпозицией конечного числа гармонических волн \cite{lopatuhin2004}. Характер волнения определяется двухмерным энергетическим спектром $S(\omega, \theta)$, $\omega$ -- угловая частота волны, а $\theta$ -- угол, образуемый направлением бега волны с направлением ветра. В литературе \cite{lopatuhin2004} рассматриваются различные модели спектров волнения, выраженные в терминах функции энергетической плотности от угловой частоты и направления распространения. Примером такого спектра является спектр Пирсона-Московица:
 
 \begin{equation}
-\begin{split}
-S(\omega, \theta) &= S(\omega) \; C \cos^m\theta \\
-S(\omega) &= \dfrac{\alpha g^2}{\omega^5} \exp \left[ 
-  -\dfrac{5}{4} \left( \dfrac{\omega_{peak}}{\omega} \right)^{4} 
-\right]  \\
-C &= \int_{-\pi/2}^{\pi/2} cos^m\theta d\theta
-\end{split}
+	\begin{split}
+	S(\omega, \theta) &= S(\omega) \; C \cos^m\theta \\
+	S(\omega) &= \dfrac{\alpha g^2}{\omega^5} \exp \left[ 
+	  -\dfrac{5}{4} \left( \dfrac{\omega_{peak}}{\omega} \right)^{4} 
+	\right]  \\
+	C &= \int_{-\pi/2}^{\pi/2} cos^m\theta d\theta
+	\end{split}
 \end{equation}, 
+
 где $m$ характеризует направленность спектра, $\omega_{peak}$ -- частоту пика спектра, а $\alpha = 0.0081$.
 
 На практике, непрерывный спектр волнения можно аппроксимировать конечным числом гармоник, спектральное распределение которых аппроксимирует используемый спектр. Для быстрого построения карты высот и скоростей для сложения гармоник используется двухмерное быстрое преобразование Фурье (БПФ) [].
@@ -22,21 +23,23 @@ k = \frac{\omega^2}{g} ,\quad
 \omega(\bvec{k}) = \sqrt{\lVert \bvec{k} \rVert g} $$
 
 Рассмотрим полную энергию волнения и произведем замену переменных интегрирования, перейдя от $(\omega, \theta)$ к волновому вектору $\bvec{k}$:
+
 \begin{equation}
-\begin{split}
-E &= \int\limits_0^{2\pi}
-     \int\limits_0^\infty S(\omega, \theta) d\omega d\theta
-  = \int\limits_0^{2\pi}
-     \int\limits_0^\infty 
-         \frac {S(\sqrt{kg}, \theta)g} {2\sqrt{kg}} dk d\theta\\
-  &= \iint\limits_{\mathbb{R}^2}
-         \frac{S(\omega(\bvec{k}), \theta(\bvec{k})) g}
-              {2\omega(\bvec{k}) \lVert \bvec{k} \rVert} d\bvec{k}
-  = \iint\limits_{\mathbb{R}^2} \hat{S}(\bvec{k})d\bvec{k}
-\end{split}
+	\begin{split}
+	E &= \int\limits_0^{2\pi}
+		 \int\limits_0^\infty S(\omega, \theta) d\omega d\theta
+	  = \int\limits_0^{2\pi}
+		 \int\limits_0^\infty 
+			 \frac {S(\sqrt{kg}, \theta)g} {2\sqrt{kg}} dk d\theta\\
+	  &= \iint\limits_{\mathbb{R}^2}
+			 \frac{S(\omega(\bvec{k}), \theta(\bvec{k})) g}
+				  {2\omega(\bvec{k}) \lVert \bvec{k} \rVert} d\bvec{k}
+	  = \iint\limits_{\mathbb{R}^2} \hat{S}(\bvec{k})d\bvec{k}
+	\end{split}
 \end{equation}
 
 Теперь можно аппроксимировать непрерывный энергетический спектр конечной суммой $N^2$ гармоник:
+
 \begin{equation}
 \begin{split}
 E = \iint\limits_{\mathbb{R}^2} \hat{S}(\bvec{k})d\bvec{k}
@@ -49,6 +52,7 @@ E = \iint\limits_{\mathbb{R}^2} \hat{S}(\bvec{k})d\bvec{k}
 Важно правильно выбрать значения $\Delta k$ и $N$, чтобы полученные гармоники достаточно плотно покрывали наиболее энергетически плотные участки спектра.
 
 Построив конечный дискретный энергетический спектр, перейдем к амплитудному спектру. Амплитуда гармоники $a_{i,j} = \sqrt{2E_{i,j}} = \sqrt{2S(\bvec{k}_{i,j})}\Delta k$. Высоту морской поверхности в точке $\bvec{p}$ в момент времени $t$ можно представить в виде суперпозиции простых гармонических волн:
+
 \begin{equation}
 \label{wave_height}
 \begin{split}
@@ -65,10 +69,10 @@ h(\bvec{p}, t) = \sum_{i,j} a_{i,j}cos(\bvec{p}\cdot \bvec{k}_{i,j} - \omega(\bv
 
 \begin{figure}[ht]
 \begin{center}
-\includegraphics[width=110mm]{wave_plot/spec_0}
-\includegraphics[width=110mm]{wave_plot/spec_1}
-\includegraphics[width=110mm]{wave_plot/spec_2}
-\includegraphics[width=110mm]{wave_plot/spec_3}
+	\includegraphics[width=110mm]{wave_plot/spec_0}
+	\includegraphics[width=110mm]{wave_plot/spec_1}
+	\includegraphics[width=110mm]{wave_plot/spec_2}
+	\includegraphics[width=110mm]{wave_plot/spec_3}
 \end{center}
 \caption{Планшеты ядра БПФ и карт высот морского волнения для различных значение параметра формы углового распределения}
 \label{spectrums}
