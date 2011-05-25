@@ -1,4 +1,7 @@
 del *.aux
+del *.dvi
+del *.eps
+del *.lyx
 del *.log
 del *.out
 del *.synctex.gz*
