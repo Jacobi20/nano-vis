@@ -106,7 +106,8 @@ ahx = [ ah0; ah1; ah2; ah4; ah8 ];
 //--------------------------------------------------------
 clf();
 subplot(1,3,1);
-xtitle("$Поверхности\ равного\ давления\ (точный\ расчет)$", "$\LARGE x, м$", "$\LARGE z, м$");
+//xtitle("$Поверхности\ равного\ давления\ (точный\ расчет)$", "$\LARGE x, м$", "$\LARGE z, м$");
+xtitle("$\LARGE (а)$", "$\LARGE x, м$", "$\LARGE z, м$");
 plot2d(x,h0);
 plot2d(x,h0125);
 plot2d(x,h025);
@@ -118,7 +119,8 @@ plot2d(x,h8);
 plot2d(x,h16);
 
 subplot(1,3,2);
-xtitle("$Поверхности\ равного\ давления\ (приближенный\ расчет)$", "$\LARGE x,\ м$", "$\LARGE z,\ м$");
+//xtitle("$Поверхности\ равного\ давления\ (приближенный\ расчет)$", "$\LARGE x,\ м$", "$\LARGE z,\ м$");
+xtitle("$\LARGE (б)$", "$\LARGE x,\ м$", "$\LARGE z,\ м$");
 plot2d(x,ah0);
 plot2d(x,ah0125);
 plot2d(x,ah025);
@@ -156,7 +158,8 @@ for j=1:5
 	end
 	
 	subplot(2,3,3);
-	xtitle("$Стандартное\ отклонения\ ошибки\ расчета\ давления$", "$\LARGE d,\ м$", "$\LARGE \text{stdev}(p_w),\ Па$");
+	//xtitle("$Стандартное\ отклонения\ ошибки\ расчета\ давления$", "$\LARGE d,\ м$", "$\LARGE \text{stdev}(p_w),\ Па$");
+	xtitle("$\LARGE (в)$", "$\LARGE d,\ м$", "$\LARGE \text{stdev}(p_w),\ Па$");
 	plot2d(dd,stdp);
 
 	if j<5 then
@@ -168,7 +171,8 @@ for j=1:5
 
 	
 	subplot(2,3,6);
-	xtitle("$Относительная\ ошибка\ расчета\ давления$", "$\LARGE d,\ м$", "$\LARGE \text{stdev}(p_w) / p_{silent}(d),\ \%$");
+	//xtitle("$Относительная\ ошибка\ расчета\ давления$", "$\LARGE d,\ м$", "$\LARGE \text{stdev}(p_w) / p_{silent}(d),\ \%$");
+	xtitle("$\LARGE(г)$", "$\LARGE d,\ м$", "$\LARGE \text{stdev}(p_w) / p_{silent}(d),\ \%$");
 	plot2d(dd,stdpr*100);
 
 	xstring(12,8-j,sprintf("$\Large\omega_{max}=%0.1f$", Wmax));
