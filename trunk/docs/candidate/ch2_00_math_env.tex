@@ -6,13 +6,13 @@
 	\begin{split}
 	S(\omega, \theta) &= S(\omega) \; C \cos^m\theta \\
 	S(\omega) &= \dfrac{\alpha g^2}{\omega^5} \exp \left[ 
-	  -\dfrac{5}{4} \left( \dfrac{\omega_{peak}}{\omega} \right)^{4} 
+	  -\dfrac{5}{4} \left( \dfrac{\omega_{max}}{\omega} \right)^{4} 
 	\right]  \\
 	C &= \int_{-\pi/2}^{\pi/2} cos^m\theta d\theta
 	\end{split}
-\end{equation}, 
+\end{equation}
 
-где $m$ характеризует направленность спектра, $\omega_{peak}$ -- частоту пика спектра, а $\alpha = 0.0081$.
+где $m$ --- четное число, характеризует направленность спектра, $\omega_{max}$ --- частоту пика спектра, а $\alpha = 0.0081$.
 
 На практике, непрерывный спектр волнения можно аппроксимировать конечным числом гармоник, спектральное распределение которых аппроксимирует используемый спектр. Для быстрого построения карты высот и скоростей для сложения гармоник используется двумерное быстрое преобразование Фурье (БПФ) [].
  
@@ -56,7 +56,7 @@ E = \iint\limits_{\mathbb{R}^2} \hat{S}(\bvec{k})d\bvec{k}
 \begin{equation}
 \label{wave_height}
 \begin{split}
-h(\bvec{p}, t) = \sum_{i,j} a_{i,j}cos(\bvec{p}\cdot \bvec{k}_{i,j} - \omega(\bvec{k}_{i,j})t + \delta_{i,j}) \\
+h_w(t,\bvec{p}) = \sum_{i,j} a_{i,j}cos(\bvec{p}\cdot \bvec{k}_{i,j} - \omega(\bvec{k}_{i,j})t + \delta_{i,j}) \\
 = Re\left( \sum_{\bvec{k}} \tilde{h}(\bvec{k}, t)
  \exp(i\bvec{k} \cdot \bvec{p}) \right)
 \end{split}
@@ -67,20 +67,37 @@ h(\bvec{p}, t) = \sum_{i,j} a_{i,j}cos(\bvec{p}\cdot \bvec{k}_{i,j} - \omega(\bv
 
 На рис. \ref{waveplot} представлены планшеты ядра БПФ и карт высот морского волнения для различных значение параметра формы углового распределения.
 
-Для определения давления на в заданной точке используется следующая формула:
+Давление в точке $\bvec{p}$ на глубине $z$ (ось $Z$, направлена вверх, а уровню тихой воды соответсвует значение $z=0$) с учетом волновой поправки выражается следующим образом:
 \begin{equation}
 \label{wave_height}
-	p(
+	p_w(t,\bvec{p},z) = \sum_{i,j}
+		\gamma e^{\abs{k}z} 
+		a_{i,j}cos(\bvec{p}\cdot \bvec{k}_{i,j} 
+		- \omega(\bvec{k}_{i,j})t 
+		+ \delta_{i,j}) - z \gamma
 \end{equation}
 
-\begin{figure}[ht]
-\begin{center}
-	\includegraphics[width=110mm]{wave_plot/spec_0}
-	\includegraphics[width=110mm]{wave_plot/spec_1}
-	\includegraphics[width=110mm]{wave_plot/spec_2}
-	\includegraphics[width=110mm]{wave_plot/spec_3}
-\end{center}
-\caption{Планшеты ядра БПФ и карт высот морского волнения для различных значение параметра формы углового распределения}
-\label{waveplot}
-\end{figure}
+где $\gamma$ --- объемный вес воды воды. Согласно этой формуле чем больше длина волны, тем медленнее затухают колебания частиц с увеличением глубины.
+
+Так как величина $\gamma e^{\abs{k}z}$ зависит от волнового числа, то вынести за знак суммы его невозможно и ставит под вопрос применимость БПФ для определения давления на каждой глубине.
+
+Предположим, что:
+\begin{equation}
+\label{wave_height}
+	p_w(t,\bvec{p},z) \approx
+		\gamma e^{\abs{k}z} h_w(t,\bvec{p},z) - z \gamma
+\end{equation}
+
+Для определения погрешности такого допущения оценим значения давления на различных глубинах.
+
+%\begin{figure}[ht]
+%\begin{center}
+%	\includegraphics[width=110mm]{wave_plot/spec_0}
+%	\includegraphics[width=110mm]{wave_plot/spec_1}
+%	\includegraphics[width=110mm]{wave_plot/spec_2}
+%	\includegraphics[width=110mm]{wave_plot/spec_3}
+%\end{center}
+%\caption{Планшеты ядра БПФ и карт высот морского волнения для различных значение параметра формы углового распределения}
+%\label{waveplot}
+%\end{figure}
 
