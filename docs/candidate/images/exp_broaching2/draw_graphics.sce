@@ -1,7 +1,7 @@
 clc();
 xdel();
 
-PATH = "d:\workspace\Engine\game_2048\shipxds\test03_br\";
+PATH = "E:\SPACE_MARINES_2_0\sci_docs\candidate\images\exp_broaching2\";
 
 function [result, time, yaw, pitch, roll, pos_x, pos_y, pos_z, wave, velocity, angular, wave_length_coef, vel_coef, jonswap, narrow] = ReadPos( path )
     result = -1;
@@ -68,6 +68,7 @@ function DrawShip(pos_x, pos_y, yaw)
 endfunction
 
 function DrawAndSaveGraphics(num, image_filename)
+	xset("wdim", 800,600)
     clf();
     filename = sprintf("broaching_%i", num);
     
@@ -75,7 +76,7 @@ function DrawAndSaveGraphics(num, image_filename)
     if r < 0 then break end
     
     subplot(221);
-    xtitle("Trajectory", "X (m)", "Y (m)");    
+    xtitle("$\Large Траектория$", "$\Large x, м$", "$\Large y, м$");
     plot2d(pos_x, pos_y);
     a=get("current_axes");
     a.tight_limits = "on";
@@ -88,39 +89,51 @@ function DrawAndSaveGraphics(num, image_filename)
     end
     
     subplot(222);
-    xtitle("Roll and Yaw", "Time (s)", "Roll, Yaw (degrees)");
-    plot2d( t, [roll yaw], [2 3]);    
+    xtitle("$\Large Крен\ и\ курс$", "$\Large t, с$", "$\Large \theta^{\circ}, \phi^{\circ}$");
+    //plot2d( t, [roll yaw], [2 3]);    
+    plot2d( t, [roll], 1);    
     a=gca();
     a.isoview = "off";
     a.tight_limits = "on";
+	a.children(1).children.line_style = 2;
     a.data_bounds = [0, -100; 60, 100];
-    legend(["Roll" "Yaw"], 3, %f);
+    plot2d( t, [yaw], 1);    
+    a=gca();
+    a.isoview = "off";
+    a.tight_limits = "on";
+	a.children(1).children.line_style = 1;
+    a.data_bounds = [0, -100; 60, 100];
+
+    legend(["$\Large \theta$" "$\Large \phi$"], 2);
     
     subplot(223);
-    xtitle("Wave height in (0;0)", "Time (s)", "Height (m)");
-    plot2d(t, wave, 2);
+    xtitle("$\Large Высота\ волны$", "$\Large t, с$", "$\Large h,м$");
+    plot2d(t, wave, 1);
     a=gca();
     a.tight_limits = "on";
     a.data_bounds = [0, -1.0; 60, 1.0];
     
     subplot(224);
-    xtitle("Angular velocity", "Time (s)", "Angular velocity (rad/s)");
-    plot2d(t, angular, 2);
+    xtitle("$\Large Угловая\ скорость$", "$\Large t, с$", "$\Large \dot\phi,рад/c$");
+    //xtitle("Angular velocity", "Time (s)", "Angular velocity (rad/s)");
+    plot2d(t, angular, 1);
     a=gca();
     a.tight_limits = "on";
     a.data_bounds = [0, -0.25; 60, 0.25]; 
     
-    xs2pdf(gcf(), PATH+"\result\"+image_filename);
+    xs2pdf(gcf(), PATH+image_filename);
 endfunction
 
-function DrawTrajecoriesForClass(class)
+function DrawTrajecoriesForClass(class, id)
     for num = class
         filename = sprintf("broaching_%i", num);
         [r, t, yaw, pitch, roll, pos_x, pos_y, pos_z, wave, velocity, angular, wave_length_coef, vel_coef, jonswap, narrow] = ReadPos(PATH+filename+".log");
+
+		clsid = ["I", "II", "III", "IV", "V"];
         
         if r < 0 then break end
                 
-        xtitle("Trajectory", "X (m)", "Y (m)");    
+    xtitle("$\Large Класс\ траекторий\ "+clsid(id)+"$", "$\Large x, м$", "$\Large y, м$");
         plot2d(pos_x, pos_y);
         a=get("current_axes");
         a.tight_limits = "on";
@@ -141,31 +154,38 @@ class5 = [6,11,14,66,76,125,143,172];
 
 // Draw set of trajectories for each class
 // Ugly stuff but scilab seems to work in peculiar way in case of vector of vectors with different dimensions
-clf();
-DrawTrajecoriesForClass(class1);
-xs2pdf(gcf(), PATH+"\result\class_traj_1");
-clf();
-DrawTrajecoriesForClass(class2);
-xs2pdf(gcf(), PATH+"\result\class_traj_2");
-clf();
-DrawTrajecoriesForClass(class3);
-xs2pdf(gcf(), PATH+"\result\class_traj_3");
-clf();
-DrawTrajecoriesForClass(class4);
-xs2pdf(gcf(), PATH+"\result\class_traj_4");
-clf();
-DrawTrajecoriesForClass(class5);
-xs2pdf(gcf(), PATH+"\result\class_traj_5");
+if %t then
+	xset("wdim", 800,600)
+	clf();
+	subplot(2,3,1);
+	DrawTrajecoriesForClass(class1, 1);
+	xs2pdf(gcf(), PATH+"\class_traj_1");
+	subplot(2,3,2);
+	DrawTrajecoriesForClass(class2, 2);
+	xs2pdf(gcf(), PATH+"\class_traj_2");
+	subplot(2,3,3);
+	DrawTrajecoriesForClass(class3, 3);
+	xs2pdf(gcf(), PATH+"\class_traj_3");
+	subplot(2,3,4);
+	DrawTrajecoriesForClass(class4, 4);
+	xs2pdf(gcf(), PATH+"\class_traj_4");
+	subplot(2,3,5);
+	DrawTrajecoriesForClass(class5, 5);
+	xs2pdf(gcf(), PATH+"\class_traj_5");
+end
 
 
 
 /////////////////////
 // Draw all graphics for typical cases
 ////////
-typical = [36, 189, 96, 32, 14];
-
-i = 0;
-for num = typical
-    i = i + 1;
-    DrawAndSaveGraphics(num, sprintf("class_typical_%i", i));
+if ~%t then
+	typical = [36, 189, 96, 32, 14];
+	
+	i = 0;
+	for num = typical
+	    i = i + 1;
+	    DrawAndSaveGraphics(num, sprintf("class_typical_%i", i));
+	end
 end
+
