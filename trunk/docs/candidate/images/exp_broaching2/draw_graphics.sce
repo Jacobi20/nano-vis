@@ -1,7 +1,11 @@
-clc();
-xdel();
+PATH = "D:\workspace\Engine\candidate\images\exp_broaching2\";
 
-PATH = "E:\SPACE_MARINES_2_0\sci_docs\candidate\images\exp_broaching2\";
+class1 = [5,21,22,36,39,44,46,48,49,52,53,68,73,74,80,81,85,89,94,97,100,101,105,106,110,112,115,118,119,121,128,132,138,139,141,144,145,161,176,179,180,181,184,188,194,195];
+class2 = [3,9,13,28,34,35,42,43,56,64,65,83,91,122,127,177,189,191,196,198];
+class3 = [2,12,16,20,24,25,30,31,38,45,55,58,63,67,69,87,90,96,104,120,124,129,131,133,134,136,142,146,150,156,157,159,162,164,165,168,170,171,175,182,183,186,187,199];
+class4 = [1,4,7,8,10,15,17,18,19,23,26,27,29,32,33,37,40,41,47,50,51,54,57,59,60,61,62,70,71,72,75,77,78,79,82,84,86,88,92,93,95,98,99,102,103,107,108,109,111,113,114,116,117,123,126,130,135,137,140,147,148,149,151,152,153,154,155,158,160,163,166,167,169,173,174,178,185,190,192,193,197,200];
+class5 = [6,11,14,66,76,125,143,172];
+
 
 function [result, time, yaw, pitch, roll, pos_x, pos_y, pos_z, wave, velocity, angular, wave_length_coef, vel_coef, jonswap, narrow] = ReadPos( path )
     result = -1;
@@ -56,48 +60,82 @@ function [result, time, yaw, pitch, roll, pos_x, pos_y, pos_z, wave, velocity, a
 
 endfunction
 
+function [T, X, Y, YAW, ROLL, WAVE_HEIGHT, ANGULAR] = ReadLogs()
+    T = [];
+    X = [];
+    Y = [];
+    YAW = [];
+    ROLL = [];
+    WAVE_HEIGHT = [];
+    ANGULAR = [];
+    num = 0;
+    while %t
+        num = num + 1;
+        
+        filename = sprintf("broaching_%i", num);
+        [r, t, yaw, pitch, roll, pos_x, pos_y, pos_z, wave, velocity, angular, wave_length_coef, vel_coef, jonswap, narrow] = ReadPos(PATH+filename+".log");
+        
+        if r < 0 then break end
+        
+        for i=1:size(t, 1);
+            T(num, i) = t(i);
+            X(num, i) = pos_x(i);
+            Y(num, i) = pos_y(i);
+            YAW(num, i) = yaw(i);
+            ROLL(num, i) = roll(i);
+            WAVE_HEIGHT(num, i) = wave(i);
+            ANGULAR(num, i) = angular(i);
+        end
+    end    
+endfunction
+
 function DrawShip(pos_x, pos_y, yaw)
-    value_x = [-10 -10 -10 10 10 -10];
-    value_y = [-3 3 3 0 0 -3]
-    x = value_x * cosd(yaw) - value_y * sind(yaw) + [pos_x pos_x pos_x pos_x pos_x pos_x];
-    y = value_x * sind(yaw) + value_y * cosd(yaw) + [pos_y pos_y pos_y pos_y pos_y pos_y];
+    l = 20;
+    w = 6;
+    
+    value_x = [-l/2 -l/2 -l/2 l/2 l/2 -l/2];
+    value_y = [-w/2 w/2 w/2 0 0 -w/2];
+    x = value_x * cosd(yaw) - value_y * sind(yaw) + ones(value_x) * pos_x;
+    y = value_x * sind(yaw) + value_y * cosd(yaw) + ones(value_y) * pos_y;
     xset("thickness",2);
     xset("clipoff");
     xarrows(x , y, 0, 5);
     xset("thickness",1);
 endfunction
 
-function DrawAndSaveGraphics(num, image_filename)
+function DrawPoint(x, y, size, classnum)
+    xset("color", classnum);
+    xfarc(x - size / 2, y - size / 2, size, size, 360*64, 360*64);
+    xset("color", 1);
+    xarc(x - size / 2, y - size / 2, size, size, 360*64, 360*64);
+endfunction
+
+function DrawAndSaveGraphics(num, image_filename, T, X, Y, YAW, ROLL, WAVE_HEIGHT, ANGULAR)
 	xset("wdim", 800,600)
     clf();
-    filename = sprintf("broaching_%i", num);
-    
-    [r, t, yaw, pitch, roll, pos_x, pos_y, pos_z, wave, velocity, angular, wave_length_coef, vel_coef, jonswap, narrow] = ReadPos(PATH+filename+".log");
-    if r < 0 then break end
-    
+        
     subplot(221);
     xtitle("$\Large Траектория$", "$\Large x, м$", "$\Large y, м$");
-    plot2d(pos_x, pos_y);
+    plot2d(X(num,:), Y(num,:));
     a=get("current_axes");
     a.tight_limits = "on";
     //a.data_bounds = [0, -300; 400, 300];
     a.isoview = "on";
-   // a.x_location = "middle";
-    for i=1:50:size(yaw,1) do
-        DrawShip(pos_x(i), pos_y(i), yaw(i));
-        xstring(pos_x(i),pos_y(i) + 5,sprintf("%.2fs", t(i)));
+    // a.x_location = "middle";
+    for i=1:50:size(YAW(num,:),2) do
+        DrawShip(X(num,i), Y(num,i), YAW(num,i));
+        xstring(X(num, i),Y(num,i) + 5,sprintf("%.2fs", T(num, i)));
     end
     
     subplot(222);
     xtitle("$\Large Крен\ и\ курс$", "$\Large t, с$", "$\Large \theta^{\circ}, \phi^{\circ}$");
-    //plot2d( t, [roll yaw], [2 3]);    
-    plot2d( t, [roll], 1);    
+    plot2d( T(num,:), ROLL(num,:), 1);    
     a=gca();
     a.isoview = "off";
     a.tight_limits = "on";
 	a.children(1).children.line_style = 2;
     a.data_bounds = [0, -100; 60, 100];
-    plot2d( t, [yaw], 1);    
+    plot2d( T(num,:), YAW(num,:), 1);    
     a=gca();
     a.isoview = "off";
     a.tight_limits = "on";
@@ -108,15 +146,14 @@ function DrawAndSaveGraphics(num, image_filename)
     
     subplot(223);
     xtitle("$\Large Высота\ волны$", "$\Large t, с$", "$\Large h,м$");
-    plot2d(t, wave, 1);
+    plot2d(T(num,:), WAVE_HEIGHT(num,:), 1);
     a=gca();
     a.tight_limits = "on";
     a.data_bounds = [0, -1.0; 60, 1.0];
     
     subplot(224);
     xtitle("$\Large Угловая\ скорость$", "$\Large t, с$", "$\Large \dot\phi,рад/c$");
-    //xtitle("Angular velocity", "Time (s)", "Angular velocity (rad/s)");
-    plot2d(t, angular, 1);
+    plot2d(T(num,:), ANGULAR(num,:), 1);
     a=gca();
     a.tight_limits = "on";
     a.data_bounds = [0, -0.25; 60, 0.25]; 
@@ -124,33 +161,149 @@ function DrawAndSaveGraphics(num, image_filename)
     xs2pdf(gcf(), PATH+image_filename);
 endfunction
 
-function DrawTrajecoriesForClass(class, id)
+function DrawTrajecoriesForClass(class, id, X, Y)
     for num = class
-        filename = sprintf("broaching_%i", num);
-        [r, t, yaw, pitch, roll, pos_x, pos_y, pos_z, wave, velocity, angular, wave_length_coef, vel_coef, jonswap, narrow] = ReadPos(PATH+filename+".log");
-
-		clsid = ["I", "II", "III", "IV", "V"];
         
-        if r < 0 then break end
+		clsid = ["I", "II", "III", "IV", "V"];
                 
-    xtitle("$\Large Класс\ траекторий\ "+clsid(id)+"$", "$\Large x, м$", "$\Large y, м$");
-        plot2d(pos_x, pos_y);
+        xtitle("$\Large Класс\ траекторий\ "+clsid(id)+"$", "$\Large x, м$", "$\Large y, м$");
+        pos_y = [];
+        if Y(num, size(Y(num,:),2)) > 0 then
+            pos_y = Y(num,:);
+        else
+            pos_y = -Y(num,:);
+        end
+        plot2d(X(num,:), pos_y);
         a=get("current_axes");
         a.tight_limits = "on";
-        a.data_bounds = [0, -250; 400, 250];
+        a.data_bounds = [0, -50; 400, 250];
         a.isoview = "on";
-        a.x_location = "middle";
+        a.x_location = "origin";
     end
 endfunction
 
+// Hardcode for class5
 
-clf();
+function DrawTrajecoriesForClass5(X, Y)
+    for num = class5
+        xtitle("$\Large Класс\ траекторий\ V$", "$\Large x, м$", "$\Large y, м$");
+        pos_y = [];
+        if Y(num, size(Y(num,:),2)) - Y(num, size(Y(num,:),2) - 1) > 0 then
+            pos_y = -Y(num,:);
+        else
+            pos_y = Y(num,:);
+        end
+        plot2d(X(num,:), pos_y);
+        a=get("current_axes");
+        a.tight_limits = "on";
+        a.data_bounds = [0, -50; 400, 250];
+        a.isoview = "on";
+        a.x_location = "origin";
+    end
+endfunction
 
-class1 = [5,21,22,36,39,44,46,48,49,52,53,68,73,74,80,81,85,89,94,97,100,101,105,106,110,112,115,118,119,121,128,132,138,139,141,144,145,161,176,179,180,181,184,188,194,195];
-class2 = [3,9,13,28,34,35,42,43,56,64,65,83,91,122,127,177,189,191,196,198];
-class3 = [2,12,16,20,24,25,30,31,38,45,55,58,63,67,69,87,90,96,104,120,124,129,131,133,134,136,142,146,150,156,157,159,162,164,165,168,170,171,175,182,183,186,187,199];
-class4 = [1,4,7,8,10,15,17,18,19,23,26,27,29,32,33,37,40,41,47,50,51,54,57,59,60,61,62,70,71,72,75,77,78,79,82,84,86,88,92,93,95,98,99,102,103,107,108,109,111,113,114,116,117,123,126,130,135,137,140,147,148,149,151,152,153,154,155,158,160,163,166,167,169,173,174,178,185,190,192,193,197,200];
-class5 = [6,11,14,66,76,125,143,172];
+function [ANGLE_SUM, DISTANCE, MAXROLL] = CalcParamsForClass(Y, YAW, ROLL, class)
+    
+    ANGLE_SUM = [];
+    DISTANCE = [];
+    MAXROLL = [];
+    num = 0;
+    for i=class
+        num = num + 1;
+        DISTANCE(num) = abs(max(Y(i,:)) - min(Y(i,:)));
+        ANGLE_SUM(num) = 0;
+        for j = 2:size(Y,2)
+           ANGLE_SUM(num) = ANGLE_SUM(num) + abs(YAW(i,j) - YAW(i,j - 1));
+        end
+        MAXROLL(num) = max(abs(ROLL(i,:)));
+    end
+endfunction
+
+function DrawPointsRoll (ANGLE_SUM, DISTANCE, MAXROLL, classnum)
+    for i = 1:size(ANGLE_SUM,1)
+        DrawPoint(ANGLE_SUM(i), DISTANCE(i), MAXROLL(i) / 90 * 30, classnum);
+    end
+endfunction
+
+function DrawPointsEnergy (ANGLE_SUM, DISTANCE, MAXROLL, classnum)
+    for i = 1:size(ANGLE_SUM,1)
+        DrawPoint(ANGLE_SUM(i), DISTANCE(i), (ANGLE_SUM(i) + MAXROLL(i)) / 250 * 15, classnum);
+    end
+endfunction
+
+function DrawAngleShiftFromRoll(ANGLE_SUM, DISTANCE, MAXROLL)
+    plot2d([0 0 45 45], [-250 250 250 -250], 1);
+    xpoly([0 45],[0 0]);    
+    width = 0.02;
+    for i = 1:size(ANGLE_SUM,1)
+           
+            xset("color", 2);
+            xfpoly([MAXROLL(i)-width/2 MAXROLL(i)+width/2 MAXROLL(i)+width/2 MAXROLL(i)-width/2], [ANGLE_SUM(i) ANGLE_SUM(i) 0 0], 0);
+            xset("color", 5);
+            xfpoly([MAXROLL(i)-width/2 MAXROLL(i)+width/2 MAXROLL(i)+width/2 MAXROLL(i)-width/2], [0 0 -DISTANCE(i) -DISTANCE(i)], 0);
+            xset("color", 1);
+    end
+endfunction
+
+function [major_x, major_y] = CalcTrajectoryVectors (class, T, X, Y)
+    major_x = [];
+    major_y = [];
+    
+    timestamps = [0 18 22 38 42 60];
+    indices = [];
+    num = 0;
+    for i = timestamps
+        num = num + 1;
+        indices(num) = find(abs(T(1,:) - i) < 0.2, 1)
+    end
+    
+    for k = 1:size(indices, 1)
+       major_x(k) = mean(X(class,indices(k)));
+       
+       major_y(k) = 0;
+       for j = class
+           if Y(j, size(Y(j,:),2)) > 0 then
+               major_y(k) = major_y(k) + Y(j,indices(k));
+           else
+               major_y(k) = major_y(k) - Y(j,indices(k));
+           end
+       end
+       major_y(k) = major_y(k) / size(class, 2);
+    end
+endfunction
+
+//Hardcode for class5
+
+function [major_x, major_y] = CalcTrajectoryVectors5 (T, X, Y)
+    major_x = [];
+    major_y = [];
+    
+    timestamps = [0 18 22 38 42 60];
+    indices = [];
+    num = 0;
+    for i = timestamps
+        num = num + 1;
+        indices(num) = find(abs(T(1,:) - i) < 0.2, 1)
+    end
+    
+    for k = 1:size(indices, 1)
+       major_x(k) = mean(X(class5,indices(k)));
+       
+       major_y(k) = 0;
+       for j = class5
+           if Y(j, size(Y(j,:),2)) - Y(j, size(Y(j,:),2) - 1) > 0 then
+               major_y(k) = major_y(k) - Y(j,indices(k));
+           else
+               major_y(k) = major_y(k) + Y(j,indices(k));
+           end
+       end
+       major_y(k) = major_y(k) / size(class5, 2);
+    end
+endfunction
+
+clc();
+
+[T, X, Y, YAW, ROLL, WAVE_HEIGHT, ANGULAR] = ReadLogs();
 
 // Draw set of trajectories for each class
 // Ugly stuff but scilab seems to work in peculiar way in case of vector of vectors with different dimensions
@@ -158,20 +311,40 @@ if %t then
 	xset("wdim", 800,600)
 	clf();
 	subplot(2,3,1);
-	DrawTrajecoriesForClass(class1, 1);
-	xs2pdf(gcf(), PATH+"\class_traj_1");
-	subplot(2,3,2);
-	DrawTrajecoriesForClass(class2, 2);
-	xs2pdf(gcf(), PATH+"\class_traj_2");
-	subplot(2,3,3);
-	DrawTrajecoriesForClass(class3, 3);
-	xs2pdf(gcf(), PATH+"\class_traj_3");
-	subplot(2,3,4);
-	DrawTrajecoriesForClass(class4, 4);
-	xs2pdf(gcf(), PATH+"\class_traj_4");
-	subplot(2,3,5);
-	DrawTrajecoriesForClass(class5, 5);
-	xs2pdf(gcf(), PATH+"\class_traj_5");
+	DrawTrajecoriesForClass(class1, 1, X, Y);
+    [major_x major_y] = CalcTrajectoryVectors(class1, T, X, Y);
+    xset("thickness",3);
+    xarrows(major_x, major_y, -1, 5);
+    xset("thickness",1);
+    xs2pdf(gcf(), PATH+"\class_traj_1");
+    subplot(2,3,2);
+    DrawTrajecoriesForClass(class2, 2, X, Y);
+    [major_x major_y] = CalcTrajectoryVectors(class2, T, X, Y);
+    xset("thickness",3);
+    xarrows(major_x, major_y, -1, 5);
+    xset("thickness",1);
+    xs2pdf(gcf(), PATH+"\class_traj_2");
+    subplot(2,3,3);
+    DrawTrajecoriesForClass(class3, 3, X, Y);
+    [major_x major_y] = CalcTrajectoryVectors(class3, T, X, Y);
+    xset("thickness",3);
+    xarrows(major_x, major_y, -1, 5);
+    xset("thickness",1);
+    xs2pdf(gcf(), PATH+"\class_traj_3");
+    subplot(2,3,4);
+    DrawTrajecoriesForClass(class4, 4, X, Y);
+    [major_x major_y] = CalcTrajectoryVectors(class4, T, X, Y);
+    xset("thickness",3);
+    xarrows(major_x, major_y, -1, 5);
+    xset("thickness",1);
+    xs2pdf(gcf(), PATH+"\class_traj_4");
+    subplot(2,3,5);
+    DrawTrajecoriesForClass5(X, Y);
+    [major_x major_y] = CalcTrajectoryVectors5(T, X, Y);
+    xset("thickness",3);
+    xarrows(major_x, major_y, -1, 5);
+    xset("thickness",1);
+    xs2pdf(gcf(), PATH+"\class_traj_5");
 end
 
 
@@ -185,7 +358,72 @@ if ~%t then
 	i = 0;
 	for num = typical
 	    i = i + 1;
-	    DrawAndSaveGraphics(num, sprintf("class_typical_%i", i));
+	    DrawAndSaveGraphics(num, sprintf("class_typical_%i", i), T, X, Y, YAW, ROLL, WAVE_HEIGHT, ANGULAR);
 	end
 end
 
+//Draw Sum angle-Shift chart where point size depends on max roll angle
+if ~%t then
+    clf();
+    xtitle("", "Angle sum", "Shift");
+    
+    [ang, dist, maxroll] = CalcParamsForClass(Y, YAW, ROLL, class1);
+    plot2d([0 250 250 0], [250 250 0 0], 1);
+    DrawPointsRoll(ang, dist, maxroll,1);
+    
+    [ang, dist, maxroll] = CalcParamsForClass(Y, YAW, ROLL, class2);
+    plot2d([0 250 250 0], [250 250 0 0], 2);
+    DrawPointsRoll(ang, dist, maxroll,2);
+    
+    [ang, dist, maxroll] = CalcParamsForClass(Y, YAW, ROLL, class3);
+    plot2d([0 250 250 0], [250 250 0 0], 3);
+    DrawPointsRoll(ang, dist, maxroll, 3);
+    
+    [ang, dist, maxroll] = CalcParamsForClass(Y, YAW, ROLL, class4);
+    plot2d([0 250 250 0], [250 250 0 0], 4);
+    DrawPointsRoll(ang, dist, maxroll,4);
+    
+    [ang, dist, maxroll] = CalcParamsForClass(Y, YAW, ROLL, class5);
+    plot2d([0 250 250 0], [250 250 0 0], 5);
+    DrawPointsRoll(ang, dist, maxroll,5);
+    
+    legend(["1" "2" "3" "4" "5"]);
+    plot2d([0 250 250 0], [250 250 0 0], 1);
+    a=get("current_axes");
+    a.isoview = "on";
+    
+    xs2pdf(gcf(), PATH+"\angle_shift_rollsized");
+end
+
+//Draw Sum angle-Shift chart where point size depends on "energy"
+if ~%t then
+    clf();
+    xtitle("", "Angle sum", "Shift");
+    
+    [ang, dist, maxroll] = CalcParamsForClass(Y, YAW, ROLL, class1);
+    plot2d([0 250 250 0], [250 250 0 0], 1);
+    DrawPointsEnergy(ang, dist, maxroll,1);
+    
+    [ang, dist, maxroll] = CalcParamsForClass(Y, YAW, ROLL, class2);
+    plot2d([0 250 250 0], [250 250 0 0], 2);
+    DrawPointsEnergy(ang, dist, maxroll,2);
+    
+    [ang, dist, maxroll] = CalcParamsForClass(Y, YAW, ROLL, class3);
+    plot2d([0 250 250 0], [250 250 0 0], 3);
+    DrawPointsEnergy(ang, dist, maxroll, 3);
+    
+    [ang, dist, maxroll] = CalcParamsForClass(Y, YAW, ROLL, class4);
+    plot2d([0 250 250 0], [250 250 0 0], 4);
+    DrawPointsEnergy(ang, dist, maxroll,4);
+    
+    [ang, dist, maxroll] = CalcParamsForClass(Y, YAW, ROLL, class5);
+    plot2d([0 250 250 0], [250 250 0 0], 5);
+    DrawPointsEnergy(ang, dist, maxroll,5);
+    
+    legend(["1" "2" "3" "4" "5"]);
+    plot2d([0 250 250 0], [250 250 0 0], 1);
+    a=get("current_axes");
+    a.isoview = "on";
+    
+    xs2pdf(gcf(), PATH+"\angle_shift_energysized");
+end
