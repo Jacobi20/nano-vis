@@ -32,7 +32,11 @@
 Эксперимент состоит из следующих этапов:
 \begin{enumerate}
 	\item	Определение буксировочной диаграммы судна --- зависимости скорости судна от приложенной силы. 
-			На основе данной диаграммы выбирается постоянная буксировочная сила.
+			На основе данной диаграммы выбирается постоянная буксировочная сила. 
+			Диаграмма строится следующим образом: на тихой воде к судну прикладывается фиксированная 
+			сила с течении заданного промежутка времени 30 с (за это скорость для столь малого судна 
+			должна установиться), после чего средняя скорость за последние 10 секунд 
+			сопоставляется в выбранной буксировочной силой.
 	\item	Проводится $N=200$ запусков (длительность $60 s$\footnote{60 секунд --- достаточное время развития явления брочинга для столь малого судна}) в одинаковых начальных условиях (различается лишь seed в генераторе случайных чисел \footnote{Используется вихрь Мерсенна \citep{mersenn_twister}})
 \end{enumerate}
 
@@ -41,15 +45,16 @@
 
 \subsection{Анализ результатов эксперимента}
 
+Частоте волнения соответствует фазовая скорость $c = 8.167\ \text{м/с}$.
+Согласно эксперименту по определению буксировочной силы, для достижения скорости $8.167\ \text{м/с}$ необходимо приложить силу равную $305\ \text{кН}$
+
 \begin{figure}[ht]
 	\begin{center}
-	%\LARGE{ДИАГРАММА БУКСИРОВОЧНОЙ СИЛЫ!}
+	\includegraphics[width=130mm]{exp_broaching2/propulsion}
 	\end{center}
-	\caption{Диаграмма буксировочной силы.}
+	\caption{Диаграмма установившейся скорости и буксировочной силы}
 	\label{tug_force}
 \end{figure}
-
-Частоте волнения соответствует фазовая скорость $c$
 
 В ходе эксперимента были записаны все текущие параметры судна. На основе визуального анализа траектории были выделены следующие категории явления:
 
@@ -63,13 +68,13 @@
 \end{enumerate}
 
 На рис.~\ref{all_tracks} представлены пять классов траекторий судна в режиме брочинга.
-А на рис.~\ref{broaching1}, ~\ref{broaching2}, ~\ref{broaching3}, ~\ref{broaching4}, ~\ref{broaching5} --- подробные графики различных характеристик судна для наиболее типичных для каждого класса случаев.
+А на рис.~\ref{broaching11}, ~\ref{broaching12}, ~\ref{broaching13}, ~\ref{broaching14}, ~\ref{broaching15} --- подробные графики различных характеристик судна для наиболее типичных для каждого класса случаев.
 
 \begin{sidewaysfigure}
 	\begin{center}
-	\includegraphics[width=210mm]{exp_broaching2/class_traj_5}
+	\includegraphics[width=210mm]{exp_broaching2/all_tracks}
 	\end{center}
-	\caption{Классы траекторий судна в режиме брочинга.}
+	\caption{Классы траекторий судна в режиме брочинга}
 	\label{all_tracks}
 \end{sidewaysfigure}
 
@@ -77,27 +82,27 @@
 
 \begin{sidewaysfigure}
 	\begin{center}	\includegraphics[width=210mm]{exp_broaching2/class_typical_1}	\end{center}
-	\caption{Классы траектории I.}	\label{broaching11}
+	\caption{Классы траектории I}	\label{broaching11}
 \end{sidewaysfigure}
 
 \begin{sidewaysfigure}
 	\begin{center}	\includegraphics[width=210mm]{exp_broaching2/class_typical_2}	\end{center}
-	\caption{Классы траектории II.}	\label{broaching12}
+	\caption{Классы траектории II}	\label{broaching12}
 \end{sidewaysfigure}
 
 \begin{sidewaysfigure}
 	\begin{center}	\includegraphics[width=210mm]{exp_broaching2/class_typical_3}	\end{center}
-	\caption{Классы траектории III.}	\label{broaching13}
+	\caption{Классы траектории III}	\label{broaching13}
 \end{sidewaysfigure}
 
 \begin{sidewaysfigure}
 	\begin{center}	\includegraphics[width=210mm]{exp_broaching2/class_typical_4}	\end{center}
-	\caption{Классы траектории IV.}	\label{broaching14}
+	\caption{Классы траектории IV}	\label{broaching14}
 \end{sidewaysfigure}
 
 \begin{sidewaysfigure}
 	\begin{center}	\includegraphics[width=210mm]{exp_broaching2/class_typical_5}	\end{center}
-	\caption{Классы траектории V.}	\label{broaching15}
+	\caption{Классы траектории V}	\label{broaching15}
 \end{sidewaysfigure}
 
 Результаты эксперимента сведены в таблицу.~\ref{table_broaching}.
