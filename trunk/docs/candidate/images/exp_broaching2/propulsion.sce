@@ -4,7 +4,8 @@ xdel();
 
 printf('\n');
 
-GAME_PATH = "d:\workspace\Engine\game_2048\shipxds\";
+//GAME_PATH = "d:\workspace\Engine\game_2048\shipxds\";
+GAME_PATH = "d:\SPACE_MARINES_2_0\sci_docs\candidate\images\exp_broaching2\";
 EXP_PATH  = GAME_PATH + "propulsion\";
 
 function [result, force, time, velocity, result_v] = ReadVel( path )
@@ -39,6 +40,9 @@ function [result, force, time, velocity, result_v] = ReadVel( path )
         result_v = vel;
 	end
 
+	v = perctl(velocity, 90)
+	result_v = v;
+
     mclose(f);
 
 endfunction
@@ -47,8 +51,10 @@ num = 0;
 result_v = [];
 applied_f = [];
 
-output = mopen(EXP_PATH+"prop_table.txt", "w");
+	xset("wdim", 600,700);
 
+output = mopen(EXP_PATH+"prop_table.txt", "w");
+subplot(2,1,1);
 while (%t)
     num=num+1;
     filename = sprintf("force_%i", num);
@@ -60,26 +66,38 @@ while (%t)
     if r < 0 then break end
     
     applied_f(num) = f;
-    result_v(num) = r_v;
+    result_v(num) = r_v(1);
     
     mfprintf(output,"%.2f\t%.2f\n", f, r_v);
         
-    xtitle("$\LARGE Time-Velocity\ Diagram$", "$\LARGE t\ (s)$", "$\LARGE V\ (ms^{-1})$");
-    plot2d( t, vel, [modulo(num,10)]);
-    xtitle("$\LARGE Time-Velocity\ Diagram$", "$\LARGE t\ (s)$", "$\LARGE V\ (ms^{-1})$");
+    xtitle("$\LARGE Диаграмма\ установившейся\ скорости$", "$\LARGE t, с$", "$\LARGE V,\ м/с$");
+    plot2d( t, vel, [1]);
+    xtitle("$\LARGE Диаграмма\ установившейся\ скорости$", "$\LARGE t, с$", "$\LARGE V,\ м/с$");
+	xstring( 35, num/1.5, sprintf( "$%2.1f кН$", f/1000.0 ));
+	xpoly( [30,35], [vel($), num/1.5+0.3]);
     a = gca();
     a.x_location = "origin"
     a.y_location = "origin"
+	a.data_bounds = [0,0; 40,15];
     a.tight_limits = "on";
 end
-xs2pdf(gcf(), EXP_PATH+"velocities");
 
 mclose(output);
 
-clf();
-xtitle("$\LARGE Force-Velocity\ Diagram$", "$\LARGE V\ (ms^{-1})$", "$\LARGE F_{tug} (kN)$" );
-plot2d(result_v, applied_f);
-xtitle("$\LARGE Force-Velocity\ Diagram$", "$\LARGE V\ (ms^{-1})$", "$\LARGE F_{tug} (kN)$" );
+subplot(2,1,2);
+xtitle("$\LARGE Диаграмма\ буксировочной\ силы$", "$\LARGE V,\ м/с$", "$\LARGE F_{tug},\ кН$" );
+plot2d(result_v, applied_f/1000);
+xpoly( [8.17, 8.17], [0, 800] );
+xpoly( [0, 12], [305, 305] );
+xstring( 8.17, 10, "$\large 8.167\ рад/с$");
+xstring( 0.1, 305, "$\large 305\ кН$");
+xtitle("$\LARGE Диаграмма\ буксировочной\ силы$", "$\LARGE V,\ м/с$", "$\LARGE F_{tug},\ кН$" );
     a = gca();
     a.tight_limits = "on";
-    xs2pdf(gcf(), EXP_PATH+"propulsion");
+    xs2pdf(gcf(), GAME_PATH+"propulsion");
+
+xs2pdf(gcf(), GAME_PATH+"velocities");
+
+
+
+

@@ -1,4 +1,6 @@
-PATH = "D:\workspace\Engine\candidate\images\exp_broaching2\";
+//PATH = "D:\workspace\Engine\candidate\images\exp_broaching2\";
+PATH = "D:\SPACE_MARINES_2_0\sci_docs\candidate\images\exp_broaching2\";
+
 
 class1 = [5,21,22,36,39,44,46,48,49,52,53,68,73,74,80,81,85,89,94,97,100,101,105,106,110,112,115,118,119,121,128,132,138,139,141,144,145,161,176,179,180,181,184,188,194,195];
 class2 = [3,9,13,28,34,35,42,43,56,64,65,83,91,122,127,177,189,191,196,198];
