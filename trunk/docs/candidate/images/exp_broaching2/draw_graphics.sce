@@ -175,7 +175,7 @@ function DrawTrajecoriesForClass(class, id, X, Y)
         else
             pos_y = -Y(num,:);
         end
-        plot2d(X(num,:), pos_y);
+        plot2d(X(num,:), pos_y, 1);
         a=get("current_axes");
         a.tight_limits = "on";
         a.data_bounds = [0, -50; 400, 250];
@@ -251,7 +251,7 @@ function [major_x, major_y] = CalcTrajectoryVectors (class, T, X, Y)
     major_x = [];
     major_y = [];
     
-    timestamps = [0 18 22 38 42 60];
+    timestamps = [0 9 11 19 21 29 31 39 41 49 51 59];//18 22 38 42 60];
     indices = [];
     num = 0;
     for i = timestamps
@@ -280,7 +280,7 @@ function [major_x, major_y] = CalcTrajectoryVectors5 (T, X, Y)
     major_x = [];
     major_y = [];
     
-    timestamps = [0 18 22 38 42 60];
+    timestamps = [0 9 11 19 21 29 31 39 41 49 51 59];//18 22 38 42 60];
     indices = [];
     num = 0;
     for i = timestamps
@@ -303,6 +303,49 @@ function [major_x, major_y] = CalcTrajectoryVectors5 (T, X, Y)
     end
 endfunction
 
+function DrawArrow(x,y)
+    th = 0.2;
+    arrow_x = [-0.5 -0.5 0.1 0.1 0.5 0.1 0.1];
+    arrow_y = [-th/2 th/2 th/2 1.1*th 0 -1.1*th -th/2];
+    angle = atan(y(2) - y(1), x(2) - x(1));
+    c = [x(1) + (x(2)-x(1))/2, y(1) + (y(2)-y(1))/2];
+    l = sqrt((x(2)-x(1))*(x(2)-x(1))+(y(2)-y(1))*(y(2)-y(1)));
+    arrow_x = arrow_x * l;
+    arrow_y = arrow_y * l;
+    
+    actual_x = arrow_y * sin(angle) + arrow_x * cos(angle) + c(1);
+    actual_y = -arrow_y * cos(angle) + arrow_x * sin(angle) + c(2);
+    
+    xset("color", color(255,255,255));
+    xfpoly(actual_x,actual_y);
+    xset("color", 1);
+    xpoly(actual_x,actual_y, "lines", 1);
+endfunction
+
+function DrawArrows(x,y)
+    num = 1;
+    while num <= size(x,1)
+        DrawArrow([x(num), x(num + 1)],[y(num), y(num + 1)]);
+        num = num + 2;
+    end
+endfunction
+
+function [correlation] = CorForVectors(v1, v2)
+    m1 = mean(v1);
+    m2 = mean(v2);
+    
+    msum = 0;
+    sqsumx = 0;
+    sqsumy = 0;
+    for i=1:size(v1,2)
+        msum = msum + (test1(i) - m1)*(test2(i) - m2);
+        sqsumx = sqsumx + (test1(i) - m1)*(test1(i) - m1);
+        sqsumy = sqsumy + (test2(i) - m2)*(test2(i) - m2);    
+    end
+
+    correlation = msum / sqrt(sqsumx*sqsumy);
+endfunction
+
 clc();
 
 [T, X, Y, YAW, ROLL, WAVE_HEIGHT, ANGULAR] = ReadLogs();
@@ -315,37 +358,42 @@ if %t then
 	subplot(2,3,1);
 	DrawTrajecoriesForClass(class1, 1, X, Y);
     [major_x major_y] = CalcTrajectoryVectors(class1, T, X, Y);
-    xset("thickness",3);
-    xarrows(major_x, major_y, -1, 5);
-    xset("thickness",1);
-    xs2pdf(gcf(), PATH+"\class_traj_1");
+    DrawArrows(major_x, major_y);
+//    xset("thickness",3);
+//    xarrows(major_x, major_y, -1, 7);//color(255,255,255));
+//    xset("thickness",1);
+   xs2pdf(gcf(), PATH+"\class_traj_1");
     subplot(2,3,2);
     DrawTrajecoriesForClass(class2, 2, X, Y);
     [major_x major_y] = CalcTrajectoryVectors(class2, T, X, Y);
-    xset("thickness",3);
-    xarrows(major_x, major_y, -1, 5);
-    xset("thickness",1);
+    DrawArrows(major_x, major_y);
+//    xset("thickness",3);
+//    xarrows(major_x, major_y, -1, 5);
+//    xset("thickness",1);
     xs2pdf(gcf(), PATH+"\class_traj_2");
     subplot(2,3,3);
     DrawTrajecoriesForClass(class3, 3, X, Y);
     [major_x major_y] = CalcTrajectoryVectors(class3, T, X, Y);
-    xset("thickness",3);
-    xarrows(major_x, major_y, -1, 5);
-    xset("thickness",1);
+    DrawArrows(major_x, major_y);
+//    xset("thickness",3);
+//    xarrows(major_x, major_y, -1, 5);
+//    xset("thickness",1);
     xs2pdf(gcf(), PATH+"\class_traj_3");
     subplot(2,3,4);
     DrawTrajecoriesForClass(class4, 4, X, Y);
     [major_x major_y] = CalcTrajectoryVectors(class4, T, X, Y);
-    xset("thickness",3);
-    xarrows(major_x, major_y, -1, 5);
-    xset("thickness",1);
+    DrawArrows(major_x, major_y);
+//    xset("thickness",3);
+//    xarrows(major_x, major_y, -1, 5);
+//    xset("thickness",1);
     xs2pdf(gcf(), PATH+"\class_traj_4");
     subplot(2,3,5);
     DrawTrajecoriesForClass5(X, Y);
     [major_x major_y] = CalcTrajectoryVectors5(T, X, Y);
-    xset("thickness",3);
-    xarrows(major_x, major_y, -1, 5);
-    xset("thickness",1);
+    DrawArrows(major_x, major_y);
+//    xset("thickness",3);
+//    xarrows(major_x, major_y, -1, 5);
+//    xset("thickness",1);
     xs2pdf(gcf(), PATH+"\class_traj_5");
 end
 
@@ -429,3 +477,42 @@ if ~%t then
     
     xs2pdf(gcf(), PATH+"\angle_shift_energysized");
 end
+
+
+//clf();
+////[cov, Mean] = corr(ANGULAR, ROLL, 1);
+////
+//co = [];
+//for j = 1:200
+//    co(j) = CorForVectors(YAW(j,:), ROLL(j,:));
+//end
+//plot2d(1:200,co, 2);
+//xtitle("Yaw-roll correlation", "Experiment number", "yaw-roll correlation");
+//xs2png(gcf(), PATH+"\yaw_roll_corellation");
+//
+//clf();
+//co = [];
+//for j = 1:200
+//    co(j) = CorForVectors(ANGULAR(j,:), ROLL(j,:));
+//end
+//plot2d(1:200,co, 2);
+//xtitle("Angular-roll correlation", "Experiment number", "angular-roll correlation");
+//xs2png(gcf(), PATH+"\angular_roll_corellation");
+//
+//clf();
+//co = [];
+//for j = 1:200
+//    co(j) = CorForVectors(ANGULAR(j,:), YAW(j,:));
+//end
+//plot2d(1:200,co, 2);
+//xtitle("Angular-yaw correlation", "Experiment number", "angular-yaw correlation");
+//xs2png(gcf(), PATH+"\angular_yaw_corellation");
+//
+//clf();
+//co = [];
+//for j = 1:200
+//    co(j) = CorForVectors(ROLL(j,:), Y(j,:));
+//end
+//plot2d(1:200,co, 2);
+//xtitle("Roll-Y correlation", "Experiment number", "roll-y correlation");
+//xs2png(gcf(), PATH+"\roll_y_corellation");
