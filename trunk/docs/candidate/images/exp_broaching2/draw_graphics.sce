@@ -117,7 +117,7 @@ function DrawAndSaveGraphics(num, image_filename, T, X, Y, YAW, ROLL, WAVE_HEIGH
     clf();
         
     subplot(221);
-    xtitle("$\Large Траектория$", "$\Large x, м$", "$\Large y, м$");
+    xtitle("$\Large Траектория$", "$\Large \xi, м$", "$\Large \eta, м$");
     plot2d(X(num,:), Y(num,:));
     a=get("current_axes");
     a.tight_limits = "on";
@@ -168,7 +168,7 @@ function DrawTrajecoriesForClass(class, id, X, Y)
         
 		clsid = ["I", "II", "III", "IV", "V"];
                 
-        xtitle("$\Large Класс\ траекторий\ "+clsid(id)+"$", "$\Large x, м$", "$\Large y, м$");
+        xtitle("$\Large Класс\ траекторий\ "+clsid(id)+"$", "$\Large \xi, м$", "$\Large \eta, м$");
         pos_y = [];
         if Y(num, size(Y(num,:),2)) > 0 then
             pos_y = Y(num,:);
@@ -188,7 +188,7 @@ endfunction
 
 function DrawTrajecoriesForClass5(X, Y)
     for num = class5
-        xtitle("$\Large Класс\ траекторий\ V$", "$\Large x, м$", "$\Large y, м$");
+        xtitle("$\Large Класс\ траекторий\ V$", "$\Large \xi, м$", "$\Large \eta, м$");
         pos_y = [];
         if Y(num, size(Y(num,:),2)) - Y(num, size(Y(num,:),2) - 1) > 0 then
             pos_y = -Y(num,:);
