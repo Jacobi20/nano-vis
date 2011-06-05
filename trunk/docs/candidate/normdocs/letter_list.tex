@@ -1,0 +1,49 @@
+\documentclass[c5paper]{letter}
+\usepackage[left=2cm,top=2cm,landscape,twoside=false]{geometry}
+\pagestyle{empty}
+\usepackage[utf8x]{inputenc}
+\RequirePackage[english,russian]{babel}
+
+\geometry{left=2cm}
+\geometry{right=1.5cm}
+\geometry{top=3cm}
+\geometry{bottom=1cm} 
+%-------------------------------------------------
+\providecommand{\newenvelop}[2]{
+\vspace{2cm}
+\large{
+	\parbox[r]{9cm}{
+	\begin{flushleft}
+	Диссертационный совет Д 212.227.06	\linebreak\linebreak
+	197101, Санкт-Петербург, пр.~Кронверкский,~д.49. 	\linebreak
+	\end{flushleft}
+	}
+}
+
+\vspace{2cm}
+
+\Large{
+	\begin{flushright}
+	\parbox{10cm}{
+	\begin{flushleft}
+	#1	\linebreak \linebreak
+	#2 	\linebreak
+	\end{flushleft}
+	}
+	\end{flushright}
+}
+
+\pagebreak
+}
+
+%-------------------------------------------------
+
+ 
+\begin{document}
+
+%\newenvelop{Санкт-Петербургский политехнический университет, каф. Математическое и программное обеспечение высокопроизводительных вычислений, Болдыреву Ю.Я.}{195251, Санкт-Петербург, ул. Политехническая, 29}
+
+\include{letter_list_auto}
+ 
+\end{document}
+
