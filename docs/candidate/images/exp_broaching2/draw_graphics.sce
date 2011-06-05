@@ -1,5 +1,6 @@
 //PATH = "D:\workspace\Engine\candidate\images\exp_broaching2\";
-PATH = "D:\SPACE_MARINES_2_0\sci_docs\candidate\images\exp_broaching2\";
+//PATH = "D:\SPACE_MARINES_2_0\sci_docs\candidate\images\exp_broaching2\";
+PATH = "E:\SPACE_MARINES_2_0\sci_docs\candidate\images\exp_broaching2\";
 
 
 class1 = [5,21,22,36,39,44,46,48,49,52,53,68,73,74,80,81,85,89,94,97,100,101,105,106,110,112,115,118,119,121,128,132,138,139,141,144,145,161,176,179,180,181,184,188,194,195];
@@ -352,7 +353,7 @@ clc();
 
 // Draw set of trajectories for each class
 // Ugly stuff but scilab seems to work in peculiar way in case of vector of vectors with different dimensions
-if %t then
+if ~%t then
 	xset("wdim", 800,600)
 	clf();
 	subplot(2,3,1);
@@ -402,7 +403,7 @@ end
 /////////////////////
 // Draw all graphics for typical cases
 ////////
-if ~%t then
+if %t then
 	typical = [36, 189, 96, 32, 14];
 	
 	i = 0;
