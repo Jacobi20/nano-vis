@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.0 r9654"
-   sodipodi:docname="forces.pdf">
+   sodipodi:docname="forces.svg">
   <defs
      id="defs4">
     <marker
@@ -262,14 +262,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.35355339"
-     inkscape:cx="477.73546"
-     inkscape:cy="178.83507"
+     inkscape:zoom="1.1504296"
+     inkscape:cx="336.04926"
+     inkscape:cy="526.53127"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="977"
+     inkscape:window-width="1680"
+     inkscape:window-height="1003"
      inkscape:window-x="-4"
      inkscape:window-y="-4"
      inkscape:window-maximized="1" />
@@ -281,7 +281,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -421,13 +421,13 @@
        inkscape:connector-curvature="0"
        id="path5408-21"
        d="m 43.793027,450.77345 95.840343,8.7508"
-       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2, 4;stroke-dashoffset:0;marker-end:url(#Arrow1Lend-6)"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker-end:url(#Arrow1Lend-6)"
        inkscape:transform-center-y="18.088146" />
     <path
        inkscape:connector-curvature="0"
        id="path5408-5-6"
        d="m 43.793027,486.38815 96.438093,33.71508"
-       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Lend)"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2,4;marker-end:url(#Arrow1Lend);stroke-dashoffset:0"
        inkscape:transform-center-y="65.069922" />
     <text
        xml:space="preserve"
