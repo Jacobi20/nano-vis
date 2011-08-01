@@ -1,0 +1,13 @@
+\begin{thebibliography}{1}
+
+\bibitem{ExampleRef}
+Ivan Ivanov and Petr Petrov,
+\newblock ``Title,''
+\newblock {\em Journal}, vol. 11, no. 23, pp. 134--140, 2009.
+
+\bibitem{ExampleRef2}
+Pert Ivanov,
+\newblock ``Title,''
+\newblock {\em Journal}, vol. 4, no. 16, pp. 48--51, 2009.
+
+\end{thebibliography}
